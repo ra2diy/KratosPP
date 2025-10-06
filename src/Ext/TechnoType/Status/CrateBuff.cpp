@@ -14,6 +14,7 @@ void TechnoStatus::RecalculateStatus()
 		double firepowerMult = CrateBuff.FirepowerMultiplier;
 		double armorMult = CrateBuff.ArmorMultiplier;
 		double speedMult = CrateBuff.SpeedMultiplier;
+		bool shouldUpdateCloakable = CrateBuff.Cloakable;
 		bool cloakable = CanICloakByDefault() || CrateBuff.Cloakable;
 		// 算上AE加成
 		AttachEffect* ae = AEManager();
@@ -22,14 +23,27 @@ void TechnoStatus::RecalculateStatus()
 			CrateBuffData aeMultiplier = ae->CountAttachStatusMultiplier();
 			firepowerMult *= aeMultiplier.FirepowerMultiplier;
 			armorMult *= aeMultiplier.ArmorMultiplier;
-			cloakable |= aeMultiplier.Cloakable;
+
+			// 检查Cloakable
+			if (aeMultiplier.Cloakable)
+			{
+				shouldUpdateCloakable = true;
+				cloakable = true;
+			}
 
 			speedMult *= aeMultiplier.SpeedMultiplier;
 		}
+
 		// 赋予单位
 		pTechno->FirepowerMultiplier = firepowerMult;
 		pTechno->ArmorMultiplier = armorMult;
-		pTechno->Cloakable = cloakable;
+
+		// 更新Cloakable
+		if (shouldUpdateCloakable)
+		{
+			pTechno->Cloakable = cloakable;
+		}
+
 		FootClass* pFoot = nullptr;
 		if (CastToFoot(pTechno, pFoot))
 		{
