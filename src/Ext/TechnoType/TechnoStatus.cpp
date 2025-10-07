@@ -101,6 +101,8 @@ void TechnoStatus::Awake()
 	InitState();
 	// 动态附加其他的组件
 	InitExt();
+	// 记录单位原本能否隐身
+	InnateCloakable = CanICloakByDefault();
 }
 
 void TechnoStatus::Destroy()
@@ -400,5 +402,18 @@ void TechnoStatus::OnSelect(bool& selectable)
 	{
 		Break();
 		return;
+	}
+}
+
+void TechnoStatus::UpdateForceDecloakState(bool active)
+{
+	if (ForceDecloakActive != active)
+	{
+		ForceDecloakActive = active;
+
+		if (active && pTechno->CloakState == CloakState::Cloaked)
+		{
+			pTechno->Uncloak(true);
+		}
 	}
 }

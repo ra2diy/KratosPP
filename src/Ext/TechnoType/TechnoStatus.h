@@ -113,6 +113,10 @@ public:
 	void RecalculateStatus();
 	bool CanICloakByDefault();
 
+	// 破隐相关
+	bool IsForceDecloakActive() const { return ForceDecloakActive; }
+	void UpdateForceDecloakState(bool active);
+
 	bool PlayDestroyAnims();
 
 	void SetExtraSparkleAnim(AnimClass* pAnim);
@@ -139,6 +143,10 @@ public:
 
 		// 踩箱子获得的buff
 		CrateBuff = {};
+
+		// 破隐状态
+		ForceDecloakActive = false;
+		ExternalCloakable = false;
 
 		// 替身的配置
 		MyStandData = {};
@@ -422,6 +430,9 @@ public:
 	{
 		return stream
 			.Process(this->CrateBuff)
+			.Process(this->InnateCloakable)
+			.Process(this->ForceDecloakActive)
+			.Process(this->ExternalCloakable)
 			.Process(this->MyStandData)
 			.Process(this->pMyMaster)
 			.Process(this->MyMasterIsSpawned)
@@ -496,6 +507,10 @@ public:
 #pragma endregion
 
 private:
+	bool ForceDecloakActive = false;	// 是否破隐
+	bool InnateCloakable = false;		// 原本能否隐身
+	bool ExternalCloakable = false;	// 是否隐身
+
 	AttachEffect* AEManager();
 
 	/**
