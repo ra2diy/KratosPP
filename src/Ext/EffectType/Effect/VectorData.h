@@ -31,7 +31,7 @@ public:
 	VectorOrigin Origin = VectorOrigin::FLH;
 	CoordStruct OriginFLH{};
 	bool OriginNoUpdate = false;
-	bool Force = false;
+	bool Force = true;                  // yes=SetLocation 硬控，默认所有 Vector 模式 Force
 	bool Freeze = false;
 
 	// ========================================================================
@@ -57,6 +57,10 @@ public:
 	double CircleAngleAcceleration = 0.0; // 角速度每步加速度
 	double CircleMaxAngle = 0.0;     // 角速度上限，0=不限
 	double CircleMinAngle = 0.0;     // 角速度下限，0=不限
+	int CircleRandomRadiusMin = 0;    // 初始半径随机下限
+	int CircleRandomRadiusMax = 0;    // 初始半径随机上限
+	double CircleRandomAngleMin = 0.0; // 初始角速度随机下限
+	double CircleRandomAngleMax = 0.0; // 初始角速度随机上限
 	int CircleRadiusGrow = 0;          // 半径每步增长量（lepton/step），正=外扩，负=内缩
 	int CircleMaxRadius = 0;           // 半径上限，0=不限
 	int CircleMinRadius = 0;           // 半径下限，0=不限
@@ -76,6 +80,8 @@ public:
 	int TargetOffsetHMax = 0;
 
 	int InitialSpeed = -1;              // -1 = 读取单位 Speed
+	int RandomSpeedMin = 0;             // Speed 模式随机速度下限
+	int RandomSpeedMax = 0;             // Speed 模式随机速度上限
 	int MaxSpeed = -1;                  // -1 = 不限
 	int MinSpeed = -1;                  // -1 = 不限
 	int Acceleration = 0;               // 每帧速度增量
@@ -135,6 +141,18 @@ public:
 		CircleMinSpeed = reader->Get(title + "CircleMinSpeed", 0);
 		CircleAnglePerStep = reader->Get(title + "CircleAnglePerStep", 0.0);
 		CircleAngleAcceleration = reader->Get(title + "CircleAngleAcceleration", 0.0);
+		std::string circleRandomRadiusStr = reader->Get(title + "CircleRandomRadius", std::string{ "" });
+		ParseMinMax(circleRandomRadiusStr, CircleRandomRadiusMin, CircleRandomRadiusMax);
+		std::string circleRandomAngleStr = reader->Get(title + "CircleRandomAngle", std::string{ "" });
+		if (!circleRandomAngleStr.empty())
+		{
+			auto comma = circleRandomAngleStr.find(',');
+			if (comma != std::string::npos)
+			{
+				CircleRandomAngleMin = std::stod(circleRandomAngleStr.substr(0, comma));
+				CircleRandomAngleMax = std::stod(circleRandomAngleStr.substr(comma + 1));
+			}
+		}
 		CircleMaxAngle = reader->Get(title + "CircleMaxAngle", 0.0);
 		CircleMinAngle = reader->Get(title + "CircleMinAngle", 0.0);
 		CircleRadiusGrow = reader->Get(title + "CircleRadiusGrow", 0);
@@ -158,12 +176,16 @@ public:
 
 		// --- 速度 ---
 		InitialSpeed = reader->Get(title + "InitialSpeed", -1);
+		std::string randomSpeedStr = reader->Get(title + "RandomSpeed", std::string{ "" });
+		ParseMinMax(randomSpeedStr, RandomSpeedMin, RandomSpeedMax);
 		MaxSpeed = reader->Get(title + "MaxSpeed", -1);
 		MinSpeed = reader->Get(title + "MinSpeed", -1);
 		Acceleration = reader->Get(title + "Acceleration", Acceleration);
 
 		Enable = !MoveTo.IsEmpty() || !TargetFLH.IsEmpty() || Force || Freeze
-			|| (CircleRadius > 0) || (CircleSpeed > 0) || (CircleAnglePerStep > 0.0);
+			|| (CircleRadius > 0) || (CircleSpeed > 0) || (CircleAnglePerStep > 0.0)
+			|| (CircleRandomRadiusMax > CircleRandomRadiusMin)
+			|| (CircleRandomAngleMax > CircleRandomAngleMin);
 	}
 
 private:
@@ -207,6 +229,10 @@ private:
 			.Process(this->CircleAngleAcceleration)
 			.Process(this->CircleMaxAngle)
 			.Process(this->CircleMinAngle)
+			.Process(this->CircleRandomRadiusMin)
+			.Process(this->CircleRandomRadiusMax)
+			.Process(this->CircleRandomAngleMin)
+			.Process(this->CircleRandomAngleMax)
 			.Process(this->CircleRadiusGrow)
 			.Process(this->CircleMaxRadius)
 			.Process(this->CircleMinRadius)
@@ -226,6 +252,8 @@ private:
 			.Process(this->FallingDestroyHeight)
 
 			.Process(this->InitialSpeed)
+			.Process(this->RandomSpeedMin)
+			.Process(this->RandomSpeedMax)
 			.Process(this->MaxSpeed)
 			.Process(this->MinSpeed)
 			.Process(this->Acceleration);

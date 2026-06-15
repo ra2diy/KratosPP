@@ -47,8 +47,7 @@ Vector.OriginNoUpdate=yes/no
 
 Vector.Force=yes/no
   yes = 彻底跳过引擎轨迹计算，Vector 直接 SetLocation 控制位置。
-  所有模式下均适用。MoveTo 和 Circle 模式自动等价 Force=yes。
-  默认 no。
+  默认 yes（所有模式均走 SetLocation 硬控路径）。
 
 Vector.Freeze=yes/no
   yes = 冻结在获得 AE 时的位置，Duration 继续计时。
@@ -98,6 +97,14 @@ Vector.CircleMaxAngle=N
 Vector.CircleMinAngle=N
   角速度下限。0 = 不限（支持负值限幅）。
   默认 0。
+
+Vector.CircleRandomRadius=Min,Max
+  初始半径随机范围。覆盖 CircleRadius，Max>Min 时生效。
+  默认空（不随机）。
+
+Vector.CircleRandomAngle=Min,Max
+  初始角速度随机范围。覆盖 CircleAnglePerStep，Max>Min 时生效。
+  默认空（不随机）。
 
 Vector.CircleRadiusGrow=N
   半径每步增长率（lepton/step）。正值外扩（螺旋），负值内缩。
@@ -214,6 +221,10 @@ Vector.ReachTarget=yes/no
 Vector.InitialSpeed=N
   初始线速度（lepton/step）。-1 = 读取单位 Speed 属性。
   默认 -1。
+
+Vector.RandomSpeed=Min,Max
+  Speed 模式初始速度随机范围。覆盖 InitialSpeed，Max>Min 时生效。
+  默认空（不随机）。
 
 Vector.Acceleration=N
   线加速度（lepton/step²）。每运动帧叠加。

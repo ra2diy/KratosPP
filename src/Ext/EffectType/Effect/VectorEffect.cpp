@@ -54,6 +54,11 @@ void VectorEffect::OnStart()
 	{
 		_currentSpeed = pBullet->Speed;
 	}
+	// Speed 模式随机速度
+	if (Data->RandomSpeedMax > Data->RandomSpeedMin)
+	{
+		_currentSpeed = Random::RandomRanged(Data->RandomSpeedMin, Data->RandomSpeedMax);
+	}
 
 	// --- Origin 初始化 ---
 	switch (Data->Origin)
@@ -93,16 +98,17 @@ void VectorEffect::OnStart()
 		break;
 
 	case VectorData::VectorOrigin::FLH:
-		if (pTechno)
+		if (pBullet)
+		{
+			double bulletRad = std::atan2(pBullet->Velocity.X, pBullet->Velocity.Y);
+			DirStruct bulletFacing;
+			bulletFacing.SetValue(static_cast<short>(bulletRad * 32768.0 / M_PI));
+			_initialOriginPos = GetFLHAbsoluteCoords(pBullet->GetCoords(), Data->OriginFLH, bulletFacing);
+		}
+		else if (pTechno)
 		{
 			CoordStruct unitPos = pTechno->GetCoords();
 			DirStruct unitFacing = pTechno->TurretFacing().Current();
-			_initialOriginPos = GetFLHAbsoluteCoords(unitPos, Data->OriginFLH, unitFacing);
-		}
-		else if (pBullet && pBullet->Owner)
-		{
-			CoordStruct unitPos = pBullet->Owner->GetCoords();
-			DirStruct unitFacing = pBullet->Owner->TurretFacing().Current();
 			_initialOriginPos = GetFLHAbsoluteCoords(unitPos, Data->OriginFLH, unitFacing);
 		}
 		break;
@@ -113,19 +119,10 @@ void VectorEffect::OnStart()
 	{
 	case VectorData::VectorOrigin::Launcher:
 	{
-		// F 轴 = Launcher → 抛射体/单位 连线方向，Launcher 为原点
-		if (pBullet && _pLauncher)
-		{
-			CoordStruct launcherPos = _pLauncher->GetCoords();
-			CoordStruct objPos = pBullet->GetCoords();
-			_facingRad = std::atan2(objPos.Y - launcherPos.Y, objPos.X - launcherPos.X);
-		}
-		else if (pTechno && _pLauncher)
-		{
-			CoordStruct launcherPos = _pLauncher->GetCoords();
-			CoordStruct objPos = pTechno->GetCoords();
-			_facingRad = std::atan2(objPos.Y - launcherPos.Y, objPos.X - launcherPos.X);
-		}
+		// F 轴 = Launcher 自身 TurretFacing，与 AutoWeapon.GetFLHAbsoluteCoords 一致
+		TechnoClass* pLauncherTechno = abstract_cast<TechnoClass*>(_pLauncher);
+		if (pLauncherTechno)
+			_facingRad = pLauncherTechno->TurretFacing().Current().GetRadian();
 		break;
 	}
 
@@ -165,14 +162,12 @@ void VectorEffect::OnStart()
 		break;
 	}
 
-	default:
+	default: // FLH：抛射体自身朝向
 	{
-		DirStruct facing;
-		if (pTechno)
-			facing = pTechno->TurretFacing().Current();
-		else if (pBullet && pBullet->Owner)
-			facing = pBullet->Owner->TurretFacing().Current();
-		_facingRad = facing.GetRadian();
+		if (pBullet)
+			_facingRad = std::atan2(pBullet->Velocity.X, pBullet->Velocity.Y);
+		else if (pTechno)
+			_facingRad = pTechno->TurretFacing().Current().GetRadian();
 		break;
 	}
 	}
@@ -197,6 +192,13 @@ VectorResult VectorEffect::GetVectorResult()
 {
 	VectorResult result;
 
+	// InitialDelay 期间 AE 存在但未启动，不施加任何位移
+	if (!_started)
+	{
+		AdvanceFrame();
+		return result;
+	}
+
 	// Force 必须在闸门之前设，确保非运动帧也走 SetLocation（Freeze 等效）
 	result.Force = Data->Force;
 	result.AllowFallingDestroy = Data->AllowFallingDestroy;
@@ -208,6 +210,7 @@ VectorResult VectorEffect::GetVectorResult()
 	if (Data->Freeze)
 	{
 		result.Freeze = true;
+		result.Force = true;  // 抛射体 Freeze 必须 Force，否则引擎检测"卡住"自爆
 		if (result.FrozenPos.IsEmpty())
 			result.FrozenPos = _initialLocation;
 		return result;
@@ -252,11 +255,19 @@ VectorResult VectorEffect::GetVectorResult()
 			}
 			break;
 
+		case VectorData::VectorOrigin::FLH:
+			if (pTechno)
+				effectiveFacing = pTechno->TurretFacing().Current().GetRadian();
+			else if (pBullet)
+				effectiveFacing = std::atan2(pBullet->Velocity.X, pBullet->Velocity.Y);
+			break;
+
 		case VectorData::VectorOrigin::Launcher:
 			if (_pLauncher && !IsDeadOrInvisible(_pLauncher))
 			{
-				CoordStruct launcherPos = _pLauncher->GetCoords();
-				effectiveFacing = std::atan2(currentPos.Y - launcherPos.Y, currentPos.X - launcherPos.X);
+				TechnoClass* pLauncherTechno = abstract_cast<TechnoClass*>(_pLauncher);
+				if (pLauncherTechno)
+					effectiveFacing = pLauncherTechno->TurretFacing().Current().GetRadian();
 			}
 			break;
 		}
@@ -300,14 +311,16 @@ VectorResult VectorEffect::GetVectorResult()
 			(_pSource && !IsDeadOrInvisible(_pSource) ? _pSource->GetCoords() : currentPos);
 		break;
 	case VectorData::VectorOrigin::FLH:
-		originPos = _initialOriginPos;
+		originPos = Data->OriginNoUpdate ? _initialOriginPos : currentPos;
 		break;
 	}
 
 	// ========================================================================
 	// 模式 C: Circle（独立圆周，圆心=Origin，三选二参数）
 	// ========================================================================
-	bool hasCircle = Data->CircleRadius > 0 || Data->CircleSpeed > 0 || Data->CircleAnglePerStep > 0.0;
+	bool hasCircle = Data->CircleRadius > 0 || Data->CircleSpeed > 0 || Data->CircleAnglePerStep > 0.0
+		|| (Data->CircleRandomRadiusMax > Data->CircleRandomRadiusMin)
+		|| (Data->CircleRandomAngleMax > Data->CircleRandomAngleMin);
 	if (hasCircle)
 	{
 		// 三选二：缺半径用当前XY距离，缺速度用半径×角速度，缺角速度用速度/半径
@@ -330,7 +343,11 @@ VectorResult VectorEffect::GetVectorResult()
 
 		// 角速度动态：首帧初始化，每帧叠加加速度
 		if (_elapsedFrames == 0)
+		{
 			_currentCircleAngle = Data->CircleAnglePerStep;
+			if (Data->CircleRandomAngleMax > Data->CircleRandomAngleMin)
+				_currentCircleAngle = Data->CircleRandomAngleMin + (Data->CircleRandomAngleMax - Data->CircleRandomAngleMin) * Random::RandomDouble();
+		}
 		_currentCircleAngle += Data->CircleAngleAcceleration;
 		if (Data->CircleMaxAngle != 0.0 && _currentCircleAngle > Data->CircleMaxAngle)
 			_currentCircleAngle = Data->CircleMaxAngle;
@@ -357,6 +374,8 @@ VectorResult VectorEffect::GetVectorResult()
 			_currentCircleRadius = static_cast<double>(Data->CircleRadius);
 			if (_currentCircleRadius <= 0.0)
 				_currentCircleRadius = currentDist;
+			if (Data->CircleRandomRadiusMax > Data->CircleRandomRadiusMin)
+				_currentCircleRadius = Random::RandomRanged(Data->CircleRandomRadiusMin, Data->CircleRandomRadiusMax);
 		}
 		_currentCircleRadius += Data->CircleRadiusGrow;
 
