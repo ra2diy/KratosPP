@@ -54,6 +54,11 @@ void VectorEffect::OnStart()
 	{
 		_currentSpeed = pBullet->Speed;
 	}
+	// Speed 模式随机速度
+	if (Data->RandomSpeedMax > Data->RandomSpeedMin)
+	{
+		_currentSpeed = Random::RandomRanged(Data->RandomSpeedMin, Data->RandomSpeedMax);
+	}
 
 	// --- Origin 初始化 ---
 	switch (Data->Origin)
@@ -208,6 +213,7 @@ VectorResult VectorEffect::GetVectorResult()
 	if (Data->Freeze)
 	{
 		result.Freeze = true;
+		result.Force = true;  // 抛射体 Freeze 必须 Force，否则引擎检测"卡住"自爆
 		if (result.FrozenPos.IsEmpty())
 			result.FrozenPos = _initialLocation;
 		return result;
@@ -307,7 +313,9 @@ VectorResult VectorEffect::GetVectorResult()
 	// ========================================================================
 	// 模式 C: Circle（独立圆周，圆心=Origin，三选二参数）
 	// ========================================================================
-	bool hasCircle = Data->CircleRadius > 0 || Data->CircleSpeed > 0 || Data->CircleAnglePerStep > 0.0;
+	bool hasCircle = Data->CircleRadius > 0 || Data->CircleSpeed > 0 || Data->CircleAnglePerStep > 0.0
+		|| (Data->CircleRandomRadiusMax > Data->CircleRandomRadiusMin)
+		|| (Data->CircleRandomAngleMax > Data->CircleRandomAngleMin);
 	if (hasCircle)
 	{
 		// 三选二：缺半径用当前XY距离，缺速度用半径×角速度，缺角速度用速度/半径
@@ -330,7 +338,11 @@ VectorResult VectorEffect::GetVectorResult()
 
 		// 角速度动态：首帧初始化，每帧叠加加速度
 		if (_elapsedFrames == 0)
+		{
 			_currentCircleAngle = Data->CircleAnglePerStep;
+			if (Data->CircleRandomAngleMax > Data->CircleRandomAngleMin)
+				_currentCircleAngle = Data->CircleRandomAngleMin + (Data->CircleRandomAngleMax - Data->CircleRandomAngleMin) * Random::RandomDouble();
+		}
 		_currentCircleAngle += Data->CircleAngleAcceleration;
 		if (Data->CircleMaxAngle != 0.0 && _currentCircleAngle > Data->CircleMaxAngle)
 			_currentCircleAngle = Data->CircleMaxAngle;
@@ -357,6 +369,8 @@ VectorResult VectorEffect::GetVectorResult()
 			_currentCircleRadius = static_cast<double>(Data->CircleRadius);
 			if (_currentCircleRadius <= 0.0)
 				_currentCircleRadius = currentDist;
+			if (Data->CircleRandomRadiusMax > Data->CircleRandomRadiusMin)
+				_currentCircleRadius = Random::RandomRanged(Data->CircleRandomRadiusMin, Data->CircleRandomRadiusMax);
 		}
 		_currentCircleRadius += Data->CircleRadiusGrow;
 
