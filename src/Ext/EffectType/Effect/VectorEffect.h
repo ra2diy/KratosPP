@@ -31,6 +31,7 @@ public:
 		_randomTargetOffset = {};
 		_facingRad = 0.0;
 		_currentAngle = 0.0;
+		_tiltRad = 0.0;                  // F 轴俯仰角（AllowedTilt 用）
 		_prevCirclePos = {};
 		_currentCircleRadius = 0.0;
 		_currentCircleSpeed = 0.0;
@@ -73,6 +74,7 @@ public:
 			.Process(this->_totalDuration)
 			.Process(this->_randomTargetOffset)
 			.Process(this->_facingRad)
+			.Process(this->_tiltRad)
 			.Process(this->_currentAngle)
 			.Process(this->_prevCirclePos)
 			.Process(this->_currentCircleRadius)
@@ -108,9 +110,34 @@ public:
 	int _totalDuration = 0;             // AE 总持续时间（ReachTarget 用）
 	CoordStruct _randomTargetOffset{};  // 随机偏移
 	double _facingRad = 0.0;           // OnStart 时锁定的朝向弧度（FLH 旋转用）
+	double _tiltRad = 0.0;             // F 轴俯仰角（AllowedTilt 用）
 	double _currentAngle = 0.0;        // MoveTo 模式自增角度（°）
 	CoordStruct _prevCirclePos{};      // MoveTo 圆周模式上一帧世界坐标
 	double _currentCircleRadius = 0.0; // Circle 模式动态半径
 	double _currentCircleSpeed = 0.0;  // Circle 模式动态线速度
 	double _currentCircleAngle = 0.0;  // Circle 模式动态角速度
+	double _normalRotF = 0.0;          // 法线绕 F 轴累计旋转（°）
+	double _normalRotL = 0.0;          // 法线绕 L 轴累计旋转（°）
+	double _normalRotH = 0.0;          // 法线绕 H 轴累计旋转（°）
+	double _normalStepF = 0.0;         // 法线每步角速度（已解析）
+	double _normalStepL = 0.0;
+	double _normalStepH = 0.0;
+	// Origin 圆心运动状态
+	CoordStruct _originOffset{};            // 圆心相对基座偏移（首帧 0）
+	int _originElapsed = 0;               // 圆心已执行运动帧数
+	double _originSpeed = 0.0;            // 圆心当前速度
+	double _originAngle = 0.0;            // 圆心 MoveTo 自旋角度
+	double _originCircleRadius = 0.0;     // 圆心 Circle 动态半径
+	double _originCircleSpeed = 0.0;      // 圆心 Circle 动态线速度
+	double _originCircleAngle = 0.0;      // 圆心 Circle 动态角速度
+	double _originFacing = 0.0;           // 圆心有效 facing
+	double _originTilt = 0.0;             // 圆心有效 tilt
+	double _originNormalRotF = 0.0;       // 圆心法线旋转累计
+	double _originNormalRotL = 0.0;
+	double _originNormalRotH = 0.0;
+	double _originNormalStepF = 0.0;      // 圆心法线每步角速度
+	double _originNormalStepL = 0.0;
+	double _originNormalStepH = 0.0;
+	CoordStruct _originTargetOffset{};    // 圆心 Target 随机偏移
+	CoordStruct _prevCircleCenter{};      // 上一帧圆心位置（计算叠加位移用）
 };

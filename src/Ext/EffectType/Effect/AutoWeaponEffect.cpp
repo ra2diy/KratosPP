@@ -111,7 +111,7 @@ bool AutoWeaponEffect::TryGetShooterAndTarget(TechnoClass* pReceiverOwner, House
 		if (Data->ReceiverAttack)
 		{
 			// 来源是抛射体广播：目标设为抛射体坐标（通过 warheadLocation 传入）
-			if (AE->FromWarhead)
+			if (AE->FromWarhead && Data->TargetFromBroadcast)
 				pTarget = nullptr; // 触发假目标，MakeFakeTarget 会用 WarheadLocation
 			else
 				pTarget = AE->pSource;
@@ -136,8 +136,8 @@ bool AutoWeaponEffect::TryGetShooterAndTarget(TechnoClass* pReceiverOwner, House
 ObjectClass* AutoWeaponEffect::MakeFakeTarget(HouseClass* pHouse, ObjectClass* pShooter, CoordStruct fireFLH, CoordStruct targetFLH)
 {
 	CoordStruct targetPos;
-	// 抛射体广播：目标基于抛射体坐标（WarheadLocation）
-	if (AE->FromWarhead)
+	// 抛射体广播：目标基于抛射体坐标（WarheadLocation），仅 Broadcast→AutoWeapon 专用路径
+	if (AE->FromWarhead && Data->TargetFromBroadcast)
 	{
 		targetPos = AE->WarheadLocation + targetFLH;
 	}
@@ -301,7 +301,7 @@ void AutoWeaponEffect::OnUpdate()
 						pTarget = MakeFakeTarget(pReceiverHouse, pShooter, data.FireFLH, data.TargetFLH);
 						callback = SetupFakeTargetToBullet;
 					}
-					else if (AE->FromWarhead && Data->IsAttackerMark && !Data->ReceiverAttack)
+					else if (AE->FromWarhead && Data->TargetFromBroadcast && Data->IsAttackerMark && !Data->ReceiverAttack)
 					{
 						s_bulletMoveTo = AE->WarheadLocation;
 						callback = SetupBulletAtProjectile;
@@ -370,7 +370,7 @@ void AutoWeaponEffect::OnUpdate()
 								pTempTarget = MakeFakeTarget(pReceiverHouse, pShooter, data.FireFLH, data.TargetFLH);
 								callback = SetupFakeTargetToBullet;
 							}
-							else if (AE->FromWarhead && Data->IsAttackerMark && !Data->ReceiverAttack)
+							else if (AE->FromWarhead && Data->TargetFromBroadcast && Data->IsAttackerMark && !Data->ReceiverAttack)
 							{
 								s_bulletMoveTo = AE->WarheadLocation;
 								callback = SetupBulletAtProjectile;

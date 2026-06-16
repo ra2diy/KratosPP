@@ -85,6 +85,7 @@ public:
 	bool IsAttackerMark = false; // 允许附加对象和攻击者进行交互
 	bool ReceiverAttack = true; // 武器由AE的接受者发射
 	bool ReceiverOwnBullet = true; // 武器所属是AE的接受者
+	bool TargetFromBroadcast = false; // 目标来自广播传递的弹头坐标（Broadcast→AutoWeapon专用）
 
 	bool AttackFromSpawnOwner = false; // 武器所属是母鸡
 
@@ -127,6 +128,7 @@ public:
 			ReceiverOwnBullet = false;
 		}
 		ReceiverOwnBullet = reader->Get(title + "ReceiverOwnBullet", ReceiverOwnBullet);
+		TargetFromBroadcast = reader->Get(title + "TargetFromBroadcast", TargetFromBroadcast);
 
 		AttackFromSpawnOwner = reader->Get(title + "AttackFromSpawnOwner", AttackFromSpawnOwner);
 
@@ -148,6 +150,7 @@ public:
 			.Process(this->IsAttackerMark)
 			.Process(this->ReceiverAttack)
 			.Process(this->ReceiverOwnBullet)
+			.Process(this->TargetFromBroadcast)
 			.Process(this->AttackFromSpawnOwner)
 			.Success();
 	};

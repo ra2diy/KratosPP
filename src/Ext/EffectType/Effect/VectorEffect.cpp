@@ -60,6 +60,17 @@ void VectorEffect::OnStart()
 		_currentSpeed = Random::RandomRanged(Data->RandomSpeedMin, Data->RandomSpeedMax);
 	}
 
+	// --- 基础参考系（始终赋值，供 OriginOrigin 等使用） ---
+	if (pBullet)
+	{
+		_pLauncher = pBullet->Owner;
+		if (AE && AE->pSource) _pSource = AE->pSource;
+	}
+	else if (pTechno)
+	{
+		_pLauncher = pTechno;
+	}
+
 	// --- Origin 初始化 ---
 	switch (Data->Origin)
 	{
@@ -81,10 +92,6 @@ void VectorEffect::OnStart()
 			else if (pTechno)
 				_initialOriginPos = pTechno->GetCoords();
 		}
-		if (pBullet)
-			_pLauncher = pBullet->Owner;
-		else if (pTechno)
-			_pLauncher = pTechno;
 		break;
 
 	case VectorData::VectorOrigin::Source:
@@ -114,50 +121,110 @@ void VectorEffect::OnStart()
 		break;
 	}
 
-	// --- 锁定 FLH 旋转朝向（OnStart 时固定，避免炮塔追踪导致目标漂移） ---
+	// NormalVector 设为后，F 轴完全由向量决定，Origin 只控制原点位置
+	bool hasNormal = !Data->NormalVector.IsEmpty()
+		|| Data->NormalRandomF.Y > Data->NormalRandomF.X
+		|| Data->NormalRandomL.Y > Data->NormalRandomL.X
+		|| Data->NormalRandomH.Y > Data->NormalRandomH.X;
+
+	// --- 锁定 FLH 旋转朝向（OnStart 时固定） ---
+	// NormalVector 使用 FLH 坐标系：F=南北(X→世界Y)，L=东西(Y→世界X)，H=Z
+	if (hasNormal)
+	{
+		double fwY = static_cast<double>(Data->NormalVector.X);  // F → 世界 Y（北）
+		double fwX = static_cast<double>(Data->NormalVector.Y);  // L → 世界 X（东）
+		double fwZ = static_cast<double>(Data->NormalVector.Z);  // H → Z
+
+		// 随机分量
+		if (Data->NormalRandomF.Y > Data->NormalRandomF.X)
+			fwY = Random::RandomRanged(Data->NormalRandomF.X, Data->NormalRandomF.Y);
+		if (Data->NormalRandomL.Y > Data->NormalRandomL.X)
+			fwX = Random::RandomRanged(Data->NormalRandomL.X, Data->NormalRandomL.Y);
+		if (Data->NormalRandomH.Y > Data->NormalRandomH.X)
+			fwZ = Random::RandomRanged(Data->NormalRandomH.X, Data->NormalRandomH.Y);
+
+		double lenXY = std::sqrt(fwX * fwX + fwY * fwY);
+		_facingRad = lenXY > 1e-6 ? std::atan2(fwY, fwX) : 0.0;
+		_tiltRad = lenXY > 1e-6 ? std::atan2(fwZ, lenXY) : (fwZ > 0 ? M_PI / 2.0 : -M_PI / 2.0);
+	}
+	else
+	{
+		_tiltRad = 0.0;
+	}
+
+	// 法线旋转角速度解析（常数优先，否则随机）
+	auto resolveAngleStep = [](double perStep, double m1, double M1, double m2, double M2) {
+		if (perStep != 0.0) return perStep;
+		if (M1 <= m1 && M2 <= m2) return 0.0;
+		if (M2 > m2 && Random::RandomRanged(0, 1))
+			return m2 + (M2 - m2) * Random::RandomDouble();
+		return M1 > m1 ? m1 + (M1 - m1) * Random::RandomDouble() : 0.0;
+	};
+	_normalStepF = resolveAngleStep(Data->NormalFAnglePerStep, Data->NormalFAngleRMin, Data->NormalFAngleRMax, Data->NormalFAngleRMin2, Data->NormalFAngleRMax2);
+	_normalStepL = resolveAngleStep(Data->NormalLAnglePerStep, Data->NormalLAngleRMin, Data->NormalLAngleRMax, Data->NormalLAngleRMin2, Data->NormalLAngleRMax2);
+	_normalStepH = resolveAngleStep(Data->NormalHAnglePerStep, Data->NormalHAngleRMin, Data->NormalHAngleRMax, Data->NormalHAngleRMin2, Data->NormalHAngleRMax2);
+
 	switch (Data->Origin)
 	{
 	case VectorData::VectorOrigin::Launcher:
 	{
-		// F 轴 = Launcher 自身 TurretFacing，与 AutoWeapon.GetFLHAbsoluteCoords 一致
-		TechnoClass* pLauncherTechno = abstract_cast<TechnoClass*>(_pLauncher);
-		if (pLauncherTechno)
-			_facingRad = pLauncherTechno->TurretFacing().Current().GetRadian();
+		if (!hasNormal)
+		{
+			TechnoClass* pLauncherTechno = abstract_cast<TechnoClass*>(_pLauncher);
+			if (pLauncherTechno)
+				_facingRad = pLauncherTechno->TurretFacing().Current().GetRadian();
+		}
 		break;
 	}
 
 	case VectorData::VectorOrigin::Target:
 	{
-		// F 轴 = Target → 抛射体/单位 连线方向，Target 为原点
-		if (pTechno && pTechno->Target)
+		if (!hasNormal)
 		{
-			CoordStruct targetPos = pTechno->Target->GetCoords();
-			CoordStruct selfPos = pTechno->GetCoords();
-			_facingRad = std::atan2(selfPos.Y - targetPos.Y, selfPos.X - targetPos.X);
-		}
-		else if (pBullet)
-		{
-			CoordStruct bulletPos = pBullet->GetCoords();
-			CoordStruct targetPos = pBullet->TargetCoords;
-			_facingRad = std::atan2(bulletPos.Y - targetPos.Y, bulletPos.X - targetPos.X);
+			double dx = 0, dy = 0, dz = 0;
+			if (pTechno && pTechno->Target)
+			{
+				CoordStruct targetPos = pTechno->Target->GetCoords();
+				CoordStruct selfPos = pTechno->GetCoords();
+				dx = selfPos.X - targetPos.X;
+				dy = selfPos.Y - targetPos.Y;
+				dz = selfPos.Z - targetPos.Z;
+			}
+			else if (pBullet)
+			{
+				CoordStruct bulletPos = pBullet->GetCoords();
+				CoordStruct targetPos = pBullet->TargetCoords;
+				dx = bulletPos.X - targetPos.X;
+				dy = bulletPos.Y - targetPos.Y;
+				dz = bulletPos.Z - targetPos.Z;
+			}
+			_facingRad = std::atan2(dy, dx);
+			double lenXY = std::sqrt(dx * dx + dy * dy);
+			_tiltRad = (lenXY > 1e-6 && Data->AllowedTilt) ? std::atan2(dz, lenXY) : 0.0;
 		}
 		break;
 	}
 
 	case VectorData::VectorOrigin::Source:
 	{
-		// F 轴 = Source → 抛射体/单位当前位置（仅 XY，不纳入 Z 以避免倾斜坐标系）
-		if (pBullet && AE && AE->pSource)
+		if (!hasNormal)
 		{
-			CoordStruct srcPos = AE->pSource->GetCoords();
-			CoordStruct objPos = pBullet->GetCoords();
-			_facingRad = std::atan2(objPos.Y - srcPos.Y, objPos.X - srcPos.X);
-		}
-		else if (pTechno && AE && AE->pSource)
-		{
-			CoordStruct srcPos = AE->pSource->GetCoords();
-			CoordStruct objPos = pTechno->GetCoords();
-			_facingRad = std::atan2(objPos.Y - srcPos.Y, objPos.X - srcPos.X);
+			double dx = 0, dy = 0, dz = 0;
+			if (pBullet && AE && AE->pSource)
+			{
+				CoordStruct srcPos = AE->pSource->GetCoords();
+				CoordStruct objPos = pBullet->GetCoords();
+				dx = objPos.X - srcPos.X; dy = objPos.Y - srcPos.Y; dz = objPos.Z - srcPos.Z;
+			}
+			else if (pTechno && AE && AE->pSource)
+			{
+				CoordStruct srcPos = AE->pSource->GetCoords();
+				CoordStruct objPos = pTechno->GetCoords();
+				dx = objPos.X - srcPos.X; dy = objPos.Y - srcPos.Y; dz = objPos.Z - srcPos.Z;
+			}
+			_facingRad = std::atan2(dy, dx);
+			double lenXY = std::sqrt(dx * dx + dy * dy);
+			_tiltRad = (lenXY > 1e-6 && Data->AllowedTilt) ? std::atan2(dz, lenXY) : 0.0;
 		}
 		break;
 	}
@@ -176,15 +243,22 @@ void VectorEffect::OnStart()
 static double DegToRad(double deg) { return deg * M_PI / 180.0; }
 static double RadToDeg(double rad) { return rad * 180.0 / M_PI; }
 
-// FLH → 世界坐标旋转（Y 轴镜像，使用 OnStart 时锁定的朝向）
-static CoordStruct RotateFLH(const CoordStruct& flh, double facingRad)
+// FLH → 世界坐标旋转（3D，支持倾斜坐标系）
+// facingRad=XY 方位角，tiltRad=俯仰角（0=水平，正=向上）
+static CoordStruct RotateFLH(const CoordStruct& flh, double facingRad, double tiltRad = 0.0)
 {
-	double cosA = std::cos(facingRad);
-	double sinA = std::sin(facingRad);
+	double cosF = std::cos(facingRad), sinF = std::sin(facingRad);
+	double cosT = std::cos(tiltRad), sinT = std::sin(tiltRad);
+	// F = (cosF*cosT, sinF*cosT, sinT)   — 前向
+	// L = (-sinF, cosF, 0)               — 左向（严格垂直 XY 面）
+	// H = (-cosF*sinT, -sinF*sinT, cosT) — 上向（F×L）
+	double fx = cosF * cosT, fy = sinF * cosT, fz = sinT;
+	double lx = -sinF, ly = cosF;
+	double hx = -cosF * sinT, hy = -sinF * sinT, hz = cosT;
 	return CoordStruct{
-		static_cast<int>(flh.X * cosA - flh.Y * sinA),
-		static_cast<int>(-(flh.X * sinA + flh.Y * cosA)),
-		flh.Z
+		static_cast<int>(flh.X * fx + flh.Y * lx + flh.Z * hx),
+		static_cast<int>(-(flh.X * fy + flh.Y * ly + flh.Z * hy)),
+		static_cast<int>(flh.X * fz + flh.Z * hz)
 	};
 }
 
@@ -231,7 +305,21 @@ VectorResult VectorEffect::GetVectorResult()
 	// 动态 F 轴：非 NoUpdate 时每帧根据当前坐标重新计算 FLH 朝向
 	// ========================================================================
 	double effectiveFacing = _facingRad;
-	if (!Data->OriginNoUpdate)
+	double effectiveTilt = _tiltRad;
+
+	// 法线旋转：每运动帧累加角速度（H=转向，L=俯仰）
+	if (ShouldMoveThisFrame())
+	{
+		_normalRotH += _normalStepH;
+		_normalRotL += _normalStepL;
+	}
+	effectiveFacing += DegToRad(_normalRotH);
+	effectiveTilt += DegToRad(_normalRotL);
+	bool hasNormal = !Data->NormalVector.IsEmpty()
+		|| Data->NormalRandomF.Y > Data->NormalRandomF.X
+		|| Data->NormalRandomL.Y > Data->NormalRandomL.X
+		|| Data->NormalRandomH.Y > Data->NormalRandomH.X;
+	if (!Data->OriginNoUpdate && !hasNormal)
 	{
 		switch (Data->Origin)
 		{
@@ -239,19 +327,28 @@ VectorResult VectorEffect::GetVectorResult()
 			if (_pSource && !IsDeadOrInvisible(_pSource))
 			{
 				CoordStruct srcPos = _pSource->GetCoords();
-				effectiveFacing = std::atan2(currentPos.Y - srcPos.Y, currentPos.X - srcPos.X);
+				double dx = currentPos.X - srcPos.X, dy = currentPos.Y - srcPos.Y, dz = currentPos.Z - srcPos.Z;
+				effectiveFacing = std::atan2(dy, dx);
+				double lenXY = std::sqrt(dx*dx + dy*dy);
+				effectiveTilt = (lenXY > 1e-6 && Data->AllowedTilt) ? std::atan2(dz, lenXY) : 0.0;
 			}
 			break;
 		case VectorData::VectorOrigin::Target:
 			if (pTechno && pTechno->Target)
 			{
 				CoordStruct targetPos = pTechno->Target->GetCoords();
-				effectiveFacing = std::atan2(currentPos.Y - targetPos.Y, currentPos.X - targetPos.X);
+				double dx = currentPos.X - targetPos.X, dy = currentPos.Y - targetPos.Y, dz = currentPos.Z - targetPos.Z;
+				effectiveFacing = std::atan2(dy, dx);
+				double lenXY = std::sqrt(dx*dx + dy*dy);
+				effectiveTilt = (lenXY > 1e-6 && Data->AllowedTilt) ? std::atan2(dz, lenXY) : 0.0;
 			}
 			else if (pBullet)
 			{
 				CoordStruct targetPos = pBullet->TargetCoords;
-				effectiveFacing = std::atan2(currentPos.Y - targetPos.Y, currentPos.X - targetPos.X);
+				double dx = currentPos.X - targetPos.X, dy = currentPos.Y - targetPos.Y, dz = currentPos.Z - targetPos.Z;
+				effectiveFacing = std::atan2(dy, dx);
+				double lenXY = std::sqrt(dx*dx + dy*dy);
+				effectiveTilt = (lenXY > 1e-6 && Data->AllowedTilt) ? std::atan2(dz, lenXY) : 0.0;
 			}
 			break;
 
@@ -346,7 +443,12 @@ VectorResult VectorEffect::GetVectorResult()
 		{
 			_currentCircleAngle = Data->CircleAnglePerStep;
 			if (Data->CircleRandomAngleMax > Data->CircleRandomAngleMin)
+		{
+			if (Data->CircleRandomAngleMax2 > Data->CircleRandomAngleMin2 && Random::RandomRanged(0, 1))
+				_currentCircleAngle = Data->CircleRandomAngleMin2 + (Data->CircleRandomAngleMax2 - Data->CircleRandomAngleMin2) * Random::RandomDouble();
+			else
 				_currentCircleAngle = Data->CircleRandomAngleMin + (Data->CircleRandomAngleMax - Data->CircleRandomAngleMin) * Random::RandomDouble();
+		}
 		}
 		_currentCircleAngle += Data->CircleAngleAcceleration;
 		if (Data->CircleMaxAngle != 0.0 && _currentCircleAngle > Data->CircleMaxAngle)
@@ -362,10 +464,243 @@ VectorResult VectorEffect::GetVectorResult()
 		else if (angleStep <= 0.0 && speed > 0.0)
 			angleStep = RadToDeg(speed / calcRadius);
 
-		// 旋转当前方向向量并按目标半径缩放
-		double dx = static_cast<double>(currentPos.X - originPos.X);
-		double dy = static_cast<double>(currentPos.Y - originPos.Y);
-		double currentDist = std::sqrt(dx * dx + dy * dy);
+		// 圆心 = Origin + CircleOrigin 偏移（世界坐标系）
+		CoordStruct circleCenter = originPos;
+		if (!Data->CircleOrigin.IsEmpty())
+		{
+			if (Data->AllowOriginTilt)
+				circleCenter = originPos + RotateFLH(Data->CircleOrigin, effectiveFacing, effectiveTilt);
+			else
+				circleCenter = originPos + Data->CircleOrigin;
+		}
+
+		// 圆心移动：Vector.Origin.* 系统
+		if (!Data->OriginMoveTo.IsEmpty() || !Data->OriginTargetFLH.IsEmpty()
+			|| Data->OriginCircleRadius >= 0 || Data->OriginCircleSpeed > 0 || Data->OriginCircleAnglePerStep != 0)
+		{
+			// 基座：默认 originPos，OriginOrigin 可替换为独立参考系
+			CoordStruct baseCenter = originPos;
+			if (Data->OriginOrigin != VectorData::VectorOrigin::FLH)
+			{
+				switch (Data->OriginOrigin)
+				{
+				case VectorData::VectorOrigin::Launcher:
+					if (_pLauncher && !IsDeadOrInvisible(_pLauncher))
+						baseCenter = _pLauncher->GetCoords();
+					break;
+				case VectorData::VectorOrigin::Target:
+					if (pTechno && pTechno->Target)
+						baseCenter = pTechno->Target->GetCoords();
+					else if (pBullet)
+						baseCenter = pBullet->TargetCoords;
+					break;
+				case VectorData::VectorOrigin::Source:
+					if (_pSource && !IsDeadOrInvisible(_pSource))
+						baseCenter = _pSource->GetCoords();
+					break;
+				}
+			}
+			else if (!Data->OriginOriginFLH.IsEmpty())
+			{
+				baseCenter.X += Data->OriginOriginFLH.X;
+				baseCenter.Y += Data->OriginOriginFLH.Y;
+				baseCenter.Z += Data->OriginOriginFLH.Z;
+			}
+
+			// Origin.CircleOffset 世界偏移
+			if (!Data->OriginCircleOffset.IsEmpty())
+				baseCenter = baseCenter + Data->OriginCircleOffset;
+
+			if (_elapsedFrames == 0)
+			{
+				// 初始偏移 = 圆心相对于基座的向量
+				_originOffset = circleCenter - baseCenter;
+				// Circle 初始化
+				_originCircleRadius = Data->OriginCircleRadius;
+				_originCircleSpeed = Data->OriginCircleSpeed;
+				_originCircleAngle = 0.0; // 初始相位
+				// 随机
+				if (Data->OriginCircleRandomRadiusMax > Data->OriginCircleRandomRadiusMin)
+					_originCircleRadius = Random::RandomRanged(Data->OriginCircleRandomRadiusMin, Data->OriginCircleRandomRadiusMax);
+				if (Data->OriginCircleRandomAngleMax > Data->OriginCircleRandomAngleMin)
+					_originCircleAngle = Data->OriginCircleRandomAngleMin + (Data->OriginCircleRandomAngleMax - Data->OriginCircleRandomAngleMin) * Random::RandomDouble();
+				// Target 随机偏移
+				_originTargetOffset.X = Random::RandomRanged(Data->OriginTargetOffsetFMin, Data->OriginTargetOffsetFMax);
+				_originTargetOffset.Y = Random::RandomRanged(Data->OriginTargetOffsetLMin, Data->OriginTargetOffsetLMax);
+				_originTargetOffset.Z = Random::RandomRanged(Data->OriginTargetOffsetHMin, Data->OriginTargetOffsetHMax);
+				// Normal 初始化
+				if (!Data->OriginNormalVector.IsEmpty())
+				{
+					double fy = Data->OriginNormalVector.X, fx = Data->OriginNormalVector.Y, fz = Data->OriginNormalVector.Z;
+					if (Data->OriginNormalRandomF.Y > Data->OriginNormalRandomF.X) fy = Random::RandomRanged(Data->OriginNormalRandomF.X, Data->OriginNormalRandomF.Y);
+					if (Data->OriginNormalRandomL.Y > Data->OriginNormalRandomL.X) fx = Random::RandomRanged(Data->OriginNormalRandomL.X, Data->OriginNormalRandomL.Y);
+					if (Data->OriginNormalRandomH.Y > Data->OriginNormalRandomH.X) fz = Random::RandomRanged(Data->OriginNormalRandomH.X, Data->OriginNormalRandomH.Y);
+					double len = std::sqrt(fx*fx+fy*fy);
+					_originFacing = len>1e-6 ? std::atan2(fy,fx) : 0;
+					_originTilt = len>1e-6 ? std::atan2(fz,len) : (fz>0?M_PI/2.0:-M_PI/2.0);
+				}
+				// Normal 角速度
+				auto res = [](double ps, double m1,double M1,double m2,double M2){if(ps)return ps;if(M2>m2&&Random::RandomRanged(0,1))return m2+(M2-m2)*Random::RandomDouble();return M1>m1?m1+(M1-m1)*Random::RandomDouble():0.0;};
+				_originNormalStepF = res(Data->OriginNormalFAnglePerStep, Data->OriginNormalFAngleRMin, Data->OriginNormalFAngleRMax, Data->OriginNormalFAngleRMin2, Data->OriginNormalFAngleRMax2);
+				_originNormalStepL = res(Data->OriginNormalLAnglePerStep, Data->OriginNormalLAngleRMin, Data->OriginNormalLAngleRMax, Data->OriginNormalLAngleRMin2, Data->OriginNormalLAngleRMax2);
+				_originNormalStepH = res(Data->OriginNormalHAnglePerStep, Data->OriginNormalHAngleRMin, Data->OriginNormalHAngleRMax, Data->OriginNormalHAngleRMin2, Data->OriginNormalHAngleRMax2);
+				if (!Data->OriginNormalVector.IsEmpty() && !_originCircleRadius)
+					_originCircleRadius = effectiveFacing > -1 ? 0 : -1;
+				// 无 NormalVector 时从 Origin 参考系取 facing
+				if (Data->OriginNormalVector.IsEmpty())
+				{
+					switch (Data->OriginOrigin)
+					{
+					case VectorData::VectorOrigin::Launcher:
+						if (pBullet) _originFacing = pBullet->Velocity.Magnitude() > 0 ? std::atan2(pBullet->Velocity.X, pBullet->Velocity.Y) : _facingRad;
+						else if (pTechno) _originFacing = pTechno->TurretFacing().Current().GetRadian();
+						break;
+					case VectorData::VectorOrigin::Target:
+						if (pBullet) { auto tp = pBullet->TargetCoords; auto bp = pBullet->GetCoords(); _originFacing = std::atan2(bp.Y-tp.Y, bp.X-tp.X); }
+						else if (pTechno && pTechno->Target) { auto tp = pTechno->Target->GetCoords(); auto sp = pTechno->GetCoords(); _originFacing = std::atan2(sp.Y-tp.Y, sp.X-tp.X); }
+						break;
+					case VectorData::VectorOrigin::Source:
+						if (AE && AE->pSource) { auto sp = AE->pSource->GetCoords(); auto bp = pObject->GetCoords(); _originFacing = std::atan2(bp.Y-sp.Y, bp.X-sp.X); }
+						break;
+					default: // FLH
+						if (!Data->OriginOriginFLH.IsEmpty())
+						{
+							double fy = Data->OriginOriginFLH.X, fx = Data->OriginOriginFLH.Y;
+							_originFacing = std::atan2(fy, fx);
+						}
+						else if (pBullet) _originFacing = pBullet->Velocity.Magnitude() > 0 ? std::atan2(pBullet->Velocity.X, pBullet->Velocity.Y) : 0.0;
+						else if (pTechno) _originFacing = pTechno->TurretFacing().Current().GetRadian();
+						break;
+					}
+				}
+			}
+
+			// 每帧累加 Normal 旋转
+			_originNormalRotF += _originNormalStepF;
+			_originNormalRotL += _originNormalStepL;
+			_originNormalRotH += _originNormalStepH;
+
+			double oFacing = _originFacing + DegToRad(_originNormalRotH);
+			double oTilt = _originTilt + DegToRad(_originNormalRotL);
+
+			// 当前圆心绝对位置 = 基座 + 偏移
+			CoordStruct originCenter = baseCenter + _originOffset;
+
+			CoordStruct disp;
+			if (!Data->OriginMoveTo.IsEmpty())
+			{
+				// MoveTo 模式：GrowRate 随帧数线性增长
+				_originAngle += Data->OriginAnglePerStep;
+				CoordStruct growOffset;
+				growOffset = Data->OriginGrowRate * _originElapsed;
+				disp = RotateFLH(Data->OriginMoveTo + growOffset, oFacing + DegToRad(_originAngle), oTilt);
+			}
+			else if (!Data->OriginTargetFLH.IsEmpty())
+			{
+				// Speed / ReachTarget
+				if (_originElapsed == 0)
+					_originSpeed = Data->OriginInitialSpeed >= 0 ? Data->OriginInitialSpeed : (pTechno ? pTechno->GetTechnoType()->Speed : 40.0);
+
+				CoordStruct targetWorld = baseCenter + RotateFLH(Data->OriginTargetFLH + _originTargetOffset, oFacing, oTilt);
+				if (Data->OriginReachTarget)
+				{
+					int rem = _totalDuration > 0 ? (_totalDuration / _effectiveTimeStep) - _originElapsed : 1;
+					if (rem < 1) rem = 1;
+					disp.X = (targetWorld.X - originCenter.X) / rem;
+					disp.Y = (targetWorld.Y - originCenter.Y) / rem;
+					if (Data->OriginArcHeight)
+					{
+						int total = _totalDuration / _effectiveTimeStep;
+						double t = total>0 ? (double)_originElapsed/total : 0, t0 = total>0 ? (double)(_originElapsed-1)/total : 0;
+						disp.Z += (int)(4.0*Data->OriginArcHeight*(t*(1-t) - t0*(1-t0)));
+					}
+				}
+				else
+				{
+					int dx = targetWorld.X - originCenter.X, dy = targetWorld.Y - originCenter.Y, dz = targetWorld.Z - originCenter.Z;
+					double dist = std::sqrt((double)dx*dx + dy*dy + dz*dz);
+					if (dist < 1.0) disp = {};
+					else { double s = _originSpeed / dist; disp.X = (int)(dx*s); disp.Y = (int)(dy*s); disp.Z = (int)(dz*s); }
+				}
+			}
+			else // Circle 模式
+			{
+				_originCircleRadius += Data->OriginCircleRadiusGrow;
+				double tr = _originCircleRadius;
+				if (Data->OriginCircleMaxRadius > 0 && tr > Data->OriginCircleMaxRadius) tr = Data->OriginCircleMaxRadius;
+				if (Data->OriginCircleMinRadius > 0 && tr < Data->OriginCircleMinRadius) tr = Data->OriginCircleMinRadius;
+				// 角步长：优先线速度/半径推算，否则用固定角速度
+				double angleStep = Data->OriginCircleAnglePerStep;
+				if (Data->OriginCircleSpeed > 0 && tr > 0)
+					angleStep = RadToDeg(Data->OriginCircleSpeed / tr);
+				// Lissajous=yes: 累积大角旋转（增减边震荡），no: 每帧仅增量旋转（平滑行星）
+				_originCircleAngle += angleStep;
+				double r = Data->OriginLissajous ? DegToRad(_originCircleAngle) : DegToRad(angleStep);
+				double ca = std::cos(r), sa = std::sin(r);
+				// 当前圆心相对基座的偏移在 LH 平面投影
+				double dx = (double)_originOffset.X, dy = (double)_originOffset.Y, dz = (double)_originOffset.Z;
+				double cf = std::cos(oFacing), sf = std::sin(oFacing), ct = std::cos(oTilt), st = std::sin(oTilt);
+				double dL = dx*(-sf) + dy*cf;
+				double dH = dx*(-cf*st) + dy*(-sf*st) + dz*ct;
+				double cd = std::sqrt(dL*dL + dH*dH);
+				// 圆心在基座上（偏移≈0），初始化到半径位置
+				if (cd < 1.0 && tr > 0)
+				{
+					dL = tr; dH = 0; cd = tr;
+				}
+				else if (cd < 1.0) cd = 1.0;
+				double rL = (dL/cd*tr*ca - dH/cd*tr*sa), rH = (dL/cd*tr*sa + dH/cd*tr*ca);
+				// 新偏移（世界坐标）
+				CoordStruct newOffset;
+				newOffset.X = (int)(rL*(-sf) + rH*(-cf*st));
+				newOffset.Y = (int)(rL*cf + rH*(-sf*st));
+				newOffset.Z = (int)(rH*ct);
+				disp.X = newOffset.X - _originOffset.X;
+				disp.Y = newOffset.Y - _originOffset.Y;
+				disp.Z = newOffset.Z - _originOffset.Z;
+			}
+			_originOffset.X += disp.X; _originOffset.Y += disp.Y; _originOffset.Z += disp.Z;
+			circleCenter = baseCenter + _originOffset;
+			_originElapsed++;
+		}
+
+	// 圆心位移叠加：Circle 模式追踪圆心→调整 currentPos
+	CoordStruct centerDelta;
+	bool useCenterTracking = false;
+	if (_prevCircleCenter.X || _prevCircleCenter.Y || _prevCircleCenter.Z)
+	{
+		centerDelta = circleCenter - _prevCircleCenter;
+		if (!Data->OriginLissajous && (Data->OriginCircleRadius >= 0 || Data->OriginCircleSpeed > 0 || Data->OriginCircleAnglePerStep != 0.0))
+			useCenterTracking = true;
+	}
+	_prevCircleCenter = circleCenter;
+
+	// 旋转当前方向向量并按目标半径缩放（追踪模式下调整 currentPos）
+	CoordStruct trackPos = currentPos;
+	if (useCenterTracking)
+	{
+		trackPos.X += centerDelta.X;
+		trackPos.Y += centerDelta.Y;
+		trackPos.Z += centerDelta.Z;
+	}
+	double dx = static_cast<double>(trackPos.X - circleCenter.X);
+	double dy = static_cast<double>(trackPos.Y - circleCenter.Y);
+	double dz = static_cast<double>(trackPos.Z - circleCenter.Z);
+		double currentDist;
+		bool useTiltPlane = hasNormal || (Data->AllowedTilt && effectiveTilt != 0.0);
+		if (useTiltPlane)
+		{
+			// 倾斜圆面：投影到 LH 平面计算当前距离
+			double cosF = std::cos(effectiveFacing), sinF = std::sin(effectiveFacing);
+			double cosT = std::cos(effectiveTilt), sinT = std::sin(effectiveTilt);
+			double dL = dx * (-sinF) + dy * cosF;
+			double dH = dx * (-cosF * sinT) + dy * (-sinF * sinT) + dz * cosT;
+			currentDist = std::sqrt(dL * dL + dH * dH);
+		}
+		else
+		{
+			currentDist = std::sqrt(dx * dx + dy * dy);
+		}
 		if (currentDist < 1.0) currentDist = 1.0;
 
 		// 动态半径：首帧初始化，每帧叠加增长率
@@ -389,15 +724,34 @@ VectorResult VectorEffect::GetVectorResult()
 		double rad = DegToRad(angleStep);
 		double cosA = std::cos(rad), sinA = std::sin(rad);
 
-		// 当前方向归一化 × 目标半径 → 旋转 → 新世界坐标
-		double ndx = (dx / currentDist * targetRadius);
-		double ndy = (dy / currentDist * targetRadius);
-		double rx = ndx * cosA - ndy * sinA;
-		double ry = ndx * sinA + ndy * cosA;
-
-		result.MoveDisp.X = originPos.X + static_cast<int>(rx) - currentPos.X;
-		result.MoveDisp.Y = originPos.Y + static_cast<int>(ry) - currentPos.Y;
-		result.MoveDisp.Z = 0;
+		if (useTiltPlane)
+		{
+			// 倾斜圆面：在 LH 平面内旋转
+			double cosF = std::cos(effectiveFacing), sinF = std::sin(effectiveFacing);
+			double cosT = std::cos(effectiveTilt), sinT = std::sin(effectiveTilt);
+			double dL = dx * (-sinF) + dy * cosF;
+			double dH = dx * (-cosF * sinT) + dy * (-sinF * sinT) + dz * cosT;
+			double curDist = std::sqrt(dL * dL + dH * dH);
+			if (curDist < 1.0) curDist = 1.0;
+			double ndL = (dL / curDist * targetRadius);
+			double ndH = (dH / curDist * targetRadius);
+			double rL = ndL * cosA - ndH * sinA;
+			double rH = ndL * sinA + ndH * cosA;
+			result.MoveDisp.X = circleCenter.X + static_cast<int>(rL * (-sinF) + rH * (-cosF * sinT)) - currentPos.X;
+			result.MoveDisp.Y = circleCenter.Y + static_cast<int>(rL * cosF + rH * (-sinF * sinT)) - currentPos.Y;
+			result.MoveDisp.Z = circleCenter.Z + static_cast<int>(rH * cosT) - currentPos.Z;
+		}
+		else
+		{
+			// 传统 2D 圆面（XY 平面）
+			double ndx = (dx / currentDist * targetRadius);
+			double ndy = (dy / currentDist * targetRadius);
+			double rx = ndx * cosA - ndy * sinA;
+			double ry = ndx * sinA + ndy * cosA;
+			result.MoveDisp.X = circleCenter.X + static_cast<int>(rx) - currentPos.X;
+			result.MoveDisp.Y = circleCenter.Y + static_cast<int>(ry) - currentPos.Y;
+			result.MoveDisp.Z = circleCenter.Z - currentPos.Z;
+		}
 		result.Force = true;
 
 		// 到达边界时结束 AE
@@ -458,7 +812,7 @@ VectorResult VectorEffect::GetVectorResult()
 	frameTargetFlh.Y = Data->TargetFLH.Y + _randomTargetOffset.Y;
 	frameTargetFlh.Z = Data->TargetFLH.Z + _randomTargetOffset.Z;
 
-	CoordStruct frameTargetDisp = RotateFLH(frameTargetFlh, effectiveFacing);
+	CoordStruct frameTargetDisp = RotateFLH(frameTargetFlh, effectiveFacing, effectiveTilt);
 	CoordStruct frameTarget;
 	frameTarget.X = originPos.X + frameTargetDisp.X;
 	frameTarget.Y = originPos.Y + frameTargetDisp.Y;
@@ -525,8 +879,6 @@ VectorResult VectorEffect::GetVectorResult()
 			speed = static_cast<double>(Data->MinSpeed);
 		if (Data->MaxSpeed >= 0 && speed > Data->MaxSpeed)
 			speed = static_cast<double>(Data->MaxSpeed);
-
-		if (speed <= 0.0) speed = 1.0;
 
 		resultDisp.X = static_cast<int>(dirVec.X / dirLen * speed);
 		resultDisp.Y = static_cast<int>(dirVec.Y / dirLen * speed);
