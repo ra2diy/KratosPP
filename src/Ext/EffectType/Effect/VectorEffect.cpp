@@ -412,8 +412,9 @@ VectorResult VectorEffect::GetVectorResult()
 		break;
 	}
 
-	// OriginFLH 偏移：对所有 Origin 模式生效
-	if (!Data->OriginFLH.IsEmpty())
+	// OriginFLH 偏移：对非 FLH 模式（Launcher/Target/Source）生效
+	// FLH 模式 origin 即 currentPos，OriginFLH 仅 OnStart 快照用，不动态叠加
+	if (!Data->OriginFLH.IsEmpty() && Data->Origin != VectorData::VectorOrigin::FLH)
 		originPos = originPos + RotateFLH(Data->OriginFLH, effectiveFacing, effectiveTilt);
 
 	// ========================================================================
@@ -560,7 +561,8 @@ VectorResult VectorEffect::GetVectorResult()
 					switch (Data->OriginOrigin)
 					{
 					case VectorData::VectorOrigin::Launcher:
-						if (pBullet) _originFacing = pBullet->Velocity.Magnitude() > 0 ? std::atan2(pBullet->Velocity.X, pBullet->Velocity.Y) : _facingRad;
+						if (_pLauncher && !IsDeadOrInvisible(_pLauncher))
+							_originFacing = abstract_cast<TechnoClass*>(_pLauncher)->TurretFacing().Current().GetRadian();
 						else if (pTechno) _originFacing = pTechno->TurretFacing().Current().GetRadian();
 						break;
 					case VectorData::VectorOrigin::Target:
