@@ -140,4 +140,5 @@ public:
 	double _originNormalStepH = 0.0;
 	CoordStruct _originTargetOffset{};    // 圆心 Target 随机偏移
 	CoordStruct _prevCircleCenter{};      // 上一帧圆心位置（计算叠加位移用）
+	int _movementFrames = 0;              // 有效运动帧数（不含 InitialDelay/TimeStep 跳帧）
 };

@@ -23,6 +23,7 @@ public:
 	// ========================================================================
 
 	int TimeStep = 1;
+	int DisabledFrames = 0;              // 首帧快照后冻结 N 帧，不计入运动时间
 
 	enum class VectorOrigin : int
 	{
@@ -173,6 +174,7 @@ public:
 		// --- 通用 ---
 		TimeStep = reader->Get(title + "TimeStep", 1);
 		if (TimeStep < 1) TimeStep = 1;
+		DisabledFrames = reader->Get(title + "DisabledFrames", 0);
 
 		std::string originStr = reader->Get(title + "Origin", std::string{ "FLH" });
 		if (originStr == "Launcher") Origin = VectorOrigin::Launcher;

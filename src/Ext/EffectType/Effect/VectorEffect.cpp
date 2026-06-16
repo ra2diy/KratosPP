@@ -266,6 +266,13 @@ VectorResult VectorEffect::GetVectorResult()
 {
 	VectorResult result;
 
+	// 首帧快照：在 _started 变 true 之前（InitialDelay 期间）即获取附着瞬间坐标
+	if (_elapsedFrames == 0)
+	{
+		_initialOriginPos = pObject->GetCoords();
+		_initialLocation = _initialOriginPos;
+	}
+
 	// InitialDelay 期间 AE 存在但未启动，不施加任何位移
 	if (!_started)
 	{
@@ -277,6 +284,14 @@ VectorResult VectorEffect::GetVectorResult()
 	result.Force = Data->Force;
 	result.AllowFallingDestroy = Data->AllowFallingDestroy;
 	result.FallingDestroyHeight = Data->FallingDestroyHeight;
+
+	// DisabledFrames：首帧快照后冻结，不阻塞其他 AE，不计入运动时间
+	if (_elapsedFrames < Data->DisabledFrames)
+	{
+		result.MoveDisp = { 0, 0, 0 };
+		AdvanceFrame();
+		return result;
+	}
 
 	// ========================================================================
 	// Freeze
@@ -298,6 +313,7 @@ VectorResult VectorEffect::GetVectorResult()
 		_moveFrame++;
 		return result;
 	}
+	_movementFrames++;
 
 	CoordStruct currentPos = pObject->GetCoords();
 
@@ -614,8 +630,9 @@ VectorResult VectorEffect::GetVectorResult()
 				CoordStruct targetWorld = baseCenter + RotateFLH(Data->OriginTargetFLH + _originTargetOffset, oFacing, oTilt);
 				if (Data->OriginReachTarget)
 				{
-					int totalSteps = _totalDuration > 0 ? (_totalDuration / _effectiveTimeStep) : 0;
-					int rem = totalSteps - _originElapsed;
+					int effectiveSteps = (_totalDuration - Data->DisabledFrames) / _effectiveTimeStep;
+					if (effectiveSteps < 1) effectiveSteps = 1;
+					int rem = effectiveSteps - _movementFrames;
 					if (rem <= 0)
 					{
 						disp.X = targetWorld.X - originCenter.X;
@@ -858,7 +875,9 @@ VectorResult VectorEffect::GetVectorResult()
 	// ========================================================================
 	if (Data->ReachTarget && _totalDuration > 0)
 	{
-		int remainingFrames = _totalDuration - _elapsedFrames;
+			int effectiveDuration = _totalDuration - Data->DisabledFrames;
+		if (effectiveDuration < 1) effectiveDuration = 1;
+		int remainingFrames = effectiveDuration - _movementFrames + 1;
 		if (remainingFrames <= 0)
 		{
 			// 已超时，直接到达目标
@@ -876,8 +895,8 @@ VectorResult VectorEffect::GetVectorResult()
 			// 抛物线弧高修正 Z
 			if (Data->ArcHeight != 0)
 			{
-				double t = static_cast<double>(_elapsedFrames) / _totalDuration;
-				double tNext = static_cast<double>(_elapsedFrames + 1) / _totalDuration;
+				double t = static_cast<double>(_movementFrames - 1) / effectiveDuration;
+				double tNext = static_cast<double>(_movementFrames) / effectiveDuration;
 				double z0 = _initialLocation.Z;
 				double z1 = frameTarget.Z;
 				double h = Data->ArcHeight;
