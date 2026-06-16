@@ -58,6 +58,7 @@ Vector.Origin=FLH / Launcher / Target / Source
   默认 FLH。
 
 Vector.OriginFLH=F,L,H
+  对所有 Origin 模式生效的 FLH 偏移（沿 effective FLH 轴）。
   Origin=FLH 时的原点偏移（FLH 坐标系），基点 = 抛射体自身坐标。
   默认 0,0,0。
 
@@ -400,7 +401,8 @@ Vector.Origin.* 圆心运动（Circle 模式专用）
 --- 通用 ---
 
 Vector.Origin.Origin=FLH/Launcher/Target/Source
-  圆心运动的 FLH 参考系。设定 NormalVector 时被覆盖。
+  圆心运动的基座参考系。设定 NormalVector 时被覆盖。
+  Target/Source/Launcher 均实时追踪移动对象。
   默认 FLH。
 
 Vector.Origin.OriginFLH=F,L,H
@@ -448,10 +450,22 @@ Vector.Origin.InitialSpeed=N
   初始速度（lepton/step）。-1=读取单位 Speed。
   默认 -1。
 
+Vector.Origin.Acceleration=N
+  加速度（lepton/step²）。每步加至速度。默认 0。
+
+Vector.Origin.MaxSpeed=N
+  速度上限。-1=不限。默认 -1。
+
+Vector.Origin.MinSpeed=N
+  速度下限。-1=不限。默认 -1。
+
 --- ReachTarget 模式 ---
 
 Vector.Origin.ReachTarget=yes/no
-  yes = 按剩余 Duration 自动调节速度到达目标点。
+  yes = 按剩余 Duration 自动调节速度到达目标点，
+        到达后自动结束 AE。默认 no。
+
+Vector.Origin.ArcHeight=N
   默认 no。
 
 Vector.Origin.ArcHeight=N

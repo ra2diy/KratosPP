@@ -412,6 +412,10 @@ VectorResult VectorEffect::GetVectorResult()
 		break;
 	}
 
+	// OriginFLH 偏移：对所有 Origin 模式生效
+	if (!Data->OriginFLH.IsEmpty())
+		originPos = originPos + RotateFLH(Data->OriginFLH, effectiveFacing, effectiveTilt);
+
 	// ========================================================================
 	// 模式 C: Circle（独立圆周，圆心=Origin，三选二参数）
 	// ========================================================================
@@ -491,6 +495,10 @@ VectorResult VectorEffect::GetVectorResult()
 				case VectorData::VectorOrigin::Target:
 					if (pTechno && pTechno->Target)
 						baseCenter = pTechno->Target->GetCoords();
+					else if (pBullet && pBullet->Target)
+						baseCenter = pBullet->Target->GetCoords();
+					else if (pBullet && pBullet->Owner && pBullet->Owner->Target)
+						baseCenter = pBullet->Owner->Target->GetCoords();
 					else if (pBullet)
 						baseCenter = pBullet->TargetCoords;
 					break;
@@ -604,10 +612,22 @@ VectorResult VectorEffect::GetVectorResult()
 				CoordStruct targetWorld = baseCenter + RotateFLH(Data->OriginTargetFLH + _originTargetOffset, oFacing, oTilt);
 				if (Data->OriginReachTarget)
 				{
-					int rem = _totalDuration > 0 ? (_totalDuration / _effectiveTimeStep) - _originElapsed : 1;
-					if (rem < 1) rem = 1;
+					int totalSteps = _totalDuration > 0 ? (_totalDuration / _effectiveTimeStep) : 0;
+					int rem = totalSteps - _originElapsed;
+					if (rem <= 0)
+					{
+						disp.X = targetWorld.X - originCenter.X;
+						disp.Y = targetWorld.Y - originCenter.Y;
+						disp.Z = targetWorld.Z - originCenter.Z;
+						_originOffset.X += disp.X; _originOffset.Y += disp.Y; _originOffset.Z += disp.Z;
+						circleCenter = baseCenter + _originOffset;
+						_prevCircleCenter = circleCenter;
+						Deactivate();
+						goto skipOriginUpdate;
+					}
 					disp.X = (targetWorld.X - originCenter.X) / rem;
 					disp.Y = (targetWorld.Y - originCenter.Y) / rem;
+					disp.Z = (targetWorld.Z - originCenter.Z) / rem;
 					if (Data->OriginArcHeight)
 					{
 						int total = _totalDuration / _effectiveTimeStep;
@@ -617,6 +637,9 @@ VectorResult VectorEffect::GetVectorResult()
 				}
 				else
 				{
+					_originSpeed += Data->OriginAcceleration;
+					if (Data->OriginMaxSpeed >= 0 && _originSpeed > Data->OriginMaxSpeed) _originSpeed = Data->OriginMaxSpeed;
+					if (Data->OriginMinSpeed >= 0 && _originSpeed < Data->OriginMinSpeed) _originSpeed = Data->OriginMinSpeed;
 					int dx = targetWorld.X - originCenter.X, dy = targetWorld.Y - originCenter.Y, dz = targetWorld.Z - originCenter.Z;
 					double dist = std::sqrt((double)dx*dx + dy*dy + dz*dz);
 					if (dist < 1.0) disp = {};
@@ -659,6 +682,7 @@ VectorResult VectorEffect::GetVectorResult()
 				disp.Y = newOffset.Y - _originOffset.Y;
 				disp.Z = newOffset.Z - _originOffset.Z;
 			}
+		skipOriginUpdate:
 			_originOffset.X += disp.X; _originOffset.Y += disp.Y; _originOffset.Z += disp.Z;
 			circleCenter = baseCenter + _originOffset;
 			_originElapsed++;

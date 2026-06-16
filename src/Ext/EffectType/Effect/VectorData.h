@@ -93,6 +93,9 @@ public:
 	// Speed / ReachTarget 模式
 	CoordStruct OriginTargetFLH{};        // 追踪目标 FLH
 	int OriginInitialSpeed = -1;          // 初始速度，-1=读取单位Speed
+	int OriginAcceleration = 0;           // 加速度（lepton/step²）
+	int OriginMaxSpeed = -1;              // 最大速度，-1=不限
+	int OriginMinSpeed = -1;              // 最小速度，-1=不限
 	bool OriginReachTarget = false;       // 到达模式
 	int OriginArcHeight = 0;            // 到达模式弧高
 	int OriginTargetOffsetFMin = 0, OriginTargetOffsetFMax = 0;
@@ -261,6 +264,9 @@ public:
 		OriginAnglePerStep = reader->Get(title + "Origin.AnglePerStep", 0.0);
 		OriginTargetFLH = reader->Get(title + "Origin.TargetFLH", OriginTargetFLH);
 		OriginInitialSpeed = reader->Get(title + "Origin.InitialSpeed", -1);
+		OriginAcceleration = reader->Get(title + "Origin.Acceleration", 0);
+		OriginMaxSpeed = reader->Get(title + "Origin.MaxSpeed", -1);
+		OriginMinSpeed = reader->Get(title + "Origin.MinSpeed", -1);
 		OriginReachTarget = reader->Get(title + "Origin.ReachTarget", false);
 		OriginArcHeight = reader->Get(title + "Origin.ArcHeight", 0);
 		OriginTargetOffsetFMin = reader->Get(title + "Origin.TargetOffsetF.Min", OriginTargetOffsetFMin);
