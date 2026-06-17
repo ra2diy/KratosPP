@@ -23,7 +23,6 @@ void VectorEffect::OnStart()
 	}
 
 	_active = true;
-	_started = true;     // Vector 用 ShouldMoveThisFrame 控制运动，不依赖基类延迟
 	_elapsedFrames = 0;
 	_moveFrame = 0;
 	_currentAngle = 0.0;
@@ -250,6 +249,22 @@ static double RadToDeg(double rad) { return rad * 180.0 / M_PI; }
 
 // FLH → 世界坐标旋转（3D，支持倾斜坐标系）
 // facingRad=XY 方位角，tiltRad=俯仰角（0=水平，正=向上）
+// 世界旋转（无 FLH 坐标系的 Y 镜像），用于 TargetFLH 类标签
+static CoordStruct WorldRotate(const CoordStruct& v, double facingRad, double tiltRad = 0.0)
+{
+	double cF = std::cos(facingRad), sF = std::sin(facingRad);
+	double cT = std::cos(tiltRad), sT = std::sin(tiltRad);
+	// F = (cF*cT, sF*cT, sT)   — 前向
+	// L = (-sF, cF, 0)         — 左向
+	// H = (-cF*sT, -sF*sT, cT) — 上向（F×L）
+	// 注意：Y 不加负号，保持世界坐标系方向
+	return CoordStruct{
+		static_cast<int>(v.X * cF * cT + v.Y * (-sF) + v.Z * (-cF * sT)),
+		static_cast<int>(v.X * sF * cT + v.Y * cF + v.Z * (-sF * sT)),
+		static_cast<int>(v.X * sT + v.Z * cT)
+	};
+}
+
 static CoordStruct RotateFLH(const CoordStruct& flh, double facingRad, double tiltRad = 0.0)
 {
 	double cosF = std::cos(facingRad), sinF = std::sin(facingRad);
@@ -271,10 +286,9 @@ VectorResult VectorEffect::GetVectorResult()
 {
 	VectorResult result;
 
-	// 首帧快照：仅在 OriginNoUpdate 且未在 OnStart 设置时捕获
-	{
+	// 首帧快照（仅一次，供弧高计算等）
+	if (_elapsedFrames == 0)
 		_initialLocation = pObject->GetCoords();
-	}
 
 	// InitialDelay 期间 AE 存在但未启动，不施加任何位移
 	if (!_started)
@@ -354,22 +368,25 @@ VectorResult VectorEffect::GetVectorResult()
 			}
 			break;
 		case VectorData::VectorOrigin::Target:
-			if (pTechno && pTechno->Target)
-			{
-				CoordStruct targetPos = pTechno->Target->GetCoords();
-				double dx = currentPos.X - targetPos.X, dy = currentPos.Y - targetPos.Y, dz = currentPos.Z - targetPos.Z;
-				effectiveFacing = std::atan2(dy, dx);
-				double lenXY = std::sqrt(dx*dx + dy*dy);
-				effectiveTilt = (lenXY > 1e-6 && Data->AllowedTilt) ? std::atan2(dz, lenXY) : 0.0;
-			}
+		{
+			// 目标有自身 facing（Techno）= 动态跟踪；无（地面/Cell）= 首帧锁定
+			bool isGround = (pBullet && !abstract_cast<TechnoClass*>(pBullet->Target));
+			if (isGround && _movementFrames > 1)
+				break;
+			CoordStruct targetPos;
+			if (pBullet && pBullet->Target)
+				targetPos = pBullet->Target->GetCoords();
 			else if (pBullet)
-			{
-				CoordStruct targetPos = pBullet->TargetCoords;
-				double dx = currentPos.X - targetPos.X, dy = currentPos.Y - targetPos.Y, dz = currentPos.Z - targetPos.Z;
-				effectiveFacing = std::atan2(dy, dx);
-				double lenXY = std::sqrt(dx*dx + dy*dy);
-				effectiveTilt = (lenXY > 1e-6 && Data->AllowedTilt) ? std::atan2(dz, lenXY) : 0.0;
-			}
+				targetPos = pBullet->TargetCoords;
+			else if (pTechno && pTechno->Target)
+				targetPos = pTechno->Target->GetCoords();
+			else
+				break;
+			double dx = currentPos.X - targetPos.X, dy = currentPos.Y - targetPos.Y, dz = currentPos.Z - targetPos.Z;
+			effectiveFacing = std::atan2(dy, dx);
+			double lenXY = std::sqrt(dx*dx + dy*dy);
+			effectiveTilt = (lenXY > 1e-6 && Data->AllowedTilt) ? std::atan2(dz, lenXY) : 0.0;
+		}
 			break;
 
 		case VectorData::VectorOrigin::Self:
@@ -403,34 +420,15 @@ VectorResult VectorEffect::GetVectorResult()
 	{
 	case VectorData::VectorOrigin::Target:
 		if (Data->OriginNoUpdate)
-		{
 			originPos = _initialOriginPos;
-		}
-		else if (pTechno && pTechno->Target)
-		{
-			originPos = pTechno->Target->GetCoords();
-		}
-		else if (pTechno)
-		{
-			// 单位无攻击目标时回退到移动目标格子
-			FootClass* pFoot = abstract_cast<FootClass*>(pTechno);
-			if (pFoot && pFoot->Destination)
-				originPos = pFoot->Destination->GetCoords();
-			else
-				originPos = currentPos;
-		}
+		else if (pBullet && pBullet->Target)
+			originPos = pBullet->Target->GetCoords(); // 单位：实时跟踪
 		else if (pBullet)
-		{
-			// 优先取抛射体自身的实时目标（寻的弹会更新）
-			if (pBullet->Target)
-				originPos = pBullet->Target->GetCoords();
-			// 其次取发射者的当前目标
-			else if (pBullet->Owner && pBullet->Owner->Target)
-				originPos = pBullet->Owner->Target->GetCoords();
-			// 最后回退到自身位置（避免圆心锁死在初始坐标）
-			else
-				originPos = currentPos;
-		}
+			originPos = pBullet->TargetCoords;         // 地面：自动锁定
+		else if (pTechno && pTechno->Target)
+			originPos = pTechno->Target->GetCoords();
+		else
+			originPos = currentPos;
 		break;
 	case VectorData::VectorOrigin::Launcher:
 		originPos = Data->OriginNoUpdate ? _initialOriginPos :
@@ -654,7 +652,7 @@ VectorResult VectorEffect::GetVectorResult()
 				if (_originElapsed == 0)
 					_originSpeed = Data->OriginInitialSpeed >= 0 ? Data->OriginInitialSpeed : (pTechno ? pTechno->GetTechnoType()->Speed : 40.0);
 
-				CoordStruct targetWorld = baseCenter + RotateFLH(Data->OriginTargetFLH + _originTargetOffset, oFacing, oTilt);
+				CoordStruct targetWorld = baseCenter + WorldRotate(Data->OriginTargetFLH + _originTargetOffset, oFacing, oTilt);
 				if (Data->OriginReachTarget)
 				{
 					int effectiveSteps = (_totalDuration - Data->DisabledFrames) / _effectiveTimeStep;
@@ -882,7 +880,7 @@ VectorResult VectorEffect::GetVectorResult()
 	frameTargetFlh.Y = Data->TargetFLH.Y + _randomTargetOffset.Y;
 	frameTargetFlh.Z = Data->TargetFLH.Z + _randomTargetOffset.Z;
 
-	CoordStruct frameTargetDisp = RotateFLH(frameTargetFlh, effectiveFacing, effectiveTilt);
+	CoordStruct frameTargetDisp = WorldRotate(frameTargetFlh, effectiveFacing, effectiveTilt);
 	CoordStruct frameTarget;
 	frameTarget.X = originPos.X + frameTargetDisp.X;
 	frameTarget.Y = originPos.Y + frameTargetDisp.Y;

@@ -53,13 +53,6 @@ void TechnoStatus::OnUpdate_Vector()
 		VectorForced = true;
 		VectorPendingFall = false;
 
-		{
-			FILE* f = fopen("I:/KratosAI/techno_vector.log", "a");
-			if (f) { fprintf(f, "  VECT_TECHNO disp=(%d,%d,%d) rot=%d\n",
-				_vectorResult.MoveDisp.X, _vectorResult.MoveDisp.Y, _vectorResult.MoveDisp.Z,
-				(int)_vectorResult.AllowRotateUnit); fclose(f); }
-		}
-
 		// 首次进入 Vector 控制：切换 Locomotor 为 Jumpjet（允许地面单位浮空）
 		if (!wasVectorForced)
 		{
@@ -142,9 +135,6 @@ void TechnoStatus::OnUpdate_Vector()
 			// 设置翻滚
 			if (_vectorResult.AllowRotateUnit)
 			{
-				FILE* ff = fopen("I:/KratosAI/techno_vector.log", "a");
-				if (ff) { fprintf(ff, "  ROTATE next=(%d,%d,%d) loc=(%d,%d,%d)\n",
-					nextPos.X, nextPos.Y, nextPos.Z, location.X, location.Y, location.Z); fclose(ff); }
 				// 设置朝向
 				if (_lastMission == Mission::Move || _lastMission == Mission::AttackMove || pTechno->GetTechnoType()->ConsideredAircraft || !pTechno->IsInAir())
 				{
@@ -155,12 +145,6 @@ void TechnoStatus::OnUpdate_Vector()
 					if (p1.DistanceFrom(p2) > 0)
 					{
 						DirStruct facingDir = Point2Dir(location, nextPos);
-						{
-							FILE* f = fopen("I:/KratosAI/techno_vector.log", "a");
-							if (f) { fprintf(f, "  FACING next=(%d,%d) loc=(%d,%d) raw=%d\n",
-								nextPos.X, nextPos.Y, location.X, location.Y,
-								(int)facingDir.Raw); fclose(f); }
-						}
 						pTechno->PrimaryFacing.SetDesired(facingDir);
 						if (IsJumpjet())
 						{
