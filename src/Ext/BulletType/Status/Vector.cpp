@@ -47,5 +47,14 @@ void BulletStatus::OnUpdateEnd_Vector(CoordStruct& sourcePos)
 		pBullet->SetLocation(desiredPos);
 		pBullet->SourceCoords = desiredPos;
 		sourcePos = desiredPos;
+
+		// SyncFacing=no：抛射体 Velocity 锁定到攻击目标方向（画弧时面朝目标）
+		if (!_vectorResult.AllowRotateUnit)
+		{
+			CoordStruct targetCoords = pBullet->GetTargetCoords();
+			pBullet->Velocity.X = targetCoords.X - desiredPos.X;
+			pBullet->Velocity.Y = targetCoords.Y - desiredPos.Y;
+			pBullet->Velocity.Z = targetCoords.Z - desiredPos.Z;
+		}
 	}
 }

@@ -49,6 +49,11 @@ Vector.TimeStep=N
   运动颗粒度。每 N 帧执行一次位移。
   默认 1（每帧执行）。
 
+Vector.DisabledFrames=N
+  首帧快照后冻结 N 帧（不挪移、不计入运动总时间），期间其他 Vector AE 正常运转。
+  用于配合 InitialDelay 实现"等待其他 AE 完成后再启动本段"。
+  默认 0。
+
 Vector.Origin=FLH / Launcher / Target / Source
   定义位移参考系的原点和 F 轴朝向。
   FLH      = 抛射体自身朝向（Velocity 方向），Techno 用 TurretFacing（默认）
@@ -78,6 +83,11 @@ Vector.Freeze=yes/no
   yes = 冻结在获得 AE 时的位置，Duration 继续计时。
         Freeze 为最高优先级，启用时忽略所有位移配置。
   默认 no。
+
+Vector.SyncFacing=yes/no
+  单位：yes = 车身朝向同步移动向量方向，no = 不改变朝向。
+  抛射体：yes = Velocity 方向同步移动向量，no = 锁定自身朝向到攻击目标。
+  默认 yes。
 
 Vector.AllowedTilt=yes/no
   yes = 坐标系可绕 XY 面倾斜，Source/Target 的 F 轴纳入 Z 轴差。
@@ -530,6 +540,15 @@ Vector.Origin.NormalHAngleRanges=A,B,C,D
 
 Vector.Origin.AllowedTilt=yes/no
   yes = 允许 F 轴倾斜。默认 no。
+
+Vector.Origin.IsOnWorld=yes/no
+  yes = OriginFLH 以世界坐标 FLH 计算（朝北），不使用单位/弹体朝向。
+  默认 no。
+
+Vector.Origin.IsOnBody=yes/no
+  yes = 单位取车身 PrimaryFacing 替代 TurretFacing 计算 F 轴。
+        不影响抛射体。
+  默认 no。
 
 ============================================================
 叠加与链式规则
