@@ -24,12 +24,15 @@ public:
 
 	int TimeStep = 1;
 	int DisabledFrames = 0;              // 首帧快照后冻结 N 帧，不计入运动时间
+	bool SyncFacing = true;              // yes=抛射体朝运动方向/单位转动，no=抛射体朝目标
+	bool OriginIsOnWorld = false;        // yes=OriginFLH用世界FLH(朝北)，不使用单位/弹体朝向
+	bool OriginIsOnBody = false;          // yes=单位取车身PrimaryFacing，无视炮塔TurretFacing
 
 	enum class VectorOrigin : int
 	{
-		FLH = 0, Launcher = 1, Target = 2, Source = 3,
+		Self = 0, Launcher = 1, Target = 2, Source = 3,
 	};
-	VectorOrigin Origin = VectorOrigin::FLH;
+	VectorOrigin Origin = VectorOrigin::Self;
 	CoordStruct OriginFLH{};
 	bool OriginNoUpdate = false;
 	bool Force = true;                  // yes=SetLocation 硬控，默认所有 Vector 模式 Force
@@ -122,7 +125,7 @@ public:
 	CoordStruct OriginCircleOffset{};     // 圆心原点偏移（世界坐标）
 	bool OriginAllowOriginTilt = false;
 	bool OriginLissajous = false;         // yes=独立圆面（Lissajous 模式），no=圆心位移叠加
-	VectorOrigin OriginOrigin = VectorOrigin::FLH; // 圆心运动参考系
+	VectorOrigin OriginOrigin = VectorOrigin::Self; // 圆心运动参考系
 	CoordStruct OriginOriginFLH{};      // OriginOrigin=FLH 时的 FLH 偏移
 
 	// ========================================================================
@@ -175,12 +178,15 @@ public:
 		TimeStep = reader->Get(title + "TimeStep", 1);
 		if (TimeStep < 1) TimeStep = 1;
 		DisabledFrames = reader->Get(title + "DisabledFrames", 0);
+		SyncFacing = reader->Get(title + "SyncFacing", SyncFacing);
+		OriginIsOnWorld = reader->Get(title + "OriginIsOnWorld", OriginIsOnWorld);
+		OriginIsOnBody = reader->Get(title + "OriginIsOnBody", OriginIsOnBody);
 
-		std::string originStr = reader->Get(title + "Origin", std::string{ "FLH" });
+		std::string originStr = reader->Get(title + "Origin", std::string{ "Self" });
 		if (originStr == "Launcher") Origin = VectorOrigin::Launcher;
 		else if (originStr == "Target") Origin = VectorOrigin::Target;
 		else if (originStr == "Source") Origin = VectorOrigin::Source;
-		else Origin = VectorOrigin::FLH;
+		else Origin = VectorOrigin::Self;
 
 		OriginFLH = reader->Get(title + "OriginFLH", OriginFLH);
 		OriginNoUpdate = reader->Get(title + "OriginNoUpdate", OriginNoUpdate);
@@ -300,11 +306,11 @@ public:
 		OriginCircleOffset = reader->Get(title + "Origin.CircleOffset", OriginCircleOffset);
 		OriginAllowOriginTilt = reader->Get(title + "Origin.AllowOriginTilt", false);
 		OriginLissajous = reader->Get(title + "Origin.Lissajous", false);
-		std::string originOriginStr = reader->Get(title + "Origin.Origin", std::string{ "FLH" });
+		std::string originOriginStr = reader->Get(title + "Origin.Origin", std::string{ "Self" });
 		if (originOriginStr == "Launcher") OriginOrigin = VectorOrigin::Launcher;
 		else if (originOriginStr == "Target") OriginOrigin = VectorOrigin::Target;
 		else if (originOriginStr == "Source") OriginOrigin = VectorOrigin::Source;
-		else OriginOrigin = VectorOrigin::FLH;
+		else OriginOrigin = VectorOrigin::Self;
 		OriginOriginFLH = reader->Get(title + "Origin.OriginFLH", OriginOriginFLH);
 
 		// --- Speed / ReachTarget ---
@@ -357,7 +363,7 @@ private:
 	bool Serialize(T& stream)
 	{
 		stream
-			.Process(this->TimeStep)
+			.Process(this->TimeStep).Process(this->DisabledFrames).Process(this->SyncFacing).Process(this->OriginIsOnWorld).Process(this->OriginIsOnBody)
 			.Process(this->Origin)
 			.Process(this->OriginFLH)
 			.Process(this->OriginNoUpdate)

@@ -417,6 +417,7 @@ public:
 	bool CaptureByBlackHole = false;
 	bool VectorForced = false;
 	bool VectorPendingFall = false;
+	GUID _vectorSavedLocomotor{}; // Vector 接管时保存的原 Locomotor
 	double _spinRad = 0;
 	int _spinTime = 0;
 	bool _spinFlip = true;
@@ -505,6 +506,7 @@ public:
 			// 向量位移
 			.Process(this->VectorForced)
 			.Process(this->VectorPendingFall)
+			.Process(this->_vectorSavedLocomotor)
 			.Process(this->_spinRad)
 			.Process(this->_spinTime)
 			.Process(this->_spinFlip)

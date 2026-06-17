@@ -23,6 +23,7 @@ void VectorEffect::OnStart()
 	}
 
 	_active = true;
+	_started = true;     // Vector 用 ShouldMoveThisFrame 控制运动，不依赖基类延迟
 	_elapsedFrames = 0;
 	_moveFrame = 0;
 	_currentAngle = 0.0;
@@ -81,6 +82,8 @@ void VectorEffect::OnStart()
 				_initialOriginPos = pTechno->Target->GetCoords();
 			else if (pBullet)
 				_initialOriginPos = pBullet->TargetCoords;
+			else
+				_initialOriginPos = pObject->GetCoords();
 		}
 		break;
 
@@ -91,6 +94,8 @@ void VectorEffect::OnStart()
 				_initialOriginPos = pBullet->Owner->GetCoords();
 			else if (pTechno)
 				_initialOriginPos = pTechno->GetCoords();
+			else
+				_initialOriginPos = pObject->GetCoords();
 		}
 		break;
 
@@ -104,7 +109,7 @@ void VectorEffect::OnStart()
 			_pSource = AE->pSource;
 		break;
 
-	case VectorData::VectorOrigin::FLH:
+	case VectorData::VectorOrigin::Self:
 		if (pBullet)
 		{
 			double bulletRad = std::atan2(pBullet->Velocity.X, pBullet->Velocity.Y);
@@ -266,11 +271,9 @@ VectorResult VectorEffect::GetVectorResult()
 {
 	VectorResult result;
 
-	// 首帧快照：在 _started 变 true 之前（InitialDelay 期间）即获取附着瞬间坐标
-	if (_elapsedFrames == 0)
+	// 首帧快照：仅在 OriginNoUpdate 且未在 OnStart 设置时捕获
 	{
-		_initialOriginPos = pObject->GetCoords();
-		_initialLocation = _initialOriginPos;
+		_initialLocation = pObject->GetCoords();
 	}
 
 	// InitialDelay 期间 AE 存在但未启动，不施加任何位移
@@ -284,6 +287,7 @@ VectorResult VectorEffect::GetVectorResult()
 	result.Force = Data->Force;
 	result.AllowFallingDestroy = Data->AllowFallingDestroy;
 	result.FallingDestroyHeight = Data->FallingDestroyHeight;
+	result.AllowRotateUnit = Data->SyncFacing;
 
 	// DisabledFrames：首帧快照后冻结，不阻塞其他 AE，不计入运动时间
 	if (_elapsedFrames < Data->DisabledFrames)
@@ -368,9 +372,11 @@ VectorResult VectorEffect::GetVectorResult()
 			}
 			break;
 
-		case VectorData::VectorOrigin::FLH:
+		case VectorData::VectorOrigin::Self:
 			if (pTechno)
-				effectiveFacing = pTechno->TurretFacing().Current().GetRadian();
+				effectiveFacing = (Data->OriginIsOnBody
+					? pTechno->PrimaryFacing.Current().GetRadian()
+					: pTechno->TurretFacing().Current().GetRadian());
 			else if (pBullet)
 				effectiveFacing = std::atan2(pBullet->Velocity.X, pBullet->Velocity.Y);
 			break;
@@ -380,7 +386,9 @@ VectorResult VectorEffect::GetVectorResult()
 			{
 				TechnoClass* pLauncherTechno = abstract_cast<TechnoClass*>(_pLauncher);
 				if (pLauncherTechno)
-					effectiveFacing = pLauncherTechno->TurretFacing().Current().GetRadian();
+					effectiveFacing = (Data->OriginIsOnBody
+						? pLauncherTechno->PrimaryFacing.Current().GetRadian()
+						: pLauncherTechno->TurretFacing().Current().GetRadian());
 			}
 			break;
 		}
@@ -401,6 +409,15 @@ VectorResult VectorEffect::GetVectorResult()
 		else if (pTechno && pTechno->Target)
 		{
 			originPos = pTechno->Target->GetCoords();
+		}
+		else if (pTechno)
+		{
+			// 单位无攻击目标时回退到移动目标格子
+			FootClass* pFoot = abstract_cast<FootClass*>(pTechno);
+			if (pFoot && pFoot->Destination)
+				originPos = pFoot->Destination->GetCoords();
+			else
+				originPos = currentPos;
 		}
 		else if (pBullet)
 		{
@@ -423,15 +440,19 @@ VectorResult VectorEffect::GetVectorResult()
 		originPos = Data->OriginNoUpdate ? _initialOriginPos :
 			(_pSource && !IsDeadOrInvisible(_pSource) ? _pSource->GetCoords() : currentPos);
 		break;
-	case VectorData::VectorOrigin::FLH:
+	case VectorData::VectorOrigin::Self:
 		originPos = Data->OriginNoUpdate ? _initialOriginPos : currentPos;
 		break;
 	}
 
-	// OriginFLH 偏移：对非 FLH 模式（Launcher/Target/Source）生效
-	// FLH 模式 origin 即 currentPos，OriginFLH 仅 OnStart 快照用，不动态叠加
-	if (!Data->OriginFLH.IsEmpty() && Data->Origin != VectorData::VectorOrigin::FLH)
-		originPos = originPos + RotateFLH(Data->OriginFLH, effectiveFacing, effectiveTilt);
+	// OriginFLH 偏移：对非 Self 模式生效
+	// OriginIsOnWorld=yes 时用世界 FLH（朝北），否则用单位/弹体朝向
+	{
+		double flhFacing = Data->OriginIsOnWorld ? 0.0 : effectiveFacing;
+		double flhTilt = Data->OriginIsOnWorld ? 0.0 : effectiveTilt;
+		if (!Data->OriginFLH.IsEmpty() && Data->Origin != VectorData::VectorOrigin::Self)
+			originPos = originPos + RotateFLH(Data->OriginFLH, flhFacing, flhTilt);
+	}
 
 	// ========================================================================
 	// 模式 C: Circle（独立圆周，圆心=Origin，三选二参数）
@@ -501,7 +522,7 @@ VectorResult VectorEffect::GetVectorResult()
 		{
 			// 基座：默认 originPos，OriginOrigin 可替换为独立参考系
 			CoordStruct baseCenter = originPos;
-			if (Data->OriginOrigin != VectorData::VectorOrigin::FLH)
+			if (Data->OriginOrigin != VectorData::VectorOrigin::Self)
 			{
 				switch (Data->OriginOrigin)
 				{
@@ -512,6 +533,12 @@ VectorResult VectorEffect::GetVectorResult()
 				case VectorData::VectorOrigin::Target:
 					if (pTechno && pTechno->Target)
 						baseCenter = pTechno->Target->GetCoords();
+					else if (pTechno)
+					{
+						FootClass* pFoot = abstract_cast<FootClass*>(pTechno);
+						if (pFoot && pFoot->Destination)
+							baseCenter = pFoot->Destination->GetCoords();
+					}
 					else if (pBullet && pBullet->Target)
 						baseCenter = pBullet->Target->GetCoords();
 					else if (pBullet && pBullet->Owner && pBullet->Owner->Target)
