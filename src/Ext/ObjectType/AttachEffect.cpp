@@ -1524,8 +1524,9 @@ void AttachEffect::OnUpdate()
 			}
 		}
 
-		// 添加section自带AE
-		Attach(GetTypeData());
+		// 添加section自带AE（卖变期间禁止重贴，避免RemoveOnSold触发无限循环）
+		if (!_ownerIsDead && !InSelling())
+			Attach(GetTypeData());
 		// 检查乘客并附加乘客带来的AE
 		if (pTechno)
 		{
