@@ -223,6 +223,17 @@ bool AttachEffectScript::IsAlive()
 	int timeLeft = GetDuration();
 	Tag = std::to_string(timeLeft) + "#" + AEData.Name + (_paused ? "#Paused" : "");
 #endif
+	// 建筑变卖处理
+	if (AEManager->InSelling())
+	{
+		if (AEData.RemoveOnSold)
+		{
+			Deactivate();
+			return false;
+		}
+		if (AEData.DeactiveOnSold)
+			return false;
+	}
 	if (!_started)
 	{
 		if (!InDelayToEnable())
@@ -277,21 +288,15 @@ bool AttachEffectScript::IsAlive()
 		if (IsActive() && !_hold)
 		{
 			bool hasDead = false;
-#ifdef DEBUG_AE
-			ForeachChild([&](Component* c) {
-#else
 			ForeachChild([&hasDead](Component* c) {
-#endif
 				if (auto e = dynamic_cast<EffectScript*>(c))
 				{
-					hasDead = !e->IsActive() || !e->IsAlive();
-					if (hasDead)
-					{
-#ifdef DEBUG_AE
-						Debug::Log(" - AE[%s]的效果器[%s]失效了\n", AEData.Name.c_str(), e->Name.c_str());
-#endif
-						c->Break();
-					}
+				int ea = (int)e->IsActive();
+				int ea2 = (int)e->IsAlive();
+				hasDead = !ea || !ea2;
+				if (hasDead) {
+					c->Break();
+				}
 				}
 				});
 			if (hasDead)
@@ -349,12 +354,10 @@ void AttachEffectScript::Start(TechnoClass * pSource, HouseClass * pSourceHouse,
 
 	this->_inBuilding = AEManager->InBuilding();
 
-	// 初始延迟
 	this->_initDelay = GetRandomValue(AEData.InitialRandomDelay, AEData.InitialDelay);
-	// 非建造状态，并且有初始延迟，开启初始延迟计时器
-	if (!_inBuilding && _initDelay > 0)
+	if (_initDelay > 0)
 	{
-		_initDelay += 1; // 当前帧不算，多延迟一帧
+		_initDelay += 1;
 		SetupInitTimer();
 	}
 
@@ -460,19 +463,15 @@ void AttachEffectScript::InitEffects()
 
 bool AttachEffectScript::InDelayToEnable()
 {
-	// 检查初始延迟计时器
 	if (_delayToEnable)
 	{
 		_delayToEnable = _initialDelayTimer.InProgress();
 	}
-	// 检查建筑状态
 	if (_inBuilding)
 	{
 		_inBuilding = AEManager->InBuilding();
-		// 是建筑状态，并且有初始延迟，在建筑状态结束后，启动初始延迟计时器
 		if (!_inBuilding && _initDelay > 0)
 		{
-			// 启动初始延迟计时器
 			SetupInitTimer();
 		}
 	}

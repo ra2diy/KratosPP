@@ -334,10 +334,10 @@ public:
 		MinSpeed = reader->Get(title + "MinSpeed", -1);
 		Acceleration = reader->Get(title + "Acceleration", Acceleration);
 
-		Enable = !MoveTo.IsEmpty() || !TargetFLH.IsEmpty() || Force || Freeze
+		Enable = !MoveTo.IsEmpty() || !TargetFLH.IsEmpty() || Freeze
 			|| (CircleRadius > 0) || (CircleSpeed > 0) || (CircleAnglePerStep > 0.0)
 			|| (CircleRandomRadiusMax > CircleRandomRadiusMin)
-	|| (CircleRandomAngleMax > CircleRandomAngleMin)
+			|| (CircleRandomAngleMax > CircleRandomAngleMin)
 			|| (CircleRandomAngleMax2 > CircleRandomAngleMin2);
 	}
 

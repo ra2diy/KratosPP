@@ -134,6 +134,8 @@ public:
 	bool DiscardOnEntry = false; // 离开地图则失效
 	bool DiscardOnTransform = true; // 发生类型改变时失效
 	bool PenetratesIronCurtain = false; // 弹头附加，影响铁幕
+	bool DeactiveOnSold = true;    // 变卖时失活，no=继续运行
+	bool RemoveOnSold = false;     // 变卖时直接移除AE
 	bool FromTransporter = true; // 弹头附加，乘客附加时，视为载具
 	bool ReceiverOwn = false; // 弹头附加，属于被赋予对象
 
@@ -377,6 +379,9 @@ public:
 			DiscardOnEntry = reader->Get("DiscardOnEntry", DiscardOnEntry);
 			DiscardOnTransform = reader->Get("DiscardOnTransform", DiscardOnTransform);
 			PenetratesIronCurtain = reader->Get("PenetratesIronCurtain", PenetratesIronCurtain);
+
+			DeactiveOnSold = reader->Get("DeactiveOnSold", DeactiveOnSold);
+			RemoveOnSold = reader->Get("RemoveOnSold", RemoveOnSold);
 			FromTransporter = reader->Get("FromTransporter", FromTransporter);
 			ReceiverOwn = reader->Get("ReceiverOwn", ReceiverOwn);
 
@@ -424,6 +429,8 @@ public:
 			.Process(this->DiscardOnEntry)
 			.Process(this->DiscardOnTransform)
 			.Process(this->PenetratesIronCurtain)
+			.Process(this->DeactiveOnSold)
+			.Process(this->RemoveOnSold)
 			.Process(this->FromTransporter)
 			.Process(this->ReceiverOwn)
 

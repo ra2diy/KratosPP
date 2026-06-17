@@ -67,7 +67,7 @@ bool AttachEffect::OwnerIsDead()
 		{
 			_ownerIsDead = true;
 		}
-		else if (pTechno && (IsDead(pTechno) || InSelling())) // 变卖了建筑也算死亡
+		else if (pTechno && IsDead(pTechno))
 		{
 			_ownerIsDead = true;
 		}
