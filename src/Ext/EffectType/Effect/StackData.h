@@ -78,6 +78,8 @@ public:
 
 	std::vector<std::string> Watch{};
 
+	Mission WatchMission = Mission::None;
+
 	std::vector<int> Level{};
 	std::vector<Condition> Condition{};
 
@@ -109,6 +111,7 @@ public:
 		EffectData::Read(reader, title);
 
 		Watch = reader->GetList(title + "Watch", Watch);
+		WatchMission = reader->Get(title + "WatchMission", WatchMission);
 
 		Level = reader->GetList(title + "Level", Level);
 		Condition = reader->GetList(title + "Condition", Condition);
@@ -134,7 +137,7 @@ public:
 		RemoveAll = reader->Get(title + "RemoveAll", RemoveAll);
 		RemoveSkipNext = reader->Get(title + "RemoveSkipNext", RemoveSkipNext);
 
-		Enable = !Watch.empty() && (Attach || Remove);
+		Enable = (!Watch.empty() || WatchMission != Mission::None) && (Attach || Remove);
 	}
 
 #pragma region save/load
@@ -143,6 +146,7 @@ public:
 	{
 		return stream
 			.Process(this->Watch)
+			.Process(this->WatchMission)
 			.Process(this->Level)
 			.Process(this->Condition)
 			.Process(this->ActionMode)
