@@ -68,7 +68,7 @@ void VectorEffect::OnStart()
 	}
 	else if (pTechno)
 	{
-		_pLauncher = pTechno;
+		_pLauncher = (AE && AE->pSource) ? AE->pSource : pTechno; // 单位侧用攻击者作为Launcher
 	}
 
 	// --- Origin 初始化 ---
@@ -244,44 +244,6 @@ void VectorEffect::OnStart()
 	}
 }
 
-static double DegToRad(double deg) { return deg * M_PI / 180.0; }
-static double RadToDeg(double rad) { return rad * 180.0 / M_PI; }
-
-// FLH → 世界坐标旋转（3D，支持倾斜坐标系）
-// facingRad=XY 方位角，tiltRad=俯仰角（0=水平，正=向上）
-// 世界旋转（无 FLH 坐标系的 Y 镜像），用于 TargetFLH 类标签
-static CoordStruct WorldRotate(const CoordStruct& v, double facingRad, double tiltRad = 0.0)
-{
-	double cF = std::cos(facingRad), sF = std::sin(facingRad);
-	double cT = std::cos(tiltRad), sT = std::sin(tiltRad);
-	// F = (cF*cT, sF*cT, sT)   — 前向
-	// L = (-sF, cF, 0)         — 左向
-	// H = (-cF*sT, -sF*sT, cT) — 上向（F×L）
-	// 注意：Y 不加负号，保持世界坐标系方向
-	return CoordStruct{
-		static_cast<int>(v.X * cF * cT + v.Y * (-sF) + v.Z * (-cF * sT)),
-		static_cast<int>(v.X * sF * cT + v.Y * cF + v.Z * (-sF * sT)),
-		static_cast<int>(v.X * sT + v.Z * cT)
-	};
-}
-
-static CoordStruct RotateFLH(const CoordStruct& flh, double facingRad, double tiltRad = 0.0)
-{
-	double cosF = std::cos(facingRad), sinF = std::sin(facingRad);
-	double cosT = std::cos(tiltRad), sinT = std::sin(tiltRad);
-	// F = (cosF*cosT, sinF*cosT, sinT)   — 前向
-	// L = (-sinF, cosF, 0)               — 左向（严格垂直 XY 面）
-	// H = (-cosF*sinT, -sinF*sinT, cosT) — 上向（F×L）
-	double fx = cosF * cosT, fy = sinF * cosT, fz = sinT;
-	double lx = -sinF, ly = cosF;
-	double hx = -cosF * sinT, hy = -sinF * sinT, hz = cosT;
-	return CoordStruct{
-		static_cast<int>(flh.X * fx + flh.Y * lx + flh.Z * hx),
-		static_cast<int>(-(flh.X * fy + flh.Y * ly + flh.Z * hy)),
-		static_cast<int>(flh.X * fz + flh.Z * hz)
-	};
-}
-
 VectorResult VectorEffect::GetVectorResult()
 {
 	VectorResult result;
@@ -338,17 +300,10 @@ VectorResult VectorEffect::GetVectorResult()
 	// ========================================================================
 	// 动态 F 轴：非 NoUpdate 时每帧根据当前坐标重新计算 FLH 朝向
 	// ========================================================================
-	double effectiveFacing = _facingRad;
-	double effectiveTilt = _tiltRad;
+	double effectiveFacing = _facingRad + Math::deg2rad(_normalRotH);
+	double effectiveTilt = _tiltRad + Math::deg2rad(_normalRotL);
+	DirStruct mainFacingDir = Radians2Dir(effectiveFacing); // 官方API，不得修改：引擎弧度→DirStruct转换
 
-	// 法线旋转：每运动帧累加角速度（H=转向，L=俯仰）
-	if (ShouldMoveThisFrame())
-	{
-		_normalRotH += _normalStepH;
-		_normalRotL += _normalStepL;
-	}
-	effectiveFacing += DegToRad(_normalRotH);
-	effectiveTilt += DegToRad(_normalRotL);
 	bool hasNormal = !Data->NormalVector.IsEmpty()
 		|| Data->NormalRandomF.Y > Data->NormalRandomF.X
 		|| Data->NormalRandomL.Y > Data->NormalRandomL.X
@@ -360,16 +315,17 @@ VectorResult VectorEffect::GetVectorResult()
 		case VectorData::VectorOrigin::Source:
 			if (_pSource && !IsDeadOrInvisible(_pSource))
 			{
-				CoordStruct srcPos = _pSource->GetCoords();
-				double dx = currentPos.X - srcPos.X, dy = currentPos.Y - srcPos.Y, dz = currentPos.Z - srcPos.Z;
-				effectiveFacing = std::atan2(dy, dx);
+				mainFacingDir = Point2Dir(_pSource->GetCoords(), currentPos); // 官方API，不得修改
+				effectiveFacing = mainFacingDir.GetRadian();
+				double dx = currentPos.X - _pSource->GetCoords().X;
+				double dy = currentPos.Y - _pSource->GetCoords().Y;
+				double dz = currentPos.Z - _pSource->GetCoords().Z;
 				double lenXY = std::sqrt(dx*dx + dy*dy);
 				effectiveTilt = (lenXY > 1e-6 && Data->AllowedTilt) ? std::atan2(dz, lenXY) : 0.0;
 			}
 			break;
 		case VectorData::VectorOrigin::Target:
 		{
-			// 目标有自身 facing（Techno）= 动态跟踪；无（地面/Cell）= 首帧锁定
 			bool isGround = (pBullet && !abstract_cast<TechnoClass*>(pBullet->Target));
 			if (isGround && _movementFrames > 1)
 				break;
@@ -382,8 +338,9 @@ VectorResult VectorEffect::GetVectorResult()
 				targetPos = pTechno->Target->GetCoords();
 			else
 				break;
+			mainFacingDir = Point2Dir(targetPos, currentPos); // 官方API，不得修改
+			effectiveFacing = mainFacingDir.GetRadian();
 			double dx = currentPos.X - targetPos.X, dy = currentPos.Y - targetPos.Y, dz = currentPos.Z - targetPos.Z;
-			effectiveFacing = std::atan2(dy, dx);
 			double lenXY = std::sqrt(dx*dx + dy*dy);
 			effectiveTilt = (lenXY > 1e-6 && Data->AllowedTilt) ? std::atan2(dz, lenXY) : 0.0;
 		}
@@ -391,11 +348,17 @@ VectorResult VectorEffect::GetVectorResult()
 
 		case VectorData::VectorOrigin::Self:
 			if (pTechno)
-				effectiveFacing = (Data->OriginIsOnBody
-					? pTechno->PrimaryFacing.Current().GetRadian()
-					: pTechno->TurretFacing().Current().GetRadian());
+			{
+				mainFacingDir = Data->OriginIsOnBody
+					? pTechno->PrimaryFacing.Current()     // 官方API，不得修改
+					: pTechno->TurretFacing().Current();   // 官方API，不得修改
+				effectiveFacing = mainFacingDir.GetRadian();
+			}
 			else if (pBullet)
-				effectiveFacing = std::atan2(pBullet->Velocity.X, pBullet->Velocity.Y);
+			{
+				mainFacingDir = Facing(pBullet, currentPos); // 官方API，不得修改
+				effectiveFacing = mainFacingDir.GetRadian();
+			}
 			break;
 
 		case VectorData::VectorOrigin::Launcher:
@@ -403,9 +366,12 @@ VectorResult VectorEffect::GetVectorResult()
 			{
 				TechnoClass* pLauncherTechno = abstract_cast<TechnoClass*>(_pLauncher);
 				if (pLauncherTechno)
-					effectiveFacing = (Data->OriginIsOnBody
-						? pLauncherTechno->PrimaryFacing.Current().GetRadian()
-						: pLauncherTechno->TurretFacing().Current().GetRadian());
+				{
+					mainFacingDir = Data->OriginIsOnBody
+						? pLauncherTechno->PrimaryFacing.Current()     // 官方API，不得修改
+						: pLauncherTechno->TurretFacing().Current();   // 官方API，不得修改
+					effectiveFacing = mainFacingDir.GetRadian();
+				}
 			}
 			break;
 		}
@@ -443,13 +409,10 @@ VectorResult VectorEffect::GetVectorResult()
 		break;
 	}
 
-	// OriginFLH 偏移：对非 Self 模式生效
-	// OriginIsOnWorld=yes 时用世界 FLH（朝北），否则用单位/弹体朝向
+	// OriginFLH 偏移：对非 Self 模式生效，直接使用引擎 DirStruct
 	{
-		double flhFacing = Data->OriginIsOnWorld ? 0.0 : effectiveFacing;
-		double flhTilt = Data->OriginIsOnWorld ? 0.0 : effectiveTilt;
 		if (!Data->OriginFLH.IsEmpty() && Data->Origin != VectorData::VectorOrigin::Self)
-			originPos = originPos + RotateFLH(Data->OriginFLH, flhFacing, flhTilt);
+			originPos = GetFLHAbsoluteCoords(originPos, Data->OriginFLH, mainFacingDir); // 官方API，不得修改
 	}
 
 	// ========================================================================
@@ -500,16 +463,16 @@ VectorResult VectorEffect::GetVectorResult()
 		double angleStep = _currentCircleAngle;
 
 		if (speed <= 0.0 && angleStep > 0.0)
-			speed = calcRadius * DegToRad(angleStep);
+			speed = calcRadius * Math::deg2rad(angleStep);
 		else if (angleStep <= 0.0 && speed > 0.0)
-			angleStep = RadToDeg(speed / calcRadius);
+			angleStep = Math::rad2deg(speed / calcRadius);
 
 		// 圆心 = Origin + CircleOrigin 偏移（世界坐标系）
 		CoordStruct circleCenter = originPos;
 		if (!Data->CircleOrigin.IsEmpty())
 		{
 			if (Data->AllowOriginTilt)
-				circleCenter = originPos + RotateFLH(Data->CircleOrigin, effectiveFacing, effectiveTilt);
+				circleCenter = GetFLHAbsoluteCoords(originPos, Data->CircleOrigin, mainFacingDir); // 官方API，不得修改
 			else
 				circleCenter = originPos + Data->CircleOrigin;
 		}
@@ -631,8 +594,9 @@ VectorResult VectorEffect::GetVectorResult()
 			_originNormalRotL += _originNormalStepL;
 			_originNormalRotH += _originNormalStepH;
 
-			double oFacing = _originFacing + DegToRad(_originNormalRotH);
-			double oTilt = _originTilt + DegToRad(_originNormalRotL);
+			double oFacing = _originFacing + Math::deg2rad(_originNormalRotH);
+			double oTilt = _originTilt + Math::deg2rad(_originNormalRotL);
+			DirStruct oFacingDir = Radians2Dir(oFacing); // 官方API，不得修改：弧度→DirStruct
 
 			// 当前圆心绝对位置 = 基座 + 偏移
 			CoordStruct originCenter = baseCenter + _originOffset;
@@ -644,7 +608,7 @@ VectorResult VectorEffect::GetVectorResult()
 				_originAngle += Data->OriginAnglePerStep;
 				CoordStruct growOffset;
 				growOffset = Data->OriginGrowRate * _originElapsed;
-				disp = RotateFLH(Data->OriginMoveTo + growOffset, oFacing + DegToRad(_originAngle), oTilt);
+				disp = GetFLHAbsoluteOffset(Data->OriginMoveTo + growOffset, Radians2Dir(oFacing + Math::deg2rad(_originAngle))); // 官方API，不得修改
 			}
 			else if (!Data->OriginTargetFLH.IsEmpty())
 			{
@@ -652,7 +616,7 @@ VectorResult VectorEffect::GetVectorResult()
 				if (_originElapsed == 0)
 					_originSpeed = Data->OriginInitialSpeed >= 0 ? Data->OriginInitialSpeed : (pTechno ? pTechno->GetTechnoType()->Speed : 40.0);
 
-				CoordStruct targetWorld = baseCenter + WorldRotate(Data->OriginTargetFLH + _originTargetOffset, oFacing, oTilt);
+				CoordStruct targetWorld = GetFLHAbsoluteCoords(baseCenter, Data->OriginTargetFLH + _originTargetOffset, oFacingDir); // 官方API，不得修改
 				if (Data->OriginReachTarget)
 				{
 					int effectiveSteps = (_totalDuration - Data->DisabledFrames) / _effectiveTimeStep;
@@ -699,10 +663,10 @@ VectorResult VectorEffect::GetVectorResult()
 				// 角步长：优先线速度/半径推算，否则用固定角速度
 				double angleStep = Data->OriginCircleAnglePerStep;
 				if (Data->OriginCircleSpeed > 0 && tr > 0)
-					angleStep = RadToDeg(Data->OriginCircleSpeed / tr);
+					angleStep = Math::rad2deg(Data->OriginCircleSpeed / tr);
 				// Lissajous=yes: 累积大角旋转（增减边震荡），no: 每帧仅增量旋转（平滑行星）
 				_originCircleAngle += angleStep;
-				double r = Data->OriginLissajous ? DegToRad(_originCircleAngle) : DegToRad(angleStep);
+				double r = Data->OriginLissajous ? Math::deg2rad(_originCircleAngle) : Math::deg2rad(angleStep);
 				double ca = std::cos(r), sa = std::sin(r);
 				// 当前圆心相对基座的偏移在 LH 平面投影
 				double dx = (double)_originOffset.X, dy = (double)_originOffset.Y, dz = (double)_originOffset.Z;
@@ -789,7 +753,7 @@ VectorResult VectorEffect::GetVectorResult()
 		if (Data->CircleMinRadius > 0 && targetRadius < Data->CircleMinRadius)
 			targetRadius = static_cast<double>(Data->CircleMinRadius);
 
-		double rad = DegToRad(angleStep);
+		double rad = Math::deg2rad(angleStep);
 		double cosA = std::cos(rad), sinA = std::sin(rad);
 
 		if (useTiltPlane)
@@ -822,15 +786,27 @@ VectorResult VectorEffect::GetVectorResult()
 		}
 		result.Force = true;
 
+		{
+			FILE* f = fopen("I:/KratosAI/vector_traj.log", "a");
+			if (f) { fprintf(f, "[%s Frm=%d dur=%d] cur=(%d,%d,%d) cc=(%d,%d,%d) r=%.0f ang=%.1f disp=(%d,%d,%d)\n",
+				AEData.Name.c_str(), _elapsedFrames, _totalDuration,
+				currentPos.X, currentPos.Y, currentPos.Z,
+				circleCenter.X, circleCenter.Y, circleCenter.Z,
+				targetRadius, angleStep,
+				result.MoveDisp.X, result.MoveDisp.Y, result.MoveDisp.Z); fclose(f); }
+		}
+
 		// 到达边界时结束 AE
 		if (Data->CircleEndOnMaxRadius && Data->CircleMaxRadius > 0
 			&& _currentCircleRadius >= Data->CircleMaxRadius)
 		{
+			{ FILE* f = fopen("I:/KratosAI/vector_traj.log", "a"); if(f) fprintf(f, "  DEACTIVATE MaxRadius\n"); fclose(f); }
 			Deactivate();
 		}
 		if (Data->CircleEndOnMinRadius && Data->CircleMinRadius > 0
 			&& _currentCircleRadius <= Data->CircleMinRadius)
 		{
+			{ FILE* f = fopen("I:/KratosAI/vector_traj.log", "a"); if(f) fprintf(f, "  DEACTIVATE MinRadius\n"); fclose(f); }
 			Deactivate();
 		}
 
@@ -843,27 +819,21 @@ VectorResult VectorEffect::GetVectorResult()
 	// ========================================================================
 	if (!Data->MoveTo.IsEmpty())
 	{
-		double moveFacing;
+		// moveDir：使用引擎 DirStruct，AnglePerStep 非零时叠加自旋角度
+		DirStruct moveDir = mainFacingDir;
 		if (Data->AnglePerStep != 0.0)
 		{
 			if (_elapsedFrames == 0)
 				_currentAngle = 0.0;
 			_currentAngle += Data->AnglePerStep;
-			moveFacing = effectiveFacing + DegToRad(_currentAngle);
+			moveDir = Radians2Dir(mainFacingDir.GetRadian() + Math::deg2rad(_currentAngle)); // 官方API，不得修改
 		}
-		else if (pTechno)
-			moveFacing = pTechno->TurretFacing().Current().GetRadian();
-		else if (pBullet)
-			moveFacing = std::atan2(pBullet->Velocity.X, pBullet->Velocity.Y);
-		else
-			moveFacing = _facingRad;
+		CoordStruct grow = { static_cast<int>(Data->GrowRate.X * _elapsedFrames),
+			static_cast<int>(Data->GrowRate.Y * _elapsedFrames),
+			static_cast<int>(Data->GrowRate.Z * _elapsedFrames) };
+		CoordStruct moveFlh = Data->MoveTo + grow;
 
-		CoordStruct moveFlh;
-		moveFlh.X = Data->MoveTo.X + static_cast<int>(Data->GrowRate.X * _elapsedFrames);
-		moveFlh.Y = Data->MoveTo.Y + static_cast<int>(Data->GrowRate.Y * _elapsedFrames);
-		moveFlh.Z = Data->MoveTo.Z + static_cast<int>(Data->GrowRate.Z * _elapsedFrames);
-
-		result.MoveDisp = RotateFLH(moveFlh, moveFacing);
+		result.MoveDisp = GetFLHAbsoluteOffset(moveFlh, moveDir); // 官方API，不得修改
 		result.Force = true;
 
 		AdvanceFrame();
@@ -880,11 +850,33 @@ VectorResult VectorEffect::GetVectorResult()
 	frameTargetFlh.Y = Data->TargetFLH.Y + _randomTargetOffset.Y;
 	frameTargetFlh.Z = Data->TargetFLH.Z + _randomTargetOffset.Z;
 
-	CoordStruct frameTargetDisp = WorldRotate(frameTargetFlh, effectiveFacing, effectiveTilt);
+	// TargetFLH → 世界坐标：照搬 AutoWeapon/AttachFire 的成熟管线
+	// 官方API，不得修改：Techno 路径走 Locomotor 矩阵，非Techno 路径走 Point2Dir+GetFLHAbsoluteCoords
 	CoordStruct frameTarget;
-	frameTarget.X = originPos.X + frameTargetDisp.X;
-	frameTarget.Y = originPos.Y + frameTargetDisp.Y;
-	frameTarget.Z = originPos.Z + frameTargetDisp.Z;
+	bool isOnTurret = !Data->OriginIsOnBody;
+	switch (Data->Origin)
+	{
+	case VectorData::VectorOrigin::Launcher:
+		{
+			TechnoClass* pLT = abstract_cast<TechnoClass*>(_pLauncher);
+			if (pLT)
+				frameTarget = GetFLHAbsoluteCoords(pLT, frameTargetFlh, isOnTurret); // 官方API，不得修改
+			else
+				frameTarget = GetFLHAbsoluteCoords(originPos, frameTargetFlh, mainFacingDir); // 官方API，不得修改
+		}
+		break;
+	case VectorData::VectorOrigin::Self:
+		if (pTechno)
+			frameTarget = GetFLHAbsoluteCoords(pTechno, frameTargetFlh, isOnTurret); // 官方API，不得修改
+		else if (pBullet)
+			frameTarget = GetFLHAbsoluteCoords(currentPos, frameTargetFlh, Facing(pBullet, currentPos)); // 官方API，不得修改
+		else
+			frameTarget = GetFLHAbsoluteCoords(originPos, frameTargetFlh, mainFacingDir); // 官方API，不得修改
+		break;
+	default: // Target / Source
+		frameTarget = GetFLHAbsoluteCoords(originPos, frameTargetFlh, mainFacingDir); // 官方API，不得修改
+		break;
+	}
 
 	// --- 方向向量 ---
 	CoordStruct dirVec;

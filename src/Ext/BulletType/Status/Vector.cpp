@@ -38,23 +38,14 @@ void BulletStatus::OnUpdateEnd_Vector(CoordStruct& sourcePos)
 
 	if (VectorForced)
 	{
-		// Force 模式：直接 SetLocation，彻底跳过引擎轨迹计算
-		// 用 OnUpdate 快照的起始位置 + Vector 计算出的位移 = 引擎干预前的正确位置
-		CoordStruct desiredPos;
-		desiredPos.X = _vectorStartPos.X + _vectorResult.MoveDisp.X;
-		desiredPos.Y = _vectorStartPos.Y + _vectorResult.MoveDisp.Y;
-		desiredPos.Z = _vectorStartPos.Z + _vectorResult.MoveDisp.Z;
+		CoordStruct desiredPos = _vectorStartPos + _vectorResult.MoveDisp;
 		pBullet->SetLocation(desiredPos);
 		pBullet->SourceCoords = desiredPos;
 		sourcePos = desiredPos;
 
-		// SyncFacing=no：抛射体 Velocity 锁定到攻击目标方向（画弧时面朝目标）
-		if (!_vectorResult.AllowRotateUnit)
-		{
-			CoordStruct targetCoords = pBullet->GetTargetCoords();
-			pBullet->Velocity.X = targetCoords.X - desiredPos.X;
-			pBullet->Velocity.Y = targetCoords.Y - desiredPos.Y;
-			pBullet->Velocity.Z = targetCoords.Z - desiredPos.Z;
-		}
+		// SyncFacing=yes（默认）：Velocity 设为运动向量，弹体面朝移动方向
+		// SyncFacing=no：不碰 Velocity，引擎开火时已指向目标
+		if (_vectorResult.AllowRotateUnit)
+			pBullet->Velocity = _vectorResult.MoveDisp;
 	}
 }

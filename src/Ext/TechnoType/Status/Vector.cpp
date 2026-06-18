@@ -132,34 +132,28 @@ void TechnoStatus::OnUpdate_Vector()
 			{
 				abstract_cast<InfantryClass*, true>(pTechno)->PlayAnim(Sequence::Crawl);
 			}
-			// 设置翻滚
-			if (_vectorResult.AllowRotateUnit)
+			// SyncFacing=yes：将单位朝向同步为移动方向
+		if (_vectorResult.AllowRotateUnit)
+		{
+			CoordStruct p1 = nextPos;
+			CoordStruct p2 = location;
+			p1.Z = 0;
+			p2.Z = 0;
+			if (p1.DistanceFrom(p2) > 0)
 			{
-				// 设置朝向
-				if (_lastMission == Mission::Move || _lastMission == Mission::AttackMove || pTechno->GetTechnoType()->ConsideredAircraft || !pTechno->IsInAir())
+				DirStruct facingDir = Point2Dir(location, nextPos); // 官方API，不得修改
+				pTechno->PrimaryFacing.SetDesired(facingDir);
+				if (IsJumpjet())
 				{
-					CoordStruct p1 = nextPos;
-					CoordStruct p2 = location;
-					p1.Z = 0;
-					p2.Z = 0;
-					if (p1.DistanceFrom(p2) > 0)
-					{
-						DirStruct facingDir = Point2Dir(location, nextPos);
-						pTechno->PrimaryFacing.SetDesired(facingDir);
-						if (IsJumpjet())
-						{
-							if (JumpjetLocomotionClass* jjLoco = dynamic_cast<JumpjetLocomotionClass*>(pFoot->Locomotor.get()))
-							{
-								jjLoco->LocomotionFacing.SetDesired(facingDir);
-							}
-						}
-						else if (IsAircraft())
-						{
-							pTechno->SecondaryFacing.SetDesired(facingDir);
-						}
-					}
+					if (JumpjetLocomotionClass* jjLoco = dynamic_cast<JumpjetLocomotionClass*>(pFoot->Locomotor.get()))
+						jjLoco->LocomotionFacing.SetDesired(facingDir);
+				}
+				else if (IsAircraft())
+				{
+					pTechno->SecondaryFacing.SetDesired(facingDir);
 				}
 			}
+		}
 		}
 	}
 	else if (wasVectorForced)
