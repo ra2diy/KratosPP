@@ -43,9 +43,27 @@ void BulletStatus::OnUpdateEnd_Vector(CoordStruct& sourcePos)
 		pBullet->SourceCoords = desiredPos;
 		sourcePos = desiredPos;
 
-		// SyncFacing=yes（默认）：Velocity 设为运动向量，弹体面朝移动方向
+		// SyncFacing=yes（默认）：Velocity 设为运动方向，弹体面朝移动方向
 		// SyncFacing=no：不碰 Velocity，引擎开火时已指向目标
-		if (_vectorResult.AllowRotateUnit)
-			pBullet->Velocity = _vectorResult.MoveDisp;
+		if (_vectorResult.AllowRotateUnit && !_vectorResult.MoveDisp.IsEmpty())
+		{
+			double dx = static_cast<double>(_vectorResult.MoveDisp.X);
+			double dy = static_cast<double>(_vectorResult.MoveDisp.Y);
+			double dz = static_cast<double>(_vectorResult.MoveDisp.Z);
+			double moveLen = std::sqrt(dx * dx + dy * dy + dz * dz);
+			if (moveLen > 1e-6)
+			{
+				double speed = static_cast<double>(pBullet->Speed);
+				if (speed <= 0.0)
+					speed = static_cast<double>(pBullet->Velocity.Magnitude());
+				if (speed > 0.0)
+				{
+					double scale = speed / moveLen;
+					pBullet->Velocity.X = static_cast<int>(dx * scale);
+					pBullet->Velocity.Y = static_cast<int>(dy * scale);
+					pBullet->Velocity.Z = static_cast<int>(dz * scale);
+				}
+			}
+		}
 	}
 }

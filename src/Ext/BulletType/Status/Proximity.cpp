@@ -1,4 +1,4 @@
-﻿#include "../BulletStatus.h"
+#include "../BulletStatus.h"
 
 #include <Ext/Helper/Finder.h>
 #include <Ext/Helper/Physics.h>

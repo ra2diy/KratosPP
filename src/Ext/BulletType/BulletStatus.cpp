@@ -1,4 +1,4 @@
-﻿#include "BulletStatus.h"
+#include "BulletStatus.h"
 
 #include <Extension/WarheadTypeExt.h>
 
