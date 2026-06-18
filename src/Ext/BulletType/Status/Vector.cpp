@@ -38,32 +38,29 @@ void BulletStatus::OnUpdateEnd_Vector(CoordStruct& sourcePos)
 
 	if (VectorForced)
 	{
+		// Force=yes：暴力挪移，纯 Vector 控制位置
 		CoordStruct desiredPos = _vectorStartPos + _vectorResult.MoveDisp;
 		pBullet->SetLocation(desiredPos);
 		pBullet->SourceCoords = desiredPos;
 		sourcePos = desiredPos;
 
-		// SyncFacing=yes（默认）：Velocity 设为运动方向，弹体面朝移动方向
-		// SyncFacing=no：不碰 Velocity，引擎开火时已指向目标
+		// 成熟机制，别乱动：弹体 Force 挪移纯靠 SetLocation
+		// SyncFacing=yes：黑洞同款 GetBulletVelocity，弹体面朝移动方向
+		// SyncFacing=no：不碰 Velocity，引擎默认指向攻击目标
 		if (_vectorResult.AllowRotateUnit && !_vectorResult.MoveDisp.IsEmpty())
 		{
-			double dx = static_cast<double>(_vectorResult.MoveDisp.X);
-			double dy = static_cast<double>(_vectorResult.MoveDisp.Y);
-			double dz = static_cast<double>(_vectorResult.MoveDisp.Z);
-			double moveLen = std::sqrt(dx * dx + dy * dy + dz * dz);
-			if (moveLen > 1e-6)
-			{
-				double speed = static_cast<double>(pBullet->Speed);
-				if (speed <= 0.0)
-					speed = static_cast<double>(pBullet->Velocity.Magnitude());
-				if (speed > 0.0)
-				{
-					double scale = speed / moveLen;
-					pBullet->Velocity.X = static_cast<int>(dx * scale);
-					pBullet->Velocity.Y = static_cast<int>(dy * scale);
-					pBullet->Velocity.Z = static_cast<int>(dz * scale);
-				}
-			}
+			pBullet->Velocity = GetBulletVelocity(_vectorStartPos, desiredPos);
 		}
+	}
+	else if (!_vectorResult.MoveDisp.IsEmpty())
+	{
+		// Force=no：引擎轨迹 + Vector 位移叠加，原版引擎也介入
+		CoordStruct enginePos = pBullet->GetCoords();
+		enginePos.X += _vectorResult.MoveDisp.X;
+		enginePos.Y += _vectorResult.MoveDisp.Y;
+		enginePos.Z += _vectorResult.MoveDisp.Z;
+		pBullet->SetLocation(enginePos);
+		pBullet->SourceCoords = enginePos;
+		sourcePos = enginePos;
 	}
 }

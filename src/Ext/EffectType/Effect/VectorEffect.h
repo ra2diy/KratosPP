@@ -141,4 +141,6 @@ public:
 	CoordStruct _originTargetOffset{};    // 圆心 Target 随机偏移
 	CoordStruct _prevCircleCenter{};      // 上一帧圆心位置（计算叠加位移用）
 	int _movementFrames = 0;              // 有效运动帧数（不含 InitialDelay/TimeStep 跳帧）
+	double _arcRotation = 0.0;           // 弧面旋转角（OnStart 解析，仅 ReachTarget）
+	int _arcHeight = 0;                 // 弧高（OnStart 解析随机后写入）
 };

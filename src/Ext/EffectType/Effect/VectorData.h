@@ -153,8 +153,13 @@ public:
 
 	bool ReachTarget = false;           // 与 TargetFLH 配合使用
 	int ArcHeight = 0;                  // ReachTarget 弧高（lepton），0=直线，正=上凸
+	int ArcRandomHeightMin = 0;         // 随机弧高下限
+	int ArcRandomHeightMax = 0;         // 随机弧高上限
+	double ArcRotation = 0.0;           // 弧面旋转角（°），0=默认朝上，顺时针
+	double ArcRandomRotationMin = 0.0;  // 随机旋转下限
+	double ArcRandomRotationMax = 0.0;  // 随机旋转上限
 	bool AllowFallingDestroy = false;   // 向量结束时摔死
-	int FallingDestroyHeight = 2 * Unsorted::LevelHeight;   // 摔死高度
+	int FallingDestroyHeight = Unsorted::LevelHeight;   // 摔死高度
 
 	// ========================================================================
 	// 内部
@@ -323,6 +328,11 @@ public:
 		ParseMinMax(targetOffsetHStr, TargetOffsetHMin, TargetOffsetHMax);
 		ReachTarget = reader->Get(title + "ReachTarget", ReachTarget);
 		ArcHeight = reader->Get(title + "ArcHeight", 0);
+		std::string arcRandomHeightStr = reader->Get(title + "ArcRandomHeight", std::string{ "" });
+		ParseMinMax(arcRandomHeightStr, ArcRandomHeightMin, ArcRandomHeightMax);
+		ArcRotation = reader->Get(title + "ArcRotation", 0.0);
+		std::string arcRandomRotationStr = reader->Get(title + "ArcRandomRotation", std::string{ "" });
+		ParseMinMaxDouble(arcRandomRotationStr, ArcRandomRotationMin, ArcRandomRotationMax);
 		AllowFallingDestroy = reader->Get(title + "AllowFallingDestroy", AllowFallingDestroy);
 		FallingDestroyHeight = reader->Get(title + "FallingDestroyHeight", FallingDestroyHeight);
 
@@ -335,10 +345,26 @@ public:
 		Acceleration = reader->Get(title + "Acceleration", Acceleration);
 
 		Enable = !MoveTo.IsEmpty() || !TargetFLH.IsEmpty() || Freeze
-			|| (CircleRadius > 0) || (CircleSpeed > 0) || (CircleAnglePerStep > 0.0)
+			|| (CircleRadius > 0) || (CircleSpeed != 0) || (CircleAnglePerStep > 0.0)
 			|| (CircleRandomRadiusMax > CircleRandomRadiusMin)
 			|| (CircleRandomAngleMax > CircleRandomAngleMin)
 			|| (CircleRandomAngleMax2 > CircleRandomAngleMin2);
+	}
+
+	static void ParseMinMaxDouble(const std::string& str, double& min, double& max)
+	{
+		if (str.empty()) return;
+		size_t commaPos = str.find(',');
+		if (commaPos != std::string::npos)
+		{
+			min = std::stod(str.substr(0, commaPos));
+			max = std::stod(str.substr(commaPos + 1));
+		}
+		else
+		{
+			min = std::stod(str);
+			max = min;
+		}
 	}
 
 private:
@@ -446,6 +472,11 @@ private:
 			.Process(this->TargetOffsetHMax)
 			.Process(this->ReachTarget)
 			.Process(this->ArcHeight)
+			.Process(this->ArcRandomHeightMin)
+			.Process(this->ArcRandomHeightMax)
+			.Process(this->ArcRotation)
+			.Process(this->ArcRandomRotationMin)
+			.Process(this->ArcRandomRotationMax)
 			.Process(this->AllowFallingDestroy)
 			.Process(this->FallingDestroyHeight)
 

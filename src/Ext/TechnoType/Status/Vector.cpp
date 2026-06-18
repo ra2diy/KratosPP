@@ -1,4 +1,4 @@
-﻿#include "../TechnoStatus.h"
+#include "../TechnoStatus.h"
 
 #include <JumpjetLocomotionClass.h>
 
@@ -132,7 +132,7 @@ void TechnoStatus::OnUpdate_Vector()
 			{
 				abstract_cast<InfantryClass*, true>(pTechno)->PlayAnim(Sequence::Crawl);
 			}
-			// SyncFacing=yes：将单位朝向同步为移动方向
+			// 成熟机制，别乱动：单位 SyncFacing 朝向同步
 		if (_vectorResult.AllowRotateUnit)
 		{
 			CoordStruct p1 = nextPos;
