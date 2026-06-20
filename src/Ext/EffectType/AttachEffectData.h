@@ -139,6 +139,9 @@ public:
 	bool FromTransporter = true; // 弹头附加，乘客附加时，视为载具
 	bool ReceiverOwn = false; // 弹头附加，属于被赋予对象
 
+	bool TreatSellingAsDeath = true; // 将建筑出售视为死亡
+	bool StartAfterBuildup = true; // 建筑拔起期间不生效
+
 	CumulativeMode Cumulative = CumulativeMode::NO; // 可叠加
 	int MaxStack = -1; // 叠加上限
 	bool ResetDurationOnReapply = false; // 不可叠加时，重复获得时是否重置计时器
@@ -383,6 +386,8 @@ public:
 			PenetratesIronCurtain = reader->Get("PenetratesIronCurtain", PenetratesIronCurtain);
 			FromTransporter = reader->Get("FromTransporter", FromTransporter);
 			ReceiverOwn = reader->Get("ReceiverOwn", ReceiverOwn);
+			TreatSellingAsDeath = reader->Get("TreatSellingAsDeath", TreatSellingAsDeath);
+			StartAfterBuildup = reader->Get("StartAfterBuildup", StartAfterBuildup);
 
 			Cumulative = reader->Get("Cumulative", Cumulative);
 			MaxStack = reader->Get("MaxStack", MaxStack);
@@ -432,6 +437,8 @@ public:
 			.Process(this->PenetratesIronCurtain)
 			.Process(this->FromTransporter)
 			.Process(this->ReceiverOwn)
+			.Process(this->TreatSellingAsDeath)
+			.Process(this->StartAfterBuildup)
 
 			.Process(this->Cumulative)
 			.Process(this->MaxStack)
