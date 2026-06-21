@@ -168,7 +168,7 @@ bool AttachEffectScript::OwnerIsDead()
 {
 	if (!AEData.TreatSellingAsDeath && pTechno)
 	{
-		if (auto const pBuilding = abstract_cast<BuildingClass*, true>(pTechno))
+		if (auto const pBuilding = abstract_cast<BuildingClass*>(pTechno))
 		{
 			if (pBuilding->CurrentMission == Mission::Selling)
 				return false;
@@ -312,7 +312,7 @@ bool AttachEffectScript::IsAlive()
 		{
 			Deactivate();
 		}
-		if (auto const pBuilding = abstract_cast<BuildingClass*, true>(pTechno))
+		if (auto const pBuilding = abstract_cast<BuildingClass*>(pTechno))
 		{
 			if (pBuilding->CurrentMission == Mission::Selling)
 			{
