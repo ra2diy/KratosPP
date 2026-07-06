@@ -1,4 +1,4 @@
-﻿#include "AutoWeaponEffect.h"
+#include "AutoWeaponEffect.h"
 
 #include <Ext/Helper/Finder.h>
 #include <Ext/Helper/FLH.h>
@@ -21,17 +21,6 @@ void AutoWeaponEffect::SetupFakeTargetToBullet(int index, int burst, BulletClass
 		{
 			status->SetFakeTarget(pObj);
 		}
-	}
-}
-
-static CoordStruct s_bulletMoveTo{};
-
-void AutoWeaponEffect::SetupBulletAtProjectile(int index, int burst, BulletClass*& pBullet, AbstractClass*& pTarget)
-{
-	if (!s_bulletMoveTo.IsEmpty())
-	{
-		pBullet->SetLocation(s_bulletMoveTo);
-		s_bulletMoveTo = {};
 	}
 }
 
@@ -108,13 +97,14 @@ bool AutoWeaponEffect::TryGetShooterAndTarget(TechnoClass* pReceiverOwner, House
 	// 设定目标
 	if (Data->IsAttackerMark)
 	{
+		// IsAttackerMark=yes时ReceiverAttack和ReceiverOwnBullet默认值为no
+		// 若无显式修改，此时应为攻击者朝AE附属对象进行攻击
+		// 只有显式修改 ReceiverAttack时，说明是由AE附属对象朝向攻击者攻击
+		// 修改目标为攻击者
 		if (Data->ReceiverAttack)
 		{
-			// 来源是抛射体广播：目标设为抛射体坐标（通过 warheadLocation 传入）
-			if (AE->FromWarhead)
-				pTarget = nullptr; // 触发假目标，MakeFakeTarget 会用 WarheadLocation
-			else
-				pTarget = AE->pSource;
+			pTarget = AE->pSource;
+
 		}
 	}
 	else if (Data->FireToTarget)
@@ -136,35 +126,27 @@ bool AutoWeaponEffect::TryGetShooterAndTarget(TechnoClass* pReceiverOwner, House
 ObjectClass* AutoWeaponEffect::MakeFakeTarget(HouseClass* pHouse, ObjectClass* pShooter, CoordStruct fireFLH, CoordStruct targetFLH)
 {
 	CoordStruct targetPos;
-	// 抛射体广播：目标基于抛射体坐标（WarheadLocation）
-	if (AE->FromWarhead)
+	CoordStruct location = pShooter->GetCoords();
+	DirStruct dir;
+	// 确定假想敌的位置
+	if (Data->IsOnWorld)
 	{
-		targetPos = AE->WarheadLocation + targetFLH;
+		// 绑定世界坐标，以射手为参考移动位置
+		targetPos = GetFLHAbsoluteCoords(location, targetFLH, dir);
 	}
 	else
 	{
-		CoordStruct location = pShooter->GetCoords();
-		DirStruct dir;
-		// 确定假想敌的位置
-		if (Data->IsOnWorld)
+		TechnoClass* pShooterTechno = nullptr;
+		BulletClass* pShooterBullet = nullptr;
+		if (CastToTechno(pShooter, pShooterTechno))
 		{
-			// 绑定世界坐标，以射手为参考移动位置
-			targetPos = GetFLHAbsoluteCoords(location, targetFLH, dir);
+			// 以射手为参考获取相对位置
+			targetPos = GetFLHAbsoluteCoords(pShooterTechno, targetFLH, Data->IsOnTurret);
 		}
-		else
+		else if (CastToBullet(pShooter, pShooterBullet))
 		{
-			TechnoClass* pShooterTechno = nullptr;
-			BulletClass* pShooterBullet = nullptr;
-			if (CastToTechno(pShooter, pShooterTechno))
-			{
-				// 以射手为参考获取相对位置
-				targetPos = GetFLHAbsoluteCoords(pShooterTechno, targetFLH, Data->IsOnTurret);
-			}
-			else if (CastToBullet(pShooter, pShooterBullet))
-			{
-				dir = Facing(pBullet, location);
-				targetPos = GetFLHAbsoluteCoords(location, targetFLH, dir);
-			}
+			dir = Facing(pBullet, location);
+			targetPos = GetFLHAbsoluteCoords(location, targetFLH, dir);
 		}
 	}
 	if (!targetPos.IsEmpty())
@@ -301,11 +283,6 @@ void AutoWeaponEffect::OnUpdate()
 						pTarget = MakeFakeTarget(pReceiverHouse, pShooter, data.FireFLH, data.TargetFLH);
 						callback = SetupFakeTargetToBullet;
 					}
-					else if (AE->FromWarhead && Data->IsAttackerMark && !Data->ReceiverAttack)
-					{
-						s_bulletMoveTo = AE->WarheadLocation;
-						callback = SetupBulletAtProjectile;
-					}
 					if (pTarget)
 					{
 						// 如果攻击者是子机，调整攻击者为母鸡
@@ -343,13 +320,6 @@ void AutoWeaponEffect::OnUpdate()
 					std::string weaponType = data.WeaponTypes[index];
 					weaponTypes.push_back(weaponType);
 				}
-				// int max = (int)data.WeaponTypes.size();
-				// for (int i = 0; i < randomNum; i++)
-				// {
-				// 	int index = Random::RandomRanged(0, max - 1);
-				// 	std::string weaponType = data.WeaponTypes[index];
-				// 	weaponTypes.push_back(weaponType);
-				// }
 			}
 			else
 			{
@@ -380,11 +350,6 @@ void AutoWeaponEffect::OnUpdate()
 							{
 								pTempTarget = MakeFakeTarget(pReceiverHouse, pShooter, data.FireFLH, data.TargetFLH);
 								callback = SetupFakeTargetToBullet;
-							}
-							else if (AE->FromWarhead && Data->IsAttackerMark && !Data->ReceiverAttack)
-							{
-								s_bulletMoveTo = AE->WarheadLocation;
-								callback = SetupBulletAtProjectile;
 							}
 							if (pTempTarget)
 							{
