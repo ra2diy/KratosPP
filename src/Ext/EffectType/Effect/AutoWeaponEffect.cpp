@@ -24,7 +24,6 @@ void AutoWeaponEffect::SetupFakeTargetToBullet(int index, int burst, BulletClass
 	}
 }
 
-
 bool AutoWeaponEffect::CheckROF(WeaponTypeClass* pWeapon, WeaponTypeExt::TypeData* weaponData)
 {
 	bool canFire = false;
@@ -276,28 +275,29 @@ void AutoWeaponEffect::OnUpdate()
 				WeaponTypeExt::TypeData* weaponData = GetTypeData<WeaponTypeExt, WeaponTypeExt::TypeData>(pWeapon);
 				if (CheckROF(pWeapon, weaponData))
 				{
-					FireBulletToTarget callback = nullptr;
-					// 可以发射
-					if (needFakeTarget && pReceiverHouse)
-					{
-						pTarget = MakeFakeTarget(pReceiverHouse, pShooter, data.FireFLH, data.TargetFLH);
-						callback = SetupFakeTargetToBullet;
-					}
-					if (pTarget)
-					{
-						// 如果攻击者是子机，调整攻击者为母鸡
-						if (pAttacker && pAttacker->SpawnOwner && Data->AttackFromSpawnOwner)
+						FireBulletToTarget callback = nullptr;
+						// 可以发射
+						if (needFakeTarget && pReceiverHouse)
 						{
-							pAttacker = pAttacker->SpawnOwner;
+							pTarget = MakeFakeTarget(pReceiverHouse, pShooter, data.FireFLH, data.TargetFLH);
+							callback = SetupFakeTargetToBullet;
 						}
-						// 发射武器
-						weaponLaunch = pAttachFire->FireCustomWeapon(pAttacker, pTarget, pAttackingHouse,
-							pWeapon, *weaponData,
-							data.FireFLH, !Data->IsOnTurret, Data->IsOnTarget,
-							callback);
-						if (weaponLaunch)
-							ResetROF(pWeapon, weaponData, rofMultip);
-					}
+						if (pTarget)
+						{
+							// 如果攻击者是子机，调整攻击者为母鸡
+							if (pAttacker && pAttacker->SpawnOwner && Data->AttackFromSpawnOwner)
+							{
+								pAttacker = pAttacker->SpawnOwner;
+							}
+							// 发射武器
+							weaponLaunch = pAttachFire->FireCustomWeapon(pAttacker, pTarget, pAttackingHouse,
+								pWeapon, *weaponData,
+								data.FireFLH, !Data->IsOnTurret, Data->IsOnTarget,
+								callback,
+								AE->FromWarhead ? AE->WarheadLocation : CoordStruct::Empty);
+							if (weaponLaunch)
+								ResetROF(pWeapon, weaponData, rofMultip);
+						}
 				}
 			}
 		}
@@ -357,7 +357,8 @@ void AutoWeaponEffect::OnUpdate()
 								weaponLaunch = pAttachFire->FireCustomWeapon(pAttacker, pTempTarget, pAttackingHouse,
 									pWeapon, *weaponData,
 									data.FireFLH, !Data->IsOnTurret, Data->IsOnTarget,
-									callback);
+									callback,
+									AE->FromWarhead ? AE->WarheadLocation : CoordStruct::Empty);
 								if (weaponLaunch)
 									ResetROF(pWeapon, weaponData, rofMultip);
 							}
