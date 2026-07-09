@@ -328,7 +328,7 @@ public:
 	 */
 	bool FireCustomWeapon(TechnoClass* pAttacker, AbstractClass* pTarget, HouseClass* pAttackingHouse,
 		WeaponTypeClass* pWeapon, WeaponTypeExt::TypeData weaponTypeData,
-		CoordStruct flh, bool isOnBody = false, bool isOnTarget = false, FireBulletToTarget callback = nullptr);
+		CoordStruct flh, bool isOnBody = false, bool isOnTarget = false, FireBulletToTarget callback = nullptr, CoordStruct sourcePos = CoordStruct::Empty);
 
 	/**
 	 *@brief 发射自定义武器
@@ -346,7 +346,7 @@ public:
 	 */
 	bool FireCustomWeapon(TechnoClass* pAttacker, AbstractClass* pTarget, HouseClass* pAttackingHouse,
 		std::string weaponId,
-		CoordStruct flh, bool isOnBody = false, bool isOnTarget = false, FireBulletToTarget callback = nullptr);
+		CoordStruct flh, bool isOnBody = false, bool isOnTarget = false, FireBulletToTarget callback = nullptr, CoordStruct sourcePos = CoordStruct::Empty);
 
 	virtual void OnUpdate() override;
 

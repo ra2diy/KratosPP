@@ -14,7 +14,7 @@ void AttachFire::FireOwnWeapon(int weaponIdx, AbstractClass* pTarget, int delay,
 
 bool AttachFire::FireCustomWeapon(TechnoClass* pAttacker, AbstractClass* pTarget, HouseClass* pAttackingHouse,
 	WeaponTypeClass* pWeapon, WeaponTypeExt::TypeData weaponTypeData,
-	CoordStruct flh, bool isOnBody, bool isOnTarget, FireBulletToTarget callback)
+	CoordStruct flh, bool isOnBody, bool isOnTarget, FireBulletToTarget callback, CoordStruct sourcePos)
 {
 	// 不允许朝这个目标发射
 	if (!weaponTypeData.CanFireToTarget(pTarget, abstract_cast<ObjectClass*>(pObject), pAttacker, pAttackingHouse, pWeapon))
@@ -78,20 +78,23 @@ bool AttachFire::FireCustomWeapon(TechnoClass* pAttacker, AbstractClass* pTarget
 		{
 			// 直接发射武器
 			DirStruct facingDir{};
-			CoordStruct sourcePos;
+			CoordStruct srcPos = sourcePos;
 			CoordStruct targetPos = pTarget->GetCoords();
-			if (isOnTarget)
+			if (srcPos.IsEmpty())
 			{
-				CoordStruct location = pObject->GetCoords(); // 射手的位置
-				sourcePos = GetSourcePosOnTarget(location, targetPos, flh, facingDir);
-			}
-			else
-			{
-				sourcePos = GetSourcePos(flh, facingDir);
+				if (isOnTarget)
+				{
+					CoordStruct location = pObject->GetCoords(); // 射手的位置
+					srcPos = GetSourcePosOnTarget(location, targetPos, flh, facingDir);
+				}
+				else
+				{
+					srcPos = GetSourcePos(flh, facingDir);
+				}
 			}
 			// 扇形攻击
 			RadialFire radialFire{ facingDir, burst, weaponTypeData.RadialAngle };
-			BulletVelocity bulletVelocity = GetBulletVelocity(sourcePos, targetPos);
+			BulletVelocity bulletVelocity = GetBulletVelocity(srcPos, targetPos);
 			for (int i = 0; i < burst; i++)
 			{
 				if (weaponTypeData.RadialFire)
@@ -99,11 +102,11 @@ bool AttachFire::FireCustomWeapon(TechnoClass* pAttacker, AbstractClass* pTarget
 					bulletVelocity = radialFire.GetBulletVelocity(i, weaponTypeData.RadialZ);
 				}
 				// 发射武器，全射出去
-				BulletClass* pBullet = FireBulletTo(abstract_cast<ObjectClass*>(pObject), pAttacker, pTarget, pAttackingHouse, pWeapon, sourcePos, targetPos, bulletVelocity, flh, !isOnBody);
+				BulletClass* pBullet = FireBulletTo(abstract_cast<ObjectClass*>(pObject), pAttacker, pTarget, pAttackingHouse, pWeapon, srcPos, targetPos, bulletVelocity, flh, !isOnBody);
 				// 记录下子机发射器的开火坐标
 				if (pWeapon->Spawner)
 				{
-					SpawnerBurstFLH[i] = sourcePos;
+					SpawnerBurstFLH[i] = srcPos;
 				}
 				if (callback != nullptr)
 				{
@@ -118,14 +121,14 @@ bool AttachFire::FireCustomWeapon(TechnoClass* pAttacker, AbstractClass* pTarget
 
 bool AttachFire::FireCustomWeapon(TechnoClass* pAttacker, AbstractClass* pTarget, HouseClass* pAttackingHouse,
 	std::string weaponId,
-	CoordStruct flh, bool isOnBody, bool isOnTarget, FireBulletToTarget callback)
+	CoordStruct flh, bool isOnBody, bool isOnTarget, FireBulletToTarget callback, CoordStruct sourcePos)
 {
 	bool isFire = false;
 	WeaponTypeClass* pWeapon = WeaponTypeClass::Find(weaponId.c_str());
 	if (pWeapon)
 	{
 		WeaponTypeExt::TypeData weaponTypeData = *GetTypeData<WeaponTypeExt, WeaponTypeExt::TypeData>(pWeapon);
-		isFire = FireCustomWeapon(pAttacker, pTarget, pAttackingHouse, pWeapon, weaponTypeData, flh, isOnBody, isOnTarget, callback);
+		isFire = FireCustomWeapon(pAttacker, pTarget, pAttackingHouse, pWeapon, weaponTypeData, flh, isOnBody, isOnTarget, callback, sourcePos);
 	}
 	return isFire;
 }
