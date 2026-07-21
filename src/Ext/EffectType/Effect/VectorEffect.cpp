@@ -727,12 +727,12 @@ VectorResult VectorEffect::GetVectorResult()
 				if (Data->OriginCircleMaxRadius > 0 && tr > Data->OriginCircleMaxRadius) tr = Data->OriginCircleMaxRadius;
 				if (Data->OriginCircleMinRadius > 0 && tr < Data->OriginCircleMinRadius) tr = Data->OriginCircleMinRadius;
 				// 角步长：优先线速度/半径推算，否则用固定角速度
-				double angleStep = Data->OriginCircleAnglePerStep;
+				double originAngleStep = Data->OriginCircleAnglePerStep;
 				if (_originCircleSpeed != 0 && tr > 0)
-					angleStep = Math::rad2deg(_originCircleSpeed / tr);
+					originAngleStep = Math::rad2deg(_originCircleSpeed / tr);
 				// Lissajous=yes: 累积大角旋转（增减边震荡），no: 每帧仅增量旋转（平滑行星）
-				_originCircleAngle += angleStep;
-				double r = Data->OriginLissajous ? Math::deg2rad(_originCircleAngle) : Math::deg2rad(angleStep);
+				_originCircleAngle += originAngleStep;
+				double r = Data->OriginLissajous ? Math::deg2rad(_originCircleAngle) : Math::deg2rad(originAngleStep);
 				double ca = std::cos(r), sa = std::sin(r);
 				// 当前圆心相对基座的偏移在 LH 平面投影
 				double dx = (double)_originOffset.X, dy = (double)_originOffset.Y, dz = (double)_originOffset.Z;
