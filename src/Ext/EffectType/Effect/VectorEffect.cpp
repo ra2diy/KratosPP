@@ -25,9 +25,11 @@ void VectorEffect::OnStart()
 	_active = true;
 	_elapsedFrames = 0;
 	_moveFrame = 0;
+	_movementFrames = 0;
 	_currentAngle = 0.0;
-	_prevCirclePos = pObject->GetCoords();
+	// _prevCirclePos = pObject->GetCoords();  // [DEAD] 从未读取
 	_effectiveTimeStep = Data->TimeStep;
+	_prevCircleCenter = pObject->GetCoords();
 
 	_initialLocation = pObject->GetCoords();
 	_totalDuration = AE->GetDuration() / _effectiveTimeStep;
@@ -45,11 +47,17 @@ void VectorEffect::OnStart()
 	if (Data->ArcRandomHeightMax > Data->ArcRandomHeightMin)
 		_arcHeight = Random::RandomRanged(Data->ArcRandomHeightMin, Data->ArcRandomHeightMax);
 
+	_arcPeakPercent = Data->ArcPeakPercent / 100.0;
+	if (Data->ArcPeakRandomPercent.X < Data->ArcPeakRandomPercent.Y)
+		_arcPeakPercent = Random::RandomRanged(Data->ArcPeakRandomPercent.X, Data->ArcPeakRandomPercent.Y) / 100.0;
+	if (_arcPeakPercent <= 0.0) _arcPeakPercent = 0.5;
+	if (_arcPeakPercent >= 1.0) _arcPeakPercent = 0.5;
+
 	// --- 初始速度 ---
 	_currentSpeed = 0.0;
-	if (Data->InitialSpeed >= 0)
+	if (Data->LinearSpeed >= 0)
 	{
-		_currentSpeed = static_cast<double>(Data->InitialSpeed);
+		_currentSpeed = static_cast<double>(Data->LinearSpeed);
 	}
 	else if (pTechno)
 	{
@@ -308,13 +316,13 @@ VectorResult VectorEffect::GetVectorResult()
 	}
 	_movementFrames++;
 
-	// 成熟机制，别乱动：法线旋转每运动帧累加角速度
-	if (ShouldMoveThisFrame())
-	{
+	// [REDUNDANT] 此处 ShouldMoveThisFrame() 必定为 true（310行已 return）
+	// if (ShouldMoveThisFrame())
+	// {
 		_normalRotF += _normalStepF;
 		_normalRotL += _normalStepL;
 		_normalRotH += _normalStepH;
-	}
+	// }
 
 	CoordStruct currentPos = pObject->GetCoords();
 
@@ -447,7 +455,7 @@ VectorResult VectorEffect::GetVectorResult()
 	// ========================================================================
 	// 成熟机制，别乱动 — 模式 C: Circle（独立圆周，圆心=Origin，三选二参数）
 	// ========================================================================
-	bool hasCircle = Data->CircleRadius > 0 || Data->CircleSpeed != 0 || Data->CircleAnglePerStep > 0.0
+	bool hasCircle = Data->CircleRadius > 0 || Data->CircleAnglePerStep > 0.0
 		|| (Data->CircleRandomRadiusMax > Data->CircleRandomRadiusMin)
 		|| (Data->CircleRandomAngleMax > Data->CircleRandomAngleMin);
 	if (hasCircle)
@@ -463,7 +471,17 @@ VectorResult VectorEffect::GetVectorResult()
 
 		// 动态线速：首帧初始化，每帧叠加加速度
 		if (_elapsedFrames == 0)
+		{
 			_currentCircleSpeed = static_cast<double>(Data->CircleSpeed);
+			// 无速度参数时，兜底取抛射体/单位自身速度
+			if (_currentCircleSpeed <= 0.0)
+			{
+				if (pBullet)
+					_currentCircleSpeed = pBullet->Speed;
+				else if (pTechno)
+					_currentCircleSpeed = pTechno->GetTechnoType()->Speed;
+			}
+		}
 		_currentCircleSpeed += Data->CircleSpeedAcceleration;
 		if (Data->CircleMaxSpeed != 0 && _currentCircleSpeed > Data->CircleMaxSpeed)
 			_currentCircleSpeed = static_cast<double>(Data->CircleMaxSpeed);
@@ -491,9 +509,10 @@ VectorResult VectorEffect::GetVectorResult()
 		double speed = _currentCircleSpeed;
 		double angleStep = _currentCircleAngle;
 
-		if (speed <= 0.0 && angleStep > 0.0)
+		// 三选二：半径 + 角速度优先，两者都有时速率由角速度推算（忽略显式 CircleSpeed）
+		if (angleStep > 0.0)
 			speed = calcRadius * Math::deg2rad(angleStep);
-		else if (angleStep <= 0.0 && speed > 0.0)
+		else if (speed > 0.0)
 			angleStep = Math::rad2deg(speed / calcRadius);
 
 		// 圆心 = Origin + CircleOrigin 偏移（世界坐标系）
@@ -508,7 +527,7 @@ VectorResult VectorEffect::GetVectorResult()
 
 		// 圆心移动：Vector.Origin.* 系统
 		if (!Data->OriginMoveTo.IsEmpty() || !Data->OriginTargetFLH.IsEmpty()
-			|| Data->OriginCircleRadius >= 0 || Data->OriginCircleSpeed != 0 || Data->OriginCircleAnglePerStep != 0)
+			|| Data->OriginCircleRadius >= 0 || Data->OriginCircleSpeed != 0 || Data->OriginLinearSpeed >= 0 || Data->OriginCircleAnglePerStep != 0)
 		{
 			// 基座：默认 originPos，OriginOrigin 可替换为独立参考系
 			CoordStruct baseCenter = originPos;
@@ -559,7 +578,7 @@ VectorResult VectorEffect::GetVectorResult()
 				_originOffset = circleCenter - baseCenter;
 				// Circle 初始化
 				_originCircleRadius = Data->OriginCircleRadius;
-				_originCircleSpeed = Data->OriginCircleSpeed;
+				_originCircleSpeed = Data->OriginLinearSpeed >= 0 ? Data->OriginLinearSpeed : Data->OriginCircleSpeed;
 				_originCircleAngle = 0.0; // 初始相位
 				// 随机
 				if (Data->OriginCircleRandomRadiusMax > Data->OriginCircleRandomRadiusMin)
@@ -587,7 +606,7 @@ VectorResult VectorEffect::GetVectorResult()
 				_originNormalStepL = res(Data->OriginNormalLAnglePerStep, Data->OriginNormalLAngleRMin, Data->OriginNormalLAngleRMax, Data->OriginNormalLAngleRMin2, Data->OriginNormalLAngleRMax2);
 				_originNormalStepH = res(Data->OriginNormalHAnglePerStep, Data->OriginNormalHAngleRMin, Data->OriginNormalHAngleRMax, Data->OriginNormalHAngleRMin2, Data->OriginNormalHAngleRMax2);
 				if (!Data->OriginNormalVector.IsEmpty() && !_originCircleRadius)
-					_originCircleRadius = effectiveFacing > -1 ? 0 : -1;
+					_originCircleRadius = -1;  // 有 NormalVector 但无显式半径，自动取当前距离
 				// 无 NormalVector 时从 Origin 参考系取 facing
 				if (Data->OriginNormalVector.IsEmpty())
 				{
@@ -643,7 +662,7 @@ VectorResult VectorEffect::GetVectorResult()
 			{
 				// Speed / ReachTarget
 				if (_originElapsed == 0)
-					_originSpeed = Data->OriginInitialSpeed >= 0 ? Data->OriginInitialSpeed : (pTechno ? pTechno->GetTechnoType()->Speed : 40.0);
+					_originSpeed = Data->OriginLinearSpeed >= 0 ? Data->OriginLinearSpeed : (pTechno ? pTechno->GetTechnoType()->Speed : 40.0);
 
 				CoordStruct targetWorld = GetFLHAbsoluteCoords(baseCenter, Data->OriginTargetFLH + _originTargetOffset, oFacingDir); // 官方API，不得修改
 				if (Data->OriginReachTarget)
@@ -680,7 +699,25 @@ VectorResult VectorEffect::GetVectorResult()
 					int dx = targetWorld.X - originCenter.X, dy = targetWorld.Y - originCenter.Y, dz = targetWorld.Z - originCenter.Z;
 					double dist = std::sqrt((double)dx*dx + dy*dy + dz*dz);
 					if (dist < 1.0) disp = {};
+					else if (Data->OriginSpeedEndOnReach && _originSpeed >= dist)
+					{
+						disp.X = dx; disp.Y = dy; disp.Z = dz;
+						Deactivate();
+					}
 					else { double s = _originSpeed / dist; disp.X = (int)(dx*s); disp.Y = (int)(dy*s); disp.Z = (int)(dz*s); }
+
+					// 弧高增量叠加（简化抛物线，与 OriginReachTarget 一致）
+					if (Data->OriginArcHeight != 0 && dist >= 1.0)
+					{
+						if (_originArcTotalDist < 0.0)
+							_originArcTotalDist = dist;
+						double t = (_originArcTotalDist > 1e-6) ? 1.0 - dist / _originArcTotalDist : 0.0;
+						if (t < 0.0) t = 0.0; else if (t > 1.0) t = 1.0;
+						double arcThis = 4.0 * Data->OriginArcHeight * t * (1.0 - t);
+						double arcDelta = arcThis - _originPrevArcOffset;
+						_originPrevArcOffset = arcThis;
+						disp.Z += static_cast<int>(arcDelta);
+					}
 				}
 			}
 			else // Circle 模式
@@ -691,8 +728,8 @@ VectorResult VectorEffect::GetVectorResult()
 				if (Data->OriginCircleMinRadius > 0 && tr < Data->OriginCircleMinRadius) tr = Data->OriginCircleMinRadius;
 				// 角步长：优先线速度/半径推算，否则用固定角速度
 				double angleStep = Data->OriginCircleAnglePerStep;
-				if (Data->OriginCircleSpeed != 0 && tr > 0)
-					angleStep = Math::rad2deg(Data->OriginCircleSpeed / tr);
+				if (_originCircleSpeed != 0 && tr > 0)
+					angleStep = Math::rad2deg(_originCircleSpeed / tr);
 				// Lissajous=yes: 累积大角旋转（增减边震荡），no: 每帧仅增量旋转（平滑行星）
 				_originCircleAngle += angleStep;
 				double r = Data->OriginLissajous ? Math::deg2rad(_originCircleAngle) : Math::deg2rad(angleStep);
@@ -726,12 +763,12 @@ VectorResult VectorEffect::GetVectorResult()
 		}
 
 	// 圆心位移叠加：Circle 模式追踪圆心→调整 currentPos
-	CoordStruct centerDelta;
+	CoordStruct centerDelta{ 0, 0, 0 };  // 初始化避免 C4701 警告
 	bool useCenterTracking = false;
 	if (_prevCircleCenter.X || _prevCircleCenter.Y || _prevCircleCenter.Z)
 	{
 		centerDelta = circleCenter - _prevCircleCenter;
-		if (!Data->OriginLissajous && (Data->OriginCircleRadius >= 0 || Data->OriginCircleSpeed != 0 || Data->OriginCircleAnglePerStep != 0.0))
+		if (!Data->OriginLissajous && (Data->OriginCircleRadius >= 0 || Data->OriginCircleSpeed != 0 || Data->OriginLinearSpeed >= 0 || Data->OriginCircleAnglePerStep != 0.0))
 			useCenterTracking = true;
 	}
 	_prevCircleCenter = circleCenter;
@@ -948,23 +985,23 @@ VectorResult VectorEffect::GetVectorResult()
 			resultDisp.Y = static_cast<int>(dirVec.Y / dirLen * adjustedSpeed);
 			resultDisp.Z = static_cast<int>(dirVec.Z / dirLen * adjustedSpeed);
 
-			// 抛物线弧高（支持 ArcRotation 旋转弧面）
+			// 抛物线弧高（基于初始位置，支持 ArcPeakPercent / ArcRotation）
 			if (_arcHeight != 0)
 			{
-				double t = static_cast<double>(_movementFrames - 1) / effectiveDuration;
-				double tNext = static_cast<double>(_movementFrames) / effectiveDuration;
-				double h = _arcHeight;
-				double deflPrev = 4.0 * h * t * (1.0 - t);
-				double deflNext = 4.0 * h * tNext * (1.0 - tNext);
-				double delta = deflNext - deflPrev;
+				double t = static_cast<double>(_movementFrames) / effectiveDuration;
+				double arcOffset = CalcArcOffsetAt(t);
+				double baseX = _initialLocation.X + (frameTarget.X - _initialLocation.X) * t;
+				double baseY = _initialLocation.Y + (frameTarget.Y - _initialLocation.Y) * t;
+				double baseZ = _initialLocation.Z + (frameTarget.Z - _initialLocation.Z) * t;
 
 				if (_arcRotation == 0.0)
 				{
-					resultDisp.Z += static_cast<int>(delta);
+					resultDisp.X = static_cast<int>(baseX - currentPos.X);
+					resultDisp.Y = static_cast<int>(baseY - currentPos.Y);
+					resultDisp.Z = static_cast<int>(baseZ + arcOffset - currentPos.Z);
 				}
 				else
 				{
-					// D = start→target 方向
 					double dx = frameTarget.X - _initialLocation.X;
 					double dy = frameTarget.Y - _initialLocation.Y;
 					double dz = frameTarget.Z - _initialLocation.Z;
@@ -972,39 +1009,42 @@ VectorResult VectorEffect::GetVectorResult()
 					if (dLen > 1e-6)
 					{
 						double dnx = dx / dLen, dny = dy / dLen, dnz = dz / dLen;
-						// 默认弧面法向 = 世界朝上垂直于 D 的分量
 						double upDotD = dnz;
 						double px = -dnx * upDotD, py = -dny * upDotD, pz = 1.0 - dnz * upDotD;
 						double pLen = std::sqrt(px * px + py * py + pz * pz);
 						if (pLen < 1e-6)
 						{
-							// D 接近垂直，用水平朝北
 							px = 1.0 - dnx * dnx; py = -dny * dnx; pz = -dnz * dnx;
 							pLen = std::sqrt(px * px + py * py + pz * pz);
 						}
 						double pnx = px / pLen, pny = py / pLen, pnz = pz / pLen;
-						// 绕 D 旋转 P
 						double rad = Math::deg2rad(_arcRotation);
 						double c = std::cos(rad), s = std::sin(rad);
 						double rx = pnx * c + (dny * pnz - dnz * pny) * s;
 						double ry = pny * c + (dnz * pnx - dnx * pnz) * s;
 						double rz = pnz * c + (dnx * pny - dny * pnx) * s;
-						resultDisp.X += static_cast<int>(rx * delta);
-						resultDisp.Y += static_cast<int>(ry * delta);
-						resultDisp.Z += static_cast<int>(rz * delta);
+						resultDisp.X = static_cast<int>(baseX + rx * arcOffset - currentPos.X);
+						resultDisp.Y = static_cast<int>(baseY + ry * arcOffset - currentPos.Y);
+						resultDisp.Z = static_cast<int>(baseZ + rz * arcOffset - currentPos.Z);
 					}
 					else
 					{
-						resultDisp.Z += static_cast<int>(delta);
+						resultDisp.X = static_cast<int>(baseX - currentPos.X);
+						resultDisp.Y = static_cast<int>(baseY - currentPos.Y);
+						resultDisp.Z = static_cast<int>(baseZ + arcOffset - currentPos.Z);
 					}
 				}
 			}
 		}
+		result.MoveDisp = resultDisp;
+		AdvanceFrame();
+		return result;
 	}
+
 	// ========================================================================
-	// 成熟机制，别乱动 — 模式 3: Speed（直线追踪 + 加速度）
+	// 模式5: Speed（直线追踪 + 加速度）
 	// ========================================================================
-	else if (dirLen > 1e-6)
+	if (Data->LinearSpeed >= 0)
 	{
 		double speed = _currentSpeed;
 
@@ -1020,13 +1060,75 @@ VectorResult VectorEffect::GetVectorResult()
 		if (Data->MaxSpeed >= 0 && speed > Data->MaxSpeed)
 			speed = static_cast<double>(Data->MaxSpeed);
 
-		resultDisp.X = static_cast<int>(dirVec.X / dirLen * speed);
-		resultDisp.Y = static_cast<int>(dirVec.Y / dirLen * speed);
-		resultDisp.Z = static_cast<int>(dirVec.Z / dirLen * speed);
+		if (dirLen > 1e-6)
+		{
+			// 抵达目标坐标点即结束AE，钳位到目标点避免飞越后抽搐
+			if (Data->SpeedEndOnReach && dirLen <= speed)
+			{
+				result.MoveDisp = dirVec;
+				Deactivate();
+				AdvanceFrame();
+				return result;
+			}
+			resultDisp.X = static_cast<int>(dirVec.X / dirLen * speed);
+			resultDisp.Y = static_cast<int>(dirVec.Y / dirLen * speed);
+			resultDisp.Z = static_cast<int>(dirVec.Z / dirLen * speed);
+
+			// 弧高增量叠加（与直线推进解耦，speed 仅代表直线速度）
+			if (_arcHeight != 0)
+			{
+				if (_speedArcTotalDist < 0.0)
+					_speedArcTotalDist = dirLen;
+				double t = (_speedArcTotalDist > 1e-6) ? 1.0 - dirLen / _speedArcTotalDist : 0.0;
+				if (t < 0.0) t = 0.0; else if (t > 1.0) t = 1.0;
+				double arcThis = CalcArcOffsetAt(t);
+				double arcDelta = arcThis - _prevArcOffset;
+				_prevArcOffset = arcThis;
+
+				if (_arcRotation == 0.0)
+				{
+					resultDisp.Z += static_cast<int>(arcDelta);
+				}
+				else
+				{
+					double dx = frameTarget.X - _initialLocation.X;
+					double dy = frameTarget.Y - _initialLocation.Y;
+					double dz = frameTarget.Z - _initialLocation.Z;
+					double dLen = std::sqrt(dx * dx + dy * dy + dz * dz);
+					if (dLen > 1e-6)
+					{
+						double dnx = dx / dLen, dny = dy / dLen, dnz = dz / dLen;
+						double upDotD = dnz;
+						double px = -dnx * upDotD, py = -dny * upDotD, pz = 1.0 - dnz * upDotD;
+						double pLen = std::sqrt(px * px + py * py + pz * pz);
+						if (pLen < 1e-6)
+						{
+							px = 1.0 - dnx * dnx; py = -dny * dnx; pz = -dnz * dnx;
+							pLen = std::sqrt(px * px + py * py + pz * pz);
+						}
+						double pnx = px / pLen, pny = py / pLen, pnz = pz / pLen;
+						double rad = Math::deg2rad(_arcRotation);
+						double c = std::cos(rad), s = std::sin(rad);
+						double rx = pnx * c + (dny * pnz - dnz * pny) * s;
+						double ry = pny * c + (dnz * pnx - dnx * pnz) * s;
+						double rz = pnz * c + (dnx * pny - dny * pnx) * s;
+						resultDisp.X += static_cast<int>(rx * arcDelta);
+						resultDisp.Y += static_cast<int>(ry * arcDelta);
+						resultDisp.Z += static_cast<int>(rz * arcDelta);
+					}
+					else
+					{
+						resultDisp.Z += static_cast<int>(arcDelta);
+					}
+				}
+			}
+		}
+		result.MoveDisp = resultDisp;
+		AdvanceFrame();
+		return result;
 	}
 
-	result.MoveDisp = resultDisp;
-
+	// 没命中任何模式，返回空
 	AdvanceFrame();
 	return result;
 }

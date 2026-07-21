@@ -24,7 +24,7 @@ public:
 
 	int TimeStep = 1;
 	int DisabledFrames = 0;              // 首帧快照后冻结 N 帧，不计入运动时间
-	bool SyncFacing = true;              // yes=抛射体朝运动方向/单位转动，no=抛射体朝目标
+	bool SyncFacing = false;             // yes=抛射体朝运动方向/单位转动，no=抛射体朝目标
 	bool OriginIsOnWorld = false;        // yes=OriginFLH用世界FLH(朝北)，不使用单位/弹体朝向
 	bool OriginIsOnBody = false;          // yes=单位取车身PrimaryFacing，无视炮塔TurretFacing
 
@@ -96,11 +96,12 @@ public:
 	double OriginAnglePerStep = 0.0;    // 自旋角度（°/step）
 	// Speed / ReachTarget 模式
 	CoordStruct OriginTargetFLH{};        // 追踪目标 FLH
-	int OriginInitialSpeed = -1;          // 初始速度，-1=读取单位Speed
+	int OriginLinearSpeed = -1;          // 初始速度，-1=读取单位Speed
 	int OriginAcceleration = 0;           // 加速度（lepton/step²）
 	int OriginMaxSpeed = -1;              // 最大速度，-1=不限
 	int OriginMinSpeed = -1;              // 最小速度，-1=不限
 	bool OriginReachTarget = false;       // 到达模式
+	bool OriginSpeedEndOnReach = true;    // Speed模式抵达目标即结束AE
 	int OriginArcHeight = 0;            // 到达模式弧高
 	int OriginTargetOffsetFMin = 0, OriginTargetOffsetFMax = 0;
 	int OriginTargetOffsetLMin = 0, OriginTargetOffsetLMax = 0;
@@ -140,12 +141,13 @@ public:
 	int TargetOffsetHMin = 0;
 	int TargetOffsetHMax = 0;
 
-	int InitialSpeed = -1;              // -1 = 读取单位 Speed
+	int LinearSpeed = -1;              // -1 = 读取单位 Speed
 	int RandomSpeedMin = 0;             // Speed 模式随机速度下限
 	int RandomSpeedMax = 0;             // Speed 模式随机速度上限
 	int MaxSpeed = -1;                  // -1 = 不限
 	int MinSpeed = -1;                  // -1 = 不限
 	int Acceleration = 0;               // 每帧速度增量
+	bool SpeedEndOnReach = true;        // 抵达目标坐标点即强制结束AE（修复飞越后抽搐）
 
 	// ========================================================================
 	// ReachTarget 模式（剩余帧数强制到达）
@@ -154,6 +156,8 @@ public:
 	bool ReachTarget = false;           // 与 TargetFLH 配合使用
 	int ReachTargetEarlyEnd = 0;        // 提前结束 AE 的帧数，0=禁用，>0 时提前 N 帧交还引擎
 	int ArcHeight = 0;                  // ReachTarget 弧高（lepton），0=直线，正=上凸
+	double ArcPeakPercent = 50.0;       // 弧高点所在 Duration 百分比（0-100），默认50=中点
+	Point2D ArcPeakRandomPercent{ 0, 0 };// 随机弧高百分比范围 (Min, Max)
 	int ArcRandomHeightMin = 0;         // 随机弧高下限
 	int ArcRandomHeightMax = 0;         // 随机弧高上限
 	double ArcRotation = 0.0;           // 弧面旋转角（°），0=默认朝上，顺时针
@@ -277,11 +281,12 @@ public:
 		OriginGrowRate = reader->Get(title + "Origin.GrowRate", OriginGrowRate);
 		OriginAnglePerStep = reader->Get(title + "Origin.AnglePerStep", 0.0);
 		OriginTargetFLH = reader->Get(title + "Origin.TargetFLH", OriginTargetFLH);
-		OriginInitialSpeed = reader->Get(title + "Origin.InitialSpeed", -1);
+		OriginLinearSpeed = reader->Get(title + "Origin.LinearSpeed", -1);
 		OriginAcceleration = reader->Get(title + "Origin.Acceleration", 0);
 		OriginMaxSpeed = reader->Get(title + "Origin.MaxSpeed", -1);
 		OriginMinSpeed = reader->Get(title + "Origin.MinSpeed", -1);
 		OriginReachTarget = reader->Get(title + "Origin.ReachTarget", false);
+		OriginSpeedEndOnReach = reader->Get(title + "Origin.SpeedEndOnReach", OriginSpeedEndOnReach);
 		OriginArcHeight = reader->Get(title + "Origin.ArcHeight", 0);
 		OriginTargetOffsetFMin = reader->Get(title + "Origin.TargetOffsetF.Min", OriginTargetOffsetFMin);
 		OriginTargetOffsetFMax = reader->Get(title + "Origin.TargetOffsetF.Max", OriginTargetOffsetFMax);
@@ -330,23 +335,27 @@ public:
 		ReachTarget = reader->Get(title + "ReachTarget", ReachTarget);
 		ReachTargetEarlyEnd = reader->Get(title + "ReachTargetEarlyEnd", ReachTargetEarlyEnd);
 		ArcHeight = reader->Get(title + "ArcHeight", 0);
-		std::string arcRandomHeightStr = reader->Get(title + "ArcRandomHeight", std::string{ "" });
+		ArcPeakPercent = reader->Get(title + "ArcPeakPercent", ArcPeakPercent);
+		ArcPeakRandomPercent = reader->Get(title + "RandomArcPeakPercent", ArcPeakRandomPercent);
+		std::string arcRandomHeightStr = reader->Get(title + "RandomArcHeight", std::string{ "" });
 		ParseMinMax(arcRandomHeightStr, ArcRandomHeightMin, ArcRandomHeightMax);
 		ArcRotation = reader->Get(title + "ArcRotation", 0.0);
-		std::string arcRandomRotationStr = reader->Get(title + "ArcRandomRotation", std::string{ "" });
+		std::string arcRandomRotationStr = reader->Get(title + "RandomArcRotation", std::string{ "" });
 		ParseMinMaxDouble(arcRandomRotationStr, ArcRandomRotationMin, ArcRandomRotationMax);
 		AllowFallingDestroy = reader->Get(title + "AllowFallingDestroy", AllowFallingDestroy);
 		FallingDestroyHeight = reader->Get(title + "FallingDestroyHeight", FallingDestroyHeight);
 
 		// --- 速度 ---
-		InitialSpeed = reader->Get(title + "InitialSpeed", -1);
+		LinearSpeed = reader->Get(title + "LinearSpeed", -1);
 		std::string randomSpeedStr = reader->Get(title + "RandomSpeed", std::string{ "" });
 		ParseMinMax(randomSpeedStr, RandomSpeedMin, RandomSpeedMax);
 		MaxSpeed = reader->Get(title + "MaxSpeed", -1);
 		MinSpeed = reader->Get(title + "MinSpeed", -1);
 		Acceleration = reader->Get(title + "Acceleration", Acceleration);
+		SpeedEndOnReach = reader->Get(title + "SpeedEndOnReach", SpeedEndOnReach);
 
-		Enable = !MoveTo.IsEmpty() || !TargetFLH.IsEmpty() || Freeze || ReachTarget
+		Enable = !MoveTo.IsEmpty() || Freeze || ReachTarget
+			|| (LinearSpeed >= 0)
 			|| (CircleRadius > 0) || (CircleSpeed != 0) || (CircleAnglePerStep > 0.0)
 			|| (CircleRandomRadiusMax > CircleRandomRadiusMin)
 			|| (CircleRandomAngleMax > CircleRandomAngleMin)
@@ -439,7 +448,8 @@ private:
 			.Process(this->CircleEndOnMinRadius)
 			.Process(this->OriginMoveTo).Process(this->OriginGrowRate)
 			.Process(this->OriginAnglePerStep).Process(this->OriginTargetFLH)
-			.Process(this->OriginInitialSpeed).Process(this->OriginReachTarget)
+			.Process(this->OriginLinearSpeed).Process(this->OriginReachTarget)
+			.Process(this->OriginSpeedEndOnReach)
 			.Process(this->OriginArcHeight)
 			.Process(this->OriginTargetOffsetFMin).Process(this->OriginTargetOffsetFMax)
 			.Process(this->OriginTargetOffsetLMin).Process(this->OriginTargetOffsetLMax)
@@ -475,6 +485,8 @@ private:
 			.Process(this->ReachTarget)
 			.Process(this->ReachTargetEarlyEnd)
 			.Process(this->ArcHeight)
+			.Process(this->ArcPeakPercent)
+			.Process(this->ArcPeakRandomPercent)
 			.Process(this->ArcRandomHeightMin)
 			.Process(this->ArcRandomHeightMax)
 			.Process(this->ArcRotation)
@@ -483,12 +495,13 @@ private:
 			.Process(this->AllowFallingDestroy)
 			.Process(this->FallingDestroyHeight)
 
-			.Process(this->InitialSpeed)
+			.Process(this->LinearSpeed)
 			.Process(this->RandomSpeedMin)
 			.Process(this->RandomSpeedMax)
 			.Process(this->MaxSpeed)
 			.Process(this->MinSpeed)
-			.Process(this->Acceleration);
+			.Process(this->Acceleration)
+			.Process(this->SpeedEndOnReach);
 		return stream.Success();
 	};
 

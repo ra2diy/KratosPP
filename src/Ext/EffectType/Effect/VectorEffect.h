@@ -25,17 +25,48 @@ public:
 		_initialLocation = {};
 		_initialOriginPos = {};
 		_pLauncher = nullptr;
-		_pTarget = nullptr;
+		// _pTarget = nullptr;  // [DEAD]
 		_pSource = nullptr;
 		_totalDuration = 0;
 		_randomTargetOffset = {};
 		_facingRad = 0.0;
 		_currentAngle = 0.0;
 		_tiltRad = 0.0;                  // F 轴俯仰角（AllowedTilt 用）
-		_prevCirclePos = {};
+		// _prevCirclePos = {};  // [DEAD]
 		_currentCircleRadius = 0.0;
 		_currentCircleSpeed = 0.0;
 		_currentCircleAngle = 0.0;
+		_normalRotF = 0.0;
+		_normalRotL = 0.0;
+		_normalRotH = 0.0;
+		_normalStepF = 0.0;
+		_normalStepL = 0.0;
+		_normalStepH = 0.0;
+		_originOffset = {};
+		_originElapsed = 0;
+		_originSpeed = 0.0;
+		_originAngle = 0.0;
+		_originCircleRadius = 0.0;
+		_originCircleSpeed = 0.0;
+		_originCircleAngle = 0.0;
+		_originFacing = 0.0;
+		_originTilt = 0.0;
+		_originNormalRotF = 0.0;
+		_originNormalRotL = 0.0;
+		_originNormalRotH = 0.0;
+		_originNormalStepF = 0.0;
+		_originNormalStepL = 0.0;
+		_originNormalStepH = 0.0;
+		_originTargetOffset = {};
+		_prevCircleCenter = {};
+		_movementFrames = 0;
+		_arcRotation = 0.0;
+		_arcHeight = 0;
+		_arcPeakPercent = 0.5;
+		_speedArcTotalDist = -1.0;
+		_prevArcOffset = 0.0;
+		_originArcTotalDist = -1.0;
+		_originPrevArcOffset = 0.0;
 	}
 
 	virtual void OnStart() override;
@@ -57,6 +88,22 @@ public:
 		_moveFrame++;
 	}
 
+	// 弧高二次曲线（ReachTarget / Speed 共用），t∈[0,1] 返回弧高绝对值
+	double CalcArcOffsetAt(double t) const
+	{
+		if (_arcHeight == 0) return 0.0;
+		if (t <= _arcPeakPercent)
+		{
+			double u = t / _arcPeakPercent;
+			return _arcHeight * u * (2.0 - u);
+		}
+		else
+		{
+			double u = (_arcPeakPercent < 1.0) ? (t - _arcPeakPercent) / (1.0 - _arcPeakPercent) : 0.0;
+			return _arcHeight * (1.0 - u * u);
+		}
+	}
+
 #pragma region Save/Load
 	template <typename T>
 	bool Serialize(T& stream) {
@@ -69,17 +116,48 @@ public:
 			.Process(this->_initialLocation)
 			.Process(this->_initialOriginPos)
 			.Process(this->_pLauncher)
-			.Process(this->_pTarget)
+			// .Process(this->_pTarget)  // [DEAD] 已注释
 			.Process(this->_pSource)
 			.Process(this->_totalDuration)
 			.Process(this->_randomTargetOffset)
 			.Process(this->_facingRad)
 			.Process(this->_tiltRad)
 			.Process(this->_currentAngle)
-			.Process(this->_prevCirclePos)
+			// .Process(this->_prevCirclePos)  // [DEAD] 已注释
 			.Process(this->_currentCircleRadius)
 			.Process(this->_currentCircleSpeed)
-			.Process(this->_currentCircleAngle);
+			.Process(this->_currentCircleAngle)
+			.Process(this->_normalRotF)
+			.Process(this->_normalRotL)
+			.Process(this->_normalRotH)
+			.Process(this->_normalStepF)
+			.Process(this->_normalStepL)
+			.Process(this->_normalStepH)
+			.Process(this->_originOffset)
+			.Process(this->_originElapsed)
+			.Process(this->_originSpeed)
+			.Process(this->_originAngle)
+			.Process(this->_originCircleRadius)
+			.Process(this->_originCircleSpeed)
+			.Process(this->_originCircleAngle)
+			.Process(this->_originFacing)
+			.Process(this->_originTilt)
+			.Process(this->_originNormalRotF)
+			.Process(this->_originNormalRotL)
+			.Process(this->_originNormalRotH)
+			.Process(this->_originNormalStepF)
+			.Process(this->_originNormalStepL)
+			.Process(this->_originNormalStepH)
+			.Process(this->_originTargetOffset)
+			.Process(this->_prevCircleCenter)
+			.Process(this->_movementFrames)
+			.Process(this->_arcRotation)
+			.Process(this->_arcHeight)
+			.Process(this->_arcPeakPercent)
+			.Process(this->_speedArcTotalDist)
+			.Process(this->_prevArcOffset)
+			.Process(this->_originArcTotalDist)
+			.Process(this->_originPrevArcOffset);
 		return stream.Success();
 	};
 
@@ -104,7 +182,7 @@ public:
 	CoordStruct _initialLocation{};     // 初始位置快照
 	CoordStruct _initialOriginPos{};    // 初始 Origin 快照（NoUpdate 用）
 	ObjectClass* _pLauncher = nullptr;
-	ObjectClass* _pTarget = nullptr;
+	// ObjectClass* _pTarget = nullptr;  // [DEAD] 从未赋值也从未读取
 	ObjectClass* _pSource = nullptr;
 
 	int _totalDuration = 0;             // AE 总持续时间（ReachTarget 用）
@@ -112,7 +190,7 @@ public:
 	double _facingRad = 0.0;           // OnStart 时锁定的朝向弧度（FLH 旋转用）
 	double _tiltRad = 0.0;             // F 轴俯仰角（AllowedTilt 用）
 	double _currentAngle = 0.0;        // MoveTo 模式自增角度（°）
-	CoordStruct _prevCirclePos{};      // MoveTo 圆周模式上一帧世界坐标
+	// CoordStruct _prevCirclePos{};      // [DEAD] MoveTo 圆周模式上一帧世界坐标 — 从未读取
 	double _currentCircleRadius = 0.0; // Circle 模式动态半径
 	double _currentCircleSpeed = 0.0;  // Circle 模式动态线速度
 	double _currentCircleAngle = 0.0;  // Circle 模式动态角速度
@@ -141,6 +219,13 @@ public:
 	CoordStruct _originTargetOffset{};    // 圆心 Target 随机偏移
 	CoordStruct _prevCircleCenter{};      // 上一帧圆心位置（计算叠加位移用）
 	int _movementFrames = 0;              // 有效运动帧数（不含 InitialDelay/TimeStep 跳帧）
-	double _arcRotation = 0.0;           // 弧面旋转角（OnStart 解析，仅 ReachTarget）
-	int _arcHeight = 0;                 // 弧高（OnStart 解析随机后写入）
+	double _arcRotation = 0.0;           // 弧面旋转角（OnStart 解析，ReachTarget / Speed）
+	int _arcHeight = 0;                 // 弧高（OnStart 解析随机后写入，ReachTarget / Speed）
+	double _arcPeakPercent = 0.5;        // 弧高点比率 0..1（OnStart 解析随机后写入）
+	// Speed 模式弧高增量计算（主抛射体）
+	double _speedArcTotalDist = -1.0;   // 首帧初始总距离（<0=未初始化）
+	double _prevArcOffset = 0.0;        // 上一帧弧高绝对值
+	// Speed 模式弧高增量计算（Origin 圆心）
+	double _originArcTotalDist = -1.0;  // Origin 首帧初始总距离（<0=未初始化）
+	double _originPrevArcOffset = 0.0;  // Origin 上一帧弧高绝对值
 };
