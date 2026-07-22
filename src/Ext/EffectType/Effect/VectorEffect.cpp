@@ -1070,7 +1070,21 @@ VectorResult VectorEffect::GetVectorResult()
 		if (Data->MaxSpeed >= 0 && speed > Data->MaxSpeed)
 			speed = static_cast<double>(Data->MaxSpeed);
 
-		// 无弧线：影子仅追踪 XY，Z 独立插值避免增量累积
+		// SpeedEndOnReach=no：不走影子系统，全程旧版 dirVec/dirLen 直追（自然产生抽搐跟随）
+		if (!Data->SpeedEndOnReach)
+		{
+			if (dirLen > 1e-6)
+			{
+				resultDisp.X = static_cast<int>(dirVec.X / dirLen * speed);
+				resultDisp.Y = static_cast<int>(dirVec.Y / dirLen * speed);
+				resultDisp.Z = static_cast<int>(dirVec.Z / dirLen * speed);
+			}
+			result.MoveDisp = resultDisp;
+			AdvanceFrame();
+			return result;
+		}
+
+		// 以下：SpeedEndOnReach=yes，走影子系统
 		// 有弧线：影子追踪完整 3D，弧高增量叠加
 		double sdx = frameTarget.X - _shadowPosX;
 		double sdy = frameTarget.Y - _shadowPosY;
@@ -1199,19 +1213,6 @@ VectorResult VectorEffect::GetVectorResult()
 					}
 				}
 			}
-		}
-		else if (!Data->SpeedEndOnReach)
-		{
-			// 影子已到达目标，但 SpeedEndOnReach=no：
-			// 用实时方向继续追踪，保留旧版追着目标抖动的行为
-			// 弧高已在 t=1.0 归零，不再叠加
-			if (dirLen > 1e-6)
-			{
-				resultDisp.X = static_cast<int>(dirVec.X / dirLen * speed);
-				resultDisp.Y = static_cast<int>(dirVec.Y / dirLen * speed);
-				resultDisp.Z = static_cast<int>(dirVec.Z / dirLen * speed);
-			}
-			_prevArcOffset = 0.0;
 		}
 		result.MoveDisp = resultDisp;
 		AdvanceFrame();
