@@ -879,27 +879,62 @@ VectorResult VectorEffect::GetVectorResult()
 	// ========================================================================
 	if (!Data->MoveTo.IsEmpty())
 	{
-		// moveDir：使用引擎 DirStruct，AnglePerStep 非零时叠加自旋角度
 		DirStruct moveDir = mainFacingDir;
+		double useCosT = 1.0, useSinT = 0.0;
+		bool hasTilt = (effectiveTilt != 0.0);
+
+		// Origin=Target：F 轴应以 抛射体→目标 连线为准（含 Z 落差），而非全局的 target→抛射体
+		if (Data->Origin == VectorData::VectorOrigin::Target)
+		{
+			CoordStruct tgt;
+			bool hasTgt = false;
+			if (pBullet && pBullet->Target)
+				{ tgt = pBullet->Target->GetCoords(); hasTgt = true; }
+			else if (pBullet)
+				{ tgt = pBullet->TargetCoords; hasTgt = true; }
+			else if (pTechno && pTechno->Target)
+				{ tgt = pTechno->Target->GetCoords(); hasTgt = true; }
+			if (hasTgt)
+			{
+				double tdx = static_cast<double>(tgt.X - currentPos.X);
+				double tdy = static_cast<double>(tgt.Y - currentPos.Y);
+				double tdz = static_cast<double>(tgt.Z - currentPos.Z);
+				double tLenXY = std::sqrt(tdx * tdx + tdy * tdy);
+				if (tLenXY > 1e-6)
+				{
+					moveDir = Radians2Dir(std::atan2(tdy, tdx)); // 官方API，不得修改
+					if (Data->AllowedTilt)
+					{
+						double tLen3D = std::sqrt(tdx * tdx + tdy * tdy + tdz * tdz);
+						useCosT = tLenXY / tLen3D;
+						useSinT = tdz / tLen3D;
+						hasTilt = true;
+					}
+				}
+			}
+		}
+
 		if (Data->AnglePerStep != 0.0)
 		{
 			if (_elapsedFrames == 0)
 				_currentAngle = 0.0;
 			_currentAngle += Data->AnglePerStep;
-			moveDir = Radians2Dir(mainFacingDir.GetRadian() + Math::deg2rad(_currentAngle)); // 官方API，不得修改
+			moveDir = Radians2Dir(moveDir.GetRadian() + Math::deg2rad(_currentAngle)); // 官方API，不得修改
 		}
+
 		CoordStruct grow = { static_cast<int>(Data->GrowRate.X * _movementFrames),
 			static_cast<int>(Data->GrowRate.Y * _movementFrames),
 			static_cast<int>(Data->GrowRate.Z * _movementFrames) };
 		CoordStruct moveFlh = Data->MoveTo + grow;
 
-		result.MoveDisp = GetFLHAbsoluteOffset(moveFlh, moveDir); // 官方API，不得修改
-		// 坐标轴倾斜：Tilt 非零时覆盖 Z 轴，使 FLH 位移沿倾斜坐标轴方向
-		if (effectiveTilt != 0.0)
+		if (hasTilt)
 		{
 			double mf = moveDir.GetRadian();
 			double cosF = std::cos(mf), sinF = std::sin(mf);
-			double cosT = std::cos(effectiveTilt), sinT = std::sin(effectiveTilt);
+			double cosT = (Data->Origin == VectorData::VectorOrigin::Target && Data->AllowedTilt)
+				? useCosT : std::cos(effectiveTilt);
+			double sinT = (Data->Origin == VectorData::VectorOrigin::Target && Data->AllowedTilt)
+				? useSinT : std::sin(effectiveTilt);
 			double F = static_cast<double>(moveFlh.X);
 			double L = static_cast<double>(moveFlh.Y);
 			double H = static_cast<double>(moveFlh.Z);
@@ -907,6 +942,11 @@ VectorResult VectorEffect::GetVectorResult()
 			result.MoveDisp.Y = static_cast<int>(F * sinF * cosT + L * cosF + H * (-sinF * sinT));
 			result.MoveDisp.Z = static_cast<int>(F * sinT + H * cosT);
 		}
+		else
+		{
+			result.MoveDisp = GetFLHAbsoluteOffset(moveFlh, moveDir); // 官方API，不得修改
+		}
+
 		result.Force = true;
 
 		AdvanceFrame();
