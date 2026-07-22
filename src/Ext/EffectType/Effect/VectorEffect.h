@@ -63,8 +63,11 @@ public:
 		_arcRotation = 0.0;
 		_arcHeight = 0;
 		_arcPeakPercent = 0.5;
-		_speedArcTotalDist = -1.0;
-		_prevArcOffset = 0.0;
+	_shadowPosX = 0.0;
+	_shadowPosY = 0.0;
+	_shadowPosZ = 0.0;
+	_shadowTraveled = 0.0;
+	_prevArcOffset = 0.0;
 		_originArcTotalDist = -1.0;
 		_originPrevArcOffset = 0.0;
 	}
@@ -154,8 +157,11 @@ public:
 			.Process(this->_arcRotation)
 			.Process(this->_arcHeight)
 			.Process(this->_arcPeakPercent)
-			.Process(this->_speedArcTotalDist)
-			.Process(this->_prevArcOffset)
+		.Process(this->_shadowPosX)
+		.Process(this->_shadowPosY)
+		.Process(this->_shadowPosZ)
+		.Process(this->_shadowTraveled)
+		.Process(this->_prevArcOffset)
 			.Process(this->_originArcTotalDist)
 			.Process(this->_originPrevArcOffset);
 		return stream.Success();
@@ -222,8 +228,11 @@ public:
 	double _arcRotation = 0.0;           // 弧面旋转角（OnStart 解析，ReachTarget / Speed）
 	int _arcHeight = 0;                 // 弧高（OnStart 解析随机后写入，ReachTarget / Speed）
 	double _arcPeakPercent = 0.5;        // 弧高点比率 0..1（OnStart 解析随机后写入）
-	// Speed 模式弧高增量计算（主抛射体）
-	double _speedArcTotalDist = -1.0;   // 首帧初始总距离（<0=未初始化）
+	// Speed 模式影子坐标（三维，不受弧高污染，用于计算干净进度 t）
+	double _shadowPosX = 0.0;
+	double _shadowPosY = 0.0;
+	double _shadowPosZ = 0.0;
+	double _shadowTraveled = 0.0;        // 影子累计行走距离（含加速度/变速）
 	double _prevArcOffset = 0.0;        // 上一帧弧高绝对值
 	// Speed 模式弧高增量计算（Origin 圆心）
 	double _originArcTotalDist = -1.0;  // Origin 首帧初始总距离（<0=未初始化）

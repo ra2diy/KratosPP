@@ -53,6 +53,12 @@ void VectorEffect::OnStart()
 	if (_arcPeakPercent <= 0.0) _arcPeakPercent = 0.5;
 	if (_arcPeakPercent >= 1.0) _arcPeakPercent = 0.5;
 
+	// 影子坐标（Speed 模式弧高进度基准，不受弧高 Z 偏移污染）
+	_shadowPosX = _initialLocation.X;
+	_shadowPosY = _initialLocation.Y;
+	_shadowPosZ = _initialLocation.Z;
+	_shadowTraveled = 0.0;
+
 	// --- 初始速度 ---
 	_currentSpeed = 0.0;
 	if (Data->LinearSpeed >= 0)
@@ -968,15 +974,17 @@ VectorResult VectorEffect::GetVectorResult()
 		}
 		if (remainingFrames <= 0)
 		{
-			// 已超时
-			if (Data->Force)
+			// 已超时：瞬移到目标，引擎正常到达检测会自然引爆
+			if (Data->Force && pBullet)
 			{
-				// Force=yes：直接到达目标
-				resultDisp.X = frameTarget.X - currentPos.X;
-				resultDisp.Y = frameTarget.Y - currentPos.Y;
-				resultDisp.Z = frameTarget.Z - currentPos.Z;
+				pBullet->SetLocation(frameTarget);
+				result.MoveDisp = { 0, 0, 0 };
+				result.Force = false;
+				Deactivate();
+				AdvanceFrame();
+				return result;
 			}
-			// Force=no：不设位移，自然结束
+			// Force=no 或无 pBullet：不设位移，自然结束
 		}
 		else if (dirLen > 1e-6)
 		{
@@ -1042,7 +1050,9 @@ VectorResult VectorEffect::GetVectorResult()
 	}
 
 	// ========================================================================
-	// 模式5: Speed（直线追踪 + 加速度）
+	// 模式5: Speed（直线追踪 + 加速度 + 影子坐标弧高）
+	// 影子沿 _shadowPos→frameTarget 方向推进，不受弧高Z偏移污染
+	// SpeedEndOnReach 和 t 均基于影子距离判定
 	// ========================================================================
 	if (Data->LinearSpeed >= 0)
 	{
@@ -1060,44 +1070,111 @@ VectorResult VectorEffect::GetVectorResult()
 		if (Data->MaxSpeed >= 0 && speed > Data->MaxSpeed)
 			speed = static_cast<double>(Data->MaxSpeed);
 
-		if (dirLen > 1e-6)
+		// 无弧线：影子仅追踪 XY，Z 独立插值避免增量累积
+		// 有弧线：影子追踪完整 3D，弧高增量叠加
+		double sdx = frameTarget.X - _shadowPosX;
+		double sdy = frameTarget.Y - _shadowPosY;
+		double sdz, shadowDist;
+		if (_arcHeight != 0)
 		{
-			// 抵达目标坐标点即结束AE，钳位到目标点避免飞越后抽搐
-			if (Data->SpeedEndOnReach && dirLen <= speed)
-			{
-				result.MoveDisp = dirVec;
-				Deactivate();
-				AdvanceFrame();
-				return result;
-			}
-			resultDisp.X = static_cast<int>(dirVec.X / dirLen * speed);
-			resultDisp.Y = static_cast<int>(dirVec.Y / dirLen * speed);
-			resultDisp.Z = static_cast<int>(dirVec.Z / dirLen * speed);
+			sdz = frameTarget.Z - _shadowPosZ;
+			shadowDist = std::sqrt(sdx * sdx + sdy * sdy + sdz * sdz);
+		}
+		else
+		{
+			// 无弧线：仅 XY 距离，避免影子 Z 追踪目标导致 shadowDist 虚小
+			sdz = 0.0;
+			shadowDist = std::sqrt(sdx * sdx + sdy * sdy);
+		}
 
-			// 弧高增量叠加（与直线推进解耦，speed 仅代表直线速度）
+		// SpeedEndOnReach：瞬移到目标位置，引擎正常到达检测会自然引爆（不手动Detonate，避免重复伤害）
+		if (Data->SpeedEndOnReach && shadowDist <= speed)
+		{
+			if (pBullet)
+			{
+				pBullet->SetLocation(frameTarget);
+			}
+			// 零位移：位置已由 SetLocation 设定，不再让 Vector.cpp 回退
+			result.MoveDisp = { 0, 0, 0 };
+			result.Force = false;
+			Deactivate();
+			AdvanceFrame();
+			return result;
+		}
+
+		if (shadowDist > 1e-6)
+		{
+			// 影子沿 shadow→target 方向推进
+			double sInv = 1.0 / shadowDist;
+			double shadowStepX = sdx * sInv * speed;
+			double shadowStepY = sdy * sInv * speed;
+			double shadowStepZ = 0.0;
+			_shadowPosX += shadowStepX;
+			_shadowPosY += shadowStepY;
 			if (_arcHeight != 0)
 			{
-				if (_speedArcTotalDist < 0.0)
-					_speedArcTotalDist = dirLen;
-				double t = (_speedArcTotalDist > 1e-6) ? 1.0 - dirLen / _speedArcTotalDist : 0.0;
-				if (t < 0.0) t = 0.0; else if (t > 1.0) t = 1.0;
-				double arcThis = CalcArcOffsetAt(t);
-				double arcDelta = arcThis - _prevArcOffset;
-				_prevArcOffset = arcThis;
+				shadowStepZ = sdz * sInv * speed;
+				_shadowPosZ += shadowStepZ;
+			}
+			// 无弧线：_shadowPosZ 不变（始终 = _initialLocation.Z），Z 由 t 插值
+			_shadowTraveled += speed;
+
+			// 重新计算影子距离（影子已移动）
+			sdx = frameTarget.X - _shadowPosX;
+			sdy = frameTarget.Y - _shadowPosY;
+			if (_arcHeight != 0)
+			{
+				sdz = frameTarget.Z - _shadowPosZ;
+				shadowDist = std::sqrt(sdx * sdx + sdy * sdy + sdz * sdz);
+			}
+			else
+			{
+				shadowDist = std::sqrt(sdx * sdx + sdy * sdy);
+			}
+
+			// t = 已走路程 / 总路程（动态更新，目标移动时自动调整）
+			double total = _shadowTraveled + shadowDist;
+			double t = (total > 1e-6) ? _shadowTraveled / total : 0.0;
+			if (t < 0.0) t = 0.0; else if (t > 1.0) t = 1.0;
+
+			// 实际位移：影子步长（XY）
+			resultDisp.X = static_cast<int>(shadowStepX);
+			resultDisp.Y = static_cast<int>(shadowStepY);
+
+			if (_arcHeight != 0)
+			{
+				// 有弧线：Z 用影子增量 + 弧高增量叠加
+				resultDisp.Z = static_cast<int>(shadowStepZ);
+			}
+			else
+			{
+				// 无弧线：Z 从抛射体起始高度 lerp 到目标高度
+				// _shadowPosZ 在无弧线时冻结为抛射体起始 Z，_initialLocation.Z 可能是目标 Z（Origin=Target 时不同）
+				double targetZ = _shadowPosZ + (frameTarget.Z - _shadowPosZ) * t;
+				resultDisp.Z = static_cast<int>(targetZ - currentPos.Z);
+			}
+
+			if (_arcHeight != 0)
+			{
+				double arcOffset = CalcArcOffsetAt(t);
+				double arcDelta = arcOffset - _prevArcOffset;
+				_prevArcOffset = arcOffset;
 
 				if (_arcRotation == 0.0)
 				{
+					// 无旋转：弧高纯 Z，增量叠加在影子 Z 之上
 					resultDisp.Z += static_cast<int>(arcDelta);
 				}
 				else
 				{
-					double dx = frameTarget.X - _initialLocation.X;
-					double dy = frameTarget.Y - _initialLocation.Y;
-					double dz = frameTarget.Z - _initialLocation.Z;
-					double dLen = std::sqrt(dx * dx + dy * dy + dz * dz);
-					if (dLen > 1e-6)
+					// 旋转弧面：弧高分解到 XYZ（增量叠加，螺旋路径）
+					double totalDx = frameTarget.X - _initialLocation.X;
+					double totalDy = frameTarget.Y - _initialLocation.Y;
+					double totalDz = frameTarget.Z - _initialLocation.Z;
+					double totalDLen = std::sqrt(totalDx * totalDx + totalDy * totalDy + totalDz * totalDz);
+					if (totalDLen > 1e-6)
 					{
-						double dnx = dx / dLen, dny = dy / dLen, dnz = dz / dLen;
+						double dnx = totalDx / totalDLen, dny = totalDy / totalDLen, dnz = totalDz / totalDLen;
 						double upDotD = dnz;
 						double px = -dnx * upDotD, py = -dny * upDotD, pz = 1.0 - dnz * upDotD;
 						double pLen = std::sqrt(px * px + py * py + pz * pz);
@@ -1122,6 +1199,19 @@ VectorResult VectorEffect::GetVectorResult()
 					}
 				}
 			}
+		}
+		else if (!Data->SpeedEndOnReach)
+		{
+			// 影子已到达目标，但 SpeedEndOnReach=no：
+			// 用实时方向继续追踪，保留旧版追着目标抖动的行为
+			// 弧高已在 t=1.0 归零，不再叠加
+			if (dirLen > 1e-6)
+			{
+				resultDisp.X = static_cast<int>(dirVec.X / dirLen * speed);
+				resultDisp.Y = static_cast<int>(dirVec.Y / dirLen * speed);
+				resultDisp.Z = static_cast<int>(dirVec.Z / dirLen * speed);
+			}
+			_prevArcOffset = 0.0;
 		}
 		result.MoveDisp = resultDisp;
 		AdvanceFrame();
