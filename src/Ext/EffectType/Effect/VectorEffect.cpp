@@ -894,6 +894,19 @@ VectorResult VectorEffect::GetVectorResult()
 		CoordStruct moveFlh = Data->MoveTo + grow;
 
 		result.MoveDisp = GetFLHAbsoluteOffset(moveFlh, moveDir); // 官方API，不得修改
+		// 坐标轴倾斜：Tilt 非零时覆盖 Z 轴，使 FLH 位移沿倾斜坐标轴方向
+		if (effectiveTilt != 0.0)
+		{
+			double mf = moveDir.GetRadian();
+			double cosF = std::cos(mf), sinF = std::sin(mf);
+			double cosT = std::cos(effectiveTilt), sinT = std::sin(effectiveTilt);
+			double F = static_cast<double>(moveFlh.X);
+			double L = static_cast<double>(moveFlh.Y);
+			double H = static_cast<double>(moveFlh.Z);
+			result.MoveDisp.X = static_cast<int>(F * cosF * cosT + L * (-sinF) + H * (-cosF * sinT));
+			result.MoveDisp.Y = static_cast<int>(F * sinF * cosT + L * cosF + H * (-sinF * sinT));
+			result.MoveDisp.Z = static_cast<int>(F * sinT + H * cosT);
+		}
 		result.Force = true;
 
 		AdvanceFrame();
