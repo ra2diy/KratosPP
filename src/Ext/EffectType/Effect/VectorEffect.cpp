@@ -336,6 +336,62 @@ VectorResult VectorEffect::GetVectorResult()
 	// ========================================================================
 	// 动态 F 轴：非 NoUpdate 时每帧根据当前坐标重新计算 FLH 朝向
 	// ========================================================================
+
+	// AllowOriginTilt：从 Origin 单位获取倾斜，注入 _facingRad/_tiltRad（同 NormalVector 机制）
+	double originTerrainTilt = 0.0;
+	if (Data->AllowOriginTilt && !Data->OriginIsOnWorld)
+	{
+		TechnoClass* pOriginTechno = nullptr;
+		switch (Data->Origin)
+		{
+		case VectorData::VectorOrigin::Target:
+			if (pBullet && pBullet->Target)
+				pOriginTechno = abstract_cast<TechnoClass*>(pBullet->Target);
+			else if (pTechno && pTechno->Target)
+				pOriginTechno = abstract_cast<TechnoClass*>(pTechno->Target);
+			break;
+		case VectorData::VectorOrigin::Source:
+			pOriginTechno = abstract_cast<TechnoClass*>(_pSource);
+			break;
+		case VectorData::VectorOrigin::Launcher:
+			pOriginTechno = abstract_cast<TechnoClass*>(_pLauncher);
+			break;
+		case VectorData::VectorOrigin::Self:
+			pOriginTechno = pTechno;
+			break;
+		}
+		if (pOriginTechno && !IsDeadOrInvisible(pOriginTechno))
+		{
+			// 优先用引擎动态倾斜（Rocker等），为 0 时从地形采样
+			originTerrainTilt = pOriginTechno->AngleRotatedForwards;
+			if (std::abs(originTerrainTilt) < 1e-6)
+			{
+				CoordStruct originCoord = pOriginTechno->GetCoords();
+				double unitFacing = pOriginTechno->PrimaryFacing.Current().GetRadian();
+				double cosF = std::cos(unitFacing), sinF = std::sin(unitFacing);
+				Point2D frontPt = { originCoord.X + static_cast<int>(128.0 * cosF), originCoord.Y + static_cast<int>(128.0 * sinF) };
+				Point2D backPt  = { originCoord.X - static_cast<int>(128.0 * cosF), originCoord.Y - static_cast<int>(128.0 * sinF) };
+				int hFront = MapClass::Instance->GetCellFloorHeight({frontPt.X, frontPt.Y, 0});
+				int hBack  = MapClass::Instance->GetCellFloorHeight({backPt.X, backPt.Y, 0});
+				double dz = static_cast<double>(hFront - hBack);
+				double dxy = 256.0;
+				originTerrainTilt = (dxy > 1e-6) ? std::atan2(dz, dxy) : 0.0;
+			}
+
+			// 注入 _facingRad/_tiltRad（同 NormalVector 机制）
+			// 单位倾斜 = 默认法向量 (0,0,1) 绕单位 L 轴旋转 originTerrainTilt
+			// L 轴 = (-sinF, cosF, 0)，绕 L 轴旋转后法向量 = (-sinT*sinF, sinT*cosF, cosT)
+			double unitFacing2 = pOriginTechno->PrimaryFacing.Current().GetRadian();
+			double sinT = std::sin(originTerrainTilt), cosT = std::cos(originTerrainTilt);
+			double nx = -sinT * std::sin(unitFacing2);
+			double ny = sinT * std::cos(unitFacing2);
+			double nz = cosT;
+			double nLenXY = std::sqrt(nx * nx + ny * ny);
+			_facingRad = nLenXY > 1e-6 ? std::atan2(ny, nx) : 0.0;
+			_tiltRad = nLenXY > 1e-6 ? std::atan2(nz, nLenXY) : (nz > 0 ? M_PI / 2.0 : -M_PI / 2.0);
+		}
+	}
+
 	double effectiveFacing = _facingRad + Math::deg2rad(_normalRotH);
 	double effectiveTilt = _tiltRad + Math::deg2rad(_normalRotL);
 	DirStruct mainFacingDir = Radians2Dir(effectiveFacing); // 官方API，不得修改：引擎弧度→DirStruct转换
@@ -352,7 +408,7 @@ VectorResult VectorEffect::GetVectorResult()
 		|| Data->NormalRandomF.Y > Data->NormalRandomF.X
 		|| Data->NormalRandomL.Y > Data->NormalRandomL.X
 		|| Data->NormalRandomH.Y > Data->NormalRandomH.X;
-	if (!Data->OriginNoUpdate && !hasNormal && !Data->OriginIsOnWorld)
+	if (!Data->OriginNoUpdate && !hasNormal && !Data->AllowOriginTilt && !Data->OriginIsOnWorld)
 	{
 		switch (Data->Origin)
 		{
@@ -453,10 +509,12 @@ VectorResult VectorEffect::GetVectorResult()
 		break;
 	}
 
-	// OriginFLH 偏移：对非 Self 模式生效，直接使用引擎 DirStruct
+	// OriginFLH 偏移：对非 Self 模式生效
+	// AllowOriginTilt 时跳过二维 GetFLHAbsoluteCoords，后续用三维旋转处理
+	if (!Data->AllowOriginTilt)
 	{
 		if (!Data->OriginFLH.IsEmpty() && Data->Origin != VectorData::VectorOrigin::Self)
-			originPos = GetFLHAbsoluteCoords(originPos, Data->OriginFLH, mainFacingDir); // 官方API，不得修改
+			originPos = GetFLHAbsoluteCoords(originPos, Data->OriginFLH, mainFacingDir);
 	}
 
 	// ========================================================================
@@ -522,15 +580,86 @@ VectorResult VectorEffect::GetVectorResult()
 		else if (speed > 0.0)
 			angleStep = Math::rad2deg(speed / calcRadius);
 
-		// 圆心 = Origin + CircleOrigin 偏移（世界坐标系）
-		CoordStruct circleCenter = originPos;
-		if (!Data->CircleOrigin.IsEmpty())
+	// 圆心 = Origin + CircleOrigin 偏移（世界坐标系）
+	// CircleOrigin Z 高度规则：CircleOrigin 非空 → 绝对覆写 OriginFLH.Z+CircleOrigin.Z；
+	// 仅 OriginFLH 非空 → 相对偏移 _vectorAcquireZ+OriginFLH.Z
+	// 修改 CircleOrigin 的 Z 后再走 GetFLHAbsoluteCoords，tilt 对 F/L 分量的 Z 投影自动保留
+	CoordStruct adjustedCircleOrigin = Data->CircleOrigin;
+	if (!Data->CircleOrigin.IsEmpty())
+		adjustedCircleOrigin.Z = Data->OriginFLH.Z + Data->CircleOrigin.Z;
+	// else if (!Data->OriginFLH.IsEmpty())
+	//	adjustedCircleOrigin.Z = _vectorAcquireZ + Data->OriginFLH.Z;  // 废代码：adjustedCircleOrigin 后续不会被使用
+	// 注意：仅 OriginFLH 时 CircleOrigin 为空，不进入 GetFLHAbsoluteCoords 分支，
+	// 需要单独处理 Z（见下方 OriginFLH 偏移后覆盖）
+
+	CoordStruct circleCenter = originPos;
+
+	// AllowOriginTilt：用三维 FLH 旋转替代二维 GetFLHAbsoluteCoords
+	if (Data->AllowOriginTilt && !Data->OriginFLH.IsEmpty() && Data->Origin != VectorData::VectorOrigin::Self)
+	{
+		int f = Data->OriginFLH.X, l = Data->OriginFLH.Y, h = Data->OriginFLH.Z;
+		double sinT = std::sin(originTerrainTilt), cosT = std::cos(originTerrainTilt);
+		// FLH 旋转用单位自身 facing（_facingRad 是法向量方向，不适用于 FLH 的 F/L 分量）
+		TechnoClass* pOriginTechno = nullptr;
+		switch (Data->Origin)
 		{
-			if (Data->AllowOriginTilt)
-				circleCenter = GetFLHAbsoluteCoords(originPos, Data->CircleOrigin, mainFacingDir); // 官方API，不得修改
-			else
-				circleCenter = originPos + Data->CircleOrigin;
+		case VectorData::VectorOrigin::Target:
+			if (pBullet && pBullet->Target)
+				pOriginTechno = abstract_cast<TechnoClass*>(pBullet->Target);
+			else if (pTechno && pTechno->Target)
+				pOriginTechno = abstract_cast<TechnoClass*>(pTechno->Target);
+			break;
+		case VectorData::VectorOrigin::Source:
+			pOriginTechno = abstract_cast<TechnoClass*>(_pSource);
+			break;
+		case VectorData::VectorOrigin::Launcher:
+			pOriginTechno = abstract_cast<TechnoClass*>(_pLauncher);
+			break;
+		case VectorData::VectorOrigin::Self:
+			pOriginTechno = pTechno;
+			break;
 		}
+		double unitF = (pOriginTechno && !IsDeadOrInvisible(pOriginTechno))
+			? pOriginTechno->PrimaryFacing.Current().GetRadian() : 0.0;
+		double cosF = std::cos(unitF), sinF = std::sin(unitF);
+		// 先绕 L 轴（左右轴）转 tilt（俯仰），再绕 Z 轴转 facing
+		// tilt>0=头低屁股高，头部在 +F 方向偏下
+		// FLH=(f,l,h) 先 tilt: f'=f*cosT-h*sinT, l'=l, h'=f*sinT+h*cosT
+		// 再 facing: X=cosF*f'-sinF*l', Y=sinF*f'+cosF*l', Z=h'
+		double fTilt = f * cosT - h * sinT;
+		double hTilt = f * sinT + h * cosT;
+		circleCenter.X += static_cast<int>(fTilt * cosF - l * sinF);
+		circleCenter.Y += static_cast<int>(fTilt * sinF + l * cosF);
+		circleCenter.Z += static_cast<int>(hTilt);
+	}
+
+	if (!Data->CircleOrigin.IsEmpty())
+	{
+		if (Data->AllowOriginTilt)
+		{
+			// FLH→世界坐标（facing + terrainTilt 三维旋转），替换 GetFLHAbsoluteCoords（仅二维）
+			double cosF = std::cos(effectiveFacing), sinF = std::sin(effectiveFacing);
+			double cosT = std::cos(originTerrainTilt), sinT = std::sin(originTerrainTilt);
+			double f = static_cast<double>(adjustedCircleOrigin.X);
+			double l = static_cast<double>(adjustedCircleOrigin.Y);
+			double h = static_cast<double>(adjustedCircleOrigin.Z);
+			// 先绕 L 轴（左右轴）转 tilt（俯仰），再绕 Z 轴转 facing
+			double fTilt = f * cosT - h * sinT;
+			double hTilt = f * sinT + h * cosT;
+			circleCenter.X += static_cast<int>(fTilt * cosF - l * sinF);
+			circleCenter.Y += static_cast<int>(fTilt * sinF + l * cosF);
+			circleCenter.Z += static_cast<int>(hTilt);
+		}
+		else
+		{
+			circleCenter = originPos + adjustedCircleOrigin;
+		}
+	}
+	else if (!Data->OriginFLH.IsEmpty())
+	{
+		// 仅 OriginFLH：CircleOrigin 为空时不走 FLH 转换，手动设 Z
+		circleCenter.Z = _vectorAcquireZ + Data->OriginFLH.Z;
+	}
 
 		// 圆心移动：Vector.Origin.* 系统
 		if (!Data->OriginMoveTo.IsEmpty() || !Data->OriginTargetFLH.IsEmpty()
@@ -769,12 +898,6 @@ VectorResult VectorEffect::GetVectorResult()
 		_originElapsed++;
 	}
 
-	// Circle 圆心 Z 高度规则（OriginFLH 做相对偏移，CircleOrigin 做绝对覆写）
-	if (!Data->CircleOrigin.IsEmpty())
-		circleCenter.Z = Data->OriginFLH.Z + Data->CircleOrigin.Z;
-	else if (!Data->OriginFLH.IsEmpty())
-		circleCenter.Z = _vectorAcquireZ + Data->OriginFLH.Z;
-
 	// 圆心位移叠加：Circle 模式追踪圆心→调整 currentPos
 	CoordStruct centerDelta{ 0, 0, 0 };  // 初始化避免 C4701 警告
 	bool useCenterTracking = false;
@@ -798,7 +921,8 @@ VectorResult VectorEffect::GetVectorResult()
 	double dy = static_cast<double>(trackPos.Y - circleCenter.Y);
 	double dz = static_cast<double>(trackPos.Z - circleCenter.Z);
 		double currentDist;
-		bool useTiltPlane = hasNormal || (Data->AllowedTilt && effectiveTilt != 0.0);
+		bool useTiltPlane = hasNormal || (Data->AllowedTilt && effectiveTilt != 0.0)
+			|| (Data->AllowOriginTilt && originTerrainTilt != 0.0);
 		if (useTiltPlane)
 		{
 			// 倾斜圆面：投影到 LH 平面计算当前距离
