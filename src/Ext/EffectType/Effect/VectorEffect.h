@@ -70,6 +70,7 @@ public:
 	_prevArcOffset = 0.0;
 		_originArcTotalDist = -1.0;
 		_originPrevArcOffset = 0.0;
+		_vectorAcquireZ = 0;
 	}
 
 	virtual void OnStart() override;
@@ -163,7 +164,8 @@ public:
 		.Process(this->_shadowTraveled)
 		.Process(this->_prevArcOffset)
 			.Process(this->_originArcTotalDist)
-			.Process(this->_originPrevArcOffset);
+			.Process(this->_originPrevArcOffset)
+			.Process(this->_vectorAcquireZ);
 		return stream.Success();
 	};
 
@@ -237,4 +239,5 @@ public:
 	// Speed 模式弧高增量计算（Origin 圆心）
 	double _originArcTotalDist = -1.0;  // Origin 首帧初始总距离（<0=未初始化）
 	double _originPrevArcOffset = 0.0;  // Origin 上一帧弧高绝对值
+	int _vectorAcquireZ = 0;            // 获取 Vector 时的抛射体 Z（Circle 圆心高度基准）
 };

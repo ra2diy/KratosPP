@@ -32,6 +32,7 @@ void VectorEffect::OnStart()
 	_prevCircleCenter = pObject->GetCoords();
 
 	_initialLocation = pObject->GetCoords();
+	_vectorAcquireZ = _initialLocation.Z;  // Circle 圆心高度基准：获取 Vector 时的 Z
 	_totalDuration = AE->GetDuration() / _effectiveTimeStep;
 
 	_randomTargetOffset.X = Random::RandomRanged(Data->TargetOffsetFMin, Data->TargetOffsetFMax);
@@ -762,11 +763,17 @@ VectorResult VectorEffect::GetVectorResult()
 				disp.Y = newOffset.Y - _originOffset.Y;
 				disp.Z = newOffset.Z - _originOffset.Z;
 			}
-		skipOriginUpdate:
-			_originOffset.X += disp.X; _originOffset.Y += disp.Y; _originOffset.Z += disp.Z;
-			circleCenter = baseCenter + _originOffset;
-			_originElapsed++;
-		}
+	skipOriginUpdate:
+		_originOffset.X += disp.X; _originOffset.Y += disp.Y; _originOffset.Z += disp.Z;
+		circleCenter = baseCenter + _originOffset;
+		_originElapsed++;
+	}
+
+	// Circle 圆心 Z 高度规则（OriginFLH 做相对偏移，CircleOrigin 做绝对覆写）
+	if (!Data->CircleOrigin.IsEmpty())
+		circleCenter.Z = Data->OriginFLH.Z + Data->CircleOrigin.Z;
+	else if (!Data->OriginFLH.IsEmpty())
+		circleCenter.Z = _vectorAcquireZ + Data->OriginFLH.Z;
 
 	// 圆心位移叠加：Circle 模式追踪圆心→调整 currentPos
 	CoordStruct centerDelta{ 0, 0, 0 };  // 初始化避免 C4701 警告
@@ -854,7 +861,8 @@ VectorResult VectorEffect::GetVectorResult()
 			double ry = ndx * sinA + ndy * cosA;
 			result.MoveDisp.X = circleCenter.X + static_cast<int>(rx) - currentPos.X;
 			result.MoveDisp.Y = circleCenter.Y + static_cast<int>(ry) - currentPos.Y;
-			result.MoveDisp.Z = circleCenter.Z - currentPos.Z;
+			result.MoveDisp.Z = Data->CircleOrigin.IsEmpty() && Data->OriginFLH.IsEmpty()
+				? 0 : circleCenter.Z - currentPos.Z;  // 有显式高度指定时拉 Z，否则维持抛射体自身高度
 		}
 		result.Force = true;
 
