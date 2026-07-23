@@ -29,7 +29,7 @@ void VectorEffect::OnStart()
 	_currentAngle = 0.0;
 	// _prevCirclePos = pObject->GetCoords();  // [DEAD] 从未读取
 	_effectiveTimeStep = Data->TimeStep;
-	_prevCircleCenter = pObject->GetCoords();
+	// _prevCircleCenter 不在此初始化：圆心追踪依赖 Origin 移动系统首帧的 skipOriginUpdate 赋值
 
 	_initialLocation = pObject->GetCoords();
 	_vectorAcquireZ = _initialLocation.Z;  // Circle 圆心高度基准：获取 Vector 时的 Z
@@ -663,7 +663,7 @@ VectorResult VectorEffect::GetVectorResult()
 
 		// 圆心移动：Vector.Origin.* 系统
 		if (!Data->OriginMoveTo.IsEmpty() || !Data->OriginTargetFLH.IsEmpty()
-			|| Data->OriginCircleRadius >= 0 || Data->OriginCircleSpeed != 0 || Data->OriginLinearSpeed >= 0 || Data->OriginCircleAnglePerStep != 0)
+			|| Data->OriginCircleRadius >= 0 || Data->OriginCircleSpeed != 0 || Data->OriginCircleAnglePerStep != 0)
 		{
 			// 基座：默认 originPos，OriginOrigin 可替换为独立参考系
 			CoordStruct baseCenter = originPos;
@@ -714,8 +714,14 @@ VectorResult VectorEffect::GetVectorResult()
 				_originOffset = circleCenter - baseCenter;
 				// Circle 初始化
 				_originCircleRadius = Data->OriginCircleRadius;
-				_originCircleSpeed = Data->OriginLinearSpeed >= 0 ? Data->OriginLinearSpeed : Data->OriginCircleSpeed;
+				_originCircleSpeed = Data->OriginCircleSpeed;
 				_originCircleAngle = 0.0; // 初始相位
+				// 未显式设半径：取当前偏移的水平距离
+				if (_originCircleRadius < 0)
+					_originCircleRadius = (int)std::sqrt(
+						(double)_originOffset.X * _originOffset.X +
+						(double)_originOffset.Y * _originOffset.Y +
+						(double)_originOffset.Z * _originOffset.Z);
 				// 随机
 				if (Data->OriginCircleRandomRadiusMax > Data->OriginCircleRandomRadiusMin)
 					_originCircleRadius = Random::RandomRanged(Data->OriginCircleRandomRadiusMin, Data->OriginCircleRandomRadiusMax);
@@ -741,10 +747,13 @@ VectorResult VectorEffect::GetVectorResult()
 				_originNormalStepF = res(Data->OriginNormalFAnglePerStep, Data->OriginNormalFAngleRMin, Data->OriginNormalFAngleRMax, Data->OriginNormalFAngleRMin2, Data->OriginNormalFAngleRMax2);
 				_originNormalStepL = res(Data->OriginNormalLAnglePerStep, Data->OriginNormalLAngleRMin, Data->OriginNormalLAngleRMax, Data->OriginNormalLAngleRMin2, Data->OriginNormalLAngleRMax2);
 				_originNormalStepH = res(Data->OriginNormalHAnglePerStep, Data->OriginNormalHAngleRMin, Data->OriginNormalHAngleRMax, Data->OriginNormalHAngleRMin2, Data->OriginNormalHAngleRMax2);
-				if (!Data->OriginNormalVector.IsEmpty() && !_originCircleRadius)
-					_originCircleRadius = -1;  // 有 NormalVector 但无显式半径，自动取当前距离
-				// 无 NormalVector 时从 Origin 参考系取 facing
+			// 无 NormalVector 时：默认水平圆面（法向量朝上）
 				if (Data->OriginNormalVector.IsEmpty())
+				{
+					_originFacing = 0;
+					_originTilt = M_PI / 2.0;
+				}
+				else
 				{
 					switch (Data->OriginOrigin)
 					{
@@ -864,8 +873,8 @@ VectorResult VectorEffect::GetVectorResult()
 				if (Data->OriginCircleMinRadius > 0 && tr < Data->OriginCircleMinRadius) tr = Data->OriginCircleMinRadius;
 				// 角步长：优先线速度/半径推算，否则用固定角速度
 				double originAngleStep = Data->OriginCircleAnglePerStep;
-				if (_originCircleSpeed != 0 && tr > 0)
-					originAngleStep = Math::rad2deg(_originCircleSpeed / tr);
+				if (Data->OriginCircleSpeed != 0 && tr > 0)
+					originAngleStep = Math::rad2deg(Data->OriginCircleSpeed / tr);
 				// Lissajous=yes: 累积大角旋转（增减边震荡），no: 每帧仅增量旋转（平滑行星）
 				_originCircleAngle += originAngleStep;
 				double r = Data->OriginLissajous ? Math::deg2rad(_originCircleAngle) : Math::deg2rad(originAngleStep);
