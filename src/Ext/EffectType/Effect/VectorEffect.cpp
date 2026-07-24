@@ -228,7 +228,7 @@ void VectorEffect::OnStart()
 			}
 			_facingRad = std::atan2(dy, dx);
 			double lenXY = std::sqrt(dx * dx + dy * dy);
-			_tiltRad = (lenXY > 1e-6 && Data->AllowedTilt) ? std::atan2(dz, lenXY) : 0.0;
+			_tiltRad = (lenXY > 1e-6 && Data->AllowCircleTilt) ? std::atan2(dz, lenXY) : 0.0;
 		}
 		break;
 	}
@@ -252,7 +252,7 @@ void VectorEffect::OnStart()
 			}
 			_facingRad = std::atan2(dy, dx);
 			double lenXY = std::sqrt(dx * dx + dy * dy);
-			_tiltRad = (lenXY > 1e-6 && Data->AllowedTilt) ? std::atan2(dz, lenXY) : 0.0;
+			_tiltRad = (lenXY > 1e-6 && Data->AllowCircleTilt) ? std::atan2(dz, lenXY) : 0.0;
 		}
 		break;
 	}
@@ -339,7 +339,7 @@ VectorResult VectorEffect::GetVectorResult()
 
 	// AllowOriginTilt：从 Origin 单位获取倾斜，注入 _facingRad/_tiltRad（同 NormalVector 机制）
 	double originTerrainTilt = 0.0;
-	if (Data->AllowOriginTilt && !Data->OriginIsOnWorld)
+	if ((Data->AllowOriginTilt || Data->OriginAllowOriginTilt) && !Data->OriginIsOnWorld)
 	{
 		TechnoClass* pOriginTechno = nullptr;
 		switch (Data->Origin)
@@ -421,7 +421,7 @@ VectorResult VectorEffect::GetVectorResult()
 				double dy = currentPos.Y - _pSource->GetCoords().Y;
 				double dz = currentPos.Z - _pSource->GetCoords().Z;
 				double lenXY = std::sqrt(dx*dx + dy*dy);
-				effectiveTilt = (lenXY > 1e-6 && Data->AllowedTilt) ? std::atan2(dz, lenXY) : 0.0;
+				effectiveTilt = (lenXY > 1e-6 && Data->AllowCircleTilt) ? std::atan2(dz, lenXY) : 0.0;
 			}
 			break;
 		case VectorData::VectorOrigin::Target:
@@ -442,7 +442,7 @@ VectorResult VectorEffect::GetVectorResult()
 			effectiveFacing = mainFacingDir.GetRadian();
 			double dx = currentPos.X - targetPos.X, dy = currentPos.Y - targetPos.Y, dz = currentPos.Z - targetPos.Z;
 			double lenXY = std::sqrt(dx*dx + dy*dy);
-			effectiveTilt = (lenXY > 1e-6 && Data->AllowedTilt) ? std::atan2(dz, lenXY) : 0.0;
+			effectiveTilt = (lenXY > 1e-6 && Data->AllowCircleTilt) ? std::atan2(dz, lenXY) : 0.0;
 		}
 			break;
 
@@ -752,6 +752,22 @@ VectorResult VectorEffect::GetVectorResult()
 				{
 					_originFacing = 0;
 					_originTilt = M_PI / 2.0;
+					// OriginAllowCircleTilt: 大圆面跟随目标倾斜（Origin=Target 时有效）
+					if (Data->OriginAllowCircleTilt && Data->OriginOrigin == VectorData::VectorOrigin::Target)
+					{
+						CoordStruct targetPos {};
+						bool hasTargetPos = false;
+						if (pBullet) { targetPos = pBullet->TargetCoords; hasTargetPos = true; }
+						else if (pTechno && pTechno->Target) { targetPos = pTechno->Target->GetCoords(); hasTargetPos = true; }
+						if (hasTargetPos)
+						{
+							double dx = circleCenter.X - targetPos.X;
+							double dy = circleCenter.Y - targetPos.Y;
+							double dz = circleCenter.Z - targetPos.Z;
+							double lenXY = std::sqrt(dx * dx + dy * dy);
+							_originTilt = (lenXY > 1e-6) ? std::atan2(dz, lenXY) : M_PI / 2.0;
+						}
+					}
 				}
 				else
 				{
@@ -787,8 +803,25 @@ VectorResult VectorEffect::GetVectorResult()
 			_originNormalRotL += _originNormalStepL;
 			_originNormalRotH += _originNormalStepH;
 
+			// OriginAllowCircleTilt：每帧从目标 Z 差更新大圆面倾斜
+			if (Data->OriginAllowCircleTilt && Data->OriginOrigin == VectorData::VectorOrigin::Target)
+			{
+				CoordStruct oc = baseCenter + _originOffset;
+				CoordStruct targetPos {};
+				bool hasTargetPos = false;
+				if (pBullet) { targetPos = pBullet->TargetCoords; hasTargetPos = true; }
+				else if (pTechno && pTechno->Target) { targetPos = pTechno->Target->GetCoords(); hasTargetPos = true; }
+				if (hasTargetPos)
+				{
+					double dx = oc.X - targetPos.X, dy = oc.Y - targetPos.Y, dz = oc.Z - targetPos.Z;
+					double lenXY = std::sqrt(dx * dx + dy * dy);
+					_originTilt = (lenXY > 1e-6) ? std::atan2(dz, lenXY) : M_PI / 2.0;
+				}
+			}
+
 			double oFacing = _originFacing + Math::deg2rad(_originNormalRotH);
-			double oTilt = _originTilt + Math::deg2rad(_originNormalRotL);
+			double oTilt = _originTilt + Math::deg2rad(_originNormalRotL)
+				+ (Data->OriginAllowOriginTilt ? originTerrainTilt : 0.0);
 			DirStruct oFacingDir = Radians2Dir(oFacing); // 官方API，不得修改：弧度→DirStruct
 
 			// 当前圆心绝对位置 = 基座 + 偏移
@@ -930,8 +963,7 @@ VectorResult VectorEffect::GetVectorResult()
 	double dy = static_cast<double>(trackPos.Y - circleCenter.Y);
 	double dz = static_cast<double>(trackPos.Z - circleCenter.Z);
 		double currentDist;
-		bool useTiltPlane = hasNormal || (Data->AllowedTilt && effectiveTilt != 0.0)
-			|| (Data->AllowOriginTilt && originTerrainTilt != 0.0);
+		bool useTiltPlane = hasNormal || (Data->AllowCircleTilt && effectiveTilt != 0.0);
 		if (useTiltPlane)
 		{
 			// 倾斜圆面：投影到 LH 平面计算当前距离
@@ -1027,7 +1059,7 @@ VectorResult VectorEffect::GetVectorResult()
 		// Origin=Target：F 轴应以 抛射体→目标 连线为准（含 Z 落差），而非全局的 target→抛射体
 		if (Data->Origin == VectorData::VectorOrigin::Target)
 		{
-			CoordStruct tgt;
+			CoordStruct tgt {};
 			bool hasTgt = false;
 			if (pBullet && pBullet->Target)
 				{ tgt = pBullet->Target->GetCoords(); hasTgt = true; }
@@ -1044,7 +1076,7 @@ VectorResult VectorEffect::GetVectorResult()
 				if (tLenXY > 1e-6)
 				{
 					moveDir = Radians2Dir(std::atan2(tdy, tdx)); // 官方API，不得修改
-					if (Data->AllowedTilt)
+					if (Data->AllowCircleTilt)
 					{
 						double tLen3D = std::sqrt(tdx * tdx + tdy * tdy + tdz * tdz);
 						useCosT = tLenXY / tLen3D;
@@ -1072,9 +1104,9 @@ VectorResult VectorEffect::GetVectorResult()
 		{
 			double mf = moveDir.GetRadian();
 			double cosF = std::cos(mf), sinF = std::sin(mf);
-			double cosT = (Data->Origin == VectorData::VectorOrigin::Target && Data->AllowedTilt)
+			double cosT = (Data->Origin == VectorData::VectorOrigin::Target && Data->AllowCircleTilt)
 				? useCosT : std::cos(effectiveTilt);
-			double sinT = (Data->Origin == VectorData::VectorOrigin::Target && Data->AllowedTilt)
+			double sinT = (Data->Origin == VectorData::VectorOrigin::Target && Data->AllowCircleTilt)
 				? useSinT : std::sin(effectiveTilt);
 			double F = static_cast<double>(moveFlh.X);
 			double L = static_cast<double>(moveFlh.Y);

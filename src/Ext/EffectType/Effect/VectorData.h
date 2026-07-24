@@ -37,7 +37,7 @@ public:
 	bool OriginNoUpdate = false;
 	bool Force = true;                  // yes=SetLocation 硬控，默认所有 Vector 模式 Force
 	bool Freeze = false;
-	bool AllowedTilt = false;           // yes=允许坐标系倾斜
+	bool AllowCircleTilt = false;        // yes=允许圆面使用 NormalVector 或地形倾斜
 	CoordStruct NormalVector{};          // 圆面法向量（FLH 坐标系），F/L/H
 	CoordStruct NormalRandomF{};         // F 分量随机范围 .X=Min .Y=Max
 	CoordStruct NormalRandomL{};         // L 分量随机范围
@@ -122,7 +122,7 @@ public:
 	double OriginNormalFAngleRMin = 0, OriginNormalFAngleRMax = 0, OriginNormalFAngleRMin2 = 0, OriginNormalFAngleRMax2 = 0;
 	double OriginNormalLAngleRMin = 0, OriginNormalLAngleRMax = 0, OriginNormalLAngleRMin2 = 0, OriginNormalLAngleRMax2 = 0;
 	double OriginNormalHAngleRMin = 0, OriginNormalHAngleRMax = 0, OriginNormalHAngleRMin2 = 0, OriginNormalHAngleRMax2 = 0;
-	bool OriginAllowedTilt = false;
+	bool OriginAllowCircleTilt = false;   // yes=大圆面跟随目标倾斜（Origin=Target 时有效）
 	CoordStruct OriginCircleOffset{};     // 圆心原点偏移（世界坐标）
 	bool OriginAllowOriginTilt = false;
 	bool OriginLissajous = false;         // yes=独立圆面（Lissajous 模式），no=圆心位移叠加
@@ -202,7 +202,7 @@ public:
 		OriginNoUpdate = reader->Get(title + "OriginNoUpdate", OriginNoUpdate);
 		Force = reader->Get(title + "Force", Force);
 		Freeze = reader->Get(title + "Freeze", Freeze);
-		AllowedTilt = reader->Get(title + "AllowedTilt", AllowedTilt);
+		AllowCircleTilt = reader->Get(title + "AllowCircleTilt", AllowCircleTilt);
 		NormalVector = reader->Get(title + "NormalVector", NormalVector);
 		NormalRandomF = reader->Get(title + "NormalRandomF", NormalRandomF);
 		NormalRandomL = reader->Get(title + "NormalRandomL", NormalRandomL);
@@ -288,19 +288,19 @@ public:
 		OriginReachTarget = reader->Get(title + "Origin.ReachTarget", false);
 		OriginSpeedEndOnReach = reader->Get(title + "Origin.SpeedEndOnReach", OriginSpeedEndOnReach);
 		OriginArcHeight = reader->Get(title + "Origin.ArcHeight", 0);
-		OriginTargetOffsetFMin = reader->Get(title + "Origin.TargetOffsetF.Min", OriginTargetOffsetFMin);
-		OriginTargetOffsetFMax = reader->Get(title + "Origin.TargetOffsetF.Max", OriginTargetOffsetFMax);
-		OriginTargetOffsetLMin = reader->Get(title + "Origin.TargetOffsetL.Min", OriginTargetOffsetLMin);
-		OriginTargetOffsetLMax = reader->Get(title + "Origin.TargetOffsetL.Max", OriginTargetOffsetLMax);
-		OriginTargetOffsetHMin = reader->Get(title + "Origin.TargetOffsetH.Min", OriginTargetOffsetHMin);
-		OriginTargetOffsetHMax = reader->Get(title + "Origin.TargetOffsetH.Max", OriginTargetOffsetHMax);
+		std::string originTargetOffsetFStr = reader->Get(title + "Origin.TargetOffsetF", std::string{""});
+		ParseMinMax(originTargetOffsetFStr, OriginTargetOffsetFMin, OriginTargetOffsetFMax);
+		std::string originTargetOffsetLStr = reader->Get(title + "Origin.TargetOffsetL", std::string{""});
+		ParseMinMax(originTargetOffsetLStr, OriginTargetOffsetLMin, OriginTargetOffsetLMax);
+		std::string originTargetOffsetHStr = reader->Get(title + "Origin.TargetOffsetH", std::string{""});
+		ParseMinMax(originTargetOffsetHStr, OriginTargetOffsetHMin, OriginTargetOffsetHMax);
 		OriginCircleRadius = reader->Get(title + "Origin.CircleRadius", -1);
 		OriginCircleSpeed = reader->Get(title + "Origin.CircleSpeed", 0);
 		OriginCircleAnglePerStep = reader->Get(title + "Origin.CircleAnglePerStep", 0.0);
-		OriginCircleRandomRadiusMin = reader->Get(title + "Origin.CircleRandomRadius.Min", OriginCircleRandomRadiusMin);
-		OriginCircleRandomRadiusMax = reader->Get(title + "Origin.CircleRandomRadius.Max", OriginCircleRandomRadiusMax);
-		OriginCircleRandomAngleMin = reader->Get(title + "Origin.CircleRandomAngle.Min", OriginCircleRandomAngleMin);
-		OriginCircleRandomAngleMax = reader->Get(title + "Origin.CircleRandomAngle.Max", OriginCircleRandomAngleMax);
+		std::string originCircleRandomRadiusStr = reader->Get(title + "Origin.CircleRandomRadius", std::string{""});
+		ParseMinMax(originCircleRandomRadiusStr, OriginCircleRandomRadiusMin, OriginCircleRandomRadiusMax);
+		std::string originCircleRandomAngleStr = reader->Get(title + "Origin.CircleRandomAngle", std::string{""});
+		ParseMinMaxDouble(originCircleRandomAngleStr, OriginCircleRandomAngleMin, OriginCircleRandomAngleMax);
 		OriginCircleRadiusGrow = reader->Get(title + "Origin.CircleRadiusGrow", 0);
 		OriginCircleMaxRadius = reader->Get(title + "Origin.CircleMaxRadius", 0);
 		OriginCircleMinRadius = reader->Get(title + "Origin.CircleMinRadius", 0);
@@ -313,8 +313,8 @@ public:
 		OriginNormalFAnglePerStep = reader->Get(title + "Origin.NormalFAnglePerStep", 0.0);
 		OriginNormalLAnglePerStep = reader->Get(title + "Origin.NormalLAnglePerStep", 0.0);
 		OriginNormalHAnglePerStep = reader->Get(title + "Origin.NormalHAnglePerStep", 0.0);
-		OriginAllowedTilt = reader->Get(title + "Origin.AllowedTilt", false);
-		OriginCircleOffset = reader->Get(title + "Origin.CircleOffset", OriginCircleOffset);
+		OriginAllowCircleTilt = reader->Get(title + "Origin.AllowCircleTilt", false);
+		OriginCircleOffset = reader->Get(title + "Origin.CircleOrigin", OriginCircleOffset);
 		OriginAllowOriginTilt = reader->Get(title + "Origin.AllowOriginTilt", false);
 		OriginLissajous = reader->Get(title + "Origin.Lissajous", false);
 		std::string originOriginStr = reader->Get(title + "Origin.Origin", std::string{ "Self" });
@@ -406,7 +406,7 @@ private:
 			.Process(this->OriginNoUpdate)
 			.Process(this->Force)
 			.Process(this->Freeze)
-			.Process(this->AllowedTilt)
+			.Process(this->AllowCircleTilt)
 			.Process(this->NormalVector)
 			.Process(this->NormalRandomF)
 			.Process(this->NormalRandomL)
@@ -472,7 +472,7 @@ private:
 			.Process(this->OriginNormalLAngleRMin2).Process(this->OriginNormalLAngleRMax2)
 			.Process(this->OriginNormalHAngleRMin).Process(this->OriginNormalHAngleRMax)
 			.Process(this->OriginNormalHAngleRMin2).Process(this->OriginNormalHAngleRMax2)
-			.Process(this->OriginAllowedTilt).Process(this->OriginCircleOffset)
+			.Process(this->OriginAllowCircleTilt).Process(this->OriginCircleOffset)
 			.Process(this->OriginAllowOriginTilt)
 
 			.Process(this->TargetFLH)
