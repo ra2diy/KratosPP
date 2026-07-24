@@ -70,6 +70,10 @@ public:
 	_prevArcOffset = 0.0;
 		_originArcTotalDist = -1.0;
 		_originPrevArcOffset = 0.0;
+		_originArcHeight = 0;
+		_originArcPeakPercent = 0.5;
+		_originArcRotation = 0.0;
+		_originArcStartCenter = {};
 		_vectorAcquireZ = 0;
 	}
 
@@ -93,19 +97,23 @@ public:
 	}
 
 	// 弧高二次曲线（ReachTarget / Speed 共用），t∈[0,1] 返回弧高绝对值
-	double CalcArcOffsetAt(double t) const
+	static double CalcArcOffsetAt(int height, double peakPercent, double t)
 	{
-		if (_arcHeight == 0) return 0.0;
-		if (t <= _arcPeakPercent)
+		if (height == 0) return 0.0;
+		if (t <= peakPercent)
 		{
-			double u = t / _arcPeakPercent;
-			return _arcHeight * u * (2.0 - u);
+			double u = t / peakPercent;
+			return height * u * (2.0 - u);
 		}
 		else
 		{
-			double u = (_arcPeakPercent < 1.0) ? (t - _arcPeakPercent) / (1.0 - _arcPeakPercent) : 0.0;
-			return _arcHeight * (1.0 - u * u);
+			double u = (peakPercent < 1.0) ? (t - peakPercent) / (1.0 - peakPercent) : 0.0;
+			return height * (1.0 - u * u);
 		}
+	}
+	double CalcArcOffsetAt(double t) const
+	{
+		return CalcArcOffsetAt(_arcHeight, _arcPeakPercent, t);
 	}
 
 #pragma region Save/Load
@@ -165,6 +173,11 @@ public:
 		.Process(this->_prevArcOffset)
 			.Process(this->_originArcTotalDist)
 			.Process(this->_originPrevArcOffset)
+			.Process(this->_originArcHeight)
+			.Process(this->_originArcPeakPercent)
+			.Process(this->_originArcRotation)
+			.Process(this->_originArcStartCenter)
+			.Process(this->_initialBaseCenter)
 			.Process(this->_vectorAcquireZ);
 		return stream.Success();
 	};
@@ -239,5 +252,10 @@ public:
 	// Speed 模式弧高增量计算（Origin 圆心）
 	double _originArcTotalDist = -1.0;  // Origin 首帧初始总距离（<0=未初始化）
 	double _originPrevArcOffset = 0.0;  // Origin 上一帧弧高绝对值
+	int _originArcHeight = 0;          // Origin 弧高（OnStart 解析随机后写入）
+	double _originArcPeakPercent = 0.5; // Origin 弧高点比率 0..1
+	double _originArcRotation = 0.0;   // Origin 弧面旋转角（OnStart 解析）
+	CoordStruct _originArcStartCenter{}; // Origin 弧线起始圆心位置
+	CoordStruct _initialBaseCenter{};   // Origin 基座初始快照（OriginNoUpdate 用）
 	int _vectorAcquireZ = 0;            // 获取 Vector 时的抛射体 Z（Circle 圆心高度基准）
 };

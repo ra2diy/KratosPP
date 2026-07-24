@@ -54,6 +54,21 @@ void VectorEffect::OnStart()
 	if (_arcPeakPercent <= 0.0) _arcPeakPercent = 0.5;
 	if (_arcPeakPercent >= 1.0) _arcPeakPercent = 0.5;
 
+	// Origin 弧参数（镜像小圆）
+	_originArcRotation = Data->OriginArcRotation;
+	if (Data->OriginArcRandomRotationMax > Data->OriginArcRandomRotationMin)
+		_originArcRotation = Data->OriginArcRandomRotationMin + (Data->OriginArcRandomRotationMax - Data->OriginArcRandomRotationMin) * Random::RandomDouble();
+
+	_originArcHeight = Data->OriginArcHeight;
+	if (Data->OriginArcRandomHeightMax > Data->OriginArcRandomHeightMin)
+		_originArcHeight = Random::RandomRanged(Data->OriginArcRandomHeightMin, Data->OriginArcRandomHeightMax);
+
+	_originArcPeakPercent = Data->OriginArcPeakPercent / 100.0;
+	if (Data->OriginArcPeakRandomPercent.X < Data->OriginArcPeakRandomPercent.Y)
+		_originArcPeakPercent = Random::RandomRanged(Data->OriginArcPeakRandomPercent.X, Data->OriginArcPeakRandomPercent.Y) / 100.0;
+	if (_originArcPeakPercent <= 0.0) _originArcPeakPercent = 0.5;
+	if (_originArcPeakPercent >= 1.0) _originArcPeakPercent = 0.5;
+
 	// 影子坐标（Speed 模式弧高进度基准，不受弧高 Z 偏移污染）
 	_shadowPosX = _initialLocation.X;
 	_shadowPosY = _initialLocation.Y;
@@ -662,7 +677,7 @@ VectorResult VectorEffect::GetVectorResult()
 	}
 
 		// 圆心移动：Vector.Origin.* 系统
-		if (!Data->OriginMoveTo.IsEmpty() || !Data->OriginTargetFLH.IsEmpty()
+		if (!Data->OriginMoveTo.IsEmpty() || Data->OriginReachTarget || Data->OriginLinearSpeed >= 0 || !Data->OriginTargetFLH.IsEmpty()
 			|| Data->OriginCircleRadius >= 0 || Data->OriginCircleSpeed != 0 || Data->OriginCircleAnglePerStep != 0)
 		{
 			// 基座：默认 originPos，OriginOrigin 可替换为独立参考系
@@ -707,6 +722,12 @@ VectorResult VectorEffect::GetVectorResult()
 			// Origin.CircleOffset 世界偏移
 			if (!Data->OriginCircleOffset.IsEmpty())
 				baseCenter = baseCenter + Data->OriginCircleOffset;
+
+			// OriginNoUpdate：首帧快照基座，后续帧冻结
+			if (_elapsedFrames == 0)
+				_initialBaseCenter = baseCenter;
+			else if (Data->OriginOriginNoUpdate)
+				baseCenter = _initialBaseCenter;
 
 			if (_elapsedFrames == 0)
 			{
@@ -836,11 +857,14 @@ VectorResult VectorEffect::GetVectorResult()
 				growOffset = Data->OriginGrowRate * _originElapsed;
 				disp = GetFLHAbsoluteOffset(Data->OriginMoveTo + growOffset, Radians2Dir(oFacing + Math::deg2rad(_originAngle))); // 官方API，不得修改
 			}
-			else if (!Data->OriginTargetFLH.IsEmpty())
+			else if (Data->OriginReachTarget || Data->OriginLinearSpeed >= 0 || !Data->OriginTargetFLH.IsEmpty())
 			{
 				// Speed / ReachTarget
 				if (_originElapsed == 0)
+				{
 					_originSpeed = Data->OriginLinearSpeed >= 0 ? Data->OriginLinearSpeed : (pTechno ? pTechno->GetTechnoType()->Speed : 40.0);
+					_originArcStartCenter = originCenter;
+				}
 
 				CoordStruct targetWorld = GetFLHAbsoluteCoords(baseCenter, Data->OriginTargetFLH + _originTargetOffset, oFacingDir); // 官方API，不得修改
 				if (Data->OriginReachTarget)
@@ -862,11 +886,45 @@ VectorResult VectorEffect::GetVectorResult()
 					disp.X = (targetWorld.X - originCenter.X) / rem;
 					disp.Y = (targetWorld.Y - originCenter.Y) / rem;
 					disp.Z = (targetWorld.Z - originCenter.Z) / rem;
-					if (Data->OriginArcHeight)
+					if (_originArcHeight != 0)
 					{
-						int total = _totalDuration / _effectiveTimeStep;
-						double t = total>0 ? (double)_originElapsed/total : 0, t0 = total>0 ? (double)(_originElapsed-1)/total : 0;
-						disp.Z += (int)(4.0*Data->OriginArcHeight*(t*(1-t) - t0*(1-t0)));
+						double t = static_cast<double>(_movementFrames) / effectiveSteps;
+						double arcOffset = CalcArcOffsetAt(_originArcHeight, _originArcPeakPercent, t);
+						double baseX = _originArcStartCenter.X + (targetWorld.X - _originArcStartCenter.X) * t;
+						double baseY = _originArcStartCenter.Y + (targetWorld.Y - _originArcStartCenter.Y) * t;
+						double baseZ = _originArcStartCenter.Z + (targetWorld.Z - _originArcStartCenter.Z) * t;
+						if (_originArcRotation == 0.0)
+						{
+							disp.Z = static_cast<int>(baseZ + arcOffset) - originCenter.Z;
+						}
+						else
+						{
+							double dx = targetWorld.X - _originArcStartCenter.X;
+							double dy = targetWorld.Y - _originArcStartCenter.Y;
+							double dz = targetWorld.Z - _originArcStartCenter.Z;
+							double dLen = std::sqrt(dx*dx + dy*dy + dz*dz);
+							if (dLen > 1e-6)
+							{
+								double dnx = dx/dLen, dny = dy/dLen, dnz = dz/dLen;
+								double upDotD = dnz;
+								double px = -dnx*upDotD, py = -dny*upDotD, pz = 1.0 - dnz*upDotD;
+								double pLen = std::sqrt(px*px + py*py + pz*pz);
+								if (pLen < 1e-6) { px = 1.0-dnx*dnx; py = -dny*dnx; pz = -dnz*dnx; pLen = std::sqrt(px*px+py*py+pz*pz); }
+								double pnx = px/pLen, pny = py/pLen, pnz = pz/pLen;
+								double rad = Math::deg2rad(_originArcRotation);
+								double c = std::cos(rad), s = std::sin(rad);
+								double rx = pnx*c + (dny*pnz - dnz*pny)*s;
+								double ry = pny*c + (dnz*pnx - dnx*pnz)*s;
+								double rz = pnz*c + (dnx*pny - dny*pnx)*s;
+								disp.X = static_cast<int>(baseX + rx*arcOffset) - originCenter.X;
+								disp.Y = static_cast<int>(baseY + ry*arcOffset) - originCenter.Y;
+								disp.Z = static_cast<int>(baseZ + rz*arcOffset) - originCenter.Z;
+							}
+							else
+							{
+								disp.Z = static_cast<int>(baseZ + arcOffset) - originCenter.Z;
+							}
+						}
 					}
 				}
 				else
@@ -884,17 +942,48 @@ VectorResult VectorEffect::GetVectorResult()
 					}
 					else { double s = _originSpeed / dist; disp.X = (int)(dx*s); disp.Y = (int)(dy*s); disp.Z = (int)(dz*s); }
 
-					// 弧高增量叠加（简化抛物线，与 OriginReachTarget 一致）
-					if (Data->OriginArcHeight != 0 && dist >= 1.0)
+					// 弧高增量叠加（与 OriginReachTarget 一致，支持 ArcPeakPercent / ArcRotation）
+					if (_originArcHeight != 0 && dist >= 1.0)
 					{
 						if (_originArcTotalDist < 0.0)
 							_originArcTotalDist = dist;
 						double t = (_originArcTotalDist > 1e-6) ? 1.0 - dist / _originArcTotalDist : 0.0;
 						if (t < 0.0) t = 0.0; else if (t > 1.0) t = 1.0;
-						double arcThis = 4.0 * Data->OriginArcHeight * t * (1.0 - t);
+						double arcThis = CalcArcOffsetAt(_originArcHeight, _originArcPeakPercent, t);
 						double arcDelta = arcThis - _originPrevArcOffset;
 						_originPrevArcOffset = arcThis;
-						disp.Z += static_cast<int>(arcDelta);
+						if (_originArcRotation == 0.0)
+						{
+							disp.Z += static_cast<int>(arcDelta);
+						}
+						else
+						{
+							double dx0 = targetWorld.X - _originArcStartCenter.X;
+							double dy0 = targetWorld.Y - _originArcStartCenter.Y;
+							double dz0 = targetWorld.Z - _originArcStartCenter.Z;
+							double dLen = std::sqrt(dx0*dx0 + dy0*dy0 + dz0*dz0);
+							if (dLen > 1e-6)
+							{
+								double dnx = dx0/dLen, dny = dy0/dLen, dnz = dz0/dLen;
+								double upDotD = dnz;
+								double px = -dnx*upDotD, py = -dny*upDotD, pz = 1.0 - dnz*upDotD;
+								double pLen = std::sqrt(px*px + py*py + pz*pz);
+								if (pLen < 1e-6) { px = 1.0-dnx*dnx; py = -dny*dnx; pz = -dnz*dnx; pLen = std::sqrt(px*px+py*py+pz*pz); }
+								double pnx = px/pLen, pny = py/pLen, pnz = pz/pLen;
+								double rad = Math::deg2rad(_originArcRotation);
+								double c = std::cos(rad), s = std::sin(rad);
+								double rx = pnx*c + (dny*pnz - dnz*pny)*s;
+								double ry = pny*c + (dnz*pnx - dnx*pnz)*s;
+								double rz = pnz*c + (dnx*pny - dny*pnx)*s;
+								disp.X += static_cast<int>(rx * arcDelta);
+								disp.Y += static_cast<int>(ry * arcDelta);
+								disp.Z += static_cast<int>(rz * arcDelta);
+							}
+							else
+							{
+								disp.Z += static_cast<int>(arcDelta);
+							}
+						}
 					}
 				}
 			}

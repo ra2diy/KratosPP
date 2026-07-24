@@ -103,6 +103,13 @@ public:
 	bool OriginReachTarget = false;       // 到达模式
 	bool OriginSpeedEndOnReach = true;    // Speed模式抵达目标即结束AE
 	int OriginArcHeight = 0;            // 到达模式弧高
+	double OriginArcPeakPercent = 50.0; // 弧高点百分比（0-100），默认50=中点
+	Point2D OriginArcPeakRandomPercent{ 0, 0 };// 随机弧高点百分比
+	int OriginArcRandomHeightMin = 0;   // 随机弧高下限
+	int OriginArcRandomHeightMax = 0;   // 随机弧高上限
+	double OriginArcRotation = 0.0;     // 弧面旋转角（°），0=朝上
+	double OriginArcRandomRotationMin = 0.0;// 随机旋转下限
+	double OriginArcRandomRotationMax = 0.0;// 随机旋转上限
 	int OriginTargetOffsetFMin = 0, OriginTargetOffsetFMax = 0;
 	int OriginTargetOffsetLMin = 0, OriginTargetOffsetLMax = 0;
 	int OriginTargetOffsetHMin = 0, OriginTargetOffsetHMax = 0;
@@ -125,6 +132,7 @@ public:
 	bool OriginAllowCircleTilt = false;   // yes=大圆面跟随目标倾斜（Origin=Target 时有效）
 	CoordStruct OriginCircleOffset{};     // 圆心原点偏移（世界坐标）
 	bool OriginAllowOriginTilt = false;
+	bool OriginOriginNoUpdate = false;   // yes=圆心基座冻结在初始位置，不随目标移动
 	bool OriginLissajous = false;         // yes=独立圆面（Lissajous 模式），no=圆心位移叠加
 	VectorOrigin OriginOrigin = VectorOrigin::Self; // 圆心运动参考系
 	CoordStruct OriginOriginFLH{};      // OriginOrigin=FLH 时的 FLH 偏移
@@ -288,6 +296,13 @@ public:
 		OriginReachTarget = reader->Get(title + "Origin.ReachTarget", false);
 		OriginSpeedEndOnReach = reader->Get(title + "Origin.SpeedEndOnReach", OriginSpeedEndOnReach);
 		OriginArcHeight = reader->Get(title + "Origin.ArcHeight", 0);
+		OriginArcPeakPercent = reader->Get(title + "Origin.ArcPeakPercent", OriginArcPeakPercent);
+		OriginArcPeakRandomPercent = reader->Get(title + "Origin.RandomArcPeakPercent", OriginArcPeakRandomPercent);
+		std::string originArcRandomHeightStr = reader->Get(title + "Origin.RandomArcHeight", std::string{ "" });
+		ParseMinMax(originArcRandomHeightStr, OriginArcRandomHeightMin, OriginArcRandomHeightMax);
+		OriginArcRotation = reader->Get(title + "Origin.ArcRotation", 0.0);
+		std::string originArcRandomRotationStr = reader->Get(title + "Origin.RandomArcRotation", std::string{ "" });
+		ParseMinMaxDouble(originArcRandomRotationStr, OriginArcRandomRotationMin, OriginArcRandomRotationMax);
 		std::string originTargetOffsetFStr = reader->Get(title + "Origin.TargetOffsetF", std::string{""});
 		ParseMinMax(originTargetOffsetFStr, OriginTargetOffsetFMin, OriginTargetOffsetFMax);
 		std::string originTargetOffsetLStr = reader->Get(title + "Origin.TargetOffsetL", std::string{""});
@@ -316,6 +331,7 @@ public:
 		OriginAllowCircleTilt = reader->Get(title + "Origin.AllowCircleTilt", false);
 		OriginCircleOffset = reader->Get(title + "Origin.CircleOrigin", OriginCircleOffset);
 		OriginAllowOriginTilt = reader->Get(title + "Origin.AllowOriginTilt", false);
+		OriginOriginNoUpdate = reader->Get(title + "Origin.OriginNoUpdate", false);
 		OriginLissajous = reader->Get(title + "Origin.Lissajous", false);
 		std::string originOriginStr = reader->Get(title + "Origin.Origin", std::string{ "Self" });
 		if (originOriginStr == "Launcher") OriginOrigin = VectorOrigin::Launcher;
@@ -451,6 +467,13 @@ private:
 			.Process(this->OriginLinearSpeed).Process(this->OriginReachTarget)
 			.Process(this->OriginSpeedEndOnReach)
 			.Process(this->OriginArcHeight)
+			.Process(this->OriginArcPeakPercent)
+			.Process(this->OriginArcPeakRandomPercent)
+			.Process(this->OriginArcRandomHeightMin)
+			.Process(this->OriginArcRandomHeightMax)
+			.Process(this->OriginArcRotation)
+			.Process(this->OriginArcRandomRotationMin)
+			.Process(this->OriginArcRandomRotationMax)
 			.Process(this->OriginTargetOffsetFMin).Process(this->OriginTargetOffsetFMax)
 			.Process(this->OriginTargetOffsetLMin).Process(this->OriginTargetOffsetLMax)
 			.Process(this->OriginTargetOffsetHMin).Process(this->OriginTargetOffsetHMax)
@@ -473,7 +496,7 @@ private:
 			.Process(this->OriginNormalHAngleRMin).Process(this->OriginNormalHAngleRMax)
 			.Process(this->OriginNormalHAngleRMin2).Process(this->OriginNormalHAngleRMax2)
 			.Process(this->OriginAllowCircleTilt).Process(this->OriginCircleOffset)
-			.Process(this->OriginAllowOriginTilt)
+			.Process(this->OriginAllowOriginTilt).Process(this->OriginOriginNoUpdate)
 
 			.Process(this->TargetFLH)
 			.Process(this->TargetOffsetFMin)
