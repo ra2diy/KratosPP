@@ -37,7 +37,7 @@ public:
 	bool OriginNoUpdate = false;
 	bool Force = true;                  // yes=SetLocation 硬控，默认所有 Vector 模式 Force
 	bool Freeze = false;
-	bool AllowCircleTilt = false;        // yes=允许圆面使用 NormalVector 或地形倾斜
+	bool AllowCircleTilt = true;         // yes=允许圆面使用 NormalVector 或地形倾斜
 	CoordStruct NormalVector{};          // 圆面法向量（FLH 坐标系），F/L/H
 	CoordStruct NormalRandomF{};         // F 分量随机范围 .X=Min .Y=Max
 	CoordStruct NormalRandomL{};         // L 分量随机范围
@@ -76,7 +76,7 @@ public:
 	double CircleMaxAngle = 0.0;     // 角速度上限，0=不限
 	double CircleMinAngle = 0.0;     // 角速度下限，0=不限
 	CoordStruct CircleOrigin{};       // 圆心偏移（默认世界坐标，AllowOriginTilt=yes 时 FLH 旋转）
-	bool AllowOriginTilt = false;     // yes=圆心偏移跟随转轴倾斜
+	bool AllowOriginTilt = true;      // yes=圆心偏移跟随转轴倾斜
 	int CircleRandomRadiusMin = 0;    // 初始半径随机下限
 	int CircleRandomRadiusMax = 0;    // 初始半径随机上限
 	double CircleRandomAngleMin = 0.0; // 初始角速度随机下限
@@ -129,9 +129,9 @@ public:
 	double OriginNormalFAngleRMin = 0, OriginNormalFAngleRMax = 0, OriginNormalFAngleRMin2 = 0, OriginNormalFAngleRMax2 = 0;
 	double OriginNormalLAngleRMin = 0, OriginNormalLAngleRMax = 0, OriginNormalLAngleRMin2 = 0, OriginNormalLAngleRMax2 = 0;
 	double OriginNormalHAngleRMin = 0, OriginNormalHAngleRMax = 0, OriginNormalHAngleRMin2 = 0, OriginNormalHAngleRMax2 = 0;
-	bool OriginAllowCircleTilt = false;   // yes=大圆面跟随目标倾斜（Origin=Target 时有效）
+	bool OriginAllowCircleTilt = true;    // yes=大圆面跟随目标倾斜（Origin=Target 时有效）
 	CoordStruct OriginCircleOffset{};     // 圆心原点偏移（世界坐标）
-	bool OriginAllowOriginTilt = false;
+	bool OriginAllowOriginTilt = true;
 	bool OriginOriginNoUpdate = false;   // yes=圆心基座冻结在初始位置，不随目标移动
 	bool OriginLissajous = false;         // yes=独立圆面（Lissajous 模式），no=圆心位移叠加
 	VectorOrigin OriginOrigin = VectorOrigin::Self; // 圆心运动参考系
@@ -328,9 +328,9 @@ public:
 		OriginNormalFAnglePerStep = reader->Get(title + "Origin.NormalFAnglePerStep", 0.0);
 		OriginNormalLAnglePerStep = reader->Get(title + "Origin.NormalLAnglePerStep", 0.0);
 		OriginNormalHAnglePerStep = reader->Get(title + "Origin.NormalHAnglePerStep", 0.0);
-		OriginAllowCircleTilt = reader->Get(title + "Origin.AllowCircleTilt", false);
+		OriginAllowCircleTilt = reader->Get(title + "Origin.AllowCircleTilt", OriginAllowCircleTilt);
 		OriginCircleOffset = reader->Get(title + "Origin.CircleOrigin", OriginCircleOffset);
-		OriginAllowOriginTilt = reader->Get(title + "Origin.AllowOriginTilt", false);
+		OriginAllowOriginTilt = reader->Get(title + "Origin.AllowOriginTilt", OriginAllowOriginTilt);
 		OriginOriginNoUpdate = reader->Get(title + "Origin.OriginNoUpdate", false);
 		OriginLissajous = reader->Get(title + "Origin.Lissajous", false);
 		std::string originOriginStr = reader->Get(title + "Origin.Origin", std::string{ "Self" });
