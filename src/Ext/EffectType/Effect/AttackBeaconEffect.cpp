@@ -1,4 +1,4 @@
-﻿#include "AttackBeaconEffect.h"
+#include "AttackBeaconEffect.h"
 
 #include <Ext/Helper/Finder.h>
 #include <Ext/Helper/MathEx.h>
@@ -74,7 +74,7 @@ void AttackBeaconEffect::OnUpdate()
 		bool noTypeLimit = data.Types.empty();
 		CoordStruct location = pObject->GetCoords();
 
-		std::map<std::string, std::map<double, TechnoClass*>> candidates; // 待征兆的全部队列
+		std::map<std::string, std::map<std::pair<double, int>, TechnoClass*>> candidates;
 		FindObject<TechnoClass>(TechnoClass::Array.get(), [&](TechnoClass* pTarget) {
 			std::string type = pTarget->GetTechnoType()->ID;
 			if ((noTypeLimit || data.Contains(type))
@@ -83,16 +83,8 @@ void AttackBeaconEffect::OnUpdate()
 				if ((data.Force || !pTarget->Target || pTarget->Target != pObject)
 					&& CanAttack(pTarget, pObject))
 				{
-					// fond one
-					std::map<double, TechnoClass*> targets;
-					auto it = candidates.find(type);
-					if (it != candidates.end())
-					{
-						targets = it->second;
-					}
 					double dist = pTarget->GetCoords().DistanceFrom(location);
-					targets[dist] = pTarget;
-					candidates[type] = targets;
+					candidates[type][{dist, pTarget->UniqueID}] = pTarget;
 				}
 			}
 			return false;

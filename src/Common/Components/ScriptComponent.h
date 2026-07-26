@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <YRPP.h>
 #include <GeneralDefinitions.h>
@@ -52,26 +52,44 @@ public:
 class ObjectScript : public ScriptComponent, public ITechnoScript, public IBulletScript
 {
 public:
+	enum class OwnerType { None, Techno, Bullet };
+
 	ObjectScript() : ScriptComponent() {}
+
+	OwnerType DetectOwnerType()
+	{
+		if (_ownerType == OwnerType::None && _extData)
+		{
+			if (dynamic_cast<TechnoExt::ExtData*>(_extData))
+				_ownerType = OwnerType::Techno;
+			else if (dynamic_cast<BulletExt::ExtData*>(_extData))
+				_ownerType = OwnerType::Bullet;
+		}
+		return _ownerType;
+	}
+
+	virtual void Awake() override
+	{
+		DetectOwnerType();
+	}
 
 	virtual GameObject* GetGameObject() override
 	{
-		if (TechnoExt::ExtData* technoExtData = dynamic_cast<TechnoExt::ExtData*>(_extData))
+		switch (DetectOwnerType())
 		{
-			return technoExtData->_GameObject;
-		}
-		else if (BulletExt::ExtData* bulletExtData = dynamic_cast<BulletExt::ExtData*>(_extData))
-		{
-			return bulletExtData->_GameObject;
+		case OwnerType::Techno:
+			return static_cast<TechnoExt::ExtData*>(_extData)->_GameObject;
+		case OwnerType::Bullet:
+			return static_cast<BulletExt::ExtData*>(_extData)->_GameObject;
 		}
 		return nullptr;
 	}
 
 	TechnoClass* GetTechno()
 	{
-		if (TechnoExt::ExtData* technoExtData = dynamic_cast<TechnoExt::ExtData*>(_extData))
+		if (DetectOwnerType() == OwnerType::Techno)
 		{
-			return technoExtData->OwnerObject();
+			return static_cast<TechnoExt::ExtData*>(_extData)->OwnerObject();
 		}
 		return nullptr;
 	}
@@ -80,9 +98,9 @@ public:
 
 	BulletClass* GetBullet()
 	{
-		if (BulletExt::ExtData* bulletExtData = dynamic_cast<BulletExt::ExtData*>(_extData))
+		if (DetectOwnerType() == OwnerType::Bullet)
 		{
-			return bulletExtData->OwnerObject();
+			return static_cast<BulletExt::ExtData*>(_extData)->OwnerObject();
 		}
 		return nullptr;
 	}
@@ -168,9 +186,11 @@ public:
 	{
 		ScriptComponent::Clean();
 
+		_ownerType = OwnerType::None;
 		_absType = AbstractType::None;
 	}
 protected:
+	OwnerType _ownerType = OwnerType::None;
 	AbstractType _absType = AbstractType::None;
 };
 

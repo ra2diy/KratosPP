@@ -1,4 +1,4 @@
-﻿#include "TechnoExt.h"
+#include "TechnoExt.h"
 
 #include <Ext/ObjectType/AttachEffect.h>
 #include <Ext/TechnoType/AircraftPut.h>
@@ -25,11 +25,11 @@ void TechnoExt::ClearAllArray(EventSystem* sender, Event e, void* args)
 
 
 TechnoExt::ExtContainer TechnoExt::ExtMap{};
-std::map<TechnoClass*, bool> TechnoExt::BaseUnitArray{};
-std::map<TechnoClass*, bool> TechnoExt::BaseStandArray{};
+std::map<TechnoClass*, bool, TechnoClassLess> TechnoExt::BaseUnitArray{};
+std::map<TechnoClass*, bool, TechnoClassLess> TechnoExt::BaseStandArray{};
 
-std::map<TechnoClass*, StandData> TechnoExt::StandArray{};
-std::map<TechnoClass*, StandData> TechnoExt::ImmuneStandArray{};
+std::map<TechnoClass*, StandData, TechnoClassLess> TechnoExt::StandArray{};
+std::map<TechnoClass*, StandData, TechnoClassLess> TechnoExt::ImmuneStandArray{};
 std::vector<TechnoClass*> TechnoExt::VirtualUnitArray{};
 
 HealthTextControlData TechnoExt::HealthTextControlData{};

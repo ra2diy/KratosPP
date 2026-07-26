@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <set>
 
 #include <GeneralDefinitions.h>
 #include <HouseClass.h>
@@ -15,6 +16,19 @@
 #include <WarheadTypeClass.h>
 
 #include <Ext/ObjectType/FilterData.h>
+
+// 指针解引用比较器，按对象值（UniqueID）排序，保证多人同步安全
+struct DereferenceLess {
+	using is_transparent = void;
+	template <typename T, typename U>
+	bool operator()(T&& lhs, U&& rhs) const {
+		return std::less<>()(*lhs, *rhs);
+	}
+};
+
+// std::set 别名，指针按解引用后的值排序
+template<typename T>
+using DistinctCollector = std::set<T, DereferenceLess>;
 
 class AttachEffect;
 

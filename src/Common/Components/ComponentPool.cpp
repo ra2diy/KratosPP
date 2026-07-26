@@ -1,4 +1,4 @@
-﻿#include "ComponentPool.h"
+#include "ComponentPool.h"
 #include "Component.h"
 #include <cstdlib>
 #include <cstring>
@@ -18,8 +18,6 @@ ComponentPool& ComponentPool::GetInstance()
 
 void* ComponentPool::AllocateRaw(const std::type_info& type, size_t size)
 {
-	std::lock_guard<std::mutex> lock(m_poolMutex);
-
 	auto& pool = m_pools[std::type_index(type)];
 	pool.objectSize = size;
 
@@ -53,8 +51,6 @@ void* ComponentPool::AllocateRaw(const std::type_info& type, size_t size)
 void ComponentPool::DeallocateRaw(const std::type_info& type, void* ptr)
 {
 	if (!ptr) return;
-
-	std::lock_guard<std::mutex> lock(m_poolMutex);
 
 #ifdef DEBUG_COMPONENT
 	const char* typeName = type.name();
@@ -100,8 +96,6 @@ Component* ComponentPool::Create(const std::string& name)
 
 void ComponentPool::ClearAll()
 {
-	std::lock_guard<std::mutex> lock(m_poolMutex);
-
 	for (auto& kv : m_pools)
 	{
 		Pool& pool = kv.second;

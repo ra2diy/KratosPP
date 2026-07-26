@@ -95,10 +95,8 @@ DEFINE_HOOK(0x685659, Scenario_ClearClasses_End, 0xA)
 // in progress: Initializing Tactical display
 DEFINE_HOOK(0x6875F3, Scenario_Start1, 0x6)
 {
-	// ensure network synchronization
 	int seed = Game::Seed;
 	Debug::Log("Scenario start, set random seed = %d\n", seed);
-	Random::SetRandomSeed(seed);
 
 	// 打印ComponentFactory清单，用于Debug
 	// ComponentFactory::GetInstance().PrintCreaterInfo();

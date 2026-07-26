@@ -1,4 +1,4 @@
-﻿#include "Finder.h"
+#include "Finder.h"
 
 #include <iterator>
 #include <algorithm>
@@ -147,7 +147,7 @@ std::vector<TechnoClass*> GetCellSpreadTechnos(CellStruct centerCell, CoordStruc
 	HouseClass* pHouse,
 	bool owner, bool allied, bool enemies, bool civilian)
 {
-	std::set<TechnoClass*> pTechnoSet;
+	DistinctCollector<TechnoClass*> pTechnoSet;
 
 	// the quick way. only look at stuff residing on the very cells we are affecting.
 	// CellStruct cellCoords = MapClass::Instance->GetCellAt(location)->MapCoords;
@@ -242,7 +242,7 @@ void FindTechnoOnMark(std::function<bool(TechnoClass*, AttachEffect*)> func,
 	if (maxSpread <= 0)
 	{
 		// 搜索全部单位
-		std::set<TechnoClass*> pTechnoSet;
+		DistinctCollector<TechnoClass*> pTechnoSet;
 		if (data.AffectBuilding)
 		{
 			FindAllObject<BuildingClass>(BuildingClass::Array.get(), [&](BuildingClass* pTarget)->bool {
@@ -318,7 +318,7 @@ void FindBulletOnMark(std::function<bool(BulletClass*, AttachEffect*)> func,
 	CoordStruct location, double maxSpread, double minSpread, bool fullAirspace,
 	HouseClass* pHouse, FilterData data, ObjectClass* exclude)
 {
-	std::set<BulletClass*> pBulletSet;
+	DistinctCollector<BulletClass*> pBulletSet;
 	FindObject<BulletClass>(BulletClass::Array.get(), [&](BulletClass* pTarget)->bool {
 		if (!IsDeadOrInvisible(pTarget) && (data.AffectSelf || pTarget != exclude) && data.CanAffectType(pTarget)) pBulletSet.insert(pTarget); return false;
 		}, location, maxSpread, minSpread, fullAirspace, pHouse, data.AffectsOwner, data.AffectsAllies, data.AffectsEnemies, data.AffectsCivilian);
@@ -367,20 +367,17 @@ void FindAndAttachEffect(CoordStruct location, int damage, WarheadTypeClass* pWH
 			bool affectInAir = warheadTypeData->AffectInAir;
 			// 检索爆炸范围内的单位类型
 			std::vector<TechnoClass*> pTechnoList = GetCellSpreadTechnos(location, cellSpread, fullAirspace, affectInAir, false);
-			// 排序准备和替身的并集
-			std::sort(pTechnoList.begin(), pTechnoList.end());
-			std::set<TechnoClass*> pTargetList;
-			// 检索爆炸范围内的替身
+			DistinctCollector<TechnoClass*> pTargetList;
+			for (auto* p : pTechnoList)
+				pTargetList.insert(p);
 			if (warheadTypeData->AffectStand)
 			{
-				// 检索爆炸范围内的替身
 				std::vector<TechnoClass*> pStandArray;
 				for (auto standExt : TechnoExt::StandArray)
 				{
 					pStandArray.push_back(standExt.first);
 				}
-				std::set<TechnoClass*> pStandList;
-				// 过滤掉不在范围内的
+				DistinctCollector<TechnoClass*> pStandList;
 				FindObject<TechnoClass>(pStandArray, [&pStandList, &affectInAir](TechnoClass* pTarget)->bool
 					{
 						if (affectInAir || !pTarget->IsInAir())
@@ -389,12 +386,8 @@ void FindAndAttachEffect(CoordStruct location, int damage, WarheadTypeClass* pWH
 						}
 						return false;
 					}, location, (double)pWH->CellSpread);
-				// 合并搜索到的单位和替身清单并去重
-				std::set_union(pTechnoList.begin(), pTechnoList.end(), pStandList.begin(), pStandList.end(), std::inserter(pTargetList, pTargetList.begin()));
-			}
-			else
-			{
-				pTargetList.insert(pTechnoList.begin(), pTechnoList.end());
+				for (auto* p : pStandList)
+					pTargetList.insert(p);
 			}
 			// Logger.Log($"{Game.CurrentFrame} 弹头[{pWH->Base.ID}] {pWH} 爆炸半径{pWH->CellSpread}, 影响的单位{pTechnoList.Count()}个，附加AE [{string.Join(", ", aeTypeData.AttachEffectTypes)}]");
 			int attachCount = 0;
@@ -487,7 +480,7 @@ void FindAndDamageStandOrVUnit(CoordStruct location, int damage,
 	WarheadTypeClass* pWH, ObjectClass* pAttacker, HouseClass* pAttackingHouse, ObjectClass* exclude)
 {
 	double distance = pWH->CellSpread * Unsorted::LeptonsPerCell;
-	std::map<TechnoClass*, DamageGroup> targets;
+	std::map<int, DamageGroup> targets;
 	// 检索爆炸范围内的替身
 	for (auto standExt : TechnoExt::StandArray)
 	{
@@ -497,25 +490,25 @@ void FindAndDamageStandOrVUnit(CoordStruct location, int damage,
 		if (!data.Immune && pTarget != exclude
 			&& CheckAndMarkTarget(pTarget, distance, location, damage, pAttacker, pWH, pAttackingHouse, damageGroup))
 		{
-			targets[pTarget] = damageGroup;
+			targets[pTarget->UniqueID] = damageGroup;
 		}
 	}
 	// 检索爆炸范围内的虚单位
 	for (auto pTarget : TechnoExt::VirtualUnitArray)
 	{
-		auto it = targets.find(pTarget);
+		auto it = targets.find(pTarget->UniqueID);
 		DamageGroup damageGroup{};
 		if (it == targets.end() && pTarget != exclude
 			&& CheckAndMarkTarget(pTarget, distance, location, damage, pAttacker, pWH, pAttackingHouse, damageGroup))
 		{
-			targets[pTarget] = damageGroup;
+			targets[pTarget->UniqueID] = damageGroup;
 		}
 	}
 	// 炸了它
-	for (auto t : targets)
+	for (auto& t : targets)
 	{
 		DamageGroup damageGroup = t.second;
-		t.first->ReceiveDamage(&damage, (int)damageGroup.Distance, pWH, pAttacker, false, false, pAttackingHouse);
+		damageGroup.pTarget->ReceiveDamage(&damage, (int)damageGroup.Distance, pWH, pAttacker, false, false, pAttackingHouse);
 	}
 
 }

@@ -1,7 +1,7 @@
-﻿#pragma once
+#pragma once
 
 #include <stack>
-#include <mutex>
+#include <memory>
 #include <unordered_map>
 #include <map>
 #include <set>
@@ -164,8 +164,6 @@ public:
 	template<typename T>
 	void Preallocate(size_t count)
 	{
-		std::lock_guard<std::mutex> lock(m_poolMutex);
-
 		auto& pool = m_pools[std::type_index(typeid(T))];
 		pool.objectSize = sizeof(T);
 
@@ -194,7 +192,6 @@ private:
 
 	using PoolMap = std::unordered_map<std::type_index, Pool>;
 	PoolMap m_pools;
-	mutable std::mutex m_poolMutex;
 
 	void* AllocateRaw(const std::type_info& type, size_t size);
 	void DeallocateRaw(const std::type_info& type, void* ptr);
