@@ -166,12 +166,16 @@ void VectorEffect::OnStart()
 			DirStruct bulletFacing;
 			bulletFacing.SetValue(static_cast<short>(bulletRad * 32768.0 / M_PI));
 			_initialOriginPos = GetFLHAbsoluteCoords(pBullet->GetCoords(), Data->OriginFLH, bulletFacing);
+			_facingDir = bulletFacing; // 锁定初始朝向
+			_facingRad = _facingDir.GetRadian();
 		}
 		else if (pTechno)
 		{
 			CoordStruct unitPos = pTechno->GetCoords();
 			DirStruct unitFacing = pTechno->TurretFacing().Current();
 			_initialOriginPos = GetFLHAbsoluteCoords(unitPos, Data->OriginFLH, unitFacing);
+			_facingDir = unitFacing; // 锁定初始朝向
+			_facingRad = _facingDir.GetRadian();
 		}
 		break;
 	}
@@ -238,7 +242,10 @@ void VectorEffect::OnStart()
 		{
 			TechnoClass* pLauncherTechno = abstract_cast<TechnoClass*>(_pLauncher);
 			if (pLauncherTechno && !IsDeadOrInvisible(pLauncherTechno))
-				_facingRad = pLauncherTechno->TurretFacing().Current().GetRadian();
+			{
+				_facingDir = pLauncherTechno->TurretFacing().Current(); // 直接存 DirStruct，不经 GetRadian 往返
+				_facingRad = _facingDir.GetRadian();
+			}
 		}
 		break;
 	}
@@ -295,23 +302,6 @@ void VectorEffect::OnStart()
 		break;
 	}
 	}
-
-	// === DEBUG: Origin=Target coordinate diagnostics ===
-	{
-		const char* originStr = "Unknown";
-		switch (Data->Origin)
-		{
-		case VectorData::VectorOrigin::Target:  originStr = "Target";  break;
-		case VectorData::VectorOrigin::Launcher:originStr = "Launcher";break;
-		case VectorData::VectorOrigin::Source:  originStr = "Source";  break;
-		case VectorData::VectorOrigin::Self:    originStr = "Self";    break;
-		default:                                originStr = "FLH";     break;
-		}
-		Debug::Log("[VectorOnStart] Origin=%s NoUpdate=%d IsOnWorld=%d\n", originStr, (int)Data->OriginNoUpdate, (int)Data->OriginIsOnWorld);
-		Debug::Log("  _initialOriginPos = (%d, %d, %d)\n", _initialOriginPos.X, _initialOriginPos.Y, _initialOriginPos.Z);
-		Debug::Log("  _facingRad        = %.4f rad  (%.1f deg)\n", _facingRad, _facingRad * 180.0 / M_PI);
-	}
-	// === END DEBUG ===
 }
 
 VectorResult VectorEffect::GetVectorResult()
@@ -342,6 +332,7 @@ VectorResult VectorEffect::GetVectorResult()
 		AdvanceFrame();
 		return result;
 	}
+
 
 	// ========================================================================
 	// Freeze — 成熟机制，别乱动
@@ -477,18 +468,12 @@ VectorResult VectorEffect::GetVectorResult()
 	double effectiveFacing = _facingRad;
 	double effectiveTilt = _tiltRad;
 	DirStruct mainFacingDir = Radians2Dir(effectiveFacing); // 官方API，不得修改：引擎弧度→DirStruct转换
-	// OriginNoUpdate + Target/Source：直接用 OnStart 的 Point2Dir 结果，不经 GetRadian→Radians2Dir 往返
-	if (Data->OriginNoUpdate && (Data->Origin == VectorData::VectorOrigin::Target || Data->Origin == VectorData::VectorOrigin::Source))
+	// OriginNoUpdate + Target/Source/Launcher/Self：直接用 OnStart 存的 DirStruct，不经 GetRadian→Radians2Dir 往返
+	if (Data->OriginNoUpdate && (Data->Origin == VectorData::VectorOrigin::Target || Data->Origin == VectorData::VectorOrigin::Source || Data->Origin == VectorData::VectorOrigin::Launcher || Data->Origin == VectorData::VectorOrigin::Self))
 	{
 		mainFacingDir = _facingDir;
 		effectiveFacing = _facingDir.GetRadian();
-		Debug::Log("[VectorMFD_override] _facingDir.Raw=%u  mainFacingDir.Raw=%u  GetRadian=%.4f\n",
-			(unsigned)_facingDir.Raw, (unsigned)mainFacingDir.Raw, mainFacingDir.GetRadian());
 	}
-	Debug::Log("[VectorMFD_init] effectiveFacing=%.4f rad (%.1f deg)  raw=%-5u  GetRadian=%.4f rad (%.1f deg)\n",
-		effectiveFacing, effectiveFacing * 180.0 / M_PI,
-		(unsigned)mainFacingDir.Raw,
-		mainFacingDir.GetRadian(), mainFacingDir.GetRadian() * 180.0 / M_PI);
 
 	// OriginIsOnWorld：锁定世界坐标系（朝北），覆盖 Origin 朝向
 	if (Data->OriginIsOnWorld)
@@ -1381,6 +1366,8 @@ VectorResult VectorEffect::GetVectorResult()
 		{
 			if (Data->OriginIsOnWorld)
 				frameTarget = GetFLHAbsoluteCoords(originPos, frameTargetFlh, DirStruct{}); // 世界坐标系，无视倾斜
+			else if (Data->OriginNoUpdate)
+				frameTarget = GetFLHAbsoluteCoords(originPos, frameTargetFlh, mainFacingDir); // 锁定原点
 			else
 				frameTarget = GetFLHAbsoluteCoords(currentPos, frameTargetFlh, Facing(pBullet, currentPos)); // 官方API，不得修改
 		}
@@ -1392,21 +1379,6 @@ VectorResult VectorEffect::GetVectorResult()
 		break;
 	}
 
-	// === DEBUG: frameTarget (first 5 movement frames) ===
-	if (_movementFrames <= 5)
-	{
-		double mfdRad = mainFacingDir.GetRadian();
-		double mfdDeg = mfdRad * 180.0 / M_PI;
-		Debug::Log("[VectorFrame%d] TargetFLH=(%d,%d,%d) mainFacingDir raw=%-5u r=%.4f deg=%.1f\n",
-			_movementFrames, Data->TargetFLH.X, Data->TargetFLH.Y, Data->TargetFLH.Z,
-			(unsigned)mainFacingDir.Raw, mfdRad, mfdDeg);
-		Debug::Log("  currentPos  = (%d, %d, %d)\n", currentPos.X, currentPos.Y, currentPos.Z);
-		Debug::Log("  originPos   = (%d, %d, %d)\n", originPos.X, originPos.Y, originPos.Z);
-		Debug::Log("  frameTarget = (%d, %d, %d)\n", frameTarget.X, frameTarget.Y, frameTarget.Z);
-	}
-	// === END DEBUG ===
-
-	// --- 方向向量 ---
 	CoordStruct dirVec;
 	dirVec.X = frameTarget.X - currentPos.X;
 	dirVec.Y = frameTarget.Y - currentPos.Y;
