@@ -33,6 +33,7 @@ public:
 		_effectiveTimeStep = 1;
 		_initialLocation = {};
 		_initialOriginPos = {};
+		_arcStartLocation = {};
 		_pLauncher = nullptr;
 		_pSource = nullptr;
 		_totalDuration = 0;
@@ -138,6 +139,7 @@ public:
 			.Process(this->_effectiveTimeStep)
 			.Process(this->_initialLocation)
 			.Process(this->_initialOriginPos)
+			.Process(this->_arcStartLocation)
 			.Process(this->_pLauncher)
 			.Process(this->_pSource)
 			.Process(this->_totalDuration)
@@ -211,6 +213,7 @@ public:
 
 	CoordStruct _initialLocation{};     // 初始位置快照
 	CoordStruct _initialOriginPos{};    // 初始 Origin 快照（NoUpdate 用）
+	CoordStruct _arcStartLocation{};   // 弧线起点快照（DisFrames结束后抓取）
 	ObjectClass* _pLauncher = nullptr;
 	ObjectClass* _pSource = nullptr;
 

@@ -1424,14 +1424,16 @@ VectorResult VectorEffect::GetVectorResult()
 			resultDisp.Y = static_cast<int>(dirVec.Y / dirLen * adjustedSpeed);
 			resultDisp.Z = static_cast<int>(dirVec.Z / dirLen * adjustedSpeed);
 
-			// 抛物线弧高（基于初始位置，支持 ArcPeakPercent / ArcRotation）
+			// 抛物线弧高（基于弧线起点，支持 ArcPeakPercent / ArcRotation）
 			if (_arcHeight != 0)
 			{
+				if (_arcStartLocation.IsEmpty())
+					_arcStartLocation = currentPos; // 首次弧线执行时抓取当前位置作为起点
 				double t = static_cast<double>(_movementFrames) / effectiveDuration;
 				double arcOffset = CalcArcOffsetAt(t);
-				double baseX = _initialLocation.X + (frameTarget.X - _initialLocation.X) * t;
-				double baseY = _initialLocation.Y + (frameTarget.Y - _initialLocation.Y) * t;
-				double baseZ = _initialLocation.Z + (frameTarget.Z - _initialLocation.Z) * t;
+				double baseX = _arcStartLocation.X + (frameTarget.X - _arcStartLocation.X) * t;
+				double baseY = _arcStartLocation.Y + (frameTarget.Y - _arcStartLocation.Y) * t;
+				double baseZ = _arcStartLocation.Z + (frameTarget.Z - _arcStartLocation.Z) * t;
 
 				if (_arcRotation == 0.0)
 				{
@@ -1441,9 +1443,9 @@ VectorResult VectorEffect::GetVectorResult()
 				}
 				else
 				{
-					double dx = frameTarget.X - _initialLocation.X;
-					double dy = frameTarget.Y - _initialLocation.Y;
-					double dz = frameTarget.Z - _initialLocation.Z;
+					double dx = frameTarget.X - _arcStartLocation.X;
+					double dy = frameTarget.Y - _arcStartLocation.Y;
+					double dz = frameTarget.Z - _arcStartLocation.Z;
 					double dLen = std::sqrt(dx * dx + dy * dy + dz * dz);
 					if (dLen > 1e-6)
 					{
