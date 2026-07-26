@@ -325,6 +325,30 @@ VectorResult VectorEffect::GetVectorResult()
 	result.FallingDestroyHeight = Data->FallingDestroyHeight;
 	result.AllowRotateUnit = Data->SyncFacing; // 成熟机制：单位端同步朝向，删改前确认
 
+	// Circle 预初始化：在 DisabledFrames 冻结前完成，保证首帧后参数可用
+	if (_elapsedFrames == 0)
+	{
+		_currentCircleSpeed = static_cast<double>(Data->CircleSpeed);
+		if (_currentCircleSpeed <= 0.0)
+		{
+			if (pBullet)
+				_currentCircleSpeed = pBullet->Speed;
+			else if (pTechno)
+				_currentCircleSpeed = pTechno->GetTechnoType()->Speed;
+		}
+		_currentCircleAngle = Data->CircleAnglePerStep;
+		if (Data->CircleRandomAngleMax > Data->CircleRandomAngleMin)
+		{
+			if (Data->CircleRandomAngleMax2 > Data->CircleRandomAngleMin2 && Random::RandomRanged(0, 1))
+				_currentCircleAngle = Data->CircleRandomAngleMin2 + (Data->CircleRandomAngleMax2 - Data->CircleRandomAngleMin2) * Random::RandomDouble();
+			else
+				_currentCircleAngle = Data->CircleRandomAngleMin + (Data->CircleRandomAngleMax - Data->CircleRandomAngleMin) * Random::RandomDouble();
+		}
+		_currentCircleRadius = static_cast<double>(Data->CircleRadius);
+		if (Data->CircleRandomRadiusMax > Data->CircleRandomRadiusMin)
+			_currentCircleRadius = Random::RandomRanged(Data->CircleRandomRadiusMin, Data->CircleRandomRadiusMax);
+	}
+
 	// DisabledFrames：首帧快照后冻结，不阻塞其他 AE，不计入运动时间
 	if (_elapsedFrames < Data->DisabledFrames)
 	{
@@ -624,37 +648,14 @@ VectorResult VectorEffect::GetVectorResult()
 			calcRadius = std::sqrt(tdx * tdx + tdy * tdy);
 		}
 
-		// 动态线速：首帧初始化，每帧叠加加速度
-		if (_elapsedFrames == 0)
-		{
-			_currentCircleSpeed = static_cast<double>(Data->CircleSpeed);
-			// 无速度参数时，兜底取抛射体/单位自身速度
-			if (_currentCircleSpeed <= 0.0)
-			{
-				if (pBullet)
-					_currentCircleSpeed = pBullet->Speed;
-				else if (pTechno)
-					_currentCircleSpeed = pTechno->GetTechnoType()->Speed;
-			}
-		}
+		// 动态线速：每帧叠加加速度（初始值已在 DisabledFrames 前预初始化）
 		_currentCircleSpeed += Data->CircleSpeedAcceleration;
 		if (Data->CircleMaxSpeed != 0 && _currentCircleSpeed > Data->CircleMaxSpeed)
 			_currentCircleSpeed = static_cast<double>(Data->CircleMaxSpeed);
 		if (Data->CircleMinSpeed != 0 && _currentCircleSpeed < Data->CircleMinSpeed)
 			_currentCircleSpeed = static_cast<double>(Data->CircleMinSpeed);
 
-		// 角速度动态：首帧初始化，每帧叠加加速度
-		if (_elapsedFrames == 0)
-		{
-			_currentCircleAngle = Data->CircleAnglePerStep;
-			if (Data->CircleRandomAngleMax > Data->CircleRandomAngleMin)
-		{
-			if (Data->CircleRandomAngleMax2 > Data->CircleRandomAngleMin2 && Random::RandomRanged(0, 1))
-				_currentCircleAngle = Data->CircleRandomAngleMin2 + (Data->CircleRandomAngleMax2 - Data->CircleRandomAngleMin2) * Random::RandomDouble();
-			else
-				_currentCircleAngle = Data->CircleRandomAngleMin + (Data->CircleRandomAngleMax - Data->CircleRandomAngleMin) * Random::RandomDouble();
-		}
-		}
+		// 角速度动态：每帧叠加加速度（初始值已在 DisabledFrames 前预初始化）
 		_currentCircleAngle += Data->CircleAngleAcceleration;
 		if (Data->CircleMaxAngle != 0.0 && _currentCircleAngle > Data->CircleMaxAngle)
 			_currentCircleAngle = Data->CircleMaxAngle;
