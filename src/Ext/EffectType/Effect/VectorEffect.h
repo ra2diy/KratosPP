@@ -68,6 +68,7 @@ public:
 		_originLissajousStep = 0.0;
 		_originTargetOffset = {};
 		_prevCircleCenter = {};
+		_circlePos = {};
 		_movementFrames = 0;
 		_arcRotation = 0.0;
 		_arcHeight = 0;
@@ -174,6 +175,7 @@ public:
 			.Process(this->_originLissajousStep)
 			.Process(this->_originTargetOffset)
 			.Process(this->_prevCircleCenter)
+			.Process(this->_circlePos)
 			.Process(this->_movementFrames)
 			.Process(this->_arcRotation)
 			.Process(this->_arcHeight)
@@ -250,6 +252,7 @@ public:
 	double _originLissajousStep = 0.0;
 	CoordStruct _originTargetOffset{};    // 圆心 Target 随机偏移
 	CoordStruct _prevCircleCenter{};      // 上一帧圆心位置（计算叠加位移用）
+	CoordStruct _circlePos{};            // 圆上内部跟踪位置（增量位移，不打架 MoveTo）
 	int _movementFrames = 0;              // 有效运动帧数（不含 InitialDelay/TimeStep 跳帧）
 	double _arcRotation = 0.0;           // 弧面旋转角（OnStart 解析，ReachTarget / Speed）
 	int _arcHeight = 0;                 // 弧高（OnStart 解析随机后写入，ReachTarget / Speed）

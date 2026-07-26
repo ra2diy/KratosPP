@@ -1148,8 +1148,10 @@ VectorResult VectorEffect::GetVectorResult()
 	}
 	_prevCircleCenter = circleCenter;
 
-	// 旋转当前方向向量并按目标半径缩放（追踪模式下调整 currentPos）
-	CoordStruct trackPos = currentPos;
+	// 圆上目标基于内部跟踪位置（非 currentPos），避免与 MoveTo 等 AE 的位移打架
+	if (_circlePos.IsEmpty())
+		_circlePos = currentPos;
+	CoordStruct trackPos = _circlePos;
 	if (useCenterTracking)
 	{
 		trackPos.X += centerDelta.X;
@@ -1210,9 +1212,9 @@ VectorResult VectorEffect::GetVectorResult()
 			double ndH = (dH / curDist * targetRadius);
 			double rL = ndL * cosA - ndH * sinA;
 			double rH = ndL * sinA + ndH * cosA;
-			result.MoveDisp.X = circleCenter.X + static_cast<int>(rL * (-sinF) + rH * (-cosF * sinT)) - currentPos.X;
-			result.MoveDisp.Y = circleCenter.Y + static_cast<int>(rL * cosF + rH * (-sinF * sinT)) - currentPos.Y;
-			result.MoveDisp.Z = circleCenter.Z + static_cast<int>(rH * cosT) - currentPos.Z;
+			result.MoveDisp.X = circleCenter.X + static_cast<int>(rL * (-sinF) + rH * (-cosF * sinT)) - _circlePos.X;
+			result.MoveDisp.Y = circleCenter.Y + static_cast<int>(rL * cosF + rH * (-sinF * sinT)) - _circlePos.Y;
+			result.MoveDisp.Z = circleCenter.Z + static_cast<int>(rH * cosT) - _circlePos.Z;
 		}
 		else
 		{
@@ -1221,11 +1223,14 @@ VectorResult VectorEffect::GetVectorResult()
 			double ndy = (dy / currentDist * targetRadius);
 			double rx = ndx * cosA - ndy * sinA;
 			double ry = ndx * sinA + ndy * cosA;
-			result.MoveDisp.X = circleCenter.X + static_cast<int>(rx) - currentPos.X;
-			result.MoveDisp.Y = circleCenter.Y + static_cast<int>(ry) - currentPos.Y;
+			result.MoveDisp.X = circleCenter.X + static_cast<int>(rx) - _circlePos.X;
+			result.MoveDisp.Y = circleCenter.Y + static_cast<int>(ry) - _circlePos.Y;
 			result.MoveDisp.Z = Data->CircleOrigin.IsEmpty() && Data->OriginFLH.IsEmpty()
-				? 0 : circleCenter.Z - currentPos.Z;  // 有显式高度指定时拉 Z，否则维持抛射体自身高度
+				? 0 : circleCenter.Z - _circlePos.Z;  // 有显式高度指定时拉 Z，否则维持抛射体自身高度
 		}
+		_circlePos.X += result.MoveDisp.X;
+		_circlePos.Y += result.MoveDisp.Y;
+		_circlePos.Z += result.MoveDisp.Z;
 		result.Force = true;
 
 		// 到达边界时结束 AE
