@@ -294,7 +294,7 @@ void AutoWeaponEffect::OnUpdate()
 								pWeapon, *weaponData,
 								data.FireFLH, !Data->IsOnTurret, Data->IsOnTarget,
 								callback,
-								AE->FromWarhead ? AE->WarheadLocation : CoordStruct::Empty);
+								AE->FromWarhead && Data->LaunchFromProjectile ? AE->WarheadLocation : CoordStruct::Empty);
 							if (weaponLaunch)
 								ResetROF(pWeapon, weaponData, rofMultip);
 						}
@@ -358,7 +358,7 @@ void AutoWeaponEffect::OnUpdate()
 									pWeapon, *weaponData,
 									data.FireFLH, !Data->IsOnTurret, Data->IsOnTarget,
 									callback,
-									AE->FromWarhead ? AE->WarheadLocation : CoordStruct::Empty);
+									AE->FromWarhead && Data->LaunchFromProjectile ? AE->WarheadLocation : CoordStruct::Empty);
 								if (weaponLaunch)
 									ResetROF(pWeapon, weaponData, rofMultip);
 							}
