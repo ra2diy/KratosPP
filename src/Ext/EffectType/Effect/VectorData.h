@@ -51,6 +51,7 @@ public:
 	double NormalLAngleRMin2 = 0.0, NormalLAngleRMax2 = 0.0;
 	double NormalHAngleRMin = 0.0, NormalHAngleRMax = 0.0;
 	double NormalHAngleRMin2 = 0.0, NormalHAngleRMax2 = 0.0;
+	double Lissajous = 0.0;           // 小圆圆周 F 轴偏移角速度（°/step），0=不偏移
 
 	// ========================================================================
 	// MoveTo 模式（纯 FLH 位移 + GrowRate）
@@ -133,7 +134,7 @@ public:
 	CoordStruct OriginCircleOffset{};     // 圆心原点偏移（世界坐标）
 	bool OriginAllowOriginTilt = true;
 	bool OriginOriginNoUpdate = false;   // yes=圆心基座冻结在初始位置，不随目标移动
-	bool OriginLissajous = false;         // yes=独立圆面（Lissajous 模式），no=圆心位移叠加
+	double OriginLissajous = 0.0;        // 大圆圆周 F 轴偏移角速度（°/step），0=不偏移
 	VectorOrigin OriginOrigin = VectorOrigin::Self; // 圆心运动参考系
 	CoordStruct OriginOriginFLH{};      // OriginOrigin=FLH 时的 FLH 偏移
 
@@ -232,6 +233,7 @@ public:
 			parse4("NormalLAngleRanges", NormalLAngleRMin, NormalLAngleRMax, NormalLAngleRMin2, NormalLAngleRMax2);
 			parse4("NormalHAngleRanges", NormalHAngleRMin, NormalHAngleRMax, NormalHAngleRMin2, NormalHAngleRMax2);
 		}
+		Lissajous = reader->Get(title + "Lissajous", 0.0);
 
 		// --- MoveTo ---
 		MoveTo = reader->Get(title + "MoveTo", MoveTo);
@@ -332,7 +334,7 @@ public:
 		OriginCircleOffset = reader->Get(title + "Origin.CircleOrigin", OriginCircleOffset);
 		OriginAllowOriginTilt = reader->Get(title + "Origin.AllowOriginTilt", OriginAllowOriginTilt);
 		OriginOriginNoUpdate = reader->Get(title + "Origin.OriginNoUpdate", false);
-		OriginLissajous = reader->Get(title + "Origin.Lissajous", false);
+		OriginLissajous = reader->Get(title + "Origin.Lissajous", 0.0);
 		std::string originOriginStr = reader->Get(title + "Origin.Origin", std::string{ "Self" });
 		if (originOriginStr == "Launcher") OriginOrigin = VectorOrigin::Launcher;
 		else if (originOriginStr == "Target") OriginOrigin = VectorOrigin::Target;
@@ -436,6 +438,7 @@ private:
 			.Process(this->NormalLAngleRMin2).Process(this->NormalLAngleRMax2)
 			.Process(this->NormalHAngleRMin).Process(this->NormalHAngleRMax)
 			.Process(this->NormalHAngleRMin2).Process(this->NormalHAngleRMax2)
+			.Process(this->Lissajous)
 
 			.Process(this->MoveTo)
 			.Process(this->GrowRate)
@@ -497,6 +500,9 @@ private:
 			.Process(this->OriginNormalHAngleRMin2).Process(this->OriginNormalHAngleRMax2)
 			.Process(this->OriginAllowCircleTilt).Process(this->OriginCircleOffset)
 			.Process(this->OriginAllowOriginTilt).Process(this->OriginOriginNoUpdate)
+			.Process(this->OriginLissajous)
+			.Process(this->OriginOrigin)
+			.Process(this->OriginOriginFLH)
 
 			.Process(this->TargetFLH)
 			.Process(this->TargetOffsetFMin)

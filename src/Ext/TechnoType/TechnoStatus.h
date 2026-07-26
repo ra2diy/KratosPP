@@ -420,6 +420,7 @@ public:
 	bool VectorFreezeActive = false;
 	CoordStruct _vectorDesiredPos{};
 	GUID _vectorSavedLocomotor{}; // Vector 接管时保存的原 Locomotor
+	AbstractClass* _savedVectorTarget = nullptr; // Vector 接管时锁定的攻击目标
 	double _spinRad = 0;
 	int _spinTime = 0;
 	bool _spinFlip = true;

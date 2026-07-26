@@ -9,9 +9,13 @@
 
 void TechnoStatus::VectorCancel()
 {
+	// 保存当前攻击目标及移动目标，Vector结束后恢复
+	AbstractClass* savedTarget = pTechno->Target;
+	AbstractClass* savedFocus = pTechno->Focus;
+	FootClass* pFoot = abstract_cast<FootClass*>(pTechno);
+
 	if (!IsBuilding() && !IsDeadOrInvisible(pTechno))
 	{
-		FootClass* pFoot = abstract_cast<FootClass*, true>(pTechno);
 		pFoot->Locomotor->Unlock();
 		// 恢复原 Locomotor
 		if (dynamic_cast<JumpjetLocomotionClass*>(pFoot->Locomotor.get()))
@@ -38,6 +42,18 @@ void TechnoStatus::VectorCancel()
 	VectorFreezeActive = false;
 	_vectorDesiredPos = CoordStruct::Empty;
 	_vectorResult = {};
+	_savedVectorTarget = nullptr;
+
+	// 恢复被清空的攻击目标和移动目标
+	if (savedTarget && !IsDeadOrInvisible(abstract_cast<ObjectClass*>(savedTarget)))
+	{
+		pTechno->SetTarget(savedTarget);
+		pTechno->QueueMission(Mission::Attack, false);
+	}
+	else if (savedFocus && !IsDeadOrInvisible(abstract_cast<ObjectClass*>(savedFocus)))
+	{
+		pTechno->SetFocus(savedFocus);
+	}
 }
 
 
@@ -68,6 +84,19 @@ void TechnoStatus::OnUpdate_Vector()
 	{
 		VectorForced = true;
 		VectorPendingFall = false;
+
+		// 首次进入 Vector：锁定当前目标
+		if (!wasVectorForced)
+		{
+			_savedVectorTarget = pTechno->Target;
+		}
+		// 每帧恢复：引擎可能清Target，强制重设
+		if (_savedVectorTarget && !IsDeadOrInvisible(abstract_cast<ObjectClass*>(_savedVectorTarget)))
+		{
+			pTechno->SetTarget(_savedVectorTarget);
+			pTechno->QueueMission(Mission::Attack, false);
+		}
+
 		if (_vectorResult.Freeze)
 			VectorFreezeActive = true;
 
