@@ -114,7 +114,7 @@ void VectorEffect::OnStart()
 	}
 
 	// 缓存：只要单位有攻击目标就记录，不限Origin类型，供AE链路后续使用
-	if (pTechno && pTechno->Target)
+	if (pTechno && pTechno->Target && abstract_cast<ObjectClass*>(pTechno->Target) && !IsDeadOrInvisible(abstract_cast<ObjectClass*>(pTechno->Target)))
 		_lastTargetCache[pTechno] = pTechno->Target->GetCoords();
 
 	// --- Origin 初始化 ---
@@ -127,7 +127,7 @@ void VectorEffect::OnStart()
 			if (pTechno)
 			{
 				_initialOriginPos = pTechno->GetCoords();
-				if (pTechno->Target)
+				if (pTechno->Target && abstract_cast<ObjectClass*>(pTechno->Target) && !IsDeadOrInvisible(abstract_cast<ObjectClass*>(pTechno->Target)))
 					_lastTargetCache[pTechno] = pTechno->Target->GetCoords();
 			}
 			else if (pBullet)
@@ -649,6 +649,8 @@ VectorResult VectorEffect::GetVectorResult()
 			double tdy = currentPos.Y - originPos.Y;
 			calcRadius = std::sqrt(tdx * tdx + tdy * tdy);
 		}
+		if (calcRadius < 1.0)
+			calcRadius = 1.0;  // 防止除零：半径 + 角速度互推时必 > 0
 
 		// 动态线速：每帧叠加加速度（初始值已在 DisabledFrames 前预初始化）
 		_currentCircleSpeed += Data->CircleSpeedAcceleration;
