@@ -435,7 +435,9 @@ VectorResult VectorEffect::GetVectorResult()
 	// AllowOriginTilt：从 Origin 单位获取倾斜，注入 _facingRad/_tiltRad（同 NormalVector 机制）
 	// 仅 Circle 模式生效，避免非 Circle 模式覆盖 OnStart 的方向
 	double originTerrainTilt = 0.0;
-	bool hasCircleForTilt = Data->CircleRadius > 0 || Data->CircleAnglePerStep > 0.0;
+	bool hasCircleForTilt = Data->CircleRadius > 0 || Data->CircleAnglePerStep > 0.0
+		|| (Data->CircleRandomRadiusMax > Data->CircleRandomRadiusMin)
+		|| (Data->CircleRandomAngleMax > Data->CircleRandomAngleMin);
 	if ((Data->AllowOriginTilt || Data->OriginAllowOriginTilt) && hasCircleForTilt && !Data->OriginIsOnWorld)
 	{
 		TechnoClass* pOriginTechno = nullptr;
@@ -977,7 +979,7 @@ VectorResult VectorEffect::GetVectorResult()
 				CoordStruct targetWorld = GetFLHAbsoluteCoords(baseCenter, Data->OriginTargetFLH + _originTargetOffset, oFacingDir); // 官方API，不得修改
 				if (Data->OriginReachTarget)
 				{
-					int effectiveSteps = (_totalDuration - Data->DisabledFrames) / _effectiveTimeStep;
+					int effectiveSteps = (AE->AEData.GetDuration() - Data->DisabledFrames) / _effectiveTimeStep;
 					if (effectiveSteps < 1) effectiveSteps = 1;
 					int rem = effectiveSteps - _movementFrames;
 					if (rem <= 0)
