@@ -18,14 +18,15 @@ public:
 	{
 		EffectScript::Clean();
 
-		// 清理静态缓存中的死条目，防止悬空指针
-		for (auto it = _lastTargetCache.begin(); it != _lastTargetCache.end();)
+		// 清理静态缓存中的死条目（先收集后擦除，避免多实例并发迭代同一 map）
+		std::vector<TechnoClass*> deadKeys;
+		for (auto& pair : _lastTargetCache)
 		{
-			if (IsDeadOrInvisible(it->first))
-				it = _lastTargetCache.erase(it);
-			else
-				++it;
+			if (IsDeadOrInvisible(pair.first))
+				deadKeys.push_back(pair.first);
 		}
+		for (auto* key : deadKeys)
+			_lastTargetCache.erase(key);
 
 		_elapsedFrames = 0;
 		_moveFrame = 0;
@@ -73,17 +74,18 @@ public:
 		_arcRotation = 0.0;
 		_arcHeight = 0;
 		_arcPeakPercent = 0.5;
-	_shadowPosX = 0.0;
-	_shadowPosY = 0.0;
-	_shadowPosZ = 0.0;
-	_shadowTraveled = 0.0;
-	_prevArcOffset = 0.0;
+		_shadowPosX = 0.0;
+		_shadowPosY = 0.0;
+		_shadowPosZ = 0.0;
+		_shadowTraveled = 0.0;
+		_prevArcOffset = 0.0;
 		_originArcTotalDist = -1.0;
 		_originPrevArcOffset = 0.0;
 		_originArcHeight = 0;
 		_originArcPeakPercent = 0.5;
 		_originArcRotation = 0.0;
 		_originArcStartCenter = {};
+		_initialBaseCenter = {};
 		_vectorAcquireZ = 0;
 	}
 

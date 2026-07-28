@@ -519,6 +519,7 @@ public:
 			.Process(this->_turretTime)
 			.Process(this->_turretFlip)
 			.Process(this->_vectorResult)
+			.Process(this->_savedVectorTarget)
 			.Success();
 	};
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
