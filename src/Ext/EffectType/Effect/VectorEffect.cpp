@@ -12,9 +12,6 @@
 #include <Ext/EffectType/AttachEffectScript.h>
 #include <Ext/BulletType/BulletStatus.h>
 
-// 跨 AE 链路目标坐标缓存
-std::map<TechnoClass*, CoordStruct> VectorEffect::_lastTargetCache;
-
 
 // Vector: Freeze / Circle / MoveTo / Speed / ReachTarget
 // 基于 V1 VectorEffect.cpp 精简
@@ -113,10 +110,6 @@ void VectorEffect::OnStart()
 		_pLauncher = (AE && AE->pSource) ? AE->pSource : pTechno; // 单位侧用攻击者作为Launcher
 	}
 
-	// 缓存：只要单位有攻击目标就记录，不限Origin类型，供AE链路后续使用
-	if (pTechno && pTechno->Target && abstract_cast<ObjectClass*>(pTechno->Target) && !IsDeadOrInvisible(abstract_cast<ObjectClass*>(pTechno->Target)))
-		_lastTargetCache[pTechno] = pTechno->Target->GetCoords();
-
 	// --- Origin 初始化 ---
 	switch (Data->Origin)
 	{
@@ -127,8 +120,6 @@ void VectorEffect::OnStart()
 			if (pTechno)
 			{
 				_initialOriginPos = pTechno->GetCoords();
-				if (pTechno->Target && abstract_cast<ObjectClass*>(pTechno->Target) && !IsDeadOrInvisible(abstract_cast<ObjectClass*>(pTechno->Target)))
-					_lastTargetCache[pTechno] = pTechno->Target->GetCoords();
 			}
 			else if (pBullet)
 				_initialOriginPos = pBullet->TargetCoords;
@@ -383,21 +374,6 @@ VectorResult VectorEffect::GetVectorResult()
 		return result;
 	}
 	_movementFrames++;
-
-	// 每帧更新缓存：即使OnStart时Target为空，后续帧获取后也能传递
-	if (pTechno)
-	{
-		CoordStruct cached{};
-		bool got = false;
-		if (pTechno->Target) { cached = pTechno->Target->GetCoords(); got = true; }
-		else {
-			FootClass* pf = abstract_cast<FootClass*>(pTechno);
-			if (pf && pf->Destination) { cached = pf->Destination->GetCoords(); got = true; }
-			else if (pTechno->Focus) { cached = pTechno->Focus->GetCoords(); got = true; }
-		}
-		if (got)
-			_lastTargetCache[pTechno] = cached;
-	}
 
 	_normalRotF += _lissajousStep;
 	// 3D 法向量增量旋转（绕世界 F=Y / L=X / H=Z 轴，正速度=顺时针）
@@ -872,9 +848,12 @@ VectorResult VectorEffect::GetVectorResult()
 					switch (Data->OriginOrigin)
 					{
 					case VectorData::VectorOrigin::Launcher:
-						if (_pLauncher && !IsDeadOrInvisible(_pLauncher))
-							_originFacing = abstract_cast<TechnoClass*>(_pLauncher)->TurretFacing().Current().GetRadian();
-						else if (pTechno) _originFacing = pTechno->TurretFacing().Current().GetRadian();
+						{
+							TechnoClass* pLT = abstract_cast<TechnoClass*>(_pLauncher);
+							if (pLT && !IsDeadOrInvisible(pLT))
+								_originFacing = pLT->TurretFacing().Current().GetRadian();
+							else if (pTechno) _originFacing = pTechno->TurretFacing().Current().GetRadian();
+						}
 						break;
 					case VectorData::VectorOrigin::Target:
 						if (pBullet) { auto tp = pBullet->TargetCoords; auto bp = pBullet->GetCoords(); _originFacing = std::atan2(bp.Y-tp.Y, bp.X-tp.X); }

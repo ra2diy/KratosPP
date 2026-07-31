@@ -2,7 +2,6 @@
 
 #include <string>
 #include <vector>
-#include <map>
 
 #include <GeneralDefinitions.h>
 
@@ -17,16 +16,6 @@ public:
 	virtual void Clean() override
 	{
 		EffectScript::Clean();
-
-		// 清理静态缓存中的死条目（先收集后擦除，避免多实例并发迭代同一 map）
-		std::vector<TechnoClass*> deadKeys;
-		for (auto& pair : _lastTargetCache)
-		{
-			if (IsDeadOrInvisible(pair.first))
-				deadKeys.push_back(pair.first);
-		}
-		for (auto* key : deadKeys)
-			_lastTargetCache.erase(key);
 
 		_elapsedFrames = 0;
 		_moveFrame = 0;
@@ -88,10 +77,6 @@ public:
 		_initialBaseCenter = {};
 		_vectorAcquireZ = 0;
 	}
-
-	// 跨 AE 链路目标坐标缓存：只要单位有攻击目标就记录，
-	// AE 链条中断后新 AE 的 OriginNoUpdate 仍可回退到上一 AE 记录的坐标
-	static std::map<TechnoClass*, CoordStruct> _lastTargetCache;
 
 	virtual void OnStart() override;
 
