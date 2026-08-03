@@ -35,9 +35,73 @@ void VectorEffect::OnStart()
 	_vectorAcquireZ = _initialLocation.Z;  // Circle 圆心高度基准：获取 Vector 时的 Z
 	_totalDuration = AE->AEData.GetDuration() / _effectiveTimeStep;
 
-	_randomTargetOffset.X = Random::RandomRanged(Data->TargetOffsetFMin, Data->TargetOffsetFMax);
-	_randomTargetOffset.Y = Random::RandomRanged(Data->TargetOffsetLMin, Data->TargetOffsetLMax);
-	_randomTargetOffset.Z = Random::RandomRanged(Data->TargetOffsetHMin, Data->TargetOffsetHMax);
+	// TargetOffset 随机偏移
+	if (Data->TargetOffsetRadiusMin < Data->TargetOffsetRadiusMax)
+	{
+		// 半径模式：全向随机落点（与 F/L/H 互斥）
+		double radius = (Data->TargetOffsetRadiusMin2 < Data->TargetOffsetRadiusMax2 && Random::RandomRanged(0, 1))
+			? Random::RandomRanged(Data->TargetOffsetRadiusMin2, Data->TargetOffsetRadiusMax2)
+			: Random::RandomRanged(Data->TargetOffsetRadiusMin, Data->TargetOffsetRadiusMax);
+		if (Data->TargetOffsetSphere)
+		{
+			// 球面均匀分布：z=2u-1 面积均匀 + 经度 2πv，避免极区聚集
+			double u = Random::RandomDouble() * 2.0 - 1.0;
+			double phi = Random::RandomDouble() * 2.0 * M_PI;
+			double rXY = radius * std::sqrt(1.0 - u * u);
+			_randomTargetOffset.X = static_cast<int>(rXY * std::cos(phi));
+			_randomTargetOffset.Y = static_cast<int>(rXY * std::sin(phi));
+			_randomTargetOffset.Z = static_cast<int>(radius * u);
+		}
+		else
+		{
+			// XY 圆环：角度默认全向，TargetOffsetAngles 限制时按区间加权均匀
+			// FLH 系角 = -90°-deg：消费端 GetFLHAbsoluteOffset 世界角 = -(mainFacingDir + flhAngle)，
+			// Origin=Target 时 mainFacingDir=近交点方向，世界落点角 = 近交点角 + deg，以近交点对称
+			double flhAngle;
+			bool hasAngleRange = (Data->TargetOffsetAngleMin < Data->TargetOffsetAngleMax)
+				|| (Data->TargetOffsetAngleMin2 < Data->TargetOffsetAngleMax2);
+			if (hasAngleRange)
+			{
+				// 区间加权均匀：u 落在总长度内，映射到对应区间
+				double len1 = Data->TargetOffsetAngleMax - Data->TargetOffsetAngleMin;
+				double len2 = Data->TargetOffsetAngleMax2 - Data->TargetOffsetAngleMin2;
+				double total = (len1 > 0 ? len1 : 0.0) + (len2 > 0 ? len2 : 0.0);
+				double u = Random::RandomDouble() * total;
+				double deg;
+				if (len1 > 0 && u < len1)
+					deg = Data->TargetOffsetAngleMin + u;
+				else
+					deg = Data->TargetOffsetAngleMin2 + (u - (len1 > 0 ? len1 : 0.0));
+				flhAngle = Math::deg2rad(-90.0 - deg);
+			}
+			else
+			{
+				flhAngle = Random::RandomDouble() * 2.0 * M_PI;  // 无角度限制：全向
+			}
+			_randomTargetOffset.X = static_cast<int>(radius * std::cos(flhAngle));
+			_randomTargetOffset.Y = static_cast<int>(radius * std::sin(flhAngle));
+			_randomTargetOffset.Z = (Data->TargetOffsetHMin2 < Data->TargetOffsetHMax2 && Random::RandomRanged(0, 1))
+				? Random::RandomRanged(Data->TargetOffsetHMin2, Data->TargetOffsetHMax2)
+				: (Data->TargetOffsetHMin < Data->TargetOffsetHMax
+					? Random::RandomRanged(Data->TargetOffsetHMin, Data->TargetOffsetHMax) : 0);
+		}
+	}
+	else
+	{
+		// F/L/H 模式：区间2有效且50%取区间2，否则区间1（无效给0）
+		_randomTargetOffset.X = (Data->TargetOffsetFMin2 < Data->TargetOffsetFMax2 && Random::RandomRanged(0, 1))
+			? Random::RandomRanged(Data->TargetOffsetFMin2, Data->TargetOffsetFMax2)
+			: (Data->TargetOffsetFMin < Data->TargetOffsetFMax
+				? Random::RandomRanged(Data->TargetOffsetFMin, Data->TargetOffsetFMax) : 0);
+		_randomTargetOffset.Y = (Data->TargetOffsetLMin2 < Data->TargetOffsetLMax2 && Random::RandomRanged(0, 1))
+			? Random::RandomRanged(Data->TargetOffsetLMin2, Data->TargetOffsetLMax2)
+			: (Data->TargetOffsetLMin < Data->TargetOffsetLMax
+				? Random::RandomRanged(Data->TargetOffsetLMin, Data->TargetOffsetLMax) : 0);
+		_randomTargetOffset.Z = (Data->TargetOffsetHMin2 < Data->TargetOffsetHMax2 && Random::RandomRanged(0, 1))
+			? Random::RandomRanged(Data->TargetOffsetHMin2, Data->TargetOffsetHMax2)
+			: (Data->TargetOffsetHMin < Data->TargetOffsetHMax
+				? Random::RandomRanged(Data->TargetOffsetHMin, Data->TargetOffsetHMax) : 0);
+	}
 
 	// 弧面旋转角
 	_arcRotation = Data->ArcRotation;

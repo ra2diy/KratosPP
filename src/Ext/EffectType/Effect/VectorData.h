@@ -149,6 +149,24 @@ public:
 	int TargetOffsetLMax = 0;
 	int TargetOffsetHMin = 0;
 	int TargetOffsetHMax = 0;
+	// 四参数版（TargetOffsetFRanges）：区间1复用上方 Min/Max，区间2独立存储，双区间50%取一
+	int TargetOffsetFMin2 = 0;
+	int TargetOffsetFMax2 = 0;
+	int TargetOffsetLMin2 = 0;
+	int TargetOffsetLMax2 = 0;
+	int TargetOffsetHMin2 = 0;
+	int TargetOffsetHMax2 = 0;
+	// 半径模式（TargetOffsetRadius）：与 F/L/H 互斥，全向随机落点
+	int TargetOffsetRadiusMin = 0;
+	int TargetOffsetRadiusMax = 0;
+	int TargetOffsetRadiusMin2 = 0;  // 四参数版（TargetOffsetRadiusRanges）区间2，区间1复用 Min/Max
+	int TargetOffsetRadiusMax2 = 0;
+	bool TargetOffsetSphere = false;   // yes=球面全向（含H），no=XY圆环+H用TargetOffsetH
+	// 角度限制（TargetOffsetAngles，仅圆环模式）：双区间，0度=目标点指向抛射体（近交点）
+	int TargetOffsetAngleMin = 0;
+	int TargetOffsetAngleMax = 0;
+	int TargetOffsetAngleMin2 = 0;
+	int TargetOffsetAngleMax2 = 0;
 
 	int LinearSpeed = -1;              // -1 = 读取单位 Speed
 	int RandomSpeedMin = 0;             // Speed 模式随机速度下限
@@ -350,6 +368,31 @@ public:
 		ParseMinMax(targetOffsetFStr, TargetOffsetFMin, TargetOffsetFMax);
 		ParseMinMax(targetOffsetLStr, TargetOffsetLMin, TargetOffsetLMax);
 		ParseMinMax(targetOffsetHStr, TargetOffsetHMin, TargetOffsetHMax);
+		{
+			// 四参数版：min1,max1,min2,max2。前两位覆盖区间1（Min/Max），后两位写区间2（Min2/Max2）
+			// 双区间全无效时保留两参数值（回退语义）
+			auto parse4i = [&](const char* key, int& m1, int& M1, int& m2, int& M2) {
+				auto s = reader->Get(title + key, std::string{ "" });
+				if (s.empty()) return;
+				std::vector<int> v;
+				std::stringstream ss(s);
+				std::string t;
+				while (std::getline(ss, t, ',')) v.push_back(std::stoi(t));
+				if (v.size() >= 4 && (v[0] < v[1] || v[2] < v[3]))
+				{
+					m1 = v[0]; M1 = v[1];
+					m2 = v[2]; M2 = v[3];
+				}
+			};
+			parse4i("TargetOffsetFRanges", TargetOffsetFMin, TargetOffsetFMax, TargetOffsetFMin2, TargetOffsetFMax2);
+			parse4i("TargetOffsetLRanges", TargetOffsetLMin, TargetOffsetLMax, TargetOffsetLMin2, TargetOffsetLMax2);
+			parse4i("TargetOffsetHRanges", TargetOffsetHMin, TargetOffsetHMax, TargetOffsetHMin2, TargetOffsetHMax2);
+			parse4i("TargetOffsetAngles", TargetOffsetAngleMin, TargetOffsetAngleMax, TargetOffsetAngleMin2, TargetOffsetAngleMax2);
+			parse4i("TargetOffsetRadiusRanges", TargetOffsetRadiusMin, TargetOffsetRadiusMax, TargetOffsetRadiusMin2, TargetOffsetRadiusMax2);
+		}
+		std::string targetOffsetRadiusStr = reader->Get(title + "TargetOffsetRadius", std::string{ "" });
+		ParseMinMax(targetOffsetRadiusStr, TargetOffsetRadiusMin, TargetOffsetRadiusMax);
+		TargetOffsetSphere = reader->Get(title + "TargetOffsetSphere", TargetOffsetSphere);
 		ReachTarget = reader->Get(title + "ReachTarget", ReachTarget);
 		ReachTargetEarlyEnd = reader->Get(title + "ReachTargetEarlyEnd", ReachTargetEarlyEnd);
 		ArcHeight = reader->Get(title + "ArcHeight", 0);
@@ -511,6 +554,21 @@ private:
 			.Process(this->TargetOffsetLMax)
 			.Process(this->TargetOffsetHMin)
 			.Process(this->TargetOffsetHMax)
+			.Process(this->TargetOffsetFMin2)
+			.Process(this->TargetOffsetFMax2)
+			.Process(this->TargetOffsetLMin2)
+			.Process(this->TargetOffsetLMax2)
+			.Process(this->TargetOffsetHMin2)
+			.Process(this->TargetOffsetHMax2)
+			.Process(this->TargetOffsetRadiusMin)
+			.Process(this->TargetOffsetRadiusMax)
+			.Process(this->TargetOffsetRadiusMin2)
+			.Process(this->TargetOffsetRadiusMax2)
+			.Process(this->TargetOffsetSphere)
+			.Process(this->TargetOffsetAngleMin)
+			.Process(this->TargetOffsetAngleMax)
+			.Process(this->TargetOffsetAngleMin2)
+			.Process(this->TargetOffsetAngleMax2)
 			.Process(this->ReachTarget)
 			.Process(this->ReachTargetEarlyEnd)
 			.Process(this->ArcHeight)
