@@ -55,8 +55,10 @@ void VectorEffect::OnStart()
 		else
 		{
 			// XY 圆环：角度默认全向，TargetOffsetAngles 限制时按区间加权均匀
-			// FLH 系角 = -90°-deg：消费端 GetFLHAbsoluteOffset 世界角 = -(mainFacingDir + flhAngle)，
-			// Origin=Target 时 mainFacingDir=近交点方向，世界落点角 = 近交点角 + deg，以近交点对称
+			// 消费端 GetFLHAbsoluteOffset 世界角 = -(mainFacingDir + flhAngle)，要求 = 近交点角 + deg：
+			// flhAngle = -mainFacingDirSim - β - deg
+			//   β = atan2 近交点世界角（目标点指向抛射体）
+			//   mainFacingDirSim = 复刻消费端取值：NoUpdate=yes 用 DirStruct 原值(α)，no 用 Radians2Dir(α)（差 90°）
 			double flhAngle;
 			bool hasAngleRange = (Data->TargetOffsetAngleMin < Data->TargetOffsetAngleMax)
 				|| (Data->TargetOffsetAngleMin2 < Data->TargetOffsetAngleMax2);
@@ -72,7 +74,33 @@ void VectorEffect::OnStart()
 					deg = Data->TargetOffsetAngleMin + u;
 				else
 					deg = Data->TargetOffsetAngleMin2 + (u - (len1 > 0 ? len1 : 0.0));
-				flhAngle = Math::deg2rad(-90.0 - deg);
+				// 近交点基准：targetPos 取 pBullet->TargetCoords（与 OnStart 326 行 _facingDir 一致）
+				bool hasBase = false;
+				CoordStruct bulletPos = pObject->GetCoords();
+				CoordStruct targetPos{};
+				if (pBullet)
+				{
+					targetPos = pBullet->TargetCoords;
+					hasBase = true;
+				}
+				else if (pTechno && pTechno->Target)
+				{
+					targetPos = pTechno->Target->GetCoords();
+					hasBase = true;
+				}
+				if (hasBase)
+				{
+					double beta = std::atan2(bulletPos.Y - targetPos.Y, bulletPos.X - targetPos.X); // 近交点世界角
+					double alpha = Point2Dir(targetPos, bulletPos).GetRadian(); // 近交点 DirStruct 角
+					double mainFacingDirSim = Data->OriginNoUpdate
+						? alpha
+						: Radians2Dir(alpha).GetRadian(); // 复刻消费端 mainFacingDir 取值路径
+					flhAngle = -mainFacingDirSim - beta - Math::deg2rad(deg);
+				}
+				else
+				{
+					flhAngle = Random::RandomDouble() * 2.0 * M_PI; // 拿不到连线方向：回退全向
+				}
 			}
 			else
 			{
