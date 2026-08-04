@@ -237,6 +237,8 @@ void VectorEffect::OnStart()
 		{
 			if (AE && AE->pSource)
 				_initialOriginPos = AE->pSource->GetCoords();
+			else
+				_initialOriginPos = pObject->GetCoords(); // 兜底与 Target 分支一致
 		}
 		if (AE && AE->pSource)
 			_pSource = AE->pSource;
@@ -362,14 +364,15 @@ void VectorEffect::OnStart()
 	{
 		if (!hasNormal)
 		{
+			// 与 Target 模式对齐：F 轴 = Origin(Source) → 弹体 方向（每帧 no 路径同向，NoUpdate 切换不再镜像）
 			if (pBullet && AE && AE->pSource)
 			{
-				_facingDir = Point2Dir(pBullet->GetCoords(), AE->pSource->GetCoords()); // 官方API
+				_facingDir = Point2Dir(AE->pSource->GetCoords(), pBullet->GetCoords()); // 官方API
 				_facingRad = _facingDir.GetRadian();
 			}
 			else if (pTechno && AE && AE->pSource)
 			{
-				_facingDir = Point2Dir(pTechno->GetCoords(), AE->pSource->GetCoords()); // 官方API
+				_facingDir = Point2Dir(AE->pSource->GetCoords(), pTechno->GetCoords()); // 官方API
 				_facingRad = _facingDir.GetRadian();
 			}
 		}
