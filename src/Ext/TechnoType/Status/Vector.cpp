@@ -13,6 +13,8 @@ void TechnoStatus::VectorCancel()
 	AbstractClass* savedTarget = pTechno->Target;
 	AbstractClass* savedFocus = pTechno->Focus;
 	FootClass* pFoot = abstract_cast<FootClass*>(pTechno);
+	Debug::Log("[VectorReach] END VectorCancel pos=(%d,%d,%d)\n",
+		pTechno->GetCoords().X, pTechno->GetCoords().Y, pTechno->GetCoords().Z);
 
 	if (!IsBuilding() && !IsDeadOrInvisible(pTechno))
 	{
@@ -220,7 +222,9 @@ void TechnoStatus::OnUpdate_Vector()
 
 void TechnoStatus::OnUpdateEnd_Vector()
 {
-	if (VectorForced && !IsBuilding() && !IsDeadOrInvisible(pTechno) && !_vectorDesiredPos.IsEmpty())
+	// VectorForced 或过渡帧（VectorPendingFall，AE 已移除但未交还）都锁位到目标点，
+	// 防止 Aircraft 等引擎在 Vector 结束瞬间接管飞离目标
+	if ((VectorForced || VectorPendingFall) && !IsBuilding() && !IsDeadOrInvisible(pTechno) && !_vectorDesiredPos.IsEmpty())
 	{
 		CoordStruct currentPos = pTechno->GetCoords();
 		if (currentPos != _vectorDesiredPos)

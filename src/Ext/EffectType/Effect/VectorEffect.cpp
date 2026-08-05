@@ -10,6 +10,8 @@
 
 #include <Ext/ObjectType/AttachEffect.h>
 #include <Ext/EffectType/AttachEffectScript.h>
+
+std::map<TechnoClass*, CoordStruct> VectorEffect::_lastTargetCache;
 #include <Ext/BulletType/BulletStatus.h>
 
 
@@ -208,10 +210,30 @@ void VectorEffect::OnStart()
 	case VectorData::VectorOrigin::Target:
 		if (Data->OriginNoUpdate)
 		{
-			// 对标 AutoWeapon IsOnTarget: 锚点是目标单位自身，不是 pTechno->Target
-			if (pTechno)
+			// 锚点 = 原定目标：攻击目标 → 移动目标(Destination) → 焦点(Focus) → 缓存 → 自身
+			if (pTechno && pTechno->Target)
+				_initialOriginPos = pTechno->Target->GetCoords();
+			else if (pTechno)
 			{
-				_initialOriginPos = pTechno->GetCoords();
+				FootClass* pFoot = abstract_cast<FootClass*>(pTechno);
+				if (pFoot && pFoot->Destination)
+				{
+					_initialOriginPos = pFoot->Destination->GetCoords();
+					_lastTargetCache[pTechno] = _initialOriginPos;
+				}
+				else if (pTechno->Focus)
+				{
+					_initialOriginPos = pTechno->Focus->GetCoords();
+					_lastTargetCache[pTechno] = _initialOriginPos;
+				}
+				else
+				{
+					auto it = _lastTargetCache.find(pTechno);
+					if (it != _lastTargetCache.end())
+						_initialOriginPos = it->second;
+					else
+						_initialOriginPos = pObject->GetCoords();
+				}
 			}
 			else if (pBullet)
 				_initialOriginPos = pBullet->TargetCoords;
@@ -339,13 +361,11 @@ void VectorEffect::OnStart()
 	{
 		if (!hasNormal)
 		{
-			// 照搬 AutoWeapon GetSourcePosOnTarget:
-			// facingDir = Point2Dir(sourcePos, targetPos)  → attacker→target (RA2)
-			// 锚点 = targetPos（目标单位自身坐标）
-			if (pTechno && AE && AE->pSource)
+			// 射手角色 = 附着对象自身；F 轴 = Point2Dir(攻击目标, 弹体)。无攻击目标不锁定（保持默认朝向）
+			if (pTechno && pTechno->Target)
 			{
-				CoordStruct targetPos = pTechno->GetCoords();
-				CoordStruct sourcePos = AE->pSource->GetCoords();
+				CoordStruct targetPos = pTechno->Target->GetCoords();
+				CoordStruct sourcePos = pTechno->GetCoords(); // 射手角色 = 自身
 				_facingDir = Point2Dir(targetPos, sourcePos); // 官方API，不得修改
 				_facingRad = _facingDir.GetRadian();
 			}
@@ -393,6 +413,10 @@ void VectorEffect::OnStart()
 VectorResult VectorEffect::GetVectorResult()
 {
 	VectorResult result;
+
+	if (Data->ReachTarget)
+		Debug::Log("[VectorG] enter el=%d moveF=%d mf=%d total=%d ts=%d started=%d\n",
+			_elapsedFrames, _moveFrame, _movementFrames, _totalDuration, _effectiveTimeStep, (int)_started);
 
 	// 首帧快照（仅一次，供弧高计算等）
 	if (_elapsedFrames == 0)
@@ -469,6 +493,22 @@ VectorResult VectorEffect::GetVectorResult()
 		return result;
 	}
 	_movementFrames++;
+
+	// 每帧更新缓存：即使 OnStart 时 Target 为空，后续帧获取后也能传递
+	if (pTechno)
+	{
+		CoordStruct cached;
+		bool got = false;
+		if (pTechno->Target) { cached = pTechno->Target->GetCoords(); got = true; }
+		else
+		{
+			FootClass* pf = abstract_cast<FootClass*>(pTechno);
+			if (pf && pf->Destination) { cached = pf->Destination->GetCoords(); got = true; }
+			else if (pTechno->Focus) { cached = pTechno->Focus->GetCoords(); got = true; }
+		}
+		if (got)
+			_lastTargetCache[pTechno] = cached;
+	}
 
 	_normalRotF += _lissajousStep;
 	// 3D 法向量增量旋转（绕世界 F=Y / L=X / H=Z 轴，正速度=顺时针）
@@ -591,11 +631,16 @@ VectorResult VectorEffect::GetVectorResult()
 		case VectorData::VectorOrigin::Source:
 			if (_pSource && !IsDeadOrInvisible(_pSource))
 			{
-				mainFacingDir = Point2Dir(_pSource->GetCoords(), currentPos); // 官方API，不得修改
+				_initialOriginPos = _pSource->GetCoords(); // 来源活着：每帧更新快照
+			}
+			if (!_initialOriginPos.IsEmpty())
+			{
+				// 来源活着或已死亡：都用快照算朝向（死亡后冻结指向死亡点）
+				mainFacingDir = Point2Dir(_initialOriginPos, currentPos); // 官方API，不得修改
 				effectiveFacing = mainFacingDir.GetRadian();
-				double dx = currentPos.X - _pSource->GetCoords().X;
-				double dy = currentPos.Y - _pSource->GetCoords().Y;
-				double dz = currentPos.Z - _pSource->GetCoords().Z;
+				double dx = currentPos.X - _initialOriginPos.X;
+				double dy = currentPos.Y - _initialOriginPos.Y;
+				double dz = currentPos.Z - _initialOriginPos.Z;
 				double lenXY = std::sqrt(dx*dx + dy*dy);
 				effectiveTilt = (lenXY > 1e-6 && Data->AllowCircleTilt) ? std::atan2(dz, lenXY) : 0.0;
 			}
@@ -607,13 +652,56 @@ VectorResult VectorEffect::GetVectorResult()
 				break;
 			CoordStruct targetPos;
 			if (pBullet && pBullet->Target)
-				targetPos = pBullet->Target->GetCoords();
+			{
+				// 地面目标（Cell，非 ObjectClass）永远有效；单位目标死亡才冻结
+				ObjectClass* pTgtObj = abstract_cast<ObjectClass*>(pBullet->Target);
+				if (!pTgtObj || !IsDeadOrInvisible(pTgtObj))
+				{
+					_initialOriginPos = pBullet->Target->GetCoords(); // 目标有效：更新快照
+					targetPos = _initialOriginPos;
+				}
+				else
+					targetPos = _initialOriginPos.IsEmpty() ? pBullet->TargetCoords : _initialOriginPos; // 单位目标死亡：冻结
+			}
 			else if (pBullet)
-				targetPos = pBullet->TargetCoords;
+				targetPos = _initialOriginPos.IsEmpty() ? pBullet->TargetCoords : _initialOriginPos; // 无 Target：地面落点/冻结快照
 			else if (pTechno && pTechno->Target)
-				targetPos = pTechno->Target->GetCoords();
-			else if (pTechno && AE && AE->pSource)
-				targetPos = AE->pSource->GetCoords(); // 对标 AutoWeapon: 攻击者位置
+			{
+				// 地面目标（Cell，非 ObjectClass）永远有效；单位目标死亡才冻结
+				ObjectClass* pTgtObj = abstract_cast<ObjectClass*>(pTechno->Target);
+				if (!pTgtObj || !IsDeadOrInvisible(pTgtObj))
+				{
+					_initialOriginPos = pTechno->Target->GetCoords(); // 目标有效：更新快照
+					targetPos = _initialOriginPos;
+				}
+				else
+					targetPos = _initialOriginPos.IsEmpty() ? currentPos : _initialOriginPos; // 单位目标死亡：冻结
+			}
+			else if (pTechno)
+			{
+				if (!_initialOriginPos.IsEmpty())
+				{
+					// 目标死亡：冻结死亡坐标，朝向保持指向死亡点
+					targetPos = _initialOriginPos;
+				}
+				else
+				{
+					// 从未有过目标：回退移动目标(Destination) → 焦点(Focus) → 缓存，都没有则什么都不做（保持朝向）
+					FootClass* pFoot = abstract_cast<FootClass*>(pTechno);
+					if (pFoot && pFoot->Destination)
+						targetPos = pFoot->Destination->GetCoords();
+					else if (pTechno->Focus)
+						targetPos = pTechno->Focus->GetCoords();
+					else
+					{
+						auto it = _lastTargetCache.find(pTechno);
+						if (it != _lastTargetCache.end())
+							targetPos = it->second;
+						else
+							break;
+					}
+				}
+			}
 			else
 				break;
 			mainFacingDir = Point2Dir(targetPos, currentPos); // 官方API，不得修改
@@ -675,21 +763,60 @@ VectorResult VectorEffect::GetVectorResult()
 		if (Data->OriginNoUpdate)
 			originPos = _initialOriginPos;
 		else if (pBullet && pBullet->Target)
-			originPos = pBullet->Target->GetCoords(); // 单位：实时跟踪
+		{
+			// 地面目标（Cell，非 ObjectClass）永远有效；单位目标死亡才冻结
+			ObjectClass* pTgtObj = abstract_cast<ObjectClass*>(pBullet->Target);
+			if (!pTgtObj || !IsDeadOrInvisible(pTgtObj))
+			{
+				_initialOriginPos = pBullet->Target->GetCoords(); // 目标有效：每帧更新快照
+				originPos = _initialOriginPos;
+			}
+			else
+				originPos = _initialOriginPos.IsEmpty() ? pBullet->TargetCoords : _initialOriginPos; // 单位目标死亡：冻结
+		}
 		else if (pBullet)
-			originPos = pBullet->TargetCoords;         // 地面：自动锁定
-		else if (pTechno)
-			originPos = pTechno->GetCoords();           // 对标 AutoWeapon: 目标单位自身
+			originPos = _initialOriginPos.IsEmpty() ? pBullet->TargetCoords : _initialOriginPos; // 无 Target：地面落点/冻结快照
+		else if (pTechno && pTechno->Target)
+		{
+			// 地面目标（Cell，非 ObjectClass）永远有效；单位目标死亡才冻结
+			ObjectClass* pTgtObj = abstract_cast<ObjectClass*>(pTechno->Target);
+			if (!pTgtObj || !IsDeadOrInvisible(pTgtObj))
+			{
+				_initialOriginPos = pTechno->Target->GetCoords(); // 目标有效：每帧更新快照
+				originPos = _initialOriginPos;
+			}
+			else
+				originPos = _initialOriginPos.IsEmpty() ? currentPos : _initialOriginPos; // 单位目标死亡：冻结死亡坐标
+		}
 		else
-			originPos = currentPos;
+		{
+			// 无 Target：实例快照 → 全局缓存 → 自身
+			if (!_initialOriginPos.IsEmpty())
+				originPos = _initialOriginPos;
+			else
+			{
+				auto it = _lastTargetCache.find(pTechno);
+				if (it != _lastTargetCache.end())
+					originPos = it->second;
+				else
+					originPos = currentPos;
+			}
+		}
 		break;
 	case VectorData::VectorOrigin::Launcher:
 		originPos = Data->OriginNoUpdate ? _initialOriginPos :
 			(_pLauncher && !IsDeadOrInvisible(_pLauncher) ? _pLauncher->GetCoords() : currentPos);
 		break;
 	case VectorData::VectorOrigin::Source:
-		originPos = Data->OriginNoUpdate ? _initialOriginPos :
-			(_pSource && !IsDeadOrInvisible(_pSource) ? _pSource->GetCoords() : currentPos);
+		if (Data->OriginNoUpdate)
+			originPos = _initialOriginPos;
+		else if (_pSource && !IsDeadOrInvisible(_pSource))
+		{
+			_initialOriginPos = _pSource->GetCoords(); // 来源活着：每帧更新快照
+			originPos = _initialOriginPos;
+		}
+		else
+			originPos = _initialOriginPos.IsEmpty() ? currentPos : _initialOriginPos; // 来源死亡：冻结死亡坐标
 		break;
 	case VectorData::VectorOrigin::Self:
 		originPos = Data->OriginNoUpdate ? _initialOriginPos : currentPos;
@@ -1479,30 +1606,33 @@ VectorResult VectorEffect::GetVectorResult()
 			int effectiveDuration = _totalDuration - Data->DisabledFrames;
 		if (effectiveDuration < 1) effectiveDuration = 1;
 		int remainingFrames = effectiveDuration - _movementFrames + 1;
+		AbstractClass* pRealTarget = pBullet ? pBullet->Target : (pTechno ? pTechno->Target : nullptr);
+		ObjectClass* pRealTargetObj = pRealTarget ? abstract_cast<ObjectClass*>(pRealTarget) : nullptr;
+		Debug::Log("[VectorReach] mf=%d rem=%d eff=%d cur=(%d,%d,%d) frameTarget=(%d,%d,%d)\n"
+			"  originPos=(%d,%d,%d) realTarget=%p what=%d alive=%d tgtPos=(%d,%d,%d)\n",
+			_movementFrames, remainingFrames, effectiveDuration,
+			currentPos.X, currentPos.Y, currentPos.Z,
+			frameTarget.X, frameTarget.Y, frameTarget.Z,
+			originPos.X, originPos.Y, originPos.Z,
+			(void*)pRealTarget,
+			pRealTarget ? (int)pRealTarget->WhatAmI() : -1,
+			pRealTargetObj ? (int)IsDeadOrInvisible(pRealTargetObj) : -1,
+			pRealTarget ? pRealTarget->GetCoords().X : 0,
+			pRealTarget ? pRealTarget->GetCoords().Y : 0,
+			pRealTarget ? pRealTarget->GetCoords().Z : 0);
 		if (Data->ReachTargetEarlyEnd > 0 && Data->ReachTargetEarlyEnd < effectiveDuration
 			&& remainingFrames <= Data->ReachTargetEarlyEnd)
 		{
+			Debug::Log("[VectorReach] EARLYEND rem=%d\n", remainingFrames);
 			Deactivate();
 			AdvanceFrame();
 			return result;
 		}
-		if (remainingFrames <= 0)
+		if (dirLen > 1e-6)
 		{
-			// 已超时：瞬移到目标，引擎正常到达检测会自然引爆
-			if (Data->Force && pBullet)
-			{
-				pBullet->SetLocation(frameTarget);
-				result.MoveDisp = { 0, 0, 0 };
-				result.Force = false;
-				Deactivate();
-				AdvanceFrame();
-				return result;
-			}
-			// Force=no 或无 pBullet：不设位移，自然结束
-		}
-		else if (dirLen > 1e-6)
-		{
-			double adjustedSpeed = dirLen / remainingFrames;
+			// AE 根基缺陷：Duration=N 实际只执行 N-1 个运动帧（末帧 AE 已移除）
+			// 轨迹按"实际帧数 = 总帧数 - 1"均分，保证 AE 实际删除的那一帧恰好到位
+			double adjustedSpeed = dirLen / (remainingFrames > 1 ? remainingFrames - 1 : 1);
 			resultDisp.X = static_cast<int>(dirVec.X / dirLen * adjustedSpeed);
 			resultDisp.Y = static_cast<int>(dirVec.Y / dirLen * adjustedSpeed);
 			resultDisp.Z = static_cast<int>(dirVec.Z / dirLen * adjustedSpeed);
@@ -1512,7 +1642,10 @@ VectorResult VectorEffect::GetVectorResult()
 			{
 				if (_arcStartLocation.IsEmpty())
 					_arcStartLocation = currentPos; // 首次弧线执行时抓取当前位置作为起点
-				double t = static_cast<double>(_movementFrames) / effectiveDuration;
+				// AE 根基缺陷（实际运动帧 = 总帧数-1）：t 按 mf 1..eff-1 映射 0..1，末帧到位
+				double t = (effectiveDuration > 2)
+					? static_cast<double>(_movementFrames - 1) / (effectiveDuration - 2)
+					: 1.0;
 				double arcOffset = CalcArcOffsetAt(t);
 				double baseX = _arcStartLocation.X + (frameTarget.X - _arcStartLocation.X) * t;
 				double baseY = _arcStartLocation.Y + (frameTarget.Y - _arcStartLocation.Y) * t;

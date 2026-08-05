@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -12,6 +13,10 @@ class VectorEffect : public EffectScript
 {
 public:
 	EFFECT_SCRIPT(Vector);
+
+	// 目标坐标缓存（跨 AE 实例，6 月版机制恢复）：SpawnMissile 未统一设 Target 前的过渡期，
+	// 以及单位目标死亡后，用缓存的上一帧有效目标坐标继续指向
+	static std::map<TechnoClass*, CoordStruct> _lastTargetCache;
 
 	virtual void Clean() override
 	{
