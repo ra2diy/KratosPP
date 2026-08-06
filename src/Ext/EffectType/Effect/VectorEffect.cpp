@@ -2,6 +2,9 @@
 
 #include <Utilities/Debug.h>
 
+#include <Kamikaze.h>
+#include <SpawnManagerClass.h>
+
 #include <Ext/Helper/Scripts.h>
 #include <Ext/Helper/Status.h>
 #include <Ext/Helper/Physics.h>
@@ -10,13 +13,158 @@
 
 #include <Ext/ObjectType/AttachEffect.h>
 #include <Ext/EffectType/AttachEffectScript.h>
+#include <Ext/TechnoType/TechnoStatus.h>
+#include <Extension/TechnoExt.h>
 
-std::map<TechnoClass*, CoordStruct> VectorEffect::_lastTargetCache;
 #include <Ext/BulletType/BulletStatus.h>
 
 
 // Vector: Freeze / Circle / MoveTo / Speed / ReachTarget
 // 基于 V1 VectorEffect.cpp 精简
+
+// ========================================================================
+// 目标有效性辅助（SpawnMissile 场景专用）
+// ========================================================================
+
+// 两点是否同一格子（256 lepton = 1 格，坐标 >>8 得格子号，仅 XY）
+static bool IsSameCell(CoordStruct a, CoordStruct b)
+{
+	return (a.X >> 8) == (b.X >> 8)
+		&& (a.Y >> 8) == (b.Y >> 8);
+}
+
+// 脚下格子通用过滤（默认全跳）：任何目标坐标与自身同格都视为无效。
+// 引擎两种场景会把导弹目标设成自身脚下格子——spawn 未全部出生前的占位目标、
+// 目标死亡后的重置（MissileHoming）。两种都不该被 Vector 采用，一律跳过。
+static bool IsSelfCellTarget(TechnoClass* pTechno, AbstractClass* pTarget)
+{
+	if (!pTarget)
+		return true;
+	return IsSameCell(pTarget->GetCoords(), pTechno->GetCoords());
+}
+
+// 从引擎 Kamikaze 控制器读导弹的目标点（现有基建，不自己造轮子）：
+// KamikazeControl->Cell 存目标格子——Homing 开启时每帧更新（目标活着跟随、死亡冻结），
+// 不 Homing 时由引擎写入目标 Cell。这是引擎眼中导弹真正要飞向的位置
+static bool TryGetKamikazeTarget(TechnoClass* pTechno, CoordStruct& out)
+{
+	AircraftClass* pAircraft = pTechno ? abstract_cast<AircraftClass*>(pTechno) : nullptr;
+	if (!pAircraft)
+		return false;
+	auto& nodes = Kamikaze::Instance->Nodes;
+	for (int i = 0; i < nodes.Count; i++)
+	{
+		Kamikaze::KamikazeControl* pControl = nodes[i];
+		if (pControl && pControl->Item == pAircraft && pControl->Cell)
+		{
+			out = pControl->Cell->GetCoords();
+			return true;
+		}
+	}
+	return false;
+}
+
+// 从 spawn 发射者的管理器读目标（Kamikaze Cell 的源头）：
+// KamikazeTrackerClass_Add 就是用 SpawnManager->Destination 设置 Cell 的。
+// 导弹未全部发射（未进 Kamikaze 容器）期间容器为空，直接读源头补全这一阶段
+static bool TryGetSpawnManagerTarget(TechnoClass* pTechno, CoordStruct& out)
+{
+	if (pTechno && pTechno->SpawnOwner && !IsDeadOrInvisible(pTechno->SpawnOwner))
+	{
+		SpawnManagerClass* pSM = pTechno->SpawnOwner->SpawnManager;
+		if (pSM)
+		{
+			if (pSM->Target)
+			{
+				out = pSM->Target->GetCoords();
+				return true;
+			}
+			if (pSM->Destination)
+			{
+				out = pSM->Destination->GetCoords();
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+// 目标缓存（挂在 TechnoStatus，归一目标保护机制）：
+// Techno 获得 Vector 时写入目标单位+格子（Spawn 从 SpawnManager/Kamikaze 取，普通单位记 Target）。
+// NoUpdate=yes 存一次即停，之后只读格子（目标死活不影响）；no 每帧刷新，目标死亡/无效（脚下格子）冻结最后有效值
+void VectorEffect::CacheTargetNow()
+{
+	if (!pTechno)
+		return;
+	TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno);
+	if (!status)
+		return;
+
+	// NoUpdate=yes：第一笔（挂载时）已写入即停止刷新
+	if (Data->OriginNoUpdate && status->HasVectorTargetCache())
+		return;
+
+	AbstractClass* candTarget = nullptr;
+	CoordStruct candCell{};
+	bool got = false;
+
+	if (pTechno->SpawnOwner && !IsDeadOrInvisible(pTechno->SpawnOwner))
+	{
+		// Spawn 导弹：SpawnManager（单位+坐标）→ Kamikaze Cell（只有格子）→ Target（单位+坐标）
+		SpawnManagerClass* pSM = pTechno->SpawnOwner->SpawnManager;
+		if (pSM && pSM->Target)
+		{
+			TechnoClass* pTgt = abstract_cast<TechnoClass*>(pSM->Target);
+			CoordStruct c = pSM->Target->GetCoords();
+			if (!IsSameCell(c, pTechno->GetCoords())
+				&& (!pTgt || !IsDeadOrInvisible(pTgt))) // 非 Techno 目标（格子）不做死亡判断
+			{
+				candTarget = pSM->Target;
+				candCell = c;
+				got = true;
+			}
+		}
+		if (!got && pSM && pSM->Destination)
+		{
+			CoordStruct c = pSM->Destination->GetCoords();
+			if (!IsSameCell(c, pTechno->GetCoords()))
+			{
+				candCell = c;
+				got = true;
+			}
+		}
+		if (!got)
+		{
+			CoordStruct kamikazePos{};
+			if (TryGetKamikazeTarget(pTechno, kamikazePos) && !IsSameCell(kamikazePos, pTechno->GetCoords()))
+			{
+				candCell = kamikazePos;
+				got = true;
+			}
+		}
+		if (!got && pTechno->Target && !IsSelfCellTarget(pTechno, pTechno->Target))
+		{
+			candTarget = pTechno->Target;
+			candCell = pTechno->Target->GetCoords();
+			got = true;
+		}
+	}
+	else if (pTechno->Target && !IsSelfCellTarget(pTechno, pTechno->Target))
+	{
+		// 普通单位：直接记 Target
+		TechnoClass* pTgt = abstract_cast<TechnoClass*>(pTechno->Target);
+		if (!pTgt || !IsDeadOrInvisible(pTgt))
+		{
+			candTarget = pTechno->Target;
+			candCell = pTechno->Target->GetCoords();
+			got = true;
+		}
+	}
+
+	// 有效才写；无效（取不到/脚下格子/目标死亡）不写，保留最后有效值（冻结）
+	if (got)
+		status->SetVectorTargetCache(candTarget, candCell);
+}
 
 void VectorEffect::OnStart()
 {
@@ -204,41 +352,56 @@ void VectorEffect::OnStart()
 		_pLauncher = (AE && AE->pSource) ? AE->pSource : pTechno; // 单位侧用攻击者作为Launcher
 	}
 
+	// 挂载即初始化目标缓存（无论本段 Origin 是不是 Target，都记录）
+	// 保证后续 Target 段（可能目标已死）有坐标可读；NoUpdate=yes 时这里就是"存一次即停"的第一笔
+	CacheTargetNow();
+
 	// --- Origin 初始化 ---
 	switch (Data->Origin)
 	{
 	case VectorData::VectorOrigin::Target:
 		if (Data->OriginNoUpdate)
 		{
-			// 锚点 = 原定目标：攻击目标 → 移动目标(Destination) → 焦点(Focus) → 缓存 → 自身
-			if (pTechno && pTechno->Target)
-				_initialOriginPos = pTechno->Target->GetCoords();
-			else if (pTechno)
+			// 锚点 = 引擎 Kamikaze 控制器存的目标点（Homing 更新/引擎写入，目标死亡冻结）→ 攻击目标 → 自身
+			// 脚下格子（引擎占位/重置污染）默认全跳
+			if (pTechno)
 			{
-				FootClass* pFoot = abstract_cast<FootClass*>(pTechno);
-				if (pFoot && pFoot->Destination)
+				CoordStruct kamikazePos{};
+				bool gotKamikaze = TryGetKamikazeTarget(pTechno, kamikazePos);
+				// ① TechnoStatus 目标缓存（挂载时固化；NoUpdate=yes 只读格子，目标死活不影响）
+				TechnoStatus* cacheStatus = GetStatus<TechnoExt, TechnoStatus>(pTechno);
+				if (cacheStatus && cacheStatus->HasVectorTargetCache()
+					&& !IsSameCell(cacheStatus->GetVectorCachedCell(), pTechno->GetCoords()))
 				{
-					_initialOriginPos = pFoot->Destination->GetCoords();
-					_lastTargetCache[pTechno] = _initialOriginPos;
+					_initialOriginPos = cacheStatus->GetVectorCachedCell();
 				}
-				else if (pTechno->Focus)
+				else if (gotKamikaze)
 				{
-					_initialOriginPos = pTechno->Focus->GetCoords();
-					_lastTargetCache[pTechno] = _initialOriginPos;
+					_initialOriginPos = kamikazePos;
+				}
+				else if (TryGetSpawnManagerTarget(pTechno, _initialOriginPos))
+				{
+					// 未进 Kamikaze 容器（导弹未全部发射）时读源头：SpawnManager 目标
+				}
+				else if (pTechno->Target && !IsSelfCellTarget(pTechno, pTechno->Target))
+				{
+					_initialOriginPos = pTechno->Target->GetCoords();
 				}
 				else
 				{
-					auto it = _lastTargetCache.find(pTechno);
-					if (it != _lastTargetCache.end())
-						_initialOriginPos = it->second;
-					else
-						_initialOriginPos = pObject->GetCoords();
+					// Kamikaze 容器此刻可能还没加入导弹（发射后才加入）：不锁自身，
+					// 留空由 GetVectorResult 首帧补读
+					_initialOriginPos = CoordStruct::Empty;
 				}
 			}
 			else if (pBullet)
+			{
 				_initialOriginPos = pBullet->TargetCoords;
+			}
 			else
+			{
 				_initialOriginPos = pObject->GetCoords();
+			}
 		}
 		break;
 
@@ -414,10 +577,6 @@ VectorResult VectorEffect::GetVectorResult()
 {
 	VectorResult result;
 
-	if (Data->ReachTarget)
-		Debug::Log("[VectorG] enter el=%d moveF=%d mf=%d total=%d ts=%d started=%d\n",
-			_elapsedFrames, _moveFrame, _movementFrames, _totalDuration, _effectiveTimeStep, (int)_started);
-
 	// 首帧快照（仅一次，供弧高计算等）
 	if (_elapsedFrames == 0)
 		_initialLocation = pObject->GetCoords();
@@ -427,6 +586,35 @@ VectorResult VectorEffect::GetVectorResult()
 	{
 		AdvanceFrame();
 		return result;
+	}
+
+	// 每帧运动刷新目标缓存：挂载时（OnStart）已写第一笔，这里跟随目标移动刷新；
+	// 目标死亡/无效（取不到/脚下格子）时停止写入，冻结最后有效值
+	CacheTargetNow();
+
+	// 目标坐标固化：OnStart 未锁定（Pending）时补读，读到即锁定到 _initialOriginPos，
+	// 防止引擎后续清空（目标死亡/管理器清空）导致 frameTarget 失效
+	if (Data->Origin == VectorData::VectorOrigin::Target
+		&& _initialOriginPos.IsEmpty() && pTechno)
+	{
+		CoordStruct targetPos{};
+		bool got = false;
+		if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
+		{
+			if (status->HasVectorTargetCache()
+				&& !IsSameCell(status->GetVectorCachedCell(), pTechno->GetCoords()))
+			{
+				targetPos = status->GetVectorCachedCell();
+				got = true;
+			}
+		}
+		if (!got && TryGetKamikazeTarget(pTechno, targetPos)) got = true;
+		if (!got && TryGetSpawnManagerTarget(pTechno, targetPos)) got = true;
+		if (!got && pTechno->Target && !IsSelfCellTarget(pTechno, pTechno->Target)) { targetPos = pTechno->Target->GetCoords(); got = true; }
+		if (got)
+		{
+			_initialOriginPos = targetPos;
+		}
 	}
 
 	// Force 必须在闸门之前设，确保非运动帧也走 SetLocation（Freeze 等效）
@@ -493,22 +681,6 @@ VectorResult VectorEffect::GetVectorResult()
 		return result;
 	}
 	_movementFrames++;
-
-	// 每帧更新缓存：即使 OnStart 时 Target 为空，后续帧获取后也能传递
-	if (pTechno)
-	{
-		CoordStruct cached;
-		bool got = false;
-		if (pTechno->Target) { cached = pTechno->Target->GetCoords(); got = true; }
-		else
-		{
-			FootClass* pf = abstract_cast<FootClass*>(pTechno);
-			if (pf && pf->Destination) { cached = pf->Destination->GetCoords(); got = true; }
-			else if (pTechno->Focus) { cached = pTechno->Focus->GetCoords(); got = true; }
-		}
-		if (got)
-			_lastTargetCache[pTechno] = cached;
-	}
 
 	_normalRotF += _lissajousStep;
 	// 3D 法向量增量旋转（绕世界 F=Y / L=X / H=Z 轴，正速度=顺时针）
@@ -650,60 +822,50 @@ VectorResult VectorEffect::GetVectorResult()
 			bool isGround = (pBullet && !abstract_cast<TechnoClass*>(pBullet->Target));
 			if (isGround && _movementFrames > 1)
 				break;
-			CoordStruct targetPos;
-			if (pBullet && pBullet->Target)
+			// 允许更新（NoUpdate=no）：缓存优先（每帧已刷新，目标死亡冻结），缓存空回退引擎来源
+			CoordStruct targetPos = _initialOriginPos;
+			bool gotTarget = !targetPos.IsEmpty();
+			if (pTechno)
 			{
-				// 地面目标（Cell，非 ObjectClass）永远有效；单位目标死亡才冻结
-				ObjectClass* pTgtObj = abstract_cast<ObjectClass*>(pBullet->Target);
-				if (!pTgtObj || !IsDeadOrInvisible(pTgtObj))
+				if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
 				{
-					_initialOriginPos = pBullet->Target->GetCoords(); // 目标有效：更新快照
-					targetPos = _initialOriginPos;
-				}
-				else
-					targetPos = _initialOriginPos.IsEmpty() ? pBullet->TargetCoords : _initialOriginPos; // 单位目标死亡：冻结
-			}
-			else if (pBullet)
-				targetPos = _initialOriginPos.IsEmpty() ? pBullet->TargetCoords : _initialOriginPos; // 无 Target：地面落点/冻结快照
-			else if (pTechno && pTechno->Target)
-			{
-				// 地面目标（Cell，非 ObjectClass）永远有效；单位目标死亡才冻结
-				ObjectClass* pTgtObj = abstract_cast<ObjectClass*>(pTechno->Target);
-				if (!pTgtObj || !IsDeadOrInvisible(pTgtObj))
-				{
-					_initialOriginPos = pTechno->Target->GetCoords(); // 目标有效：更新快照
-					targetPos = _initialOriginPos;
-				}
-				else
-					targetPos = _initialOriginPos.IsEmpty() ? currentPos : _initialOriginPos; // 单位目标死亡：冻结
-			}
-			else if (pTechno)
-			{
-				if (!_initialOriginPos.IsEmpty())
-				{
-					// 目标死亡：冻结死亡坐标，朝向保持指向死亡点
-					targetPos = _initialOriginPos;
-				}
-				else
-				{
-					// 从未有过目标：回退移动目标(Destination) → 焦点(Focus) → 缓存，都没有则什么都不做（保持朝向）
-					FootClass* pFoot = abstract_cast<FootClass*>(pTechno);
-					if (pFoot && pFoot->Destination)
-						targetPos = pFoot->Destination->GetCoords();
-					else if (pTechno->Focus)
-						targetPos = pTechno->Focus->GetCoords();
-					else
+					if (status->HasVectorTargetCache()
+						&& !IsSameCell(status->GetVectorCachedCell(), pTechno->GetCoords()))
 					{
-						auto it = _lastTargetCache.find(pTechno);
-						if (it != _lastTargetCache.end())
-							targetPos = it->second;
-						else
-							break;
+						targetPos = status->GetVectorCachedCell();
+						gotTarget = true;
 					}
 				}
 			}
-			else
-				break;
+			if (!gotTarget && pBullet && pBullet->Target)
+			{
+				targetPos = pBullet->Target->GetCoords(); // 抛射体目标 Cell 是真实落点
+				gotTarget = true;
+			}
+			else if (!gotTarget && pBullet)
+			{
+				targetPos = pBullet->TargetCoords;
+				gotTarget = true;
+			}
+			else if (!gotTarget && pTechno && pTechno->Target && !IsSelfCellTarget(pTechno, pTechno->Target))
+			{
+				targetPos = pTechno->Target->GetCoords();
+				gotTarget = true;
+			}
+			else if (!gotTarget && pTechno)
+			{
+				CoordStruct kamikazePos{};
+				if ((TryGetKamikazeTarget(pTechno, kamikazePos) || TryGetSpawnManagerTarget(pTechno, kamikazePos))
+					&& !IsSameCell(kamikazePos, pTechno->GetCoords())) // 脚下格子抛弃
+				{
+					targetPos = kamikazePos;
+					gotTarget = true;
+				}
+			}
+			if (gotTarget)
+				_initialOriginPos = targetPos; // 跟随：更新锁定值
+			else if (targetPos.IsEmpty())
+				break; // 从未有过目标：保持朝向
 			mainFacingDir = Point2Dir(targetPos, currentPos); // 官方API，不得修改
 			effectiveFacing = mainFacingDir.GetRadian();
 			double dx = currentPos.X - targetPos.X, dy = currentPos.Y - targetPos.Y, dz = currentPos.Z - targetPos.Z;
@@ -761,46 +923,45 @@ VectorResult VectorEffect::GetVectorResult()
 	{
 	case VectorData::VectorOrigin::Target:
 		if (Data->OriginNoUpdate)
-			originPos = _initialOriginPos;
-		else if (pBullet && pBullet->Target)
-		{
-			// 地面目标（Cell，非 ObjectClass）永远有效；单位目标死亡才冻结
-			ObjectClass* pTgtObj = abstract_cast<ObjectClass*>(pBullet->Target);
-			if (!pTgtObj || !IsDeadOrInvisible(pTgtObj))
-			{
-				_initialOriginPos = pBullet->Target->GetCoords(); // 目标有效：每帧更新快照
-				originPos = _initialOriginPos;
-			}
-			else
-				originPos = _initialOriginPos.IsEmpty() ? pBullet->TargetCoords : _initialOriginPos; // 单位目标死亡：冻结
-		}
-		else if (pBullet)
-			originPos = _initialOriginPos.IsEmpty() ? pBullet->TargetCoords : _initialOriginPos; // 无 Target：地面落点/冻结快照
-		else if (pTechno && pTechno->Target)
-		{
-			// 地面目标（Cell，非 ObjectClass）永远有效；单位目标死亡才冻结
-			ObjectClass* pTgtObj = abstract_cast<ObjectClass*>(pTechno->Target);
-			if (!pTgtObj || !IsDeadOrInvisible(pTgtObj))
-			{
-				_initialOriginPos = pTechno->Target->GetCoords(); // 目标有效：每帧更新快照
-				originPos = _initialOriginPos;
-			}
-			else
-				originPos = _initialOriginPos.IsEmpty() ? currentPos : _initialOriginPos; // 单位目标死亡：冻结死亡坐标
-		}
+			originPos = _initialOriginPos.IsEmpty() ? currentPos : _initialOriginPos; // 锁定初始目标
 		else
 		{
-			// 无 Target：实例快照 → 全局缓存 → 自身
-			if (!_initialOriginPos.IsEmpty())
-				originPos = _initialOriginPos;
-			else
+			// 允许更新：每帧从引擎读目标跟随移动（NoUpdate=no 语义）；
+			// 更新结果变成导弹自身格子（目标死亡，引擎重置）时抛弃该帧，回退到已锁定坐标
+			CoordStruct updated{};
+			bool gotUpdate = false;
+			if (pBullet && pBullet->Target)
 			{
-				auto it = _lastTargetCache.find(pTechno);
-				if (it != _lastTargetCache.end())
-					originPos = it->second;
-				else
-					originPos = currentPos;
+				updated = pBullet->Target->GetCoords(); // 抛射体目标 Cell 是真实落点，不判脚下
+				gotUpdate = true;
 			}
+			else if (pBullet)
+			{
+				updated = pBullet->TargetCoords;
+				gotUpdate = true;
+			}
+			else if (pTechno && pTechno->Target && !IsSelfCellTarget(pTechno, pTechno->Target))
+			{
+				updated = pTechno->Target->GetCoords();
+				gotUpdate = true;
+			}
+			else if (pTechno)
+			{
+				CoordStruct kamikazePos{};
+				if ((TryGetKamikazeTarget(pTechno, kamikazePos) || TryGetSpawnManagerTarget(pTechno, kamikazePos))
+					&& !IsSameCell(kamikazePos, pTechno->GetCoords())) // 脚下格子抛弃
+				{
+					updated = kamikazePos;
+					gotUpdate = true;
+				}
+			}
+			if (gotUpdate)
+			{
+				_initialOriginPos = updated; // 跟随：更新锁定值
+				originPos = _initialOriginPos;
+			}
+			else
+				originPos = _initialOriginPos.IsEmpty() ? currentPos : _initialOriginPos; // 抛弃 update → 回退锁定坐标
 		}
 		break;
 	case VectorData::VectorOrigin::Launcher:
@@ -1606,24 +1767,9 @@ VectorResult VectorEffect::GetVectorResult()
 			int effectiveDuration = _totalDuration - Data->DisabledFrames;
 		if (effectiveDuration < 1) effectiveDuration = 1;
 		int remainingFrames = effectiveDuration - _movementFrames + 1;
-		AbstractClass* pRealTarget = pBullet ? pBullet->Target : (pTechno ? pTechno->Target : nullptr);
-		ObjectClass* pRealTargetObj = pRealTarget ? abstract_cast<ObjectClass*>(pRealTarget) : nullptr;
-		Debug::Log("[VectorReach] mf=%d rem=%d eff=%d cur=(%d,%d,%d) frameTarget=(%d,%d,%d)\n"
-			"  originPos=(%d,%d,%d) realTarget=%p what=%d alive=%d tgtPos=(%d,%d,%d)\n",
-			_movementFrames, remainingFrames, effectiveDuration,
-			currentPos.X, currentPos.Y, currentPos.Z,
-			frameTarget.X, frameTarget.Y, frameTarget.Z,
-			originPos.X, originPos.Y, originPos.Z,
-			(void*)pRealTarget,
-			pRealTarget ? (int)pRealTarget->WhatAmI() : -1,
-			pRealTargetObj ? (int)IsDeadOrInvisible(pRealTargetObj) : -1,
-			pRealTarget ? pRealTarget->GetCoords().X : 0,
-			pRealTarget ? pRealTarget->GetCoords().Y : 0,
-			pRealTarget ? pRealTarget->GetCoords().Z : 0);
 		if (Data->ReachTargetEarlyEnd > 0 && Data->ReachTargetEarlyEnd < effectiveDuration
 			&& remainingFrames <= Data->ReachTargetEarlyEnd)
 		{
-			Debug::Log("[VectorReach] EARLYEND rem=%d\n", remainingFrames);
 			Deactivate();
 			AdvanceFrame();
 			return result;
@@ -1637,31 +1783,42 @@ VectorResult VectorEffect::GetVectorResult()
 			resultDisp.Y = static_cast<int>(dirVec.Y / dirLen * adjustedSpeed);
 			resultDisp.Z = static_cast<int>(dirVec.Z / dirLen * adjustedSpeed);
 
-			// 抛物线弧高（基于弧线起点，支持 ArcPeakPercent / ArcRotation）
+			// 抛物线弧高（Speed 模式影子算法：增量叠加，t 跟随实际路程，目标移动自动校准）
 			if (_arcHeight != 0)
 			{
-				if (_arcStartLocation.IsEmpty())
-					_arcStartLocation = currentPos; // 首次弧线执行时抓取当前位置作为起点
-				// AE 根基缺陷（实际运动帧 = 总帧数-1）：t 按 mf 1..eff-1 映射 0..1，末帧到位
-				double t = (effectiveDuration > 2)
-					? static_cast<double>(_movementFrames - 1) / (effectiveDuration - 2)
-					: 1.0;
+				// 影子沿 frameTarget 方向推进 adjustedSpeed（与直线均分同步）
+				double ux = dirVec.X / dirLen, uy = dirVec.Y / dirLen, uz = dirVec.Z / dirLen;
+				_shadowPosX += ux * adjustedSpeed;
+				_shadowPosY += uy * adjustedSpeed;
+				_shadowPosZ += uz * adjustedSpeed;
+				_shadowTraveled += adjustedSpeed;
+
+				// 剩余影子距离（3D）
+				double sdx = frameTarget.X - _shadowPosX;
+				double sdy = frameTarget.Y - _shadowPosY;
+				double sdz = frameTarget.Z - _shadowPosZ;
+				double shadowDist = std::sqrt(sdx * sdx + sdy * sdy + sdz * sdz);
+
+				// t = 已走路程 / 总路程（动态更新，目标移动时自动调整）
+				double total = _shadowTraveled + shadowDist;
+				double t = (total > 1e-6) ? _shadowTraveled / total : 0.0;
+				if (t < 0.0) t = 0.0; else if (t > 1.0) t = 1.0;
+
+				// 弧高增量叠加（不覆盖直线位移）
 				double arcOffset = CalcArcOffsetAt(t);
-				double baseX = _arcStartLocation.X + (frameTarget.X - _arcStartLocation.X) * t;
-				double baseY = _arcStartLocation.Y + (frameTarget.Y - _arcStartLocation.Y) * t;
-				double baseZ = _arcStartLocation.Z + (frameTarget.Z - _arcStartLocation.Z) * t;
+				double arcDelta = arcOffset - _prevArcOffset;
+				_prevArcOffset = arcOffset;
 
 				if (_arcRotation == 0.0)
 				{
-					resultDisp.X = static_cast<int>(baseX - currentPos.X);
-					resultDisp.Y = static_cast<int>(baseY - currentPos.Y);
-					resultDisp.Z = static_cast<int>(baseZ + arcOffset - currentPos.Z);
+					resultDisp.Z += static_cast<int>(arcDelta);
 				}
 				else
 				{
-					double dx = frameTarget.X - _arcStartLocation.X;
-					double dy = frameTarget.Y - _arcStartLocation.Y;
-					double dz = frameTarget.Z - _arcStartLocation.Z;
+					// 旋转弧面：弧高分解到 XYZ（与 Speed 模式一致，D = frameTarget - _initialLocation）
+					double dx = frameTarget.X - _initialLocation.X;
+					double dy = frameTarget.Y - _initialLocation.Y;
+					double dz = frameTarget.Z - _initialLocation.Z;
 					double dLen = std::sqrt(dx * dx + dy * dy + dz * dz);
 					if (dLen > 1e-6)
 					{
@@ -1680,15 +1837,13 @@ VectorResult VectorEffect::GetVectorResult()
 						double rx = pnx * c + (dny * pnz - dnz * pny) * s;
 						double ry = pny * c + (dnz * pnx - dnx * pnz) * s;
 						double rz = pnz * c + (dnx * pny - dny * pnx) * s;
-						resultDisp.X = static_cast<int>(baseX + rx * arcOffset - currentPos.X);
-						resultDisp.Y = static_cast<int>(baseY + ry * arcOffset - currentPos.Y);
-						resultDisp.Z = static_cast<int>(baseZ + rz * arcOffset - currentPos.Z);
+						resultDisp.X += static_cast<int>(rx * arcDelta);
+						resultDisp.Y += static_cast<int>(ry * arcDelta);
+						resultDisp.Z += static_cast<int>(rz * arcDelta);
 					}
 					else
 					{
-						resultDisp.X = static_cast<int>(baseX - currentPos.X);
-						resultDisp.Y = static_cast<int>(baseY - currentPos.Y);
-						resultDisp.Z = static_cast<int>(baseZ + arcOffset - currentPos.Z);
+						resultDisp.Z += static_cast<int>(arcDelta);
 					}
 				}
 			}
@@ -1719,19 +1874,8 @@ VectorResult VectorEffect::GetVectorResult()
 		if (Data->MaxSpeed >= 0 && speed > Data->MaxSpeed)
 			speed = static_cast<double>(Data->MaxSpeed);
 
-		// SpeedEndOnReach=no：不走影子系统，全程旧版 dirVec/dirLen 直追（自然产生抽搐跟随）
-		if (!Data->SpeedEndOnReach)
-		{
-			if (dirLen > 1e-6)
-			{
-				resultDisp.X = static_cast<int>(dirVec.X / dirLen * speed);
-				resultDisp.Y = static_cast<int>(dirVec.Y / dirLen * speed);
-				resultDisp.Z = static_cast<int>(dirVec.Z / dirLen * speed);
-			}
-			result.MoveDisp = resultDisp;
-			AdvanceFrame();
-			return result;
-		}
+		// SpeedEndOnReach=yes/no 都走影子系统：弧线（影子坐标弧高）不依赖 SpeedEndOnReach；
+		// no 时不做到达瞬移，继续追踪直到引擎自然触地爆炸
 
 		// 以下：SpeedEndOnReach=yes，走影子系统
 		// 有弧线：影子追踪完整 3D，弧高增量叠加
@@ -1751,36 +1895,54 @@ VectorResult VectorEffect::GetVectorResult()
 		}
 
 		// SpeedEndOnReach：瞬移到目标位置，引擎正常到达检测会自然引爆（不手动Detonate，避免重复伤害）
-		if (Data->SpeedEndOnReach && shadowDist <= speed)
+		// 到达判定用真实 3D 距离（含 Z），避免高空俯冲时 XY 先对齐导致误判到达
+		if (Data->SpeedEndOnReach)
 		{
-			if (pBullet)
+			double realDX = frameTarget.X - currentPos.X;
+			double realDY = frameTarget.Y - currentPos.Y;
+			double realDZ = frameTarget.Z - currentPos.Z;
+			double realDist = std::sqrt(realDX * realDX + realDY * realDY + realDZ * realDZ);
+			if (realDist <= speed)
 			{
-				pBullet->SetLocation(frameTarget);
+				if (pBullet)
+				{
+					pBullet->SetLocation(frameTarget);
+					// 零位移：位置已由 SetLocation 设定，不再让 Vector.cpp 回退
+					result.MoveDisp = { 0, 0, 0 };
+					result.Force = false;
+				}
+				else if (pTechno)
+				{
+					// 单位侧：位移 = 剩余距离，一步到位（Vector.cpp 会 SetLocation 到 frameTarget）
+					result.MoveDisp.X = frameTarget.X - currentPos.X;
+					result.MoveDisp.Y = frameTarget.Y - currentPos.Y;
+					result.MoveDisp.Z = frameTarget.Z - currentPos.Z;
+					result.Force = true;
+				}
+				Deactivate();
+				AdvanceFrame();
+				return result;
 			}
-			// 零位移：位置已由 SetLocation 设定，不再让 Vector.cpp 回退
-			result.MoveDisp = { 0, 0, 0 };
-			result.Force = false;
-			Deactivate();
-			AdvanceFrame();
-			return result;
 		}
 
 		if (shadowDist > 1e-6)
 		{
-			// 影子沿 shadow→target 方向推进
+			// 影子沿 shadow→target 方向推进，步长钳位到剩余距离：
+			// 末段 speed > 剩余距离时若仍推进满 speed 会越过目标，sdx 变号导致来回振荡（原地抽搐）
+			double step = (speed < shadowDist) ? speed : shadowDist;
 			double sInv = 1.0 / shadowDist;
-			double shadowStepX = sdx * sInv * speed;
-			double shadowStepY = sdy * sInv * speed;
+			double shadowStepX = sdx * sInv * step;
+			double shadowStepY = sdy * sInv * step;
 			double shadowStepZ = 0.0;
 			_shadowPosX += shadowStepX;
 			_shadowPosY += shadowStepY;
 			if (_arcHeight != 0)
 			{
-				shadowStepZ = sdz * sInv * speed;
+				shadowStepZ = sdz * sInv * step;
 				_shadowPosZ += shadowStepZ;
 			}
 			// 无弧线：_shadowPosZ 不变（始终 = _initialLocation.Z），Z 由 t 插值
-			_shadowTraveled += speed;
+			_shadowTraveled += step;
 
 			// 重新计算影子距离（影子已移动）
 			sdx = frameTarget.X - _shadowPosX;

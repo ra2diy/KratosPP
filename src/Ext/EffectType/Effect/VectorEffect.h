@@ -14,10 +14,6 @@ class VectorEffect : public EffectScript
 public:
 	EFFECT_SCRIPT(Vector);
 
-	// 目标坐标缓存（跨 AE 实例，6 月版机制恢复）：SpawnMissile 未统一设 Target 前的过渡期，
-	// 以及单位目标死亡后，用缓存的上一帧有效目标坐标继续指向
-	static std::map<TechnoClass*, CoordStruct> _lastTargetCache;
-
 	virtual void Clean() override
 	{
 		EffectScript::Clean();
@@ -84,6 +80,11 @@ public:
 	}
 
 	virtual void OnStart() override;
+
+	// 记录/刷新目标缓存（挂在 TechnoStatus 上，归一目标保护机制）：
+	// Techno 获得 Vector 时写入目标单位+格子（Spawn 从 SpawnManager/Kamikaze 取，普通单位记 Target）。
+	// NoUpdate=yes 存一次即停，之后只读格子（目标死活不影响）；no 每帧刷新，目标死亡/无效（脚下格子）冻结最后有效值
+	void CacheTargetNow();
 
 	VectorResult GetVectorResult();
 

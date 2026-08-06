@@ -198,6 +198,11 @@ public:
 		// 阿伟死了，DestroySelfState干的
 		_isDead = false;
 
+		// Vector 目标缓存
+		_vectorCachedTarget = nullptr;
+		_vectorCachedCell = {};
+		_vectorCachedCellValid = false;
+
 		_lastMission = Mission::Guard;
 
 		_location = CoordStruct::Empty;
@@ -421,6 +426,23 @@ public:
 	CoordStruct _vectorDesiredPos{};
 	GUID _vectorSavedLocomotor{}; // Vector 接管时保存的原 Locomotor
 	AbstractClass* _savedVectorTarget = nullptr; // Vector 接管时锁定的攻击目标
+
+	// Vector 目标缓存（归一目标保护机制到 Spawn）：
+	// 目标单位（存活时有效）+ 目标格子（死亡后仍有效，唯一可靠值）。
+	// Techno 获得第一个 Vector 时写入，NoUpdate=no 每帧刷新，目标死亡后冻结格子不再更新
+	AbstractClass* _vectorCachedTarget = nullptr;
+	CoordStruct _vectorCachedCell{};
+	bool _vectorCachedCellValid = false;
+
+	bool HasVectorTargetCache() const { return _vectorCachedCellValid; }
+	CoordStruct GetVectorCachedCell() const { return _vectorCachedCell; }
+	void SetVectorTargetCache(AbstractClass* pTarget, const CoordStruct& cell)
+	{
+		_vectorCachedTarget = pTarget;
+		_vectorCachedCell = cell;
+		_vectorCachedCellValid = true;
+	}
+
 	double _spinRad = 0;
 	int _spinTime = 0;
 	bool _spinFlip = true;
@@ -520,6 +542,9 @@ public:
 			.Process(this->_turretFlip)
 			.Process(this->_vectorResult)
 			.Process(this->_savedVectorTarget)
+			.Process(this->_vectorCachedTarget)
+			.Process(this->_vectorCachedCell)
+			.Process(this->_vectorCachedCellValid)
 			.Success();
 	};
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override

@@ -13,8 +13,6 @@ void TechnoStatus::VectorCancel()
 	AbstractClass* savedTarget = pTechno->Target;
 	AbstractClass* savedFocus = pTechno->Focus;
 	FootClass* pFoot = abstract_cast<FootClass*>(pTechno);
-	Debug::Log("[VectorReach] END VectorCancel pos=(%d,%d,%d)\n",
-		pTechno->GetCoords().X, pTechno->GetCoords().Y, pTechno->GetCoords().Z);
 
 	if (!IsBuilding() && !IsDeadOrInvisible(pTechno))
 	{
@@ -45,6 +43,9 @@ void TechnoStatus::VectorCancel()
 	_vectorDesiredPos = CoordStruct::Empty;
 	_vectorResult = {};
 	_savedVectorTarget = nullptr;
+	_vectorCachedTarget = nullptr;
+	_vectorCachedCell = {};
+	_vectorCachedCellValid = false;
 
 	// 恢复被清空的攻击目标和移动目标
 	if (savedTarget && !IsDeadOrInvisible(abstract_cast<ObjectClass*>(savedTarget)))
