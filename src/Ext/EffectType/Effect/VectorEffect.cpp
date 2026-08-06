@@ -91,7 +91,9 @@ static bool TryGetSpawnManagerTarget(TechnoClass* pTechno, CoordStruct& out)
 
 // 目标缓存（挂在 TechnoStatus，归一目标保护机制）：
 // Techno 获得 Vector 时写入目标单位+格子（Spawn 从 SpawnManager/Kamikaze 取，普通单位记 Target）。
-// NoUpdate=yes 存一次即停，之后只读格子（目标死活不影响）；no 每帧刷新，目标死亡/无效（脚下格子）冻结最后有效值
+// NoUpdate=yes 存一次即停，之后只读格子（目标死活不影响）。
+// NoUpdate=no 只跟随缓存锁定的目标单位实时位置，不再读引擎参数（防引擎集结目标点污染）；
+// 锁定的是格子（无单位）则不刷新（格子不会移动）；目标死亡冻结最后有效格子
 void VectorEffect::CacheTargetNow()
 {
 	if (!pTechno)
@@ -100,10 +102,30 @@ void VectorEffect::CacheTargetNow()
 	if (!status)
 		return;
 
-	// NoUpdate=yes：第一笔（挂载时）已写入即停止刷新
-	if (Data->OriginNoUpdate && status->HasVectorTargetCache())
+	// --- 已有缓存：NoUpdate=no 只跟随锁定单位，不再读引擎参数 ---
+	if (status->HasVectorTargetCache())
+	{
+		// NoUpdate=yes：锁定第一笔，不刷新
+		if (Data->OriginNoUpdate)
+			return;
+		// NoUpdate=no：跟随锁定的单位实时位置
+		AbstractClass* pCachedTarget = status->GetVectorCachedTarget();
+		if (pCachedTarget)
+		{
+			TechnoClass* pTgt = abstract_cast<TechnoClass*>(pCachedTarget);
+			if (pTgt && !IsDeadOrInvisible(pTgt))
+			{
+				CoordStruct c = pTgt->GetCoords();
+				if (!IsSameCell(c, pTechno->GetCoords())) // 单位跑到导弹脚下（极罕见）防污染
+					status->SetVectorTargetCache(pCachedTarget, c);
+			}
+			// 目标死亡：不写，冻结最后有效格子
+		}
+		// 锁定的是格子（无单位）：格子不会移动，不刷新
 		return;
+	}
 
+	// --- 第一笔：引擎来源链取候选，优先单位 ---
 	AbstractClass* candTarget = nullptr;
 	CoordStruct candCell{};
 	bool got = false;

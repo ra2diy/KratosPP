@@ -436,6 +436,7 @@ public:
 
 	bool HasVectorTargetCache() const { return _vectorCachedCellValid; }
 	CoordStruct GetVectorCachedCell() const { return _vectorCachedCell; }
+	AbstractClass* GetVectorCachedTarget() const { return _vectorCachedTarget; }
 	void SetVectorTargetCache(AbstractClass* pTarget, const CoordStruct& cell)
 	{
 		_vectorCachedTarget = pTarget;
