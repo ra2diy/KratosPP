@@ -132,9 +132,23 @@ void VectorEffect::CacheTargetNow()
 
 	if (pTechno->SpawnOwner && !IsDeadOrInvisible(pTechno->SpawnOwner))
 	{
-		// Spawn 导弹：SpawnManager（单位+坐标）→ Kamikaze Cell（只有格子）→ Target（单位+坐标）
+		// Spawn 导弹：优先从发射者（SpawnOwner）自身攻击目标读——
+		// 引擎集结阶段 SpawnManager 的 Target/Destination 可能是集结点，发射者自己瞄准的目标才是真实目标
+		if (pTechno->SpawnOwner->Target)
+		{
+			TechnoClass* pTgt = abstract_cast<TechnoClass*>(pTechno->SpawnOwner->Target);
+			CoordStruct c = pTechno->SpawnOwner->Target->GetCoords();
+			if (!IsSameCell(c, pTechno->GetCoords())
+				&& (!pTgt || !IsDeadOrInvisible(pTgt))) // 非 Techno 目标（格子）不做死亡判断
+			{
+				candTarget = pTechno->SpawnOwner->Target;
+				candCell = c;
+				got = true;
+			}
+		}
+		// 原链兜底：SpawnManager（单位+坐标）→ Kamikaze Cell（只有格子）→ Target（单位+坐标）
 		SpawnManagerClass* pSM = pTechno->SpawnOwner->SpawnManager;
-		if (pSM && pSM->Target)
+		if (!got && pSM && pSM->Target)
 		{
 			TechnoClass* pTgt = abstract_cast<TechnoClass*>(pSM->Target);
 			CoordStruct c = pSM->Target->GetCoords();
@@ -948,26 +962,38 @@ VectorResult VectorEffect::GetVectorResult()
 			originPos = _initialOriginPos.IsEmpty() ? currentPos : _initialOriginPos; // 锁定初始目标
 		else
 		{
-			// 允许更新：每帧从引擎读目标跟随移动（NoUpdate=no 语义）；
-			// 更新结果变成导弹自身格子（目标死亡，引擎重置）时抛弃该帧，回退到已锁定坐标
+			// 允许更新（NoUpdate=no）：缓存优先（只跟随锁定单位，防引擎集结目标点污染），
+			// 缓存空才回退引擎链；更新结果变成脚下格子（目标死亡）时抛弃，回退锁定坐标
 			CoordStruct updated{};
 			bool gotUpdate = false;
-			if (pBullet && pBullet->Target)
+			if (pTechno)
+			{
+				if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
+				{
+					if (status->HasVectorTargetCache()
+						&& !IsSameCell(status->GetVectorCachedCell(), pTechno->GetCoords()))
+					{
+						updated = status->GetVectorCachedCell();
+						gotUpdate = true;
+					}
+				}
+			}
+			if (!gotUpdate && pBullet && pBullet->Target)
 			{
 				updated = pBullet->Target->GetCoords(); // 抛射体目标 Cell 是真实落点，不判脚下
 				gotUpdate = true;
 			}
-			else if (pBullet)
+			else if (!gotUpdate && pBullet)
 			{
 				updated = pBullet->TargetCoords;
 				gotUpdate = true;
 			}
-			else if (pTechno && pTechno->Target && !IsSelfCellTarget(pTechno, pTechno->Target))
+			else if (!gotUpdate && pTechno && pTechno->Target && !IsSelfCellTarget(pTechno, pTechno->Target))
 			{
 				updated = pTechno->Target->GetCoords();
 				gotUpdate = true;
 			}
-			else if (pTechno)
+			else if (!gotUpdate && pTechno)
 			{
 				CoordStruct kamikazePos{};
 				if ((TryGetKamikazeTarget(pTechno, kamikazePos) || TryGetSpawnManagerTarget(pTechno, kamikazePos))
