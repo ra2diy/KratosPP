@@ -412,25 +412,22 @@ void VectorEffect::OnStart()
 		break;
 
 	case VectorData::VectorOrigin::Launcher:
-		if (Data->OriginNoUpdate)
-		{
-			if (pBullet && pBullet->Owner)
-				_initialOriginPos = pBullet->Owner->GetCoords();
-			else if (pTechno)
-				_initialOriginPos = pTechno->GetCoords();
-			else
-				_initialOriginPos = pObject->GetCoords();
-		}
+		// 无论 NoUpdate 都锁定基线（与 Target 分支一致）：NoUpdate=yes 直接用，
+		// no 每帧快照刷新覆盖；launcher 死亡时冻结此基线作为 origin 解算起点
+		if (pBullet && pBullet->Owner)
+			_initialOriginPos = pBullet->Owner->GetCoords();
+		else if (pTechno)
+			_initialOriginPos = pTechno->GetCoords();
+		else
+			_initialOriginPos = pObject->GetCoords();
 		break;
 
 	case VectorData::VectorOrigin::Source:
-		if (Data->OriginNoUpdate)
-		{
-			if (AE && AE->pSource)
-				_initialOriginPos = AE->pSource->GetCoords();
-			else
-				_initialOriginPos = pObject->GetCoords(); // 兜底与 Target 分支一致
-		}
+		// 无论 NoUpdate 都锁定基线（与 Target/Launcher 分支一致）：死亡时冻结此基线
+		if (AE && AE->pSource)
+			_initialOriginPos = AE->pSource->GetCoords();
+		else
+			_initialOriginPos = pObject->GetCoords(); // 兜底与 Target 分支一致
 		if (AE && AE->pSource)
 			_pSource = AE->pSource;
 		break;
@@ -990,8 +987,15 @@ VectorResult VectorEffect::GetVectorResult()
 		}
 		break;
 	case VectorData::VectorOrigin::Launcher:
-		originPos = Data->OriginNoUpdate ? _initialOriginPos :
-			(_pLauncher && !IsDeadOrInvisible(_pLauncher) ? _pLauncher->GetCoords() : currentPos);
+		if (Data->OriginNoUpdate)
+			originPos = _initialOriginPos;
+		else if (_pLauncher && !IsDeadOrInvisible(_pLauncher))
+		{
+			_initialOriginPos = _pLauncher->GetCoords(); // 发射者活着：每帧更新快照（与 Source 分支一致）
+			originPos = _initialOriginPos;
+		}
+		else
+			originPos = _initialOriginPos; // 发射者死亡：冻结基线（OnStart 锁定或最后快照），不再读指针
 		break;
 	case VectorData::VectorOrigin::Source:
 		if (Data->OriginNoUpdate)
@@ -1002,7 +1006,7 @@ VectorResult VectorEffect::GetVectorResult()
 			originPos = _initialOriginPos;
 		}
 		else
-			originPos = _initialOriginPos.IsEmpty() ? currentPos : _initialOriginPos; // 来源死亡：冻结死亡坐标
+			originPos = _initialOriginPos; // 来源死亡：冻结基线（OnStart 锁定或最后快照），不再读指针
 		break;
 	case VectorData::VectorOrigin::Self:
 		originPos = Data->OriginNoUpdate ? _initialOriginPos : currentPos;
@@ -1148,27 +1152,66 @@ VectorResult VectorEffect::GetVectorResult()
 				{
 				case VectorData::VectorOrigin::Launcher:
 					if (_pLauncher && !IsDeadOrInvisible(_pLauncher))
+					{
+						if (!Data->OriginOriginNoUpdate)
+							_initialBaseCenter = _pLauncher->GetCoords(); // 发射者活着：每帧快照（NoUpdate=yes 冻结首帧不更新）
 						baseCenter = _pLauncher->GetCoords();
+					}
+					else
+						baseCenter = _initialBaseCenter; // 发射者死亡：冻结快照（首帧或最后跟随值），不再读指针
 					break;
 				case VectorData::VectorOrigin::Target:
-					if (pTechno && pTechno->Target)
-						baseCenter = pTechno->Target->GetCoords();
-					else if (pTechno)
 					{
-						FootClass* pFoot = abstract_cast<FootClass*>(pTechno);
-						if (pFoot && pFoot->Destination)
-							baseCenter = pFoot->Destination->GetCoords();
+						CoordStruct targetBase{};
+						bool gotTargetBase = false;
+						if (pTechno && pTechno->Target)
+						{
+							targetBase = pTechno->Target->GetCoords();
+							gotTargetBase = true;
+						}
+						else if (pTechno)
+						{
+							FootClass* pFoot = abstract_cast<FootClass*>(pTechno);
+							if (pFoot && pFoot->Destination)
+							{
+								targetBase = pFoot->Destination->GetCoords();
+								gotTargetBase = true;
+							}
+						}
+						else if (pBullet && pBullet->Target)
+						{
+							targetBase = pBullet->Target->GetCoords();
+							gotTargetBase = true;
+						}
+						else if (pBullet && pBullet->Owner && pBullet->Owner->Target)
+						{
+							targetBase = pBullet->Owner->Target->GetCoords();
+							gotTargetBase = true;
+						}
+						else if (pBullet)
+						{
+							targetBase = pBullet->TargetCoords;
+							gotTargetBase = true;
+						}
+						if (gotTargetBase)
+						{
+							if (!Data->OriginOriginNoUpdate)
+								_initialBaseCenter = targetBase; // 目标活着：每帧快照（NoUpdate=yes 冻结首帧不更新）
+							baseCenter = targetBase;
+						}
+						else
+							baseCenter = _initialBaseCenter; // 目标失效：冻结快照（首帧或最后跟随值），不再掉回 originPos
 					}
-					else if (pBullet && pBullet->Target)
-						baseCenter = pBullet->Target->GetCoords();
-					else if (pBullet && pBullet->Owner && pBullet->Owner->Target)
-						baseCenter = pBullet->Owner->Target->GetCoords();
-					else if (pBullet)
-						baseCenter = pBullet->TargetCoords;
 					break;
 				case VectorData::VectorOrigin::Source:
 					if (_pSource && !IsDeadOrInvisible(_pSource))
+					{
+						if (!Data->OriginOriginNoUpdate)
+							_initialBaseCenter = _pSource->GetCoords(); // 来源活着：每帧快照（NoUpdate=yes 冻结首帧不更新）
 						baseCenter = _pSource->GetCoords();
+					}
+					else
+						baseCenter = _initialBaseCenter; // 来源死亡：冻结快照（首帧或最后跟随值），不再读指针
 					break;
 				}
 			}
