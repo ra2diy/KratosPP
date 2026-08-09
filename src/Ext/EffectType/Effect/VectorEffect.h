@@ -14,6 +14,18 @@ class VectorEffect : public EffectScript
 public:
 	EFFECT_SCRIPT(Vector);
 
+	virtual void Awake() override;
+	virtual void Destroy() override;
+
+	// 参照 MissileHoming 先例：目标单位 UnInit 时清空指针，防止悬垂
+	void OnTechnoDelete(EventSystem* sender, Event e, void* args)
+	{
+		if (args == _pLauncher)
+			_pLauncher = nullptr;
+		if (args == _pSource)
+			_pSource = nullptr;
+	}
+
 	virtual void Clean() override
 	{
 		EffectScript::Clean();

@@ -73,6 +73,17 @@ static bool TryGetSpawnManagerTarget(TechnoClass* pTechno, CoordStruct& out)
 	return false;
 }
 
+// 参照 MissileHoming 先例：注册 UnInit 事件，launcher/source 被删除时置空指针防悬垂
+void VectorEffect::Awake()
+{
+	EventSystems::General.AddHandler(Events::ObjectUnInitEvent, this, &VectorEffect::OnTechnoDelete);
+}
+
+void VectorEffect::Destroy()
+{
+	EventSystems::General.RemoveHandler(Events::ObjectUnInitEvent, this, &VectorEffect::OnTechnoDelete);
+}
+
 // 目标缓存（挂在 TechnoStatus，归一目标保护机制）：
 // Techno 获得 Vector 时写入目标单位+格子（Spawn 从 SpawnManager/Kamikaze 取，普通单位记 Target）。
 // NoUpdate=yes 存一次即停，之后只读格子（目标死活不影响）。
