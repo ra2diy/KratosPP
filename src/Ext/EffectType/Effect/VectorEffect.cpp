@@ -218,7 +218,7 @@ void VectorEffect::OnStart()
 			// 消费端 GetFLHAbsoluteOffset 世界角 = -(mainFacingDir + flhAngle)，要求 = 近交点角 + deg：
 			// flhAngle = -mainFacingDirSim - β - deg
 			//   β = atan2 近交点世界角（目标点指向抛射体）
-			//   mainFacingDirSim = 复刻消费端取值：NoUpdate=yes 用 DirStruct 原值(α)，no 用 Radians2Dir(α)（差 90°）
+			//   mainFacingDirSim = 消费端 mainFacingDir 统一取 DirStruct 原值（NoUpdate 不影响坐标系）
 			double flhAngle;
 			bool hasAngleRange = (Data->TargetOffsetAngleMin < Data->TargetOffsetAngleMax)
 				|| (Data->TargetOffsetAngleMin2 < Data->TargetOffsetAngleMax2);
@@ -252,9 +252,8 @@ void VectorEffect::OnStart()
 				{
 					double beta = std::atan2(bulletPos.Y - targetPos.Y, bulletPos.X - targetPos.X); // 近交点世界角
 					double alpha = Point2Dir(targetPos, bulletPos).GetRadian(); // 近交点 DirStruct 角
-					double mainFacingDirSim = Data->OriginNoUpdate
-						? alpha
-						: Radians2Dir(alpha).GetRadian(); // 复刻消费端 mainFacingDir 取值路径
+					// 消费端 mainFacingDir 统一取 DirStruct 原值（NoUpdate 不影响坐标系），直接复刻
+					double mainFacingDirSim = alpha;
 					flhAngle = -mainFacingDirSim - beta - Math::deg2rad(deg);
 				}
 				else
@@ -370,14 +369,14 @@ void VectorEffect::OnStart()
 	switch (Data->Origin)
 	{
 	case VectorData::VectorOrigin::Target:
-		if (Data->OriginNoUpdate)
-		{
+		// 无论 NoUpdate 都锁定基线（OnStart 时引擎目标还是真实的）：NoUpdate=yes 直接用它，
+		// no 每帧刷新覆盖；引擎目标失效时回退此基线（保证打地面轨迹一致）
 		// 锚点 = 引擎 Kamikaze 控制器存的目标点（Homing 更新/引擎写入，目标死亡冻结）→ 攻击目标 → 自身
 		if (pTechno)
 		{
 			CoordStruct kamikazePos{};
 			bool gotKamikaze = TryGetKamikazeTarget(pTechno, kamikazePos);
-			// ① TechnoStatus 目标缓存（挂载时固化；NoUpdate=yes 只读格子，目标死活不影响）
+			// ① TechnoStatus 目标缓存（挂载时固化；只读格子，目标死活不影响）
 			TechnoStatus* cacheStatus = GetStatus<TechnoExt, TechnoStatus>(pTechno);
 			if (cacheStatus && cacheStatus->HasVectorTargetCache())
 			{
@@ -410,7 +409,6 @@ void VectorEffect::OnStart()
 			{
 				_initialOriginPos = pObject->GetCoords();
 			}
-		}
 		break;
 
 	case VectorData::VectorOrigin::Launcher:
@@ -579,6 +577,7 @@ void VectorEffect::OnStart()
 		break;
 	}
 	}
+
 }
 
 VectorResult VectorEffect::GetVectorResult()
@@ -784,8 +783,17 @@ VectorResult VectorEffect::GetVectorResult()
 	double effectiveFacing = _facingRad;
 	double effectiveTilt = _tiltRad;
 	DirStruct mainFacingDir = Radians2Dir(effectiveFacing); // 官方API，不得修改：引擎弧度→DirStruct转换
-	// OriginNoUpdate + Target/Source/Launcher/Self：直接用 OnStart 存的 DirStruct，不经 GetRadian→Radians2Dir 往返
-	if (Data->OriginNoUpdate && (Data->Origin == VectorData::VectorOrigin::Target || Data->Origin == VectorData::VectorOrigin::Source || Data->Origin == VectorData::VectorOrigin::Launcher || Data->Origin == VectorData::VectorOrigin::Self))
+	// Target/Source/Launcher/Self：统一用 OnStart 存的 DirStruct 作基础朝向。
+	// Radians2Dir(GetRadian()) 往返存在 90° 偏置（BINARY_ANGLE_MAGIC 为负），
+	// NoUpdate=no 时误走该路径导致坐标系旋转。NoUpdate 只决定原点是否动态刷新，不影响坐标系计算。
+	bool hasNormal = !Data->NormalVector.IsEmpty()
+		|| Data->NormalRandomF.Y > Data->NormalRandomF.X
+		|| Data->NormalRandomL.Y > Data->NormalRandomL.X
+		|| Data->NormalRandomH.Y > Data->NormalRandomH.X;
+	if (!hasNormal && (Data->Origin == VectorData::VectorOrigin::Target
+		|| Data->Origin == VectorData::VectorOrigin::Source
+		|| Data->Origin == VectorData::VectorOrigin::Launcher
+		|| Data->Origin == VectorData::VectorOrigin::Self))
 	{
 		mainFacingDir = _facingDir;
 		effectiveFacing = _facingDir.GetRadian();
@@ -799,16 +807,14 @@ VectorResult VectorEffect::GetVectorResult()
 		effectiveTilt = 0.0;
 	}
 
-	bool hasNormal = !Data->NormalVector.IsEmpty()
-		|| Data->NormalRandomF.Y > Data->NormalRandomF.X
-		|| Data->NormalRandomL.Y > Data->NormalRandomL.X
-		|| Data->NormalRandomH.Y > Data->NormalRandomH.X;
-	if (!Data->OriginNoUpdate && !hasNormal && !Data->AllowOriginTilt && !Data->OriginIsOnWorld)
+	// 统一朝向算法：NoUpdate 只切换计算点（锁定 _initialOriginPos vs 实时坐标），不切换坐标系/朝向算法
+	if (!hasNormal && !Data->AllowOriginTilt && !Data->OriginIsOnWorld)
 	{
 		switch (Data->Origin)
 		{
 		case VectorData::VectorOrigin::Source:
-			if (_pSource && !IsDeadOrInvisible(_pSource))
+			// 计算点：NoUpdate=yes 用锁定值，no 每帧刷新
+			if (!Data->OriginNoUpdate && _pSource && !IsDeadOrInvisible(_pSource))
 			{
 				_initialOriginPos = _pSource->GetCoords(); // 来源活着：每帧更新快照
 			}
@@ -829,42 +835,46 @@ VectorResult VectorEffect::GetVectorResult()
 			bool isGround = (pBullet && !abstract_cast<TechnoClass*>(pBullet->Target));
 			if (isGround && _movementFrames > 1)
 				break;
-			// 允许更新（NoUpdate=no）：缓存优先（每帧已刷新，目标死亡冻结），缓存空回退引擎来源
+			// 计算点：默认锁定值起步，NoUpdate=no 才走缓存/引擎链动态获取
 			CoordStruct targetPos = _initialOriginPos;
 			bool gotTarget = !targetPos.IsEmpty();
-			if (pTechno)
+			if (!Data->OriginNoUpdate)
 			{
-				if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
+				// 允许更新（NoUpdate=no）：缓存优先（每帧已刷新，目标死亡冻结），缓存空回退引擎来源
+				if (pTechno)
 				{
-					if (status->HasVectorTargetCache())
+					if (TechnoStatus* status = GetStatus<TechnoExt, TechnoStatus>(pTechno))
 					{
-						targetPos = status->GetVectorCachedCell();
-						gotTarget = true;
+						if (status->HasVectorTargetCache())
+						{
+							targetPos = status->GetVectorCachedCell();
+							gotTarget = true;
+						}
 					}
 				}
-			}
-			if (!gotTarget && pBullet && pBullet->Target)
-			{
-				targetPos = pBullet->Target->GetCoords(); // 抛射体目标 Cell 是真实落点
-				gotTarget = true;
-			}
-			else if (!gotTarget && pBullet)
-			{
-				targetPos = pBullet->TargetCoords;
-				gotTarget = true;
-			}
-			else if (!gotTarget && pTechno && pTechno->Target)
-			{
-				targetPos = pTechno->Target->GetCoords();
-				gotTarget = true;
-			}
-			else if (!gotTarget && pTechno)
-			{
-				CoordStruct kamikazePos{};
-				if (TryGetKamikazeTarget(pTechno, kamikazePos) || TryGetSpawnManagerTarget(pTechno, kamikazePos))
+				if (!gotTarget && pBullet && pBullet->Target)
 				{
-					targetPos = kamikazePos;
+					targetPos = pBullet->Target->GetCoords(); // 抛射体目标 Cell 是真实落点
 					gotTarget = true;
+				}
+				else if (!gotTarget && pBullet)
+				{
+					targetPos = pBullet->TargetCoords;
+					gotTarget = true;
+				}
+				else if (!gotTarget && pTechno && pTechno->Target)
+				{
+					targetPos = pTechno->Target->GetCoords();
+					gotTarget = true;
+				}
+				else if (!gotTarget && pTechno)
+				{
+					CoordStruct kamikazePos{};
+					if (TryGetKamikazeTarget(pTechno, kamikazePos) || TryGetSpawnManagerTarget(pTechno, kamikazePos))
+					{
+						targetPos = kamikazePos;
+						gotTarget = true;
+					}
 				}
 			}
 			if (gotTarget)
@@ -1658,7 +1668,8 @@ VectorResult VectorEffect::GetVectorResult()
 				double tLenXY = std::sqrt(tdx * tdx + tdy * tdy);
 				if (tLenXY > 1e-6)
 				{
-					moveDir = Radians2Dir(std::atan2(tdy, tdx)); // 官方API，不得修改
+					// 与 AutoWeapon IsOnTarget 同款：Point2Dir 内部处理 RA2 坐标系（裸 atan2+Radians2Dir 有 90° 偏置）
+					moveDir = Point2Dir(currentPos, tgt); // 抛射体→目标 连线方向
 					if (Data->AllowCircleTilt)
 					{
 						double tLen3D = std::sqrt(tdx * tdx + tdy * tdy + tdz * tdz);
@@ -1675,7 +1686,8 @@ VectorResult VectorEffect::GetVectorResult()
 			if (_elapsedFrames == 0)
 				_currentAngle = 0.0;
 			_currentAngle += Data->AnglePerStep;
-			moveDir = Radians2Dir(moveDir.GetRadian() + Math::deg2rad(_currentAngle)); // 官方API，不得修改
+			// SetRadian 与 GetRadian 互逆（Radians2Dir 往返存在 90° 偏置，不能用）
+			moveDir.SetRadian(moveDir.GetRadian() + Math::deg2rad(_currentAngle));
 		}
 
 		CoordStruct grow = { static_cast<int>(Data->GrowRate.X * _movementFrames),
@@ -1719,44 +1731,33 @@ VectorResult VectorEffect::GetVectorResult()
 	frameTargetFlh.Y = Data->TargetFLH.Y + _randomTargetOffset.Y;
 	frameTargetFlh.Z = Data->TargetFLH.Z + _randomTargetOffset.Z;
 
-	// TargetFLH → 世界坐标：照搬 AutoWeapon/AttachFire 的成熟管线
-	// 官方API，不得修改：Techno 路径走 Locomotor 矩阵，非Techno 路径走 Point2Dir+GetFLHAbsoluteCoords
+	// TargetFLH → 世界坐标：AutoWeapon 同款管线
+	// 坐标系统一：矩阵偏移（含 IsOnTurret 炮塔/车身）+ NoUpdate 控制的计算点 originPos
 	CoordStruct frameTarget;
-	bool isOnTurret = !Data->OriginIsOnBody;
+	bool isOnTurret = !Data->OriginIsOnBody; // AutoWeapon 语义：yes=炮塔指向，no=车身指向
 	switch (Data->Origin)
 	{
 	case VectorData::VectorOrigin::Launcher:
 		{
-			if (Data->OriginNoUpdate)
-				frameTarget = GetFLHAbsoluteCoords(originPos, frameTargetFlh, mainFacingDir); // 锁定原点
-			else
+			TechnoClass* pLT = abstract_cast<TechnoClass*>(_pLauncher);
+			if (pLT && !IsDeadOrInvisible(pLT))
 			{
-				TechnoClass* pLT = abstract_cast<TechnoClass*>(_pLauncher);
-				if (pLT && !IsDeadOrInvisible(pLT))
-					frameTarget = GetFLHAbsoluteCoords(pLT, frameTargetFlh, isOnTurret); // 官方API，不得修改
-				else
-					frameTarget = GetFLHAbsoluteCoords(originPos, frameTargetFlh, mainFacingDir); // 官方API，不得修改
+				// AutoWeapon 同款：Locomotor 矩阵 + TurretOffset + 炮塔旋转角
+				CoordStruct mtxPos = GetFLHAbsoluteCoords(pLT, frameTargetFlh, isOnTurret);
+				frameTarget = originPos + (mtxPos - pLT->GetCoords());
 			}
+			else
+				frameTarget = GetFLHAbsoluteCoords(originPos, frameTargetFlh, mainFacingDir); // 官方API，不得修改
 		}
 		break;
 	case VectorData::VectorOrigin::Self:
-		if (pTechno)
+		if (Data->OriginIsOnWorld)
+			frameTarget = GetFLHAbsoluteCoords(originPos, frameTargetFlh, DirStruct{}); // 世界坐标系，无视倾斜
+		else if (pTechno)
 		{
-			if (Data->OriginIsOnWorld)
-				frameTarget = GetFLHAbsoluteCoords(originPos, frameTargetFlh, DirStruct{}); // 世界坐标系，无视倾斜
-			else if (Data->OriginNoUpdate)
-				frameTarget = GetFLHAbsoluteCoords(originPos, frameTargetFlh, mainFacingDir); // 锁定原点
-			else
-				frameTarget = GetFLHAbsoluteCoords(pTechno, frameTargetFlh, isOnTurret); // 官方API，不得修改
-		}
-		else if (pBullet)
-		{
-			if (Data->OriginIsOnWorld)
-				frameTarget = GetFLHAbsoluteCoords(originPos, frameTargetFlh, DirStruct{}); // 世界坐标系，无视倾斜
-			else if (Data->OriginNoUpdate)
-				frameTarget = GetFLHAbsoluteCoords(originPos, frameTargetFlh, mainFacingDir); // 锁定原点
-			else
-				frameTarget = GetFLHAbsoluteCoords(currentPos, frameTargetFlh, Facing(pBullet, currentPos)); // 官方API，不得修改
+			// AutoWeapon 同款：Locomotor 矩阵 + TurretOffset + 炮塔旋转角
+			CoordStruct mtxPos = GetFLHAbsoluteCoords(pTechno, frameTargetFlh, isOnTurret);
+			frameTarget = originPos + (mtxPos - pTechno->GetCoords());
 		}
 		else
 			frameTarget = GetFLHAbsoluteCoords(originPos, frameTargetFlh, mainFacingDir); // 官方API，不得修改

@@ -263,6 +263,6 @@ public:
 	double _originArcPeakPercent = 0.5; // Origin 弧高点比率 0..1
 	double _originArcRotation = 0.0;   // Origin 弧面旋转角（OnStart 解析）
 	CoordStruct _originArcStartCenter{}; // Origin 弧线起始圆心位置
-	CoordStruct _initialBaseCenter{};   // Origin 基座初始快照（OriginNoUpdate 用）
+	CoordStruct _initialBaseCenter{};   // Origin 基座初始快照（Origin.OriginNoUpdate 用）
 	int _vectorAcquireZ = 0;            // 获取 Vector 时的抛射体 Z（Circle 圆心高度基准）
 };
