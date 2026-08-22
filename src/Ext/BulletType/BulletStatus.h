@@ -169,6 +169,14 @@ public:
 	// 正在被Vector强制位移
 	bool VectorForced = false;
 
+	// 弹体是否仍被 Vector 接管（复用 OnUpdate_Vector 每帧 MarginVectorOffset 的现成结果）
+	// Force=yes 的 Vector 必置 VectorForced；Force=no 的 Vector 以实际位移/冻结为准。
+	// 供 BulletClass_AI_PreDetonation_Vector hook 判断是否跳过引爆流程。
+	bool HasActiveVector()
+	{
+		return VectorForced || !_vectorResult.MoveDisp.IsEmpty() || _vectorResult.Freeze;
+	}
+
 	bool SpeedChanged = false; // 改变抛射体的速度
 	bool LocationLocked = false; // 锁定抛射体的位置
 

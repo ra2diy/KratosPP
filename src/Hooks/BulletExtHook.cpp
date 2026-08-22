@@ -345,3 +345,30 @@ DEFINE_HOOK(0x466E18, BulletClass_CheckHight_UnderGround, 0x6)
 	return 0;
 }
 #pragma endregion
+
+#pragma region Vector KeepAlive
+
+// Vector 存在期间暴力跳过"抛射体抵达目标进入引爆流程"
+// 原流程：0x467E53 进入预爆动画 / Detonate / UnInit，弹体消失
+// 新流程：弹体仍被 Vector 接管（复用 BulletStatus::OnUpdate_Vector 每帧
+//         MarginVectorOffset 的现成结果，不重复遍历判定）→ 跳到 0x467FBA
+//         （跳过引爆三段），弹体保持存活并继续被 Vector 位移控制；
+//         Vector 结束 → 判据变假，走原版引爆流程。
+// 原始字节：8B 8D 28 01 00 00（mov ecx, [ebp+0x128]）
+DEFINE_HOOK(0x467E53, BulletClass_AI_PreDetonation_Vector, 0x6)
+{
+	GET(BulletClass*, pThis, EBP);
+
+	if (BulletStatus* status = GetStatus<BulletExt, BulletStatus>(pThis))
+	{
+		if (status->HasActiveVector())
+		{
+			// 跳过预爆动画、Detonate 和 UnInit，继续帧尾记录以及 0x467FEE 的 OnUpdateEnd
+			return 0x467FBA;
+		}
+	}
+
+	// Vector 不存在或已结束，进入原版引爆流程
+	return 0;
+}
+#pragma endregion
