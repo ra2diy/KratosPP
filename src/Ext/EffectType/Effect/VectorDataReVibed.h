@@ -48,6 +48,9 @@ public:
 	bool Force = true;                  // yes=SetLocation 硬控，默认所有 Vector 模式 Force
 	bool Freeze = false;
 	bool AllowCircleTilt = true;         // yes=允许圆面使用 NormalVector 或地形倾斜
+	bool IsOnOrigin = false;             // （INI: Vector.OriginIsOnVectorOrigin）FLH 参考系（F 轴）来源：yes=Origin 单位自身朝向，no=Origin→弹体连线
+										 // 默认按 Origin 类型推导（Launcher/Self→yes，Target/Source→no），与旧版行为一致
+	bool IsNormalOnOrigin = true;        // 圆面法向量：yes（默认）=每帧跟随 Origin 单位自身朝向转动，no=世界固定
 
 	// ========================================================================
 	// NormalVector 圆面法线
@@ -150,6 +153,7 @@ public:
 	double OriginNormalHAngleRMin = 0, OriginNormalHAngleRMax = 0, OriginNormalHAngleRMin2 = 0, OriginNormalHAngleRMax2 = 0;
 	// 圆心通用
 	bool OriginAllowCircleTilt = true;    // yes=大圆面跟随目标倾斜（Origin=Target 时有效）
+	bool OriginIsNormalOnOrigin = true;   // 大圆法向量：yes（默认）=每帧跟随 OriginOrigin 单位自身朝向转动，no=世界固定
 	CoordStruct OriginCircleOffset{};     // 圆心原点偏移（世界坐标）
 	bool OriginAllowOriginTilt = true;
 	bool OriginOriginNoUpdate = false;   // yes=圆心基座冻结在初始位置，不随目标移动
@@ -181,6 +185,7 @@ public:
 	int TargetOffsetRadiusMin2 = 0;  // 四参数版（TargetOffsetRadiusRanges）区间2，区间1复用 Min/Max
 	int TargetOffsetRadiusMax2 = 0;
 	bool TargetOffsetSphere = false;   // yes=球面全向（含H），no=XY圆环+H用TargetOffsetH
+	CoordStruct TargetOffsetNormal{};  // 圆环法向量（FLH），非空时 TargetOffsetSphere=no 的落点在倾斜圆面上（法向量定义圆面）
 	// 角度限制（TargetOffsetAngles，仅圆环模式）：双区间，0度=目标点指向抛射体（近交点）
 	int TargetOffsetAngleMin = 0;
 	int TargetOffsetAngleMax = 0;
@@ -249,6 +254,9 @@ public:
 		Force = reader->Get(title + "Force", Force);
 		Freeze = reader->Get(title + "Freeze", Freeze);
 		AllowCircleTilt = reader->Get(title + "AllowCircleTilt", AllowCircleTilt);
+		// 默认按 Origin 类型推导旧版行为：Launcher/Self=单位自身朝向(yes)，Target/Source=连线(no)
+		IsOnOrigin = reader->Get(title + "OriginIsOnVectorOrigin", Origin == VectorOrigin::Launcher || Origin == VectorOrigin::Self);
+		IsNormalOnOrigin = reader->Get(title + "IsNormalOnOrigin", true); // 默认跟随 Origin 单位，no 才世界固定
 		NormalVector = reader->Get(title + "NormalVector", NormalVector);
 		NormalRandomF = reader->Get(title + "NormalRandomF", NormalRandomF);
 		NormalRandomL = reader->Get(title + "NormalRandomL", NormalRandomL);
@@ -368,6 +376,7 @@ public:
 		OriginNormalLAnglePerStep = reader->Get(title + "Origin.NormalLAnglePerStep", 0.0);
 		OriginNormalHAnglePerStep = reader->Get(title + "Origin.NormalHAnglePerStep", 0.0);
 		OriginAllowCircleTilt = reader->Get(title + "Origin.AllowCircleTilt", OriginAllowCircleTilt);
+		OriginIsNormalOnOrigin = reader->Get(title + "Origin.IsNormalOnOrigin", true); // 默认跟随 OriginOrigin 单位，no 才世界固定
 		OriginCircleOffset = reader->Get(title + "Origin.CircleOrigin", OriginCircleOffset);
 		OriginAllowOriginTilt = reader->Get(title + "Origin.AllowOriginTilt", OriginAllowOriginTilt);
 		OriginOriginNoUpdate = reader->Get(title + "Origin.OriginNoUpdate", false);
@@ -412,6 +421,7 @@ public:
 		std::string targetOffsetRadiusStr = reader->Get(title + "TargetOffsetRadius", std::string{ "" });
 		ParseMinMax(targetOffsetRadiusStr, TargetOffsetRadiusMin, TargetOffsetRadiusMax);
 		TargetOffsetSphere = reader->Get(title + "TargetOffsetSphere", TargetOffsetSphere);
+		TargetOffsetNormal = reader->Get(title + "TargetOffsetNormal", TargetOffsetNormal);
 		ReachTarget = reader->Get(title + "ReachTarget", ReachTarget);
 		ReachTargetEarlyEnd = reader->Get(title + "ReachTargetEarlyEnd", ReachTargetEarlyEnd);
 		ArcHeight = reader->Get(title + "ArcHeight", 0);
@@ -487,6 +497,8 @@ private:
 			.Process(this->Force)
 			.Process(this->Freeze)
 			.Process(this->AllowCircleTilt)
+			.Process(this->IsOnOrigin)
+			.Process(this->IsNormalOnOrigin)
 			.Process(this->NormalVector)
 			.Process(this->NormalRandomF)
 			.Process(this->NormalRandomL)
@@ -560,7 +572,7 @@ private:
 			.Process(this->OriginNormalLAngleRMin2).Process(this->OriginNormalLAngleRMax2)
 			.Process(this->OriginNormalHAngleRMin).Process(this->OriginNormalHAngleRMax)
 			.Process(this->OriginNormalHAngleRMin2).Process(this->OriginNormalHAngleRMax2)
-			.Process(this->OriginAllowCircleTilt).Process(this->OriginCircleOffset)
+			.Process(this->OriginAllowCircleTilt).Process(this->OriginIsNormalOnOrigin).Process(this->OriginCircleOffset)
 			.Process(this->OriginAllowOriginTilt).Process(this->OriginOriginNoUpdate)
 			.Process(this->OriginLissajous)
 			.Process(this->OriginOrigin)
@@ -584,6 +596,7 @@ private:
 			.Process(this->TargetOffsetRadiusMin2)
 			.Process(this->TargetOffsetRadiusMax2)
 			.Process(this->TargetOffsetSphere)
+			.Process(this->TargetOffsetNormal)
 			.Process(this->TargetOffsetAngleMin)
 			.Process(this->TargetOffsetAngleMax)
 			.Process(this->TargetOffsetAngleMin2)
