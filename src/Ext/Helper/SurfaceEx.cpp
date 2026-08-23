@@ -167,7 +167,8 @@ void DrawTargetLaserPoint(DSurface* pSurface,
 	Point2D targetPos = ToClientPos(location);
 	// 颜色的随机偏移
 	ColorStruct c = color;
-	BYTE rand = (BYTE)Random::RandomRanged(0, 14);
+	// 渲染路径，使用本地随机数，避免联机分叉
+	BYTE rand = (BYTE)VisualRandomRanged(0, 14);
 	if (c.R > rand)
 	{
 		c.R -= rand;
@@ -219,7 +220,8 @@ void DrawTargetLaser(DSurface* pSurface,
 	Point2D point2 = ToClientPos(endLocation);
 	// 颜色的随机偏移
 	ColorStruct c = color;
-	BYTE rand = (BYTE)Random::RandomRanged(0, 64);
+	// 渲染路径，使用本地随机数，避免联机分叉
+	BYTE rand = (BYTE)VisualRandomRanged(0, 64);
 	if (c.R > rand)
 	{
 		c.R -= rand;

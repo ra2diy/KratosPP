@@ -74,7 +74,7 @@ public:
 	void TimeToDie();
 	void InheritedTo(TechnoClass* pNewOwner, HouseClass* pNewOwnerHouse);
 
-	bool IsSameGroup(AttachEffectData otherType);
+	bool IsSameGroup(const AttachEffectData& otherType);
 	void GetMarks(std::vector<std::string>& marks);
 
 	bool OwnerIsDead();

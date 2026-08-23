@@ -405,7 +405,7 @@ public:
 		}
 	}
 
-	bool HasContradiction(std::vector<std::string> AENames)
+	bool HasContradiction(std::vector<std::string> AENames) const
 	{
 		bool has = !AttachWithOutTypes.empty() && !AENames.empty();
 		if (has)
@@ -468,7 +468,7 @@ public:
 	}
 #pragma endregion
 
-	int GetDuration()
+	int GetDuration() const
 	{
 		return this->HoldDuration ? -1 : this->Duration;
 	}

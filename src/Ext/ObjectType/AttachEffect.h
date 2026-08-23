@@ -66,12 +66,12 @@ public:
 	 */
 	int Count();
 
-	bool AddCounter(AttachEffectData data, CounterEffect* counter);
-	void RemoveCounter(AttachEffectData data);
+	bool AddCounter(const AttachEffectData& data, CounterEffect* counter);
+	void RemoveCounter(const AttachEffectData& data);
 
 	void GetMarks(std::vector<std::string>& marks);
 	std::vector<std::string> GetMarks();
-	bool IsOnMark(FilterData data);
+	bool IsOnMark(const FilterData& data);
 
 	void GetAENames(std::vector<std::string>& names);
 	bool HasStand();
@@ -113,7 +113,7 @@ public:
 	 *
 	 * @param typeData AE类型
 	 */
-	void Attach(AttachEffectTypeData* typeData);
+	void Attach(const AttachEffectTypeData* typeData);
 
 	/**
 	 *@brief 按照清单来附加AE
@@ -127,7 +127,7 @@ public:
 	 * @param aeMode 分组编号
 	 * @param fromPassenger 来自乘客
 	 */
-	void Attach(std::vector<std::string> types, std::vector<double> chances = {}, bool onceCheck = false,
+	void Attach(const std::vector<std::string>& types, const std::vector<double>& chances = {}, bool onceCheck = false,
 		ObjectClass* pSource = nullptr, HouseClass* pSourceHouse = nullptr,
 		CoordStruct warheadLocation = CoordStruct::Empty, int aeMode = -1, bool fromPassenger = false);
 
@@ -142,7 +142,7 @@ public:
 	 * @param aeMode 分组编号
 	 * @param fromPassenger 来自乘客
 	 */
-	void Attach(std::string type, bool onceCheck = false,
+	void Attach(const std::string& type, bool onceCheck = false,
 		ObjectClass* pSource = nullptr, HouseClass* pSourceHouse = nullptr,
 		CoordStruct warheadLocation = CoordStruct::Empty, int aeMode = -1, bool fromPassenger = false);
 
@@ -156,7 +156,7 @@ public:
 	 * @param aeMode 分组编号
 	 * @param fromPassenger 来自乘客
 	 */
-	void Attach(AttachEffectData data,
+	void Attach(const AttachEffectData& data,
 		ObjectClass* pSource = nullptr, HouseClass* pSourceHouse = nullptr,
 		CoordStruct warheadLocation = CoordStruct::Empty, int aeMode = -1, bool fromPassenger = false);
 
@@ -329,7 +329,7 @@ private:
 	 * @return true
 	 * @return false
 	 */
-	bool IsAvailable(AttachEffectData data);
+	bool IsAvailable(const AttachEffectData& data);
 
 	/**
 	 *@brief 赋予由乘客带来的AE
@@ -346,14 +346,14 @@ private:
 
 	void AttachStateEffect();
 
-	bool HasContradiction(AttachEffectData data);
+	bool HasContradiction(const AttachEffectData& data);
 
-	bool IsOnDelay(AttachEffectData data);
-	void StartDelay(AttachEffectData data);
+	bool IsOnDelay(const AttachEffectData& data);
+	void StartDelay(const AttachEffectData& data);
 
-	void AddStackCount(AttachEffectData data);
-	void ReduceStackCount(AttachEffectData data);
-	bool StackNotFull(AttachEffectData data);
+	void AddStackCount(const AttachEffectData& data);
+	void ReduceStackCount(const AttachEffectData& data);
+	bool StackNotFull(const AttachEffectData& data);
 	/**
 	 *@brief AE堆叠时，获取AE的堆叠位置偏移
 	 *
@@ -364,7 +364,7 @@ private:
 	 * @param groupFirstMarks 有分组的堆叠，以分组为索引，记录每个组的第一个偏移位置
 	 * @return Offset 当前AE的偏移值
 	 */
-	CoordStruct StackOffset(AttachEffectData aeData, OffsetData offsetData,
+	CoordStruct StackOffset(const AttachEffectData& aeData, OffsetData offsetData,
 		StackOffsetMap<std::string, CoordStruct>& offsetMarks,
 		StackOffsetMap<std::string, CoordStruct>& groupMarks,
 		StackOffsetMap<std::string, CoordStruct>& groupFirstMarks);
@@ -375,7 +375,7 @@ private:
 	 * @param data AE类型
 	 * @return int 序号
 	 */
-	int FindInsertIndex(AttachEffectData data);
+	int FindInsertIndex(const AttachEffectData& data);
 	/**
 	 *@brief 更新火车替身车厢的位置
 	 *

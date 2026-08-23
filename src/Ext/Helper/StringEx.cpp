@@ -31,7 +31,6 @@ void split(std::string& s, const std::string& delim, std::vector<std::string>* r
 std::string subreplace(std::string resource, std::string sub, std::string replace)
 {
 	std::string dst_str = resource;
-	std::string::size_type;
 	size_t pos = 0;
     while((pos = dst_str.find(sub)) != std::string::npos)
     {
@@ -105,22 +104,17 @@ void ClearIfGetNone(std::vector<std::string>& value)
 	}
 }
 
+#include <atomic>
+
+// 轻量唯一 Token：进程内原子自增，避免 AE 脚本频繁创建/销毁时 CoCreateGuid 的开销。
+// 该值只在单局内用作脚本实例标识，不要求全局唯一或符合 GUID 格式。
 std::string GetUUID()
 {
-    std::string strUUID;
-    GUID guid;
-    if (SUCCEEDED(CoCreateGuid(&guid))) {
-        char buffer[64] = { 0 };
-        _snprintf_s(buffer, sizeof(buffer),
-            "%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",    //大写
-            //"%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",  //小写
-            guid.Data1, guid.Data2, guid.Data3,
-            guid.Data4[0], guid.Data4[1], guid.Data4[2],
-            guid.Data4[3], guid.Data4[4], guid.Data4[5],
-            guid.Data4[6], guid.Data4[7]);
-        strUUID = buffer;
-    }
-    return strUUID;
+	static std::atomic<uint64_t> counter{ 1 };
+	uint64_t id = counter.fetch_add(1, std::memory_order_relaxed);
+	char buffer[32] = { 0 };
+	_snprintf_s(buffer, sizeof(buffer), "K%016llX", (unsigned long long)id);
+	return std::string(buffer);
 }
 
 std::string GetUUIDShort()

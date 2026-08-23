@@ -6,7 +6,8 @@ output
 *.sdf
 *.suo
 .vs
-.vscode
+.vscode/*
+!.vscode/*.example.json
 .cproject
 .project
 /scripts/run_ion_shock.bat

@@ -5,6 +5,7 @@
 #include <Randomizer.h>
 #include <TeamClass.h>
 
+#include <algorithm>
 #include <vector>
 
 static constexpr unsigned int RNGCalls_Size = 4096;
@@ -54,6 +55,17 @@ public:
 	}
 
 	size_t Size() { return Data.size(); }
+
+	/// <summary>
+	/// 清空环形缓冲，使下一次写入只包含新事件。
+	/// </summary>
+	void Clear()
+	{
+		LastWritePosition = 0;
+		LastReadPosition = -1;
+		HasBeenFilled = false;
+		std::fill(Data.begin(), Data.end(), T());
+	}
 };
 
 struct SyncLogEvent

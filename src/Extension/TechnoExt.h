@@ -18,7 +18,7 @@ struct TechnoClassLess
 class TechnoExt : public GOExtension<TechnoClass, TechnoExt>
 {
 public:
-	static constexpr DWORD Canary = 0x55555555;
+	static constexpr DWORD Canary = 0x5A5A5A5A;
 	// static constexpr size_t ExtPointerOffset = 0x34C;
 
 	/**

@@ -1,4 +1,4 @@
-#include "SyncLogging.h"
+﻿#include "SyncLogging.h"
 #include <Helpers/Macro.h>
 #include <Utilities/Debug.h>
 
@@ -14,7 +14,10 @@
 #include <Unsorted.h>
 #include <HouseClass.h>
 
-bool SyncLogger::Enabled = true;
+// 默认关闭，仅在命令行传入 -SYNCLOG 时开启，避免在热路径上产生无谓开销
+bool SyncLogger::Enabled = false;
+
+static int _lastWriteFrame = -1;
 
 SyncLogEventBuffer<RNGCallSyncLogEvent, RNGCalls_Size> SyncLogger::RNGCalls;
 SyncLogEventBuffer<FacingChangeSyncLogEvent, FacingChanges_Size> SyncLogger::FacingChanges;
@@ -96,6 +99,13 @@ void SyncLogger::AddRangeStatusSyncLogEvent(AbstractClass* pObject, int baseRang
 
 void SyncLogger::WriteSyncLog(const char* logFilename)
 {
+	// 同一帧内的多个 desync 检测点只写一次日志，避免重复内容
+	if (Unsorted::CurrentFrame == _lastWriteFrame)
+	{
+		return;
+	}
+	_lastWriteFrame = Unsorted::CurrentFrame;
+
 	auto const pLogFile = fopen(logFilename, "at");
 
 	if (pLogFile)
@@ -115,6 +125,14 @@ void SyncLogger::WriteSyncLog(const char* logFilename)
 		WriteBuildings(pLogFile);
 
 		fclose(pLogFile);
+
+		// 写完后清空缓冲，下一次 desync 只导出新事件
+		RNGCalls.Clear();
+		FacingChanges.Clear();
+		TargetChanges.Clear();
+		DestinationChanges.Clear();
+		MissionOverrides.Clear();
+		RangeStatus.Clear();
 	}
 	else
 	{
@@ -400,25 +418,6 @@ DEFINE_HOOK(0x7013A0, TechnoClass_OverrideMission_SyncLog, 0x5)
 
 	if (pThis->WhatAmI() == AbstractType::Building)
 		SyncLogger::AddMissionOverrideSyncLogEvent(pThis, mission, callerAddress);
-
-	return 0;
-}
-
-// TechnoClass::Fire logging
-DEFINE_HOOK(0x6FF08B, TechnoClass_Fire_SyncLog, 0x6)
-{
-	GET(BulletClass*, pBullet, EBX);
-
-	if (SyncLogger::Enabled && pBullet)
-	{
-		TechnoClass* pOwner = pBullet->Owner;
-		AbstractClass* pTarget = pBullet->Target;
-		if (pOwner)
-		{
-			SyncLogger::AddTargetChangeSyncLogEvent(pOwner, pTarget,
-				reinterpret_cast<unsigned int>(_ReturnAddress()));
-		}
-	}
 
 	return 0;
 }

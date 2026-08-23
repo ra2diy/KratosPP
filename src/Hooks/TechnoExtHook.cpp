@@ -178,7 +178,7 @@ DEFINE_HOOK(0x414CF2, TechnoClass_WarpUpdate, 0x6)		 // Aircraft
 	return 0;
 }
 
-DEFINE_HOOK(0x71A88D, TemporalClass_Update, 0x0)
+DEFINE_HOOK(0x71A88D, TemporalClass_Update, 0x8)
 {
 	GET(TemporalClass*, pTemporal, ESI);
 
@@ -551,45 +551,45 @@ DEFINE_HOOK(0x6F9039, TechnoClass_Greatest_Threat_HealWeaponRange, 0x5)
 	return 0x6F903E;
 }
 
-DEFINE_HOOK(0x7012DF, TechnoClass_In_WeaponRange, 0x6)
-{
-	GET(TechnoClass*, pTechno, ESI);
-	GET(WeaponTypeClass*, pWeapon, EAX);
-	int range = pWeapon->Range;
-	AttachEffect* aeManager = nullptr;
-	if (TryGetAEManager<TechnoExt>(pTechno, aeManager))
-	{
-		CrateBuffData data = aeManager->CountAttachStatusMultiplier();
-		range += (int)(data.RangeCell * Unsorted::LeptonsPerCell);
-		range = (int)(range * data.RangeMultiplier);
-		if (range != pWeapon->Range)
-		{
-			R->EBX(range);
-			return 0x7012E5;
-		}
-	}
-	return 0;
-}
+// DEFINE_HOOK(0x7012DF, TechnoClass_In_WeaponRange, 0x6)
+// {
+// 	GET(TechnoClass*, pTechno, ESI);
+// 	GET(WeaponTypeClass*, pWeapon, EAX);
+// 	int range = pWeapon->Range;
+// 	AttachEffect* aeManager = nullptr;
+// 	if (TryGetAEManager<TechnoExt>(pTechno, aeManager))
+// 	{
+// 		CrateBuffData data = aeManager->CountAttachStatusMultiplier();
+// 		range += (int)(data.RangeCell * Unsorted::LeptonsPerCell);
+// 		range = (int)(range * data.RangeMultiplier);
+// 		if (range != pWeapon->Range)
+// 		{
+// 			R->EBX(range);
+// 			return 0x7012E5;
+// 		}
+// 	}
+// 	return 0;
+// }
 
-DEFINE_HOOK(0x7012DF, TechnoClass_In_WeaponRange_OpenTopped_Passenger, 0x6)
-{
-	GET(TechnoClass*, pTechno, ESI);
-	GET(WeaponTypeClass*, pWeapon, EAX);
-	int range = pWeapon->Range;
-	AttachEffect* aeManager = nullptr;
-	if (TryGetAEManager<TechnoExt>(pTechno, aeManager))
-	{
-		CrateBuffData data = aeManager->CountAttachStatusMultiplier();
-		range += (int)(data.RangeCell * Unsorted::LeptonsPerCell);
-		range = (int)(range * data.RangeMultiplier);
-		if (range != pWeapon->Range)
-		{
-			R->EAX(range);
-			return 0x70132B;
-		}
-	}
-	return 0;
-}
+// DEFINE_HOOK(0x7012DF, TechnoClass_In_WeaponRange_OpenTopped_Passenger, 0x6)
+// {
+// 	GET(TechnoClass*, pTechno, ESI);
+// 	GET(WeaponTypeClass*, pWeapon, EAX);
+// 	int range = pWeapon->Range;
+// 	AttachEffect* aeManager = nullptr;
+// 	if (TryGetAEManager<TechnoExt>(pTechno, aeManager))
+// 	{
+// 		CrateBuffData data = aeManager->CountAttachStatusMultiplier();
+// 		range += (int)(data.RangeCell * Unsorted::LeptonsPerCell);
+// 		range = (int)(range * data.RangeMultiplier);
+// 		if (range != pWeapon->Range)
+// 		{
+// 			R->EAX(range);
+// 			return 0x70132B;
+// 		}
+// 	}
+// 	return 0;
+// }
 
 DEFINE_HOOK(0x7012DF, TechnoClass_In_WeaponRange_OpenTopped, 0x6)
 {
@@ -791,7 +791,7 @@ DEFINE_HOOK(0x6FC833, TechnoClass_NavalTargeting, 0x7)
 	return 0;
 }
 
-DEFINE_HOOK(0x6F36DB, TechnoClass_SelectWeapon, 0xA)
+DEFINE_HOOK(0x6F36DB, TechnoClass_SelectWeapon, 0x8)
 {
 	enum { Primary = 0x6F37AD, Secondary = 0x6F3807 };
 	GET(TechnoClass*, pTechno, ESI);

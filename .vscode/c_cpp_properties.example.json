@@ -1,0 +1,18 @@
+{
+	"configurations": [
+		{
+			"name": "KratosPP",
+			"includePath": [
+				"${workspaceFolder}/**"
+			],
+			"defines": [
+				// "DEBUG",
+				// "DEBUG_COMPONENT"
+			],
+			"intelliSenseMode": "windows-msvc-x64",
+			"compilerPath": "${default}",
+			"cStandard": "c17"
+		}
+	],
+	"version": 4
+}

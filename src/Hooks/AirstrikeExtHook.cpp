@@ -122,24 +122,6 @@ DEFINE_HOOK(0x41DAA4, AirstrikeClass_ResetTarget_ResetForOldTarget, 0xA)
 	return SkipGameCode;
 }
 
-// 兼容Phobos
-DEFINE_HOOK(0x41DAD4, AirstrikeClass_ResetTarget_ResetForNewTarget, 0x6)
-{
-	enum { SkipGameCode = 0x41DADA };
-
-	GET(AirstrikeClass*, pAirstrike, EBP);
-	GET(TechnoClass*, pTarget, ESI);
-
-	// Debug::Log("空袭管理器 %d 设置新目标，当前新目标[%s]%d\n", pAirstrike, pTarget->GetTechnoType()->ID, pTarget);
-	TechnoStatus* status = nullptr;
-	if (TryGetStatus<TechnoExt>(pTarget, status))
-	{
-		status->SetAirstrike(pAirstrike);
-	}
-
-	return SkipGameCode;
-}
-
 // 接管空袭管理器向目标设置自己
 DEFINE_HOOK(0x41D994, AirstrikeClass_Setup_SetToTarget, 0x6)
 {
@@ -413,7 +395,8 @@ DEFINE_HOOK(0x7058F6, TechnoClass_DrawAirstrikeFlare_LineColor, 0x5)
 	// 自定义颜色，点的颜色与此处相同
 	AirstrikeData* data = INI::GetConfig<AirstrikeData>(INI::Rules, pTechno->GetTechnoType()->ID)->Data;
 	auto const baseColor = data->AirstrikeLineColor;
-	double percentage = Random::RandomRanged(745, 1000) / 1000.0; // 随机色差
+	// 渲染路径，使用本地随机数，避免联机分叉
+	double percentage = VisualRandomRanged(745, 1000) / 1000.0; // 随机色差
 	// Debug::Log(" - 绘制空袭光纤颜色: {%d, %d, %d} %d\n", baseColor.R, baseColor.G, baseColor.B, percentage);
 	color = { (BYTE)(baseColor.R * percentage), (BYTE)(baseColor.G * percentage), (BYTE)(baseColor.B * percentage) };
 	R->ESI(Drawing::RGB_To_Int(baseColor));

@@ -143,7 +143,7 @@ void AttachEffectScript::SetupLifeTimer()
 	}
 }
 
-bool AttachEffectScript::IsSameGroup(AttachEffectData otherType)
+bool AttachEffectScript::IsSameGroup(const AttachEffectData& otherType)
 {
 	const std::string& group = AEData.Group;
 	const std::string& otherGroup = otherType.Group;

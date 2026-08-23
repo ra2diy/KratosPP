@@ -27,6 +27,24 @@ public:
 	}
 };
 
+/// <summary>
+/// 本地随机数：仅供每客户端独立执行的渲染/视觉效果使用。
+/// 不会消耗 ScenarioClass 的共享随机数，避免联机时两端随机数流分叉。
+/// 不要用它替代任何会影响游戏逻辑的随机决策。
+/// </summary>
+static int VisualRandomRanged(int min, int max)
+{
+	if (max < min)
+	{
+		int tmp = min;
+		min = max;
+		max = tmp;
+	}
+	static std::mt19937 engine{ std::random_device{}() };
+	std::uniform_int_distribution<int> dist(min, max);
+	return dist(engine);
+}
+
 template<typename T>
 static int GetRandomValue(Vector2D<T> range, int defVal)
 {
@@ -97,7 +115,7 @@ static bool Bingo(double chance)
 	return false;
 }
 
-static bool Bingo(std::vector<double> chances, int index)
+static bool Bingo(const std::vector<double>& chances, int index)
 {
 	int size = chances.size();
 	if (size < index + 1)
