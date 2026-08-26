@@ -371,4 +371,41 @@ DEFINE_HOOK(0x467E53, BulletClass_AI_PreDetonation_Vector, 0x6)
 	// Vector 不存在或已结束，进入原版引爆流程
 	return 0;
 }
+
+// Vector 期间 ROT 导弹引信判定取消（修复 SyncFacing=yes 提前爆炸）
+// FuseClass::Checkup 的调用在 0x467C35，本 hook 设在调用返回后的 0x467C3A。
+// fuseResult：0=继续飞行，1=真正到达目标附近，2=距离开始增大（判定已经越过目标）
+// SyncFacing=yes 时 Vector 用 GetBulletVelocity 改 Velocity 方向，ROT 导弹引擎轨迹
+// 每帧按新方向转向，引信误判"到达/越过目标"（1/2）→ 提前爆炸。
+// VectorForced 期间持有 Vector 的弹体不该爆：1、2 都改 0（继续飞），
+// 引爆由 Vector 结束后恢复（VectorForced 变假 → 引信正常判定 → 引爆）。
+// 非 ROT 弹体/其他引爆路径由 0x467E53 兜底。
+// 原始字节：8B F0 8B 8D B0 00 00 00（mov esi,eax; mov ecx,[ebp+0B0h]）
+DEFINE_HOOK(0x467C3A, BulletClass_AI_ROTFuse_Vector, 0x8)
+{
+	GET(BulletClass*, pThis, EBP);
+	GET(int, fuseResult, EAX);
+
+	// Vector 接管期间，取消 ROT 导弹的一切引信判爆（到达/越过都继续飞）
+	if (fuseResult != 0
+		&& pThis->Type
+		&& pThis->Type->ROT > 0)
+	{
+		if (BulletStatus* status = GetStatus<BulletExt, BulletStatus>(pThis))
+		{
+			if (status->VectorForced)
+			{
+				fuseResult = 0;
+			}
+		}
+	}
+
+	// 回填被 Hook 覆盖的两条指令
+	// 注意：[ebp+0xB0] 是 Owner（不是 Target），必须恢复 R->ECX(pThis->Owner)
+	R->EAX(fuseResult);
+	R->ESI(fuseResult);
+	R->ECX(pThis->Owner);
+
+	return 0;
+}
 #pragma endregion
