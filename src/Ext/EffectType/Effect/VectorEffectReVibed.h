@@ -216,6 +216,11 @@ public:
 	// --- 大圆朝向（独立参考系）---
 	double _originFacing = 0.0;         // 大圆有效 facing
 	double _originTilt = 0.0;           // 大圆有效 tilt
+	// 首帧锁定的基础法向量球坐标（OriginNormalVector/OriginNormalRandom/默认水平）：
+	// OriginIsNormalOnOrigin=yes 时每帧以此为基础随 OriginOrigin 单位转动（不随 _originTilt 被
+	// OriginAllowCircleTilt 每帧覆盖而污染）
+	double _baseOriginFacing = 0.0;
+	double _baseOriginTilt = M_PI / 2.0;
 
 	// --- 目标偏移 ---
 	CoordStruct _randomTargetOffset{};  // 主 TargetFLH 随机偏移（首帧解析）
@@ -264,6 +269,8 @@ public:
 			.Process(this->_tiltRad)
 			.Process(this->_originFacing)
 			.Process(this->_originTilt)
+			.Process(this->_baseOriginFacing)
+			.Process(this->_baseOriginTilt)
 			.Process(this->_randomTargetOffset)
 			.Process(this->_originTargetOffset)
 			.Process(this->_originOffset)

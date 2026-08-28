@@ -107,6 +107,8 @@ void VectorEffect::Clean()
 
 	_originFacing = 0.0;
 	_originTilt = 0.0;
+	_baseOriginFacing = 0.0;
+	_baseOriginTilt = M_PI / 2.0;
 
 	_randomTargetOffset = {};
 	_originTargetOffset = {};
@@ -979,13 +981,14 @@ VectorResult VectorEffect::GetVectorResult()
 	// 动态 F 轴：非 NoUpdate 时每帧根据当前坐标重新计算 FLH 朝向
 	// ========================================================================
 
-	// AllowOriginTilt：从 Origin 单位获取倾斜，注入 _facingRad/_tiltRad（同 NormalVector 机制）
-	// 仅 Circle 模式生效，避免非 Circle 模式覆盖 OnStart 的方向
+	// originTerrainTilt：Origin 单位倾斜角（AngleRotatedForwards 动态倾斜优先，否则地形采样）。
+	// 供两处使用：AllowOriginTilt 的 CircleOrigin FLH 旋转、大圆 OriginAllowOriginTilt 的 oTilt 叠加、
+	// IsNormalOnOrigin 的法向量随单位转动。只计算不注入（法向量跟随由 IsNormalOnOrigin 段负责）。
 	double originTerrainTilt = 0.0;
 	bool hasCircleForTilt = Data->CircleRadius > 0 || Data->CircleAnglePerStep > 0.0
 		|| (Data->CircleRandomRadiusMax > Data->CircleRandomRadiusMin)
 		|| (Data->CircleRandomAngleMax > Data->CircleRandomAngleMin);
-	if ((Data->AllowOriginTilt || Data->OriginAllowOriginTilt) && hasCircleForTilt && !Data->OriginIsOnWorld)
+	if ((Data->AllowOriginTilt || Data->OriginAllowOriginTilt || Data->IsNormalOnOrigin) && hasCircleForTilt && !Data->OriginIsOnWorld)
 	{
 		TechnoClass* pOriginTechno = nullptr;
 		switch (Data->Origin)
@@ -1023,18 +1026,6 @@ VectorResult VectorEffect::GetVectorResult()
 				double dxy = 256.0;
 				originTerrainTilt = (dxy > 1e-6) ? std::atan2(dz, dxy) : 0.0;
 			}
-
-			// 注入 _facingRad/_tiltRad（同 NormalVector 机制）
-			// 单位倾斜 = 默认法向量 (0,0,1) 绕单位 L 轴旋转 originTerrainTilt
-			// L 轴 = (-sinF, cosF, 0)，绕 L 轴旋转后法向量 = (-sinT*sinF, sinT*cosF, cosT)
-			double unitFacing2 = pOriginTechno->PrimaryFacing.Current().GetRadian();
-			double sinT = std::sin(originTerrainTilt), cosT = std::cos(originTerrainTilt);
-			double nx = -sinT * std::sin(unitFacing2);
-			double ny = sinT * std::cos(unitFacing2);
-			double nz = cosT;
-			double nLenXY = std::sqrt(nx * nx + ny * ny);
-			_facingRad = nLenXY > 1e-6 ? std::atan2(ny, nx) : 0.0;
-			_tiltRad = nLenXY > 1e-6 ? std::atan2(nz, nLenXY) : (nz > 0 ? M_PI / 2.0 : -M_PI / 2.0);
 		}
 	}
 
@@ -1177,20 +1168,22 @@ VectorResult VectorEffect::GetVectorResult()
 		}
 	}
 
-	// IsNormalOnOrigin：圆面法向量水平朝向（facing）每帧跟随 Origin 单位自身朝向（单位旋转带动圆面转动），
-	// 仰角：有 NormalVector 用它的仰角（_tiltRad），无则默认水平圆面（PI/2）。
-	// no（显式）= 世界固定，法向量由 LockFacing 初始化后不在此刷新。
-	// yes 时同时覆盖 effectiveFacing，使倾斜圆面数学（useTiltPlane 分支）与法向量一致跟随单位朝向。
+	// IsNormalOnOrigin：圆面法向量随 Origin 单位转动（facing + tilt 全跟随）
+	// 基础法向量 = OnStart 锁定的球坐标（_facingRad/_tiltRad，来自 NormalVector/NormalRandom/默认水平），
+	// 每帧按单位朝向（facingU）+ 单位倾斜（originTerrainTilt）转动：
+	//   1. 绕 Z 轴转 facingU（单位水平朝向）
+	//   2. 绕单位 L 轴（(-sinFU, cosFU, 0)，水平左方向）转 tiltU（Rodrigues：n' = n cosθ + (u×n) sinθ + u(u·n)(1-cosθ)）
+	// no（显式）= 世界固定，法向量保持 LockFacing 初始化值，不随单位转。
 	if (Data->IsNormalOnOrigin && !Data->OriginIsOnWorld)
 	{
-		double facing = effectiveFacing;
+		double facingU = effectiveFacing;
 		switch (Data->Origin)
 		{
 		case VectorData::VectorOrigin::Launcher:
 			{
 				TechnoClass* pLT = abstract_cast<TechnoClass*>(_pLauncher);
 				if (pLT && !IsDeadOrInvisible(pLT))
-					facing = (Data->OriginIsOnBody ? pLT->PrimaryFacing.Current() : pLT->TurretFacing().Current()).GetRadian(); // 官方API，不得修改
+					facingU = (Data->OriginIsOnBody ? pLT->PrimaryFacing.Current() : pLT->TurretFacing().Current()).GetRadian(); // 官方API，不得修改
 			}
 			break;
 		case VectorData::VectorOrigin::Target:
@@ -1198,7 +1191,7 @@ VectorResult VectorEffect::GetVectorResult()
 				AbstractClass* pTgt = pBullet ? pBullet->Target : (pTechno ? pTechno->Target : nullptr);
 				TechnoClass* pTT = abstract_cast<TechnoClass*>(pTgt);
 				if (pTT && !IsDeadOrInvisible(pTT))
-					facing = (Data->OriginIsOnBody ? pTT->PrimaryFacing.Current() : pTT->TurretFacing().Current()).GetRadian(); // 官方API，不得修改
+					facingU = (Data->OriginIsOnBody ? pTT->PrimaryFacing.Current() : pTT->TurretFacing().Current()).GetRadian(); // 官方API，不得修改
 				// 目标无朝向（格子）：保持 effectiveFacing（连线）
 			}
 			break;
@@ -1206,19 +1199,41 @@ VectorResult VectorEffect::GetVectorResult()
 			{
 				TechnoClass* pST = abstract_cast<TechnoClass*>(_pSource);
 				if (pST && !IsDeadOrInvisible(pST))
-					facing = (Data->OriginIsOnBody ? pST->PrimaryFacing.Current() : pST->TurretFacing().Current()).GetRadian(); // 官方API，不得修改
+					facingU = (Data->OriginIsOnBody ? pST->PrimaryFacing.Current() : pST->TurretFacing().Current()).GetRadian(); // 官方API，不得修改
 			}
 			break;
-		default: // Self：自身朝向即 effectiveFacing，无需覆盖
+		default: // Self：自身朝向即 effectiveFacing
 			break;
 		}
-		double tilt = hasNormal ? _tiltRad : M_PI / 2.0;
-		double ct = std::cos(tilt), st = std::sin(tilt);
-		double cf = std::cos(facing), sf = std::sin(facing);
-		_motion.normalX = ct * cf;
-		_motion.normalY = ct * sf;
-		_motion.normalZ = st;
-		effectiveFacing = facing;
+		double tiltU = originTerrainTilt; // 单位倾斜（AngleRotatedForwards 动态/地形采样）
+
+		// 基础法向量（OnStart 锁定）→ 笛卡尔；无自定义法线时默认水平圆面（法线朝上）
+		double baseTilt = hasNormal ? _tiltRad : M_PI / 2.0;
+		double bx = std::cos(baseTilt) * std::cos(_facingRad);
+		double by = std::cos(baseTilt) * std::sin(_facingRad);
+		double bz = std::sin(baseTilt);
+
+		// 1. 绕 Z 轴转 facingU（单位水平朝向）
+		double cz = std::cos(facingU), sz = std::sin(facingU);
+		double x1 = bx * cz - by * sz;
+		double y1 = bx * sz + by * cz;
+		double z1 = bz;
+
+		// 2. 绕单位 L 轴 u=(-sinFU, cosFU, 0) 转 tiltU（Rodrigues）
+		double ct = std::cos(tiltU), st = std::sin(tiltU);
+		double ux = -sz, uy = cz, uz = 0.0;
+		double dot = ux * x1 + uy * y1;      // u·n
+		double cx = uy * z1 - uz * y1;       // u×n
+		double cy = uz * x1 - ux * z1;
+		double cz2 = ux * y1 - uy * x1;
+		_motion.normalX = x1 * ct + cx * st + ux * dot * (1.0 - ct);
+		_motion.normalY = y1 * ct + cy * st + uy * dot * (1.0 - ct);
+		_motion.normalZ = z1 * ct + cz2 * st;
+
+		// 同步倾斜圆面数学输入（最终法向量 → 球坐标）
+		double lenXY = std::sqrt(_motion.normalX * _motion.normalX + _motion.normalY * _motion.normalY);
+		effectiveFacing = lenXY > 1e-6 ? std::atan2(_motion.normalY, _motion.normalX) : 0.0;
+		effectiveTilt = lenXY > 1e-6 ? std::atan2(_motion.normalZ, lenXY) : (_motion.normalZ > 0 ? M_PI / 2.0 : -M_PI / 2.0);
 	}
 
 	// 3D 法向量旋转覆盖：当 NormalF/L/HAnglePerStep 设定时，无视基座变化
@@ -1566,6 +1581,9 @@ VectorResult VectorEffect::GetVectorResult()
 				}
 				// 有 OriginNormalVector 时：facing/tilt 均取它的 F/L/H 分量（彻底世界固定）。
 				// IsNormalOnOrigin=yes 时的 OriginOrigin 朝向跟随在下方每帧段处理。
+				// 锁定基础法向量球坐标（OriginIsNormalOnOrigin 每帧旋转的基准，不被 OriginAllowCircleTilt 覆盖污染）
+				_baseOriginFacing = _originFacing;
+				_baseOriginTilt = _originTilt;
 				// 初始化大圆 3D 法向量
 				{
 					double ct = std::cos(_originTilt), st = std::sin(_originTilt);
@@ -1575,20 +1593,22 @@ VectorResult VectorEffect::GetVectorResult()
 					_originMotion.normalZ = st;
 				}
 			}
-		// OriginIsNormalOnOrigin：大圆法向量水平朝向（facing）每帧跟随 OriginOrigin 单位自身朝向，
-		// 仰角保持首帧初始值（_originTilt）。no（显式）= 彻底世界固定，facing 取 OriginNormalVector
-		// 的 F/L 分量（首帧已定），不做处理。
+		// OriginIsNormalOnOrigin：大圆法向量随 OriginOrigin 单位转动（facing + tilt 全跟随，同主圆）。
+		// 基础 = 首帧锁定的 _baseOriginFacing/_baseOriginTilt（OriginNormalVector/随机/默认水平），
+		// 每帧按 OriginOrigin 单位朝向（facingU）+ 单位倾斜（originTerrainTilt）转动（Rodrigues）。
+		// 更新 _originFacing/_originTilt（Circle 运动直接消费）与 _originMotion.normalX/Y/Z。
+		// no（显式）= 世界固定，保持首帧值。
 		if (Data->OriginIsNormalOnOrigin && !Data->OriginNormalVector.IsEmpty())
 		{
-			double facing = _originFacing;
+			double facingU = _originFacing;
 			switch (Data->OriginOrigin)
 			{
 			case VectorData::VectorOrigin::Launcher:
 				{
 					TechnoClass* pLT = abstract_cast<TechnoClass*>(_pLauncher);
 					if (pLT && !IsDeadOrInvisible(pLT))
-						facing = pLT->TurretFacing().Current().GetRadian(); // 官方API，不得修改
-					else if (pTechno) facing = pTechno->TurretFacing().Current().GetRadian(); // 官方API，不得修改
+						facingU = pLT->TurretFacing().Current().GetRadian(); // 官方API，不得修改
+					else if (pTechno) facingU = pTechno->TurretFacing().Current().GetRadian(); // 官方API，不得修改
 				}
 				break;
 			case VectorData::VectorOrigin::Target:
@@ -1596,34 +1616,54 @@ VectorResult VectorEffect::GetVectorResult()
 					AbstractClass* pTgt = pBullet ? pBullet->Target : (pTechno ? pTechno->Target : nullptr);
 					TechnoClass* pTT = abstract_cast<TechnoClass*>(pTgt);
 					if (pTT && !IsDeadOrInvisible(pTT))
-						facing = pTT->TurretFacing().Current().GetRadian(); // 官方API，不得修改
-					else if (pBullet) { auto tp = pBullet->TargetCoords; auto bp = pBullet->GetCoords(); facing = std::atan2(bp.Y-tp.Y, bp.X-tp.X); } // 格子：回退连线
-					else if (pTechno && pTechno->Target) { auto tp = pTechno->Target->GetCoords(); auto sp = pTechno->GetCoords(); facing = std::atan2(sp.Y-tp.Y, sp.X-tp.X); }
+						facingU = pTT->TurretFacing().Current().GetRadian(); // 官方API，不得修改
+					else if (pBullet) { auto tp = pBullet->TargetCoords; auto bp = pBullet->GetCoords(); facingU = std::atan2(bp.Y-tp.Y, bp.X-tp.X); } // 格子：回退连线
+					else if (pTechno && pTechno->Target) { auto tp = pTechno->Target->GetCoords(); auto sp = pTechno->GetCoords(); facingU = std::atan2(sp.Y-tp.Y, sp.X-tp.X); }
 				}
 				break;
 			case VectorData::VectorOrigin::Source:
 				{
 					TechnoClass* pST = abstract_cast<TechnoClass*>(AE && AE->pSource ? AE->pSource : nullptr);
 					if (pST && !IsDeadOrInvisible(pST))
-						facing = pST->TurretFacing().Current().GetRadian(); // 官方API，不得修改
-					else if (AE && AE->pSource) { auto sp = AE->pSource->GetCoords(); auto bp = pObject->GetCoords(); facing = std::atan2(bp.Y-sp.Y, bp.X-sp.X); } // 非单位：回退连线
+						facingU = pST->TurretFacing().Current().GetRadian(); // 官方API，不得修改
+					else if (AE && AE->pSource) { auto sp = AE->pSource->GetCoords(); auto bp = pObject->GetCoords(); facingU = std::atan2(bp.Y-sp.Y, bp.X-sp.X); } // 非单位：回退连线
 				}
 				break;
 			default: // FLH
 				if (!Data->OriginOriginFLH.IsEmpty())
 				{
 					double fy = Data->OriginOriginFLH.X, fx = Data->OriginOriginFLH.Y;
-					facing = std::atan2(fy, fx);
+					facingU = std::atan2(fy, fx);
 				}
-				else if (pBullet) facing = pBullet->Velocity.Magnitude() > 0 ? std::atan2(pBullet->Velocity.X, pBullet->Velocity.Y) : 0.0;
-				else if (pTechno) facing = pTechno->TurretFacing().Current().GetRadian(); // 官方API，不得修改
+				else if (pBullet) facingU = pBullet->Velocity.Magnitude() > 0 ? std::atan2(pBullet->Velocity.X, pBullet->Velocity.Y) : 0.0;
+				else if (pTechno) facingU = pTechno->TurretFacing().Current().GetRadian(); // 官方API，不得修改
 				break;
 			}
-			double ct = std::cos(_originTilt), st = std::sin(_originTilt);
-			double cf = std::cos(facing), sf = std::sin(facing);
-			_originMotion.normalX = ct * cf;
-			_originMotion.normalY = ct * sf;
-			_originMotion.normalZ = st;
+			double tiltU = originTerrainTilt; // 单位倾斜
+
+			// 基础法向量（首帧锁定）→ 笛卡尔
+			double bx = std::cos(_baseOriginTilt) * std::cos(_baseOriginFacing);
+			double by = std::cos(_baseOriginTilt) * std::sin(_baseOriginFacing);
+			double bz = std::sin(_baseOriginTilt);
+			// 1. 绕 Z 轴转 facingU（单位水平朝向）
+			double cz = std::cos(facingU), sz = std::sin(facingU);
+			double x1 = bx * cz - by * sz;
+			double y1 = bx * sz + by * cz;
+			double z1 = bz;
+			// 2. 绕单位 L 轴 u=(-sinFU, cosFU, 0) 转 tiltU（Rodrigues：n' = n cosθ + (u×n) sinθ + u(u·n)(1-cosθ)）
+			double ct = std::cos(tiltU), st = std::sin(tiltU);
+			double ux = -sz, uy = cz, uz = 0.0;
+			double dot = ux * x1 + uy * y1;      // u·n
+			double cx = uy * z1 - uz * y1;       // u×n
+			double cy = uz * x1 - ux * z1;
+			double cz2 = ux * y1 - uy * x1;
+			_originMotion.normalX = x1 * ct + cx * st + ux * dot * (1.0 - ct);
+			_originMotion.normalY = y1 * ct + cy * st + uy * dot * (1.0 - ct);
+			_originMotion.normalZ = z1 * ct + cz2 * st;
+			// 同步 _originFacing/_originTilt（Circle 运动直接消费）→ 最终法向量球坐标
+			double nLenXY = std::sqrt(_originMotion.normalX * _originMotion.normalX + _originMotion.normalY * _originMotion.normalY);
+			_originFacing = nLenXY > 1e-6 ? std::atan2(_originMotion.normalY, _originMotion.normalX) : 0.0;
+			_originTilt = nLenXY > 1e-6 ? std::atan2(_originMotion.normalZ, nLenXY) : (_originMotion.normalZ > 0 ? M_PI / 2.0 : -M_PI / 2.0);
 		}
 		// 每帧累加 Lissajous + 3D 法向量增量旋转
 		_originMotion.normalRotF += _originMotion.lissajousStep;
@@ -1650,7 +1690,8 @@ VectorResult VectorEffect::GetVectorResult()
 			}
 
 			double oFacing = _originFacing;
-			double oTilt = _originTilt + (Data->OriginAllowOriginTilt ? originTerrainTilt : 0.0);
+			// OriginIsNormalOnOrigin=yes 时 _originTilt 已含单位倾斜（每帧旋转），OriginAllowOriginTilt 不再叠加，避免重复
+			double oTilt = _originTilt + (Data->OriginAllowOriginTilt && !Data->OriginIsNormalOnOrigin ? originTerrainTilt : 0.0);
 			// 3D 法向量旋转覆盖
 			if (_originMotion.normalStepF != 0.0 || _originMotion.normalStepL != 0.0 || _originMotion.normalStepH != 0.0)
 			{
