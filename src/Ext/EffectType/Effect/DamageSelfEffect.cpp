@@ -107,7 +107,7 @@ void DamageSelfEffect::OnUpdate()
 				if (realDamage < 0 || pTechno->CloakState == CloakState::Uncloaked || Data->Decloak)
 				{
 					// 维修或者显形状态，直接炸
-					pTechno->ReceiveDamage(&_damage, 0, _pWH, pDamageMaker, Data->IgnoreArmor, pTechno->GetTechnoType()->Crewed, AE->pSourceHouse);
+					pTechno->ReceiveDamage(&realDamage, 0, _pWH, pDamageMaker, Data->IgnoreArmor, pTechno->GetTechnoType()->Crewed, AE->pSourceHouse);
 				}
 				else
 				{
@@ -167,6 +167,10 @@ void DamageSelfEffect::OnUpdate()
 				Deactivate();
 				AE->TimeToDie();
 			}
+		}
+		else
+		{
+			Debug::Log("DamageSelfEffect: waiting for ROF, Owner = %d, time left = %d\n", AE->pTechno, _delayTimer.GetTimeLeft());
 		}
 	}
 }
