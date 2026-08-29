@@ -91,6 +91,8 @@ public:
 
 	bool AttackFromSpawnOwner = false; // 武器所属是母鸡
 
+	bool LaunchFromProjectile = false; // 武器从弹头附着点发射（广播专用）
+
 
 	virtual void Read(INIBufferReader* reader) override
 	{
@@ -133,6 +135,8 @@ public:
 
 		AttackFromSpawnOwner = reader->Get(title + "AttackFromSpawnOwner", AttackFromSpawnOwner);
 
+		LaunchFromProjectile = reader->Get(title + "LaunchFromProjectile", LaunchFromProjectile);
+
 		Enable = Data.Enable || EliteData.Enable;
 	}
 
@@ -152,6 +156,7 @@ public:
 			.Process(this->ReceiverAttack)
 			.Process(this->ReceiverOwnBullet)
 			.Process(this->AttackFromSpawnOwner)
+			.Process(this->LaunchFromProjectile)
 			.Success();
 	};
 
