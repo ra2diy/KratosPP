@@ -1,4 +1,4 @@
-﻿#include "../TechnoStatus.h"
+#include "../TechnoStatus.h"
 
 #include <FootClass.h>
 #include <JumpjetLocomotionClass.h>
@@ -186,6 +186,38 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 
 	boxState.pOwner = pTechno;
 	boxState.pHouse = pHouse;
+
+	// 收集可继承AE列表（修复：所有礼物都需要继承，而非仅第一份）
+	struct InheritableAEInfo
+	{
+		std::string Name;
+		ObjectClass* pSource;
+		HouseClass* pSourceHouse;
+	};
+	std::vector<InheritableAEInfo> inheritableAEs;
+	if (inheritAE)
+	{
+		Component* boxGO = this->GetParent();
+		AttachEffect* boxAEM = boxGO->GetComponent<AttachEffect>();
+		if (boxAEM)
+		{
+			boxAEM->ForeachChild([&](Component* c) {
+				if (auto ae = dynamic_cast<AttachEffectScript*>(c))
+				{
+					if (!ae->AEData.Inheritable || ae->AEData.GiftBox.Enable || ae->AEData.Transform.Enable)
+					{
+						ae->TimeToDie();
+					}
+					else
+					{
+						inheritableAEs.push_back({ ae->AEData.Name, ae->pSource, ae->pSourceHouse });
+					}
+				}
+			});
+			boxAEM->CheckDurationAndDisable(true);
+			boxAEM->ClearDisableComponent();
+		}
+	}
 	// 开刷
 	ReleaseGifts(gifts, GiftBox->GetGiftData(), boxState,
 		[&](TechnoClass* pGift, TechnoStatus*& pGiftStatus, AttachEffect*& pGiftAEM)
@@ -243,52 +275,23 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 				}
 			}
 
-			// 继承AE管理器
-			if (inheritAE)
+			// 继承AE
+			if (inheritAE && !inheritableAEs.empty())
 			{
-				inheritAE = false;
 				// 复制除了giftBox之外的状态机
 				InheritedStatsTo(pGiftStatus);
-				// 获取根组件
-				Component* giftGO = pGiftStatus->GetParent();
-				Component* boxGO = this->GetParent();
-				// 获取EXT
-				IExtData* giftExt = pGiftStatus->_extData;
-				IExtData* boxExt = this->_extData;
-				// 交换AE管理器
-				AttachEffect* boxAEM = boxGO->GetComponent<AttachEffect>();
-				// 关闭不可继承的AE，以及含有GiftBox的AE
-				boxAEM->ForeachChild([&](Component* c) {
-					if (auto ae = dynamic_cast<AttachEffectScript*>(c))
+				// 给每个礼物附上可继承AE，保留来源信息
+				for (auto& aeInfo : inheritableAEs)
+				{
+					ObjectClass* pSource = aeInfo.pSource;
+					HouseClass* pSourceHouse = aeInfo.pSourceHouse;
+					if (aeInfo.pSource == pTechno)
 					{
-						if (!ae->AEData.Inheritable || ae->AEData.GiftBox.Enable || ae->AEData.Transform.Enable)
-						{
-							ae->TimeToDie();
-						}
-						else if (ae->pSource == pTechno)
-						{
-							// 如果来源是盒子，继承时，来源修改为礼物
-							ae->InheritedTo(pGift, boxState.pHouse);
-						}
+						pSource = pGift;
+						pSourceHouse = boxState.pHouse;
 					}
-					});
-				boxAEM->CheckDurationAndDisable(true);
-				boxAEM->ClearDisableComponent();
-				// AE管理器脱离
-				boxAEM->DetachFromParent(false);
-				pGiftAEM->DetachFromParent(false);
-				// 交换EXT
-				boxAEM->SetExtData(giftExt);
-				pGiftAEM->SetExtData(boxExt);
-				// 交换组件
-				giftGO->AddComponent(boxAEM);
-				boxGO->AddComponent(pGiftAEM);
-				// 发出类型变更的通知
-				boxAEM->ExtChanged();
-				pGiftAEM->ExtChanged();
-				dynamic_cast<GameObject*>(giftGO)->ExtChanged = true;
-				// 修改变量
-				pGiftAEM = boxAEM;
+					pGiftAEM->Attach(aeInfo.Name, false, pSource, pSourceHouse);
+				}
 			}
 		});
 }

@@ -13,6 +13,7 @@ public:
 	bool Enable = false;
 
 	bool Dynamic = false;
+	bool DynamicFromSource = false;
 	std::vector<std::string> Gifts;
 	std::vector<int> Nums;
 	std::vector<double> Chances;
@@ -25,6 +26,7 @@ public:
 	virtual void Read(INIBufferReader* reader, std::string title)
 	{
 		Dynamic = reader->Get(title + "Dynamic", Dynamic);
+		DynamicFromSource = reader->Get(title + "DynamicFromSource", DynamicFromSource);
 		Gifts = reader->GetList(title + "Types", Gifts);
 		Nums = reader->GetList(title + "Nums", Nums);
 		Chances = reader->GetChanceList(title + "Chances", Chances);
@@ -35,7 +37,7 @@ public:
 		Delay = reader->Get(title + "Delay", Delay);
 		RandomDelay = reader->Get(title + "RandomDelay", RandomDelay);
 
-		Enable = !Gifts.empty() || Dynamic;
+		Enable = !Gifts.empty() || Dynamic || DynamicFromSource;
 	}
 
 #pragma region save/load
@@ -45,6 +47,7 @@ public:
 		return stream
 			.Process(this->Enable)
 			.Process(this->Dynamic)
+			.Process(this->DynamicFromSource)
 			.Process(this->Gifts)
 			.Process(this->Nums)
 			.Process(this->Chances)
