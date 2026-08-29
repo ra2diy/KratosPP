@@ -1520,8 +1520,9 @@ VectorResult VectorEffect::GetVectorResult()
 
 			if (_elapsedFrames == 0)
 			{
-				// 初始偏移 = 圆心相对于基座的向量
-				_originOffset = circleCenter - baseCenter;
+				// 初始偏移 = 0：大圆圆心直接用大圆基座（baseCenter，已含 Origin.CircleOrigin 偏移），
+				// 不绑定主圆圆心（circleCenter）。主圆围绕大圆转，主圆圆心坐标对大圆无意义。
+				_originOffset = {};
 				// Circle 初始化
 				_originMotion.circleRadius = Data->OriginCircleRadius;
 				_originMotion.circleSpeed = Data->OriginCircleSpeed;
@@ -1596,7 +1597,8 @@ VectorResult VectorEffect::GetVectorResult()
 		// OriginIsNormalOnOrigin：大圆法向量随 OriginOrigin 单位转动（facing + tilt 全跟随，同主圆）。
 		// 基础 = 首帧锁定的 _baseOriginFacing/_baseOriginTilt（OriginNormalVector/随机/默认水平），
 		// 每帧按 OriginOrigin 单位朝向（facingU）+ 单位倾斜（originTerrainTilt）转动（Rodrigues）。
-		// 更新 _originFacing/_originTilt（Circle 运动直接消费）与 _originMotion.normalX/Y/Z。
+		// 更新 _originMotion.normalX/Y/Z（Circle 运动消费点在段外从法向量现算球坐标）。
+		// 不回写成员 _originFacing/_originTilt（保持首帧锁定值，同主圆 effectiveFacing/effectiveTilt 模式）。
 		// no（显式）= 世界固定，保持首帧值。
 		if (Data->OriginIsNormalOnOrigin && !Data->OriginNormalVector.IsEmpty())
 		{
@@ -1617,8 +1619,7 @@ VectorResult VectorEffect::GetVectorResult()
 					TechnoClass* pTT = abstract_cast<TechnoClass*>(pTgt);
 					if (pTT && !IsDeadOrInvisible(pTT))
 						facingU = pTT->TurretFacing().Current().GetRadian(); // 官方API，不得修改
-					else if (pBullet) { auto tp = pBullet->TargetCoords; auto bp = pBullet->GetCoords(); facingU = std::atan2(bp.Y-tp.Y, bp.X-tp.X); } // 格子：回退连线
-					else if (pTechno && pTechno->Target) { auto tp = pTechno->Target->GetCoords(); auto sp = pTechno->GetCoords(); facingU = std::atan2(sp.Y-tp.Y, sp.X-tp.X); }
+					// 目标无朝向（格子/地面）：保持 facingU 初值（世界固定），不回退连线（同主圆 IsNormalOnOrigin 处理）
 				}
 				break;
 			case VectorData::VectorOrigin::Source:
@@ -1660,10 +1661,8 @@ VectorResult VectorEffect::GetVectorResult()
 			_originMotion.normalX = x1 * ct + cx * st + ux * dot * (1.0 - ct);
 			_originMotion.normalY = y1 * ct + cy * st + uy * dot * (1.0 - ct);
 			_originMotion.normalZ = z1 * ct + cz2 * st;
-			// 同步 _originFacing/_originTilt（Circle 运动直接消费）→ 最终法向量球坐标
-			double nLenXY = std::sqrt(_originMotion.normalX * _originMotion.normalX + _originMotion.normalY * _originMotion.normalY);
-			_originFacing = nLenXY > 1e-6 ? std::atan2(_originMotion.normalY, _originMotion.normalX) : 0.0;
-			_originTilt = nLenXY > 1e-6 ? std::atan2(_originMotion.normalZ, nLenXY) : (_originMotion.normalZ > 0 ? M_PI / 2.0 : -M_PI / 2.0);
+			// 不回写 _originFacing/_originTilt（同主圆 IsNormalOnOrigin：基座球坐标永远保持首帧锁定值，
+			// 段外消费点从 _originMotion.normalX/Y/Z 现算，杜绝法向量每帧自反馈累计旋转）
 		}
 		// 每帧累加 Lissajous + 3D 法向量增量旋转
 		_originMotion.normalRotF += _originMotion.lissajousStep;
@@ -1689,9 +1688,17 @@ VectorResult VectorEffect::GetVectorResult()
 				}
 			}
 
-			double oFacing = _originFacing;
-			// OriginIsNormalOnOrigin=yes 时 _originTilt 已含单位倾斜（每帧旋转），OriginAllowOriginTilt 不再叠加，避免重复
-			double oTilt = _originTilt + (Data->OriginAllowOriginTilt && !Data->OriginIsNormalOnOrigin ? originTerrainTilt : 0.0);
+			// 从法向量现算球坐标（同主圆 effectiveFacing/effectiveTilt 消费模式）：
+			// 段内 OriginIsNormalOnOrigin 每帧旋转结果已在 _originMotion.normalX/Y/Z，
+			// 这里现算 oFacing/oFacingTilt 供 Circle 运动消费；不回读成员 _originFacing/_originTilt（保持首帧锁定值）。
+			double oFacing = 0.0, oTilt = 0.0;
+			{
+				double lenXY = std::sqrt(_originMotion.normalX * _originMotion.normalX + _originMotion.normalY * _originMotion.normalY);
+				oFacing = lenXY > 1e-6 ? std::atan2(_originMotion.normalY, _originMotion.normalX) : 0.0;
+				oTilt = lenXY > 1e-6 ? std::atan2(_originMotion.normalZ, lenXY) : (_originMotion.normalZ > 0 ? M_PI / 2.0 : -M_PI / 2.0);
+			}
+			// OriginIsNormalOnOrigin=yes 时法向量已按单位倾斜每帧旋转，OriginAllowOriginTilt 不再叠加，避免重复
+			oTilt += (Data->OriginAllowOriginTilt && !Data->OriginIsNormalOnOrigin ? originTerrainTilt : 0.0);
 			// 3D 法向量旋转覆盖
 			if (_originMotion.normalStepF != 0.0 || _originMotion.normalStepL != 0.0 || _originMotion.normalStepH != 0.0)
 			{
