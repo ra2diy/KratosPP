@@ -120,7 +120,7 @@ public:
 		return !pHouse || !pTargetHouse || (pTargetHouse == pHouse ? AffectsOwner : (IsCivilian(pTargetHouse) ? AffectsCivilian : pTargetHouse->IsAlliedWith(pHouse) ? AffectsAllies : AffectsEnemies));
 	}
 
-	bool CanAffectType(const char* ID)
+	bool CanAffectType(const char* ID) const
 	{
 		if (!NotAffectTypes.empty() && std::find(NotAffectTypes.begin(), NotAffectTypes.end(), ID) != NotAffectTypes.end())
 		{
@@ -134,7 +134,7 @@ public:
 		return can;
 	}
 
-	bool CanAffectType(AbstractType absType)
+	bool CanAffectType(AbstractType absType) const
 	{
 		switch (absType)
 		{
@@ -150,7 +150,7 @@ public:
 		return false;
 	}
 
-	bool CanAffectType(BulletType bulletType, bool isLevel)
+	bool CanAffectType(BulletType bulletType, bool isLevel) const
 	{
 		switch (bulletType)
 		{
@@ -172,17 +172,17 @@ public:
 		return false;
 	}
 
-	bool CanAffectType(BulletClass* pBullet)
+	bool CanAffectType(BulletClass* pBullet) const
 	{
 		return CanAffectType(pBullet->Type->ID) && CanAffectType(WhatAmI(pBullet), pBullet->Type->Level);
 	}
 
-	bool CanAffectType(TechnoClass* pTechno)
+	bool CanAffectType(TechnoClass* pTechno) const
 	{
 		return CanAffectType(pTechno->GetTechnoType()->ID) && CanAffectType(pTechno->WhatAmI());
 	}
 
-	bool CanAffectType(ObjectClass* pObject)
+	bool CanAffectType(ObjectClass* pObject) const
 	{
 		TechnoClass* pTechno = nullptr;
 		BulletClass* pBullet = nullptr;
@@ -197,12 +197,12 @@ public:
 		return false;
 	}
 
-	bool HasMarks()
+	bool HasMarks() const
 	{
 		return !OnlyAffectMarks.empty() || !NotAffectMarks.empty();
 	}
 
-	bool OnMark(std::vector<std::string> marks)
+	bool OnMark(std::vector<std::string> marks) const
 	{
 		bool hasWhiteList = !OnlyAffectMarks.empty();
 		bool hasBlackList = !NotAffectMarks.empty();

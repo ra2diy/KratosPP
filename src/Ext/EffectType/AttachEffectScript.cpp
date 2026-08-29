@@ -143,7 +143,7 @@ void AttachEffectScript::SetupLifeTimer()
 	}
 }
 
-bool AttachEffectScript::IsSameGroup(AttachEffectData otherType)
+bool AttachEffectScript::IsSameGroup(const AttachEffectData& otherType)
 {
 	const std::string& group = AEData.Group;
 	const std::string& otherGroup = otherType.Group;
@@ -166,6 +166,14 @@ void AttachEffectScript::GetMarks(std::vector<std::string>& marks)
 
 bool AttachEffectScript::OwnerIsDead()
 {
+	if (!AEData.TreatSellingAsDeath && pTechno)
+	{
+		if (auto const pBuilding = abstract_cast<BuildingClass*>(pTechno))
+		{
+			if (pBuilding->CurrentMission == Mission::Selling)
+				return false;
+		}
+	}
 	return AEManager->OwnerIsDead();
 }
 
@@ -304,7 +312,7 @@ bool AttachEffectScript::IsAlive()
 		{
 			Deactivate();
 		}
-		if (auto const pBuilding = abstract_cast<BuildingClass*, true>(pTechno))
+		if (auto const pBuilding = abstract_cast<BuildingClass*>(pTechno))
 		{
 			if (pBuilding->CurrentMission == Mission::Selling)
 			{
@@ -486,8 +494,15 @@ bool AttachEffectScript::InDelayToEnable()
 	// 检查建筑状态
 	if (_inBuilding)
 	{
-		_inBuilding = AEManager->InBuilding();
-		// 是建筑状态，并且有初始延迟，在建筑状态结束后，启动初始延迟计时器
+		if (AEData.StartAfterBuildup)  // 默认 true，在建筑状态结束后，启动初始延迟计时器
+		{
+			_inBuilding = AEManager->InBuilding();
+		}
+		else                           // 忽略建造状态，直接允许激活
+		{
+			_inBuilding = false;
+		}
+		// 如果建造状态结束且有初始延迟，启动延迟计时器
 		if (!_inBuilding && _initDelay > 0)
 		{
 			// 启动初始延迟计时器

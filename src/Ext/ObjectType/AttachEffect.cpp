@@ -80,7 +80,7 @@ int AttachEffect::Count()
 	return _children.size();
 }
 
-bool AttachEffect::AddCounter(AttachEffectData data, CounterEffect* counter)
+bool AttachEffect::AddCounter(const AttachEffectData& data, CounterEffect* counter)
 {
 	std::string mark = data.Counter.Mark;
 	auto it = Counters.find(mark);
@@ -92,7 +92,7 @@ bool AttachEffect::AddCounter(AttachEffectData data, CounterEffect* counter)
 	return false;
 }
 
-void AttachEffect::RemoveCounter(AttachEffectData data)
+void AttachEffect::RemoveCounter(const AttachEffectData& data)
 {
 	std::string mark = data.Counter.Mark;
 	auto it = Counters.find(mark);
@@ -305,7 +305,7 @@ void AttachEffect::SetLocationSpace(int cabinLength)
 	}
 }
 
-void AttachEffect::Attach(AttachEffectTypeData* typeData)
+void AttachEffect::Attach(const AttachEffectTypeData* typeData)
 {
 	if (typeData->Enable)
 	{
@@ -318,14 +318,14 @@ void AttachEffect::Attach(AttachEffectTypeData* typeData)
 
 }
 
-void AttachEffect::Attach(std::vector<std::string> types, std::vector<double> chances, bool onceCheck,
+void AttachEffect::Attach(const std::vector<std::string>& types, const std::vector<double>& chances, bool onceCheck,
 	ObjectClass* pSource, HouseClass* pSourceHouse,
 	CoordStruct warheadLocation, int aeMode, bool fromPassenger)
 {
 	if (!types.empty())
 	{
 		int index = 0;
-		for (std::string type : types)
+		for (const std::string& type : types)
 		{
 			if (Bingo(chances, index))
 			{
@@ -336,7 +336,7 @@ void AttachEffect::Attach(std::vector<std::string> types, std::vector<double> ch
 	}
 }
 
-void AttachEffect::Attach(std::string type, bool onceCheck,
+void AttachEffect::Attach(const std::string& type, bool onceCheck,
 	ObjectClass* pSource, HouseClass* pSourceHouse,
 	CoordStruct warheadLocation, int aeMode, bool fromPassenger)
 {
@@ -354,7 +354,7 @@ void AttachEffect::Attach(std::string type, bool onceCheck,
 	}
 }
 
-void AttachEffect::Attach(AttachEffectData data,
+void AttachEffect::Attach(const AttachEffectData& data,
 	ObjectClass* pSource, HouseClass* pSourceHouse,
 	CoordStruct warheadLocation, int aeMode, bool fromPassenger)
 {
@@ -703,7 +703,7 @@ void AttachEffect::Attach(AttachEffectData data,
 	}
 }
 
-bool AttachEffect::IsAvailable(AttachEffectData data)
+bool AttachEffect::IsAvailable(const AttachEffectData& data)
 {
 	// 检查是否持有建筑
 	if (data.CheckBuildings)
@@ -850,10 +850,10 @@ void AttachEffect::CheckAndAttachUploadAE(TechnoClass* pPassenger)
 		UploadAttachData* uploadData = INI::GetConfig<UploadAttachData>(INI::Rules, pPassenger->GetType()->ID)->Data;
 		if (uploadData->Enable)
 		{
-			std::map<int, UploadAttachEntity> uploadDatas = uploadData->Datas;
+			const auto& uploadDatas = uploadData->Datas;
 			for (auto it = uploadDatas.begin(); it != uploadDatas.end(); it++)
 			{
-				UploadAttachEntity e = it->second;
+				const UploadAttachEntity& e = it->second;
 				if (e.Enable
 					&& e.CanAffectType(pTechno)
 					&& (e.AffectInAir || !pTechno->IsInAir())
@@ -872,10 +872,10 @@ void AttachEffect::AttachGroupAE()
 {
 	if (GetGroupData()->Enable)
 	{
-		std::map<int, AttachEffectTypeData> groupData = GetGroupData()->Datas;
+		const auto& groupData = GetGroupData()->Datas;
 		for (auto it = groupData.begin(); it != groupData.end(); it++)
 		{
-			AttachEffectTypeData aeType = it->second;
+			const AttachEffectTypeData& aeType = it->second;
 			if (aeType.AttachByPassenger)
 			{
 				// 该组AE需要乘客进行激活
@@ -1018,7 +1018,7 @@ void AttachEffect::CheckDurationAndDisable(bool silence)
 			// 执行IsAlive时，检查AE的生命状态，失效的AE会在这里被标记为Deactivate
 			if (!ae->IsAlive())
 			{
-				AttachEffectData data = ae->AEData;
+				const AttachEffectData& data = ae->AEData;
 				// 结束AE
 				ae->End(location);
 				if (!silence)
@@ -1078,7 +1078,7 @@ AttachEffectGroupData* AttachEffect::GetGroupData()
 	return _groupData;
 }
 
-bool AttachEffect::IsOnMark(FilterData data)
+bool AttachEffect::IsOnMark(const FilterData& data)
 {
 	if (data.HasMarks())
 	{
@@ -1089,14 +1089,14 @@ bool AttachEffect::IsOnMark(FilterData data)
 	return true;
 }
 
-bool AttachEffect::HasContradiction(AttachEffectData data)
+bool AttachEffect::HasContradiction(const AttachEffectData& data)
 {
 	std::vector<std::string> names;
 	GetAENames(names);
 	return data.HasContradiction(names);
 }
 
-bool AttachEffect::IsOnDelay(AttachEffectData data)
+bool AttachEffect::IsOnDelay(const AttachEffectData& data)
 {
 	std::string name = data.Name;
 	auto it = DisableDelayTimers.find(name);
@@ -1107,7 +1107,7 @@ bool AttachEffect::IsOnDelay(AttachEffectData data)
 	return false;
 }
 
-void AttachEffect::StartDelay(AttachEffectData data)
+void AttachEffect::StartDelay(const AttachEffectData& data)
 {
 	std::string name = data.Name;
 	auto it = DisableDelayTimers.find(name);
@@ -1122,7 +1122,7 @@ void AttachEffect::StartDelay(AttachEffectData data)
 	}
 }
 
-void AttachEffect::AddStackCount(AttachEffectData data)
+void AttachEffect::AddStackCount(const AttachEffectData& data)
 {
 	std::string name = data.Name;
 	auto it = AEStacks.find(name);
@@ -1136,7 +1136,7 @@ void AttachEffect::AddStackCount(AttachEffectData data)
 	}
 }
 
-void AttachEffect::ReduceStackCount(AttachEffectData data)
+void AttachEffect::ReduceStackCount(const AttachEffectData& data)
 {
 	std::string name = data.Name;
 	auto it = AEStacks.find(name);
@@ -1150,7 +1150,7 @@ void AttachEffect::ReduceStackCount(AttachEffectData data)
 	}
 }
 
-bool AttachEffect::StackNotFull(AttachEffectData data)
+bool AttachEffect::StackNotFull(const AttachEffectData& data)
 {
 	if (data.MaxStack > 0)
 	{
@@ -1164,7 +1164,7 @@ bool AttachEffect::StackNotFull(AttachEffectData data)
 	return true;
 }
 
-CoordStruct AttachEffect::StackOffset(AttachEffectData aeData, OffsetData offsetData,
+CoordStruct AttachEffect::StackOffset(const AttachEffectData& aeData, OffsetData offsetData,
 	StackOffsetMap<std::string, CoordStruct>& offsetMarks,
 	StackOffsetMap<std::string, CoordStruct>& groupMarks,
 	StackOffsetMap<std::string, CoordStruct>& groupFirstMarks)
@@ -1225,7 +1225,7 @@ CoordStruct AttachEffect::StackOffset(AttachEffectData aeData, OffsetData offset
 	return offset;
 }
 
-int AttachEffect::FindInsertIndex(AttachEffectData data)
+int AttachEffect::FindInsertIndex(const AttachEffectData& data)
 {
 	int index = -1;
 	int size = -1;
@@ -1469,7 +1469,7 @@ void AttachEffect::OnGScreenRender(EventSystem* sender, Event e, void* args)
 			{
 				if (ae->IsAlive())
 				{
-					AttachEffectData aeData = ae->AEData;
+					const AttachEffectData& aeData = ae->AEData;
 					// 调整替身的位置
 					if (aeData.Stand.Enable)
 					{
@@ -1666,7 +1666,7 @@ void AttachEffect::TransferAttachedEffects(TechnoClass* pSourceTechno, TechnoCla
 		if (!pAEScript || !pAEScript->IsAlive())
 			return;
 
-		AttachEffectData data = pAEScript->AEData;
+		const AttachEffectData& data = pAEScript->AEData;
 
 		// 检查 DiscardOnTransform 决定
 		if (data.DiscardOnTransform)
@@ -1704,7 +1704,7 @@ void AttachEffect::TransferAttachedEffects(TechnoClass* pSourceTechno, TechnoCla
 		if (!pAEScript || !pAEScript->IsAlive())
 			return;
 
-		AttachEffectData data = pAEScript->AEData;
+		const AttachEffectData& data = pAEScript->AEData;
 		if (data.DiscardOnTransform)
 			return;
 		if (!data.CanAffectType(pTargetTechno))

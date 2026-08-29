@@ -7,11 +7,18 @@
 #include <Ext/TechnoType/HealthTextData.h>
 #include <Ext/EffectType/Effect/StandData.h>
 
+struct TechnoClassLess
+{
+	bool operator()(TechnoClass* a, TechnoClass* b) const
+	{
+		return a->UniqueID < b->UniqueID;
+	}
+};
 
 class TechnoExt : public GOExtension<TechnoClass, TechnoExt>
 {
 public:
-	static constexpr DWORD Canary = 0x55555555;
+	static constexpr DWORD Canary = 0x5A5A5A5A;
 	// static constexpr size_t ExtPointerOffset = 0x34C;
 
 	/**
@@ -39,16 +46,16 @@ public:
 	 *@brief 储存可以作为基地建造节点的单位.
 	 * key = 单位, value = 做友军的基地建造节点
 	 */
-	static std::map<TechnoClass*, bool> BaseUnitArray;
+	static std::map<TechnoClass*, bool, TechnoClassLess> BaseUnitArray;
 
 	/**
 	 *@brief 储存可以作为基地建造节点的替身单位.
 	 * key = 单位, value = 做友军的基地建造节点
 	 */
-	static std::map<TechnoClass*, bool> BaseStandArray;
+	static std::map<TechnoClass*, bool, TechnoClassLess> BaseStandArray;
 
-	static std::map<TechnoClass*, StandData> StandArray;
-	static std::map<TechnoClass*, StandData> ImmuneStandArray;
+	static std::map<TechnoClass*, StandData, TechnoClassLess> StandArray;
+	static std::map<TechnoClass*, StandData, TechnoClassLess> ImmuneStandArray;
 
 	static std::vector<TechnoClass*> VirtualUnitArray;
 

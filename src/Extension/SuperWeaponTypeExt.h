@@ -18,7 +18,7 @@ public:
 		// Ares
 	};
 
-	static constexpr DWORD Canary = 0x11111111;
+	static constexpr DWORD Canary = 0x77777777;
 	// static constexpr size_t ExtPointerOffset = 0x18;
 
 	static SuperWeaponTypeExt::ExtContainer ExtMap;

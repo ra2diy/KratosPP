@@ -89,7 +89,7 @@ namespace Delegate
 
 		virtual ReturnType invoke(ParamType... params)
 		{
-			(mObject->*mMethod)(params...);
+			return (mObject->*mMethod)(params...);
 		}
 
 		virtual bool compare(IDelegate<ReturnType, ParamType...> *_delegate) const

@@ -11,6 +11,7 @@
 
 #include <Extension.h>
 #include <Utilities/Macro.h>
+#include <Utilities/SyncLogging.h>
 
 #include <Extension/AnimExt.h>
 #include <Extension/BulletExt.h>
@@ -66,6 +67,18 @@ DEFINE_HOOK(0x6FF08B, TechnoClass_Fire_RecordBullet, 0x6)
 {
 	GET(BulletClass*, pBullet, EBX);
 	FireAtTemp::FireBullet = pBullet;
+
+	if (SyncLogger::Enabled && pBullet)
+	{
+		TechnoClass* pOwner = pBullet->Owner;
+		AbstractClass* pTarget = pBullet->Target;
+		if (pOwner)
+		{
+			SyncLogger::AddTargetChangeSyncLogEvent(pOwner, pTarget,
+				reinterpret_cast<unsigned int>(_ReturnAddress()));
+		}
+	}
+
 	return 0;
 }
 

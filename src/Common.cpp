@@ -5,6 +5,7 @@
 #include <Utilities/Debug.h>
 #include <Utilities/Patch.h>
 #include <Utilities/Macro.h>
+#include <Utilities/SyncLogging.h>
 
 #ifndef IS_RELEASE_VER
 bool HideWarning = false;
@@ -35,6 +36,11 @@ void Common::CmdLineParse(EventSystem* sender, Event e, void* args)
 	for (int i = 1; i < nNumArgs; i++)
 	{
 		const char* pArg = ppArgs[i];
+		if (_stricmp(pArg, "-SYNCLOG") == 0)
+		{
+			SyncLogger::Enabled = true;
+			Debug::Log("Sync logging enabled.\n");
+		}
 #ifdef DEBUG
 		if (_stricmp(pArg, "-DebugAE") == 0)
 		{

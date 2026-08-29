@@ -310,7 +310,7 @@ public:
 		Enable = IsNotNone(Mark);
 	}
 
-	bool CanAttach()
+	bool CanAttach() const
 	{
 		return AttachIfNotFound && (Action == CounterAction::ADD || Action == CounterAction::INIT);
 	}

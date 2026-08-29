@@ -1,12 +1,16 @@
-﻿#include "BroadcastEffect.h"
+#include "BroadcastEffect.h"
 
 #include <Ext/Helper/Finder.h>
 #include <Ext/Helper/FLH.h>
 #include <Ext/Helper/Scripts.h>
 #include <Ext/Helper/Status.h>
 
-void BroadcastEffect::FindAndAttach(BroadcastEntity data, HouseClass* pHouse)
+void BroadcastEffect::FindAndAttach(BroadcastEntity data, std::vector<std::string>& types, std::vector<double>& chances, HouseClass* pHouse, bool getMode)
 {
+	if (types.empty())
+	{
+		return;
+	}
 	CoordStruct location = pObject->GetCoords();
 	ObjectClass* pSource = AE->pSource;
 	HouseClass* pSourceHouse = AE->pSourceHouse;
@@ -16,12 +20,17 @@ void BroadcastEffect::FindAndAttach(BroadcastEntity data, HouseClass* pHouse)
 		pSource = pObject;
 		pSourceHouse = pHouse;
 	}
-	// 广播持有者是抛射体：来源改为发射者（满足 pSource 必须是 TechnoClass 约束），坐标另传
 	if (pBullet)
 	{
 		pSource = pBullet->Owner;
 		pSourceHouse = pHouse;
 		projectileLocation = pObject->GetCoords();
+	}
+	// Get模式：范围内单位给广播塔（self）贴AE
+	AttachEffect* selfAEM = nullptr;
+	if (getMode)
+	{
+		selfAEM = AE->AEManager;
 	}
 	// 搜索单位
 	if (Data->AffectTechno)
@@ -29,8 +38,14 @@ void BroadcastEffect::FindAndAttach(BroadcastEntity data, HouseClass* pHouse)
 		int attachCount = 0;
 		FindTechnoOnMark([&](TechnoClass* pTarget, AttachEffect* aeManager)
 			{
-				// 赋予AE
-				aeManager->Attach(data.Types, data.AttachChances, false, pSource, pSourceHouse, projectileLocation);
+				if (getMode)
+				{
+					selfAEM->Attach(types, chances, false, pTarget, pTarget->Owner, projectileLocation);
+				}
+				else
+				{
+					aeManager->Attach(types, chances, false, pSource, pSourceHouse, projectileLocation);
+				}
 				attachCount++;
 				if (Data->MaxAttachTechno > 0 && attachCount >= Data->MaxAttachTechno)
 				{
@@ -45,8 +60,15 @@ void BroadcastEffect::FindAndAttach(BroadcastEntity data, HouseClass* pHouse)
 		int attachCount = 0;
 		FindBulletOnMark([&](BulletClass* pTarget, AttachEffect* aeManager)
 			{
-				// 赋予AE
-				aeManager->Attach(data.Types, data.AttachChances, false, pSource, pSourceHouse, projectileLocation);
+				if (getMode)
+				{
+					HouseClass* pTargetHouse = GetSourceHouse(pTarget);
+					selfAEM->Attach(types, chances, false, pTarget, pTargetHouse, projectileLocation);
+				}
+				else
+				{
+					aeManager->Attach(types, chances, false, pSource, pSourceHouse, projectileLocation);
+				}
 				attachCount++;
 				if (Data->MaxAttachBullet > 0 && attachCount >= Data->MaxAttachBullet)
 				{
@@ -102,7 +124,8 @@ void BroadcastEffect::OnUpdate()
 					AE->TimeToDie();
 				}
 				_delayTimer.Start(data.Rate);
-				FindAndAttach(data, pHouse);
+				FindAndAttach(data, data.Types, data.AttachChances, pHouse);
+				FindAndAttach(data, data.GetTypes, data.GetChances, pHouse, true);
 			}
 		}
 	}

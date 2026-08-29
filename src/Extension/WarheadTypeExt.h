@@ -412,7 +412,7 @@ public:
 		GetAresArmorValueArray();
 	}
 
-	static constexpr DWORD Canary = 0x22222222;
+	static constexpr DWORD Canary = 0x44444444;
 	// static constexpr size_t ExtPointerOffset = 0x18;
 
 	static WarheadTypeExt::ExtContainer ExtMap;

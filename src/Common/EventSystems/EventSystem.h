@@ -3,6 +3,7 @@
 #include <map>
 #include <list>
 #include <string>
+#include <cstring>
 
 #include <Common.h>
 #include <Common/MyDelegate.h>
@@ -24,7 +25,16 @@ class Event
 {
 public:
 	Event(const char* Name, const char* Dest);
-	auto operator <=>(const Event&) const = default;
+
+	// 按字符串内容比较，而不是比较 const char* 指针地址
+	auto operator <=>(const Event& other) const
+	{
+		if (int cmp = std::strcmp(Name, other.Name); cmp != 0)
+		{
+			return cmp <=> 0;
+		}
+		return std::strcmp(Dest, other.Dest) <=> 0;
+	}
 
 	const char* Name;
 	const char* Dest;

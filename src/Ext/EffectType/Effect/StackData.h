@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <string>
 #include <vector>
@@ -90,12 +90,17 @@ public:
 	std::vector<double> AttachChances{};
 	bool AttachToSource = false;
 
+	std::vector<std::string> SourceGetEffects{};
+	std::vector<double> SourceGetEffectChances{};
+
 	bool Remove = false;
 	std::vector<std::string> RemoveEffects{};
 	std::vector<int> RemoveEffectsLevel{};
 	std::vector<std::string> RemoveEffectsWithMarks{};
 	bool RemoveEffectsSkipNext = false;
 	bool RemoveToSource = false;
+
+	std::vector<std::string> SourceRemoveEffects{};
 
 	std::vector<int> RemoveLevel{};
 	bool RemoveAll = true;
@@ -124,6 +129,10 @@ public:
 		Attach = !AttachEffects.empty();
 		AttachToSource = reader->Get(title + "AttachToSource", AttachToSource);
 
+		SourceGetEffects = reader->GetList(title + "SourceGetEffects", SourceGetEffects);
+		ClearIfGetNone(SourceGetEffects);
+		SourceGetEffectChances = reader->GetChanceList(title + "SourceGetEffectChances", SourceGetEffectChances);
+
 		RemoveEffects = reader->GetList(title + "RemoveEffects", RemoveEffects);
 		ClearIfGetNone(RemoveEffects);
 		RemoveEffectsLevel = reader->GetList(title + "RemoveEffectsLevel", RemoveEffectsLevel);
@@ -133,11 +142,14 @@ public:
 		RemoveEffectsSkipNext = reader->Get(title + "RemoveEffectsSkipNext", RemoveEffectsSkipNext);
 		RemoveToSource = reader->Get(title + "RemoveToSource", RemoveToSource);
 
+		SourceRemoveEffects = reader->GetList(title + "SourceRemoveEffects", SourceRemoveEffects);
+		ClearIfGetNone(SourceRemoveEffects);
+
 		RemoveLevel = reader->GetList(title + "RemoveLevel", RemoveLevel);
 		RemoveAll = reader->Get(title + "RemoveAll", RemoveAll);
 		RemoveSkipNext = reader->Get(title + "RemoveSkipNext", RemoveSkipNext);
 
-		Enable = (!Watch.empty() || WatchMission != Mission::None) && (Attach || Remove);
+		Enable = (!Watch.empty() || WatchMission != Mission::None) && (Attach || Remove || !SourceGetEffects.empty() || !SourceRemoveEffects.empty());
 	}
 
 #pragma region save/load
@@ -155,6 +167,8 @@ public:
 			.Process(this->AttachEffects)
 			.Process(this->AttachChances)
 			.Process(this->AttachToSource)
+			.Process(this->SourceGetEffects)
+			.Process(this->SourceGetEffectChances)
 
 			.Process(this->Remove)
 			.Process(this->RemoveEffects)
@@ -162,6 +176,7 @@ public:
 			.Process(this->RemoveEffectsWithMarks)
 			.Process(this->RemoveEffectsSkipNext)
 			.Process(this->RemoveToSource)
+			.Process(this->SourceRemoveEffects)
 
 			.Process(this->RemoveLevel)
 			.Process(this->RemoveAll)

@@ -125,9 +125,10 @@ void TechnoStatus::OnGScreenRender(EventSystem* sender, Event e, void* args)
 				{
 					int min = laser.Data.TargetLaserShake.X;
 					int max = laser.Data.TargetLaserShake.Y;
-					int d = Random::RandomRanged(min, max);
+					// 渲染路径，使用本地随机数，避免联机分叉
+					int d = VisualRandomRanged(min, max);
 					laser.TargetOffset = laser.Data.TargetLaserOffset + CoordStruct{ d, d, d };
-					int delay = Random::RandomRanged(0, 15);
+					int delay = VisualRandomRanged(0, 15);
 					laser.ShakeTimer.Start(delay);
 				}
 			}

@@ -48,9 +48,9 @@ bool ExByteStream::Read(data_t* Value, size_t Size)
 		auto Position = &this->Data[this->CurrentOffset];
 		std::memcpy(Value, Position, Size);
 		ret = true;
+		this->CurrentOffset += Size;
 	}
 
-	this->CurrentOffset += Size;
 	return ret;
 }
 

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ShowAllFiles>true</ShowAllFiles>
@@ -202,6 +202,7 @@
     <ClCompile Include="src\Utilities\ShapeTextPrinter.cpp" />
     <ClCompile Include="src\Utilities\Stream.cpp" />
     <ClCompile Include="src\Utilities\Swizzle.cpp" />
+    <ClCompile Include="src\Utilities\SyncLogging.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Common\INI\INI.h" />
@@ -438,6 +439,7 @@
     <ClInclude Include="src\Utilities\ShapeTextPrinter.h" />
     <ClInclude Include="src\Utilities\Stream.h" />
     <ClInclude Include="src\Utilities\Swizzle.h" />
+    <ClInclude Include="src\Utilities\SyncLogging.h" />
     <ClInclude Include="src\Utilities\Template.h" />
     <ClInclude Include="src\Utilities\TemplateDef.h" />
     <ClInclude Include="src\Version.h" />

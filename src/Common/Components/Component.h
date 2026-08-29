@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <functional>
 #include <typeinfo>
@@ -65,11 +65,8 @@
 	virtual void CopyFrom(const Component& other) override \
 	{ \
 		Component::CopyFrom(other); \
-		const CLASS_NAME* otherDerived = dynamic_cast<const CLASS_NAME*>(&other); \
-		if (otherDerived) \
-		{ \
-			CopyDerivedFrom(*otherDerived); \
-		} \
+		const CLASS_NAME* otherDerived = static_cast<const CLASS_NAME*>(&other); \
+		CopyDerivedFrom(*otherDerived); \
 	} \
 	\
 	virtual void CopyDerivedFrom(const CLASS_NAME& other) {} \
@@ -197,10 +194,7 @@ public:
 		if (InstanceId.empty())
 		{
 			static std::atomic<uint64_t> nextId{ 1 };
-			uint64_t id = nextId.fetch_add(1);
-			char buffer[64];
-			sprintf_s(buffer, "%llu", id);
-			InstanceId = buffer;
+			InstanceId = std::to_string(nextId.fetch_add(1));
 		}
 	}
 
@@ -302,9 +296,8 @@ public:
 			int nextLevel = level + 1;
 			if (maxLevel < 0 || nextLevel < maxLevel)
 			{
-
-				std::string s1 = "ForeachLevel _childrenInstanceIds: \n";
 #ifdef DEBUG_COMPONENT
+				std::string s1 = "ForeachLevel _childrenInstanceIds: \n";
 				std::vector<Component*> childrenCopy = _children;
 				for (Component* c : childrenCopy)
 				{
@@ -320,13 +313,17 @@ public:
 					if (i >= _children.size())
 					{
 						Debug::Log("Error: Component %s child [<%zu>] is removed during ForeachLevel!\n", thisName.c_str(), i);
+#ifdef DEBUG_COMPONENT
 						LOG_COMPONENT(s1.c_str());
+#endif
 						break;
 					}
 					if (_children[i] != c)
 					{
 						Debug::Log("Error: Component %s child [<%zu>] has changed during ForeachLevel!\n", thisName.c_str(), i);
+#ifdef DEBUG_COMPONENT
 						LOG_COMPONENT(s1.c_str());
+#endif
 						continue;
 					}
 					// 执行子组件
@@ -524,10 +521,9 @@ public:
 		// 在子组件中查找，深度优先
 		for (Component* child : _children)
 		{
-			Component* found = child->GetComponentInChildren<TComponent>();
-			if (found)
+			if (TComponent* found = child->GetComponentInChildren<TComponent>())
 			{
-				return dynamic_cast<TComponent*>(found);
+				return found;
 			}
 		}
 		return nullptr;
@@ -665,7 +661,7 @@ public:
 		if (!pThis->_childrenInstanceIds.empty())
 		{
 			std::string s1 = "Saved _childrenInstanceIds: ";
-			for_each(pThis->_childrenInstanceIds.begin(), pThis->_childrenInstanceIds.end(), [&](std::string& s) {
+			for_each(pThis->_childrenInstanceIds.begin(), pThis->_childrenInstanceIds.end(), [&](const std::string& s) {
 				s1.append(s).append(", ");
 				});
 			s1.append("\n");
@@ -724,8 +720,8 @@ protected:
 	bool _break = false; // 中断上层循环
 
 	// 添加的Component名单，在存档时生成
-	std::vector<std::string> _childrenNames{};
-	std::vector<std::string> _childrenInstanceIds{};
+	mutable std::vector<std::string> _childrenNames{};
+	mutable std::vector<std::string> _childrenInstanceIds{};
 
 	Component* _parent = nullptr;
 	std::vector<Component*> _children{};

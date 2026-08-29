@@ -1,0 +1,12 @@
+@echo off
+rem ============================================================
+rem Template for scripts\run_yr.bat
+rem Copy this file to scripts\run_yr.bat and adjust the game
+rem path below to match your YR installation.
+rem ============================================================
+chcp 65001
+cd %~dp0
+echo f|xcopy /i /y "..\output\*.dll" "D:\Games\Yuri's Revenge\*.dll"
+echo f|xcopy /i /y "..\output\*.pdb" "D:\Games\Yuri's Revenge\*.pdb"
+cd "D:\Games\Yuri's Revenge\"
+call RunAres

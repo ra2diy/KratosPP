@@ -12,66 +12,38 @@
 #include <ScenarioClass.h>
 #include <YRMathVector.h>
 
-/**
- *@brief ScenarioClass::Instance->Random Only get the Same number in One frame
- *
- */
 class Random
 {
 public:
-	static void SetRandomSeed(int seed)
-	{
-		_engine.seed(seed);
-	}
-
-	/**
-	 *@brief Include maximum value
-	 *
-	 * @param min
-	 * @param max
-	 * @return int
-	 */
 	static int RandomRanged(int min, int max)
 	{
 		if (max < min) std::swap(min, max);
-		// int类型包含max
-		std::uniform_int_distribution<int> dis(min, max);
-		return dis(_engine);
+		return ScenarioClass::Instance->Random.RandomRanged(min, max);
 	}
 
-	/**
-	 *@brief Include maximum value
-	 *
-	 * @param min
-	 * @param max
-	 * @return float
-	 */
-	static float RandomFloat(float min, float max)
-	{
-		if (max < min) std::swap(min, max);
-		// float类型不包含max，使用 nextafter 让范围包含max值
-		std::uniform_real_distribution<float> dis(min,
-			std::nextafter(max, std::numeric_limits<float>::max()));
-		return dis(_engine);
-	}
-
-	/**
-	 *@brief Random [0.0 - 1.0], include maximum value
-	 *
-	 * @return double
-	 */
 	static double RandomDouble()
 	{
-		// return RandomRanged(1, INT_MAX) / (double)((unsigned int)INT_MAX + 1); // (0, 1)
-
-		// double类型不包含max，使用 nextafter 让范围包含max值
-		std::uniform_real_distribution<double> dis(0.0,
-			std::nextafter(1.0, std::numeric_limits<double>::max()));
-		return dis(_engine);
+		return ScenarioClass::Instance->Random.RandomDouble();
 	}
-private:
-	inline static std::minstd_rand _engine{};
 };
+
+/// <summary>
+/// 本地随机数：仅供每客户端独立执行的渲染/视觉效果使用。
+/// 不会消耗 ScenarioClass 的共享随机数，避免联机时两端随机数流分叉。
+/// 不要用它替代任何会影响游戏逻辑的随机决策。
+/// </summary>
+static int VisualRandomRanged(int min, int max)
+{
+	if (max < min)
+	{
+		int tmp = min;
+		min = max;
+		max = tmp;
+	}
+	static std::mt19937 engine{ std::random_device{}() };
+	std::uniform_int_distribution<int> dist(min, max);
+	return dist(engine);
+}
 
 template<typename T>
 static int GetRandomValue(Vector2D<T> range, int defVal)
@@ -143,7 +115,7 @@ static bool Bingo(double chance)
 	return false;
 }
 
-static bool Bingo(std::vector<double> chances, int index)
+static bool Bingo(const std::vector<double>& chances, int index)
 {
 	int size = chances.size();
 	if (size < index + 1)

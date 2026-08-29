@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <string>
 #include <vector>
@@ -56,7 +56,7 @@ public:
 	}
 #pragma endregion
 private:
-	void FindAndAttach(BroadcastEntity data, HouseClass* pHouse);
+	void FindAndAttach(BroadcastEntity data, std::vector<std::string>& types, std::vector<double>& chances, HouseClass* pHouse, bool getMode = false);
 
 	int _count = 0;
 	CDTimerClass _delayTimer{};
