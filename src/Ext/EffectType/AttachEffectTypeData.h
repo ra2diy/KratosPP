@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <string>
 #include <vector>
@@ -12,6 +12,9 @@ public:
 	std::vector<double> AttachEffectChances{}; // 附加成功率，应该只对弹头有用
 
 	bool AttachToSource = false; // 用弹头附加时，反过来附加给攻击者
+
+	std::vector<std::string> GetEffectTypes{};
+	std::vector<double> GetEffectChances{};
 
 	bool AttachFullAirspace = false; // 搜索圆柱体范围
 
@@ -29,13 +32,16 @@ public:
 
 		AttachToSource = reader->Get("AttachToSource", AttachToSource);
 
+		GetEffectTypes = reader->GetList("GetEffectTypes", GetEffectTypes);
+		GetEffectChances = reader->GetChanceList("GetEffectChances", GetEffectChances);
+
 		AttachFullAirspace = reader->Get("AttachFullAirspace", AttachFullAirspace);
 
 		StandTrainCabinLength = reader->Get("StandTrainCabinLength", StandTrainCabinLength);
 		// 由乘客读取
 		AEMode = reader->Get("AEMode", AEMode);
 
-		Enable = !AttachEffectTypes.empty();
+		Enable = !AttachEffectTypes.empty() || !GetEffectTypes.empty();
 	}
 
 	// 通过AEMode触发附加的多组AE的设置读取

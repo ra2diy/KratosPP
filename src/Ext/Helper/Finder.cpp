@@ -343,8 +343,13 @@ void FindAndAttachEffect(CoordStruct location, int damage, WarheadTypeClass* pWH
 	if (aeTypeData->Enable)
 	{
 		bool attachToSource = aeTypeData->AttachToSource;
+		bool hasGetEffects = !aeTypeData->GetEffectTypes.empty();
 		AttachEffect* sourceAEM = nullptr;
-		if (attachToSource && !TryGetAEManager<TechnoExt>(abstract_cast<TechnoClass*>(pAttacker), sourceAEM))
+		if (attachToSource || hasGetEffects)
+		{
+			TryGetAEManager<TechnoExt>(abstract_cast<TechnoClass*>(pAttacker), sourceAEM);
+		}
+		if (attachToSource && !sourceAEM)
 		{
 			return;
 		}
@@ -354,6 +359,12 @@ void FindAndAttachEffect(CoordStruct location, int damage, WarheadTypeClass* pWH
 		bool findBullet = false;
 		// 快速检索是否需要查找单位或者抛射体清单
 		for (std::string ae : aeTypeData->AttachEffectTypes)
+		{
+			AttachEffectData* aeData = INI::GetConfig<AttachEffectData>(INI::Rules, ae.c_str())->Data;
+			findTechno |= aeData->AffectTechno;
+			findBullet |= aeData->AffectBullet;
+		}
+		for (std::string ae : aeTypeData->GetEffectTypes)
 		{
 			AttachEffectData* aeData = INI::GetConfig<AttachEffectData>(INI::Rules, ae.c_str())->Data;
 			findTechno |= aeData->AffectTechno;
@@ -427,6 +438,10 @@ void FindAndAttachEffect(CoordStruct location, int damage, WarheadTypeClass* pWH
 							attachCount++;
 						}
 					}
+					if (hasGetEffects && sourceAEM)
+					{
+						sourceAEM->Attach(aeTypeData->GetEffectTypes, aeTypeData->GetEffectChances, false, pTarget, pTargetHouse, location);
+					}
 				}
 				// 附加次数上限
 				if (warheadTypeData->MaxAttachTechno > 0 && attachCount >= warheadTypeData->MaxAttachTechno)
@@ -463,6 +478,10 @@ void FindAndAttachEffect(CoordStruct location, int damage, WarheadTypeClass* pWH
 								attachCount++;
 							}
 						}
+						if (hasGetEffects && sourceAEM)
+						{
+							sourceAEM->Attach(aeTypeData->GetEffectTypes, aeTypeData->GetEffectChances, false, pTarget, pTargetSourceHouse, location);
+						}
 						// 附加次数上限
 						if (warheadTypeData->MaxAttachBullet > 0 && attachCount >= warheadTypeData->MaxAttachBullet)
 						{
@@ -471,7 +490,7 @@ void FindAndAttachEffect(CoordStruct location, int damage, WarheadTypeClass* pWH
 					}
 				}
 				return false;
-				}, location, pWH->CellSpread, 0, fullAirspace);
+					}, location, pWH->CellSpread, 0, fullAirspace);
 		}
 	}
 }

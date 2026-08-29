@@ -1,4 +1,4 @@
-﻿#include "StackEffect.h"
+#include "StackEffect.h"
 
 #include <Ext/Helper/Finder.h>
 #include <Ext/Helper/FLH.h>
@@ -162,6 +162,36 @@ void StackEffect::Watch()
 				{
 					aeManager->DetachByMarks(Data->RemoveEffectsWithMarks, Data->RemoveEffectsSkipNext);
 				}
+			}
+		}
+		// SourceGetEffects: 始终向来源附着AE
+		if (!Data->SourceGetEffects.empty())
+		{
+			AttachEffect* aeManager = GetAEManager<TechnoExt>(AE->pSource);
+			TechnoClass* pSource = nullptr;
+			HouseClass* pSourceHouse = nullptr;
+			if (pTechno)
+			{
+				pSource = pTechno;
+				pSourceHouse = pTechno->Owner;
+			}
+			else if (pBullet)
+			{
+				pSource = pBullet->Owner;
+				pSourceHouse = GetHouse(pBullet);
+			}
+			if (aeManager && pSource)
+			{
+				aeManager->Attach(Data->SourceGetEffects, Data->SourceGetEffectChances, false, pSource, pSourceHouse);
+			}
+		}
+		// SourceRemoveEffects: 始终从来源移除AE
+		if (!Data->SourceRemoveEffects.empty())
+		{
+			AttachEffect* aeManager = GetAEManager<TechnoExt>(AE->pSource);
+			if (aeManager)
+			{
+				aeManager->DetachByName(Data->SourceRemoveEffects, false);
 			}
 		}
 		// 移除被监视者

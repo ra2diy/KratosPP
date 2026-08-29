@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <string>
 #include <vector>
@@ -18,6 +18,8 @@ public:
 
 	std::vector<std::string> Types{};
 	std::vector<double> AttachChances{};
+	std::vector<std::string> GetTypes{};
+	std::vector<double> GetChances{};
 	int Rate = 15;
 	float RangeMin = 0;
 	float RangeMax = -1;
@@ -27,13 +29,15 @@ public:
 	{
 		Types = reader->GetList(title + "Types", Types);
 		AttachChances = reader->GetChanceList(title + "AttachChances", AttachChances);
+		GetTypes = reader->GetList(title + "GetTypes", GetTypes);
+		GetChances = reader->GetChanceList(title + "GetChances", GetChances);
 		Rate = reader->Get(title + "Rate", Rate);
 		RangeMin = reader->Get(title + "RangeMin", RangeMin);
 		RangeMax = reader->Get(title + "RangeMax", RangeMax);
 		FullAirspace = reader->Get(title + "FullAirspace", FullAirspace);
 
 		// 0 时关闭，-1全地图
-		Enable = !Types.empty() && RangeMax != 0;
+		Enable = (!Types.empty() || !GetTypes.empty()) && RangeMax != 0;
 	}
 
 #pragma region save/load
@@ -44,6 +48,8 @@ public:
 			.Process(this->Enable)
 			.Process(this->Types)
 			.Process(this->AttachChances)
+			.Process(this->GetTypes)
+			.Process(this->GetChances)
 			.Process(this->Rate)
 			.Process(this->RangeMin)
 			.Process(this->RangeMax)
