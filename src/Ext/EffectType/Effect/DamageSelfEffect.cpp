@@ -7,6 +7,7 @@
 
 #include <Extension/BulletExt.h>
 #include <Extension/TechnoExt.h>
+#include <Extension/WarheadTypeExt.h>
 
 #include <Ext/BulletType/BulletStatus.h>
 #include <Ext/TechnoType/TechnoStatus.h>
@@ -36,6 +37,9 @@ void DamageSelfEffect::OnStart()
 		if (WarheadTypeClass* pWH = WarheadTypeClass::Find(Data->Warhead.c_str()))
 		{
 			_pWH = pWH;
+			// Toy warhead
+			WarheadTypeExt::TypeData* whData = GetTypeData<WarheadTypeExt, WarheadTypeExt::TypeData>(pWH);
+			_isToyWarhead = whData->IsToy;
 		}
 	}
 	_bulletDamage.Damage = _damage;
@@ -125,8 +129,52 @@ void DamageSelfEffect::OnUpdate()
 					}
 					else
 					{
-						// 血量可以减到负数不死
-						pTechno->Health -= realDamage;
+						// 额外触发受伤事件
+						args_ReceiveDamage args;
+						args.Damage = &realDamage;
+						args.DistanceToEpicenter = 0;
+						args.WH = _pWH;
+						args.Attacker = static_cast<TechnoClass*>(pDamageMaker);
+						args.IgnoreDefenses = Data->IgnoreArmor;
+						args.PreventsPassengerEscape = pTechno->GetTechnoType()->Crewed;
+						args.SourceHouse = AE->pSourceHouse;
+						_gameObject->Foreach([&args](Component* c)
+							{ if (auto cc = dynamic_cast<ITechnoScript*>(c)) { cc->OnReceiveDamage(&args); } });
+
+						HealthState pastHealthState = pTechno->GetHealthStatus();
+
+						// 执行扣血
+						if (!_isToyWarhead)
+						{
+							// 血量可以减到负数不死
+							pTechno->Health -= *args.Damage;
+						}
+
+						_gameObject->Foreach([&](Component* c)
+							{ if (auto cc = dynamic_cast<ITechnoScript*>(c)) { cc->OnReceiveDamageReal(args.Damage, args.WH, args.Attacker, args.SourceHouse); } });
+
+						DamageState damageState = _isToyWarhead ? DamageState::Unchanged : DamageState::Unaffected;
+						if (pTechno->Health <= 0)
+						{
+							damageState = DamageState::NowDead;
+						}
+						else {
+							HealthState nowHealthState = pTechno->GetHealthStatus();
+							if (nowHealthState != pastHealthState)
+							{
+								switch (nowHealthState)
+								{
+								case HealthState::Yellow:
+									damageState = DamageState::NowYellow;
+									break;
+								case HealthState::Red:
+									damageState = DamageState::NowRed;
+									break;
+								}
+							}
+						}
+						_gameObject->Foreach([&](Component* c)
+							{ if (auto cc = dynamic_cast<ITechnoScript*>(c)) { cc->OnReceiveDamageEnd(args.Damage, args.WH, damageState, args.Attacker, args.SourceHouse); } });
 					}
 				}
 				// 播放弹头动画
@@ -167,10 +215,6 @@ void DamageSelfEffect::OnUpdate()
 				Deactivate();
 				AE->TimeToDie();
 			}
-		}
-		else
-		{
-			Debug::Log("DamageSelfEffect: waiting for ROF, Owner = %d, time left = %d\n", AE->pTechno, _delayTimer.GetTimeLeft());
 		}
 	}
 }

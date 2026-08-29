@@ -35,6 +35,7 @@ public:
 		_bulletDamage = { 1 };
 
 		_pWH = nullptr;
+		_isToyWarhead = false;
 
 		_count = 0;
 		_delayTimer = {};
@@ -51,6 +52,7 @@ public:
 			.Process(this->_damage)
 			.Process(this->_bulletDamage)
 			.Process(this->_pWH)
+			.Process(this->_isToyWarhead)
 
 			.Process(this->_count)
 			.Process(this->_delayTimer)
@@ -73,6 +75,7 @@ private:
 	BulletDamage _bulletDamage{ 1 };
 
 	WarheadTypeClass* _pWH = nullptr;
+	bool _isToyWarhead = false;
 
 	int _count = 0;
 	CDTimerClass _delayTimer{};
