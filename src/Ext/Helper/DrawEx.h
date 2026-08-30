@@ -6,6 +6,8 @@
 #include <TechnoClass.h>
 #include <WeaponTypeClass.h>
 
+int GetDefaultColor_Int(ConvertClass* pConvert, int idx);
+
 #pragma region LaserType
 struct LaserType
 {
@@ -105,6 +107,19 @@ public:
 	BoltType(bool alternate)
 	{
 		IsAlternateColor = alternate;
+		InitDefaultColor();
+		if (alternate)
+		{
+			Color1 = ac1;
+			Color2 = ac2;
+			Color3 = ac3;
+		}
+		else
+		{
+			Color1 = c1;
+			Color2 = c2;
+			Color3 = c3;
+		}
 	}
 
 	bool IsAlternateColor = false;
@@ -117,6 +132,67 @@ public:
 	bool Disable2 = false;
 	bool Disable3 = false;
 	bool DisableParticle = false;
+
+	ColorStruct GetColor1()
+	{
+		return Color1 == Colors::Empty ? GetDefaultColor1(IsAlternateColor) : Color1;
+	}
+
+	ColorStruct GetColor2()
+	{
+		return Color2 == Colors::Empty ? GetDefaultColor2(IsAlternateColor) : Color2;
+	}
+
+	ColorStruct GetColor3()
+	{
+		return Color3 == Colors::Empty ? GetDefaultColor3(IsAlternateColor) : Color3;
+	}
+
+	static ColorStruct GetDefaultColor1(bool alternate = false)
+	{
+		InitDefaultColor();
+		return alternate ? ac1 : c1;
+	}
+	static ColorStruct GetDefaultColor2(bool alternate = false)
+	{
+		InitDefaultColor();
+		return alternate ? ac2 : c2;
+	}
+	static ColorStruct GetDefaultColor3(bool alternate = false)
+	{
+		InitDefaultColor();
+		return alternate ? ac3 : c3;
+	}
+private:
+	static inline bool initDefColor = false;
+
+	static inline ColorStruct c1 = Colors::Blue; // 蓝色
+	static inline ColorStruct c2 = Colors::White; // 白色
+	static inline ColorStruct c3 = Colors::Blue; // 蓝色
+
+	static inline ColorStruct ac1 = Colors::Yellow; // 黄色
+	static inline ColorStruct ac2 = Colors::White; // 白色
+	static inline ColorStruct ac3 = Colors::Yellow; // 黄色
+
+	static void InitDefaultColor()
+	{
+		if (!initDefColor)
+		{
+			initDefColor = true;
+
+			int defaultBlue = GetDefaultColor_Int(FileSystem::PALETTE_PAL, 10);
+			int defaultYellow = GetDefaultColor_Int(FileSystem::PALETTE_PAL, 5);
+			int defaultWhite = GetDefaultColor_Int(FileSystem::PALETTE_PAL, 15);
+
+			c1 = Drawing::Int_To_RGB(defaultBlue);
+			c2 = Drawing::Int_To_RGB(defaultWhite);
+			c3 = Drawing::Int_To_RGB(defaultBlue);
+
+			ac1 = Drawing::Int_To_RGB(defaultYellow);
+			ac2 = Drawing::Int_To_RGB(defaultWhite);
+			ac3 = Drawing::Int_To_RGB(defaultYellow);
+		}
+	}
 };
 
 void DrawBolt(CoordStruct sourcePos, CoordStruct targetPos, BoltType type);

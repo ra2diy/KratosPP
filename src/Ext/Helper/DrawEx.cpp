@@ -8,6 +8,18 @@
 
 #include <Ext/Common/CommonStatus.h>
 
+int GetDefaultColor_Int(ConvertClass* pConvert, int idx)
+{
+	if (pConvert->BytesPerPixel == 1)
+	{
+		return reinterpret_cast<uint8_t*>(pConvert->PaletteData)[idx];
+	}
+	else
+	{
+		return reinterpret_cast<uint16_t*>(pConvert->PaletteData)[idx];
+	}
+}
+
 #pragma region LaserType
 void DrawLaser(LaserType laser, CoordStruct sourcePos, CoordStruct targetPos, ColorStruct houseColor)
 {
@@ -242,9 +254,9 @@ void DrawBolt(CoordStruct sourcePos, CoordStruct targetPos, BoltType type)
 			// 调整绘制
 			status->ArcCount = type.ArcCount;
 
-			status->Color1 = type.Color1;
-			status->Color2 = type.Color2;
-			status->Color3 = type.Color3;
+			status->Color1 = type.GetColor1();
+			status->Color2 = type.GetColor2();
+			status->Color3 = type.GetColor3();
 
 			status->Disable1 = type.Disable1;
 			status->Disable2 = type.Disable2;
