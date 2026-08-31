@@ -27,7 +27,7 @@
 #include "Effect/RevengeData.h"
 #include "Effect/StackData.h"
 #include "Effect/StandData.h"
-#include "Effect/VectorDataReVibed.h"
+#include "Effect/VectorData.h"
 #include "Effect/TurretSpinData.h"
 #include "Effect/BodySpinData.h"
 #include "Effect/VampireData.h"

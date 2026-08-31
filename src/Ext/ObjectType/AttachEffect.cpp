@@ -1,4 +1,4 @@
-#include "AttachEffect.h"
+﻿#include "AttachEffect.h"
 
 #include <BuildingClass.h>
 #include <MissionClass.h>
@@ -18,7 +18,7 @@
 #include <Ext/EffectType/Effect/AttackBeaconEffect.h>
 #include <Ext/EffectType/Effect/CounterEffect.h>
 #include <Ext/EffectType/Effect/StandEffect.h>
-#include <Ext/EffectType/Effect/VectorEffectReVibed.h>
+#include <Ext/EffectType/Effect/VectorEffect.h>
 #include <Ext/EffectType/Effect/TurretSpinEffect.h>
 #include <Ext/EffectType/Effect/BodySpinEffect.h>
 #include <Ext/BulletType/BulletStatus.h>
