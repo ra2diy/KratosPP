@@ -38,6 +38,11 @@ public:
 
 		_warpTo; // 弹头传进来的坐标
 		_teleportTimer = {}; // 传送冰冻时间
+		_jumpTo; // 传送的坐标
+
+		isInfantry = false;
+		isAircraft = false;
+		isJumpJet = false;
 
 		pDest = nullptr;
 		pFocus = nullptr;
@@ -53,6 +58,8 @@ public:
 	virtual void OnEnd() override;
 
 	virtual void OnUpdate() override;
+
+	virtual void OnWarpUpdate() override;
 
 	TeleportState& operator=(const TeleportState& other)
 	{
@@ -79,8 +86,14 @@ public:
 			.Process(this->_step)
 			.Process(this->_warpTo)
 			.Process(this->_teleportTimer)
+			.Process(this->_jumpTo)
+
+			.Process(this->isInfantry)
+			.Process(this->isAircraft)
+			.Process(this->isJumpJet)
 			.Process(this->pDest)
 			.Process(this->pFocus)
+			.Process(this->pTarget)
 			.Success();
 	};
 
@@ -117,6 +130,13 @@ private:
 	CoordStruct _warpTo; // 弹头传进来的坐标
 	CDTimerClass _teleportTimer{}; // 传送冰冻时间
 
+	CoordStruct _jumpTo; // 传送的坐标，用来判断是否已经到达指定位置，需要清除Jumpjet的目标，否则JJ会在爬升时来回跳跃
+
+	bool isInfantry = false;
+	bool isAircraft = false;
+	bool isJumpJet = false;
+
 	AbstractClass* pDest = nullptr;
 	AbstractClass* pFocus = nullptr;
+	AbstractClass* pTarget = nullptr;
 };

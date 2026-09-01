@@ -240,3 +240,15 @@ FallingError FallingExceptAircraft(TechnoClass* pTechno, int fallingDestroyHeigh
 	return drop;
 }
 
+void OccupyCell(TechnoClass* pTechno, const CoordStruct& coords)
+{
+	void** vtable = *reinterpret_cast<void***>(pTechno);
+	reinterpret_cast<void(__thiscall*)(void*, const CoordStruct*)>(vtable[0xF0 / 4])(pTechno, &coords);
+}
+
+void ReleaseCell(TechnoClass* pTechno, const CoordStruct& coords)
+{
+	void** vtable = *reinterpret_cast<void***>(pTechno);
+	reinterpret_cast<void(__thiscall*)(void*, const CoordStruct*)>(vtable[0xF4 / 4])(pTechno, &coords);
+}
+
