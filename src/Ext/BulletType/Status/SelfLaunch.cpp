@@ -34,7 +34,7 @@ void BulletStatus::OnUpdate_SelfLaunchOrPumpAction()
 					{
 						// 强制修正抛射体目标，选预定目标附近的可落脚点为目标
 						CoordStruct landingPos;
-						if (TryGetLandingPoint(pSource, pBullet->TargetCoords, landingPos, false, &TechnoExt::HumanConnonPreOcc))
+						if (TryGetLandingPoint(pSource, pBullet->TargetCoords, landingPos, false, true, &TechnoExt::HumanConnonPreOcc))
 						{
 							if (CellClass* pCell = MapClass::Instance->TryGetCellAt(landingPos))
 							{

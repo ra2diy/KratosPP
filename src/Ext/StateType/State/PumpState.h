@@ -19,6 +19,7 @@ public:
 
 		_isHumanCannon = false; // 人间大炮
 		_flyTimer = {}; // 飞行时间
+		_jumpTarget = CoordStruct::Empty; // 目标落点
 
 		_gravity = 0;
 		_velocity = BulletVelocity::Empty; // 飞行向量
@@ -47,6 +48,7 @@ public:
 			StateScript<PumpData>::operator=(other);
 			_isHumanCannon = other._isHumanCannon;
 			_flyTimer = other._flyTimer;
+			_jumpTarget = other._jumpTarget;
 			_gravity = other._gravity;
 			_velocity = other._velocity;
 			_flySequence = other._flySequence;
@@ -62,6 +64,7 @@ public:
 		return stream
 			.Process(this->_isHumanCannon)
 			.Process(this->_flyTimer)
+			.Process(this->_jumpTarget)
 
 			.Process(this->_gravity)
 			.Process(this->_velocity)
@@ -91,6 +94,7 @@ private:
 
 	bool _isHumanCannon = false; // 人间大炮
 	CDTimerClass _flyTimer{}; // 飞行时间
+	CoordStruct _jumpTarget = CoordStruct::Empty; // 人间大炮的目标落点（飞行收尾精确落回）
 
 	int _gravity = 0;
 	BulletVelocity _velocity = BulletVelocity::Empty; // 飞行向量

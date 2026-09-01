@@ -3,6 +3,7 @@
 #include <FootClass.h>
 #include <MapClass.h>
 #include <Unsorted.h>
+#include <Utilities/Debug.h>
 
 bool SubCellOccupancy::IsSubCellOccupied(int subIdx) const
 {
@@ -105,6 +106,8 @@ void PreOccupancyManager::MarkOccupied(TechnoClass* pTechno, const CoordStruct& 
 			m_occupancy[cell].occupiedSubCells.insert(subIdx);
 		}
 	}
+	// 诊断日志（排查预占登记时取消注释）：
+	// Debug::Log("PreOcc Mark: cell{%d,%d} sub=%d\n", cell.X, cell.Y, subIdx);
 
 	// 记录单位与格子的映射（用于后续清理）
 	m_unitToCell[pTechno] = { cell, subIdx };
@@ -140,6 +143,8 @@ bool PreOccupancyManager::GetAvailableSubCell(TechnoClass* pTechno, const CoordS
 	outPos.X += offset.X;
 	outPos.Y += offset.Y;
 
+	// 诊断日志（排查子格分配时取消注释）：
+	// Debug::Log("PreOcc GetAvail: cell{%d,%d} sub=%d out{%d,%d}\n", cell.X, cell.Y, freeSubIdx, outPos.X / 256, outPos.Y / 256);
 	return true;
 }
 
@@ -178,6 +183,16 @@ void PreOccupancyManager::ReleaseOccupancy(TechnoClass* pTechno)
 size_t PreOccupancyManager::GetOccupiedCellCount() const
 {
 	return m_occupancy.size();
+}
+
+int PreOccupancyManager::GetOccupiedSubCellCount(const CellStruct& cell) const
+{
+	auto it = m_occupancy.find(cell);
+	if (it == m_occupancy.end())
+	{
+		return 0;
+	}
+	return (int)it->second.occupiedSubCells.size();
 }
 
 int PreOccupancyManager::GetSubCellIndexFromPos(const CoordStruct& pos, CellClass* pCell)

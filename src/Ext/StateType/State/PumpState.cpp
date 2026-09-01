@@ -2,6 +2,7 @@
 
 #include <JumpjetLocomotionClass.h>
 
+#include <Utilities/Debug.h>
 #include <Ext/Helper/FLH.h>
 #include <Ext/Helper/MathEx.h>
 #include <Ext/Helper/Physics.h>
@@ -90,6 +91,12 @@ bool PumpState::Jump(CoordStruct targetPos, bool isLobber, Sequence flySequence,
 			// 计算飞行时间
 			int frame = (int)(straightDistance / realSpeed);
 			_flyTimer.Start(frame);
+			// 记住目标落点：抛物线积分有误差（提前到期/过冲），
+			// 收尾时把水平位置精确拉回落点，避免落到相邻的不可通行格摔死
+			_jumpTarget = targetPos;
+			// 诊断日志（排查飞行收尾时取消注释）：
+			// Debug::Log("Pump Jump: frame=%d src{%d,%d} tgt{%d,%d}\n",
+			// 	frame, sourcePos.X / 256, sourcePos.Y / 256, targetPos.X / 256, targetPos.Y / 256);
 		}
 		_flySequence = flySequence;
 		// 从占据的格子中移除自己
@@ -138,6 +145,22 @@ void PumpState::CancelJump()
 	status->Jumping = false;
 	if (!status->CaptureByBlackHole && !IsDeadOrInvisible(pTechno))
 	{
+		// 人间大炮：先把水平位置精确修正到目标落点，再开始下落。
+		// 不修的话，抛物线积分提前到期/过冲会让乘客从半路摔下，
+		// 落到计算落点旁边的不可通行格（建筑/水面）直接摔死，
+		// 死后预占被释放、Content 也清空，后续乘客又选中同一格 → 连锁堆叠。
+		if (_isHumanCannon && !_jumpTarget.IsEmpty())
+		{
+			CoordStruct pos = pTechno->GetCoords();
+			// 诊断日志（排查落地位置偏移时取消注释）：
+			// Debug::Log("Pump CancelJump: pos{%d,%d}->jumpTarget{%d,%d}\n",
+			// 	pos.X / 256, pos.Y / 256, _jumpTarget.X / 256, _jumpTarget.Y / 256);
+			pos.X = _jumpTarget.X;
+			pos.Y = _jumpTarget.Y;
+			pTechno->UpdatePlacement(PlacementType::Remove);
+			pTechno->SetLocation(pos);
+			pTechno->UpdatePlacement(PlacementType::Put);
+		}
 		FallingExceptAircraft(pTechno, 0, _isHumanCannon);
 	}
 	End();

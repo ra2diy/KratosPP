@@ -76,6 +76,10 @@ public:
 	// 获取所有预占用格子的数量（用于调试）
 	size_t GetOccupiedCellCount() const;
 
+	// 获取某个格子已被预占用的子格数量（无预占返回 0，用于落点搜索评分：
+	// 让后续乘客优先选择完全空闲的格子，而不是挤进已有预占的格子）
+	int GetOccupiedSubCellCount(const CellStruct& cell) const;
+
 private:
 	// 根据坐标计算子格索引
 	int GetSubCellIndexFromPos(const CoordStruct& pos, CellClass* pCell);

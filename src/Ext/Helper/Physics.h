@@ -116,12 +116,16 @@ FallingError FallingExceptAircraft(TechnoClass* pTechno, int fallingDestroyHeigh
  * @param targetPos 期望落点坐标
  * @param forceGround 为 true 时强制按地面单位搜索落点（忽略 IsInAir 早退，用于
  * 人间大炮等"需要真实落脚点"的场景；默认 false 时空中单位直接以目标格为落点）
+ * @param usePathPriority 是否应用"沿连线向源点方向优先"的路径优先搜索
+ * （默认 true，用于传送/自发射等希望落在目标与源点连线附近的场景）；
+ * 人间大炮传 false：跳过沿连线搜索，直接以目标为中心逐圈扩散、以连线为轴
+ * 向两侧分布，形成包围圈，避免乘客全部散落在车与目标之间的连线上。
  * @param pPreOccupancyManager 预占用管理器指针，用于预占用检查（可选）
  * @return 落点坐标（不含空中高度）；找不到可落脚点时返回 CoordStruct::Empty
  */
-CoordStruct FindLandingPoint(TechnoClass* pTechno, const CoordStruct& targetPos, bool forceGround = false, PreOccupancyManager* pPreOccupancyManager = nullptr);
+CoordStruct FindLandingPoint(TechnoClass* pTechno, const CoordStruct& targetPos, bool forceGround = false, bool usePathPriority = true, PreOccupancyManager* pPreOccupancyManager = nullptr);
 
-bool TryGetLandingPoint(TechnoClass* pTechno, const CoordStruct& targetPos, CoordStruct& landingPos, bool forceGround = false, PreOccupancyManager* pPreOccupancyManager = nullptr);
+bool TryGetLandingPoint(TechnoClass* pTechno, const CoordStruct& targetPos, CoordStruct& landingPos, bool forceGround = false, bool usePathPriority = true, PreOccupancyManager* pPreOccupancyManager = nullptr);
 
 // ============================================================================
 // 格子占用位备忘（2026-08-31 通过 gamemd.idb 反编译确认）
