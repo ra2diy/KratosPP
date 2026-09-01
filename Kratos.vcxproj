@@ -58,6 +58,7 @@
     <ClCompile Include="src\Ext\Common\ExpandAnimsManager.cpp" />
     <ClCompile Include="src\Ext\Common\FireSuperManager.cpp" />
     <ClCompile Include="src\Ext\Common\PaintballSyncManager.cpp" />
+    <ClCompile Include="src\Ext\Common\PreOccupancyManager.cpp" />
     <ClCompile Include="src\Ext\Common\PrintTextManager.cpp" />
     <ClCompile Include="src\Ext\EBoltType\EBoltStatus.cpp" />
     <ClCompile Include="src\Ext\EffectType\AttachEffectScript.cpp" />

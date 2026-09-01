@@ -4,6 +4,8 @@
 
 #include "GOExtension.h"
 
+#include <Ext/Common/PreOccupancyManager.h>
+
 #include <Ext/TechnoType/HealthTextData.h>
 #include <Ext/EffectType/Effect/StandData.h>
 
@@ -58,6 +60,8 @@ public:
 	static std::map<TechnoClass*, StandData, TechnoClassLess> ImmuneStandArray;
 
 	static std::vector<TechnoClass*> VirtualUnitArray;
+
+	static PreOccupancyManager HumanConnonPreOcc;
 
 	/**
 	 *@brief 血量数字的全局设置

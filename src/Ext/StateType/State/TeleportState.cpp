@@ -241,53 +241,11 @@ void TeleportState::OnUpdate()
 						}
 						targetPos = GetFLHAbsoluteCoords(targetPos, Data.Offset, facing);
 					}
-					// 检查目的地是否可以着陆
-					CellClass* pTargetCell = nullptr;
-					if (CellClass* pCell = MapClass::Instance->TryGetCellAt(targetPos))
-					{
-						if (isInAir)
-						{
-							pTargetCell = pCell;
-						}
-						else
-						{
-							TechnoTypeClass* pType = pTechno->GetTechnoType();
-
-							int times = 0;
-							do
-							{
-								bool canEnterCell = false;
-								Move move = pTechno->IsCellOccupied(pCell, -1, -1, nullptr, false);
-								switch (move)
-								{
-								case Move::OK:
-									// case Move::MovingBlock:
-									canEnterCell = true;
-									break;
-								}
-								if (isJumpJet)
-								{
-									canEnterCell = pCell->Jumpjet == nullptr;
-								}
-								bool canMoveTo = pCell->IsClearToMove(pType->SpeedType, pType->MovementZone, true, true) && canEnterCell;
-								if (canMoveTo)
-								{
-									pTargetCell = pCell;
-									break;
-								}
-								CellStruct curretCell = pCell->MapCoords;
-								int zone = MapClass::Instance->GetMovementZoneType(curretCell, pType->MovementZone, pTechno->IsOnBridge());
-								bool alt = (bool)(pCell->Flags & CellFlags::CenterRevealed);
-								CellStruct nextCell = MapClass::Instance->NearByLocation(curretCell, pType->SpeedType, zone, pType->MovementZone, alt, 1, 1, 0, true, false, true, curretCell, false, false);
-								pCell = MapClass::Instance->TryGetCellAt(nextCell);
-							} while (pCell && times++ < 9);
-						}
-					}
+					// 检查目的地是否可以着陆，取距离 targetPos 最近的可落脚点
+					_jumpTo = FindLandingPoint(pTechno, targetPos);
 					// 可以跳，一轮跳跃开始
-					if (pTargetCell)
+					if (!_jumpTo.IsEmpty())
 					{
-						// 记录跳跃位置，落地位置
-						_jumpTo = pTargetCell->GetCoordsWithBridge();
 						// 清除记录的目标
 						_teleportTimer.Stop();
 						if (Data.ClearTarget)
@@ -304,17 +262,8 @@ void TeleportState::OnUpdate()
 						if (isInAir || isAircraft || !Data.Super)
 						{
 							// Warp，TeleportLocomotionClass会有一帧的延迟，因此不使用Loco切换，而是全部采用自定义跳
-							// 根据类型判断，落点
-							// 地面步兵落地使用引擎的子格选择（1/3格），会避开已被占用的子格，多单位不会堆叠
-							if (isInfantry && !isInAir && !isJumpJet)
-							{
-								CoordStruct subcellPos = CoordStruct::Empty;
-								if (MapClass::PickInfantrySublocation(subcellPos, _jumpTo, false) && !subcellPos.IsEmpty())
-								{
-									_jumpTo = subcellPos;
-								}
-							}
-							else if (isAircraft || isInAir || isJumpJet)
+							// 落点已经由 FindLandingPoint 计算（含步兵子格选择），这里只补空中高度
+							if (isAircraft || isInAir || isJumpJet)
 							{
 								// 空中跳
 								int height = pTechno->GetHeight() + Data.Offset.Z;
@@ -328,18 +277,16 @@ void TeleportState::OnUpdate()
 								_jumpTo.Z += height;
 							}
 
-							// 清除占位
+							// 释放原格子的占用位（UnmarkAllOccupationBits = 本体虚表 +0xF4），UpdatePlacement 不写占用位，
+							// 详见 Ext/Helper/Physics.h 的备忘
+							pTechno->UnmarkAllOccupationBits(location);
+							// ForceStopMoving 已经停住 loco、清空 NavCom/HeadToCoord 与寻路占位；
+							// Force_Track 基类是空实现（只有 Drive 会把它当作"履带"特例，把 HeadTo
+							// 钉回当前位置），这里不再需要
 							ForceStopMoving(pFoot);
-							pFoot->Locomotor->Force_Track(-1, location);
 							pFoot->FrozenStill = true;
+							// 对飞机通知"解除链接"
 							pFoot->SendToEachLink(RadioCommand::NotifyUnlink);
-							// 释放原格占用位对所有地面单位都需要（含 Jumpjet，避免原格留下幽灵占用位）
-							if (!isInAir && !isAircraft)
-							{
-								// 释放原格子的占用位（本体虚表 +0xF4），UpdatePlacement 不写占用位，
-								// 详见 Ext/Helper/Physics.h 的备忘
-								ReleaseCell(pTechno, location);
-							}
 							// 移动位置
 							pTechno->UpdatePlacement(PlacementType::Remove);
 							pTechno->SetLocation(_jumpTo);
@@ -349,21 +296,25 @@ void TeleportState::OnUpdate()
 							// 飞回起飞点并把目的地改回原格，导致反复跳
 							if (!isInAir && !isAircraft && !isJumpJet)
 							{
-								// 占住落点格子（本体虚表 +0xF0）：步兵写子格位，载具写 0x40 位，
+								// 占住落点格子（MarkAllOccupationBits = 本体虚表 +0xF0）：步兵写子格位，载具写 0x40 位，
 								// 让 PickInfantrySublocation / IsClearToMove 能感知到，多单位按子格分散
-								OccupyCell(pTechno, _jumpTo);
+								pTechno->MarkAllOccupationBits(_jumpTo);
 							}
 							if (isJumpJet)
 							{
-								pFoot->Jumpjet_OccupyCell(pTargetCell->MapCoords);
+								CellStruct jumpToCell = CellClass::Coord2Cell(_jumpTo);
+								pFoot->Jumpjet_OccupyCell(jumpToCell);
 								// 已到达原移动目标时：重置 Jumpjet 移动状态并停住，不再下达移动指令。
 								// 若不重置，loco 会带着旧目标继续升空/巡航（日志表现 st1/st3、dd 变回上一格），
 								// 引擎随后把目的地改回上一格，导致来回跳和爬升
-								// if (JumpjetLocomotionClass* jjLoco = dynamic_cast<JumpjetLocomotionClass*>(pFoot->Locomotor.get()))
-								// {
-								// 	jjLoco->State = JumpjetLocomotionClass::State::Hovering;
-								// }
-								pFoot->SetDestination(pTargetCell, true);
+								if (CellClass* pTargetCell = MapClass::Instance->TryGetCellAt(_jumpTo))
+								{
+									// if (JumpjetLocomotionClass* jjLoco = dynamic_cast<JumpjetLocomotionClass*>(pFoot->Locomotor.get()))
+									// {
+									// 	jjLoco->State = JumpjetLocomotionClass::State::Hovering;
+									// }
+									pFoot->SetDestination(pTargetCell, true);
+								}
 							}
 							// 设置面向
 							pTechno->PrimaryFacing.SetCurrent(pTechno->PrimaryFacing.Current());

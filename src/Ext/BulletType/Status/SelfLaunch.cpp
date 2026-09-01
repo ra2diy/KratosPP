@@ -30,6 +30,21 @@ void BulletStatus::OnUpdate_SelfLaunchOrPumpAction()
 						pSource->WasSelected = true;
 						_shooterIsSelected = true;
 					}
+					if (_selfLaunch && weaponData->SelfLaunchDash)
+					{
+						// 强制修正抛射体目标，选预定目标附近的可落脚点为目标
+						CoordStruct landingPos;
+						if (TryGetLandingPoint(pSource, pBullet->TargetCoords, landingPos, false, &TechnoExt::HumanConnonPreOcc))
+						{
+							if (CellClass* pCell = MapClass::Instance->TryGetCellAt(landingPos))
+							{
+								// 强制修正抛射体目标，选预定目标附近的可落脚点为目标
+								ResetTarget(pCell, pCell->GetCoordsWithBridge());
+								// 预占用
+								TechnoExt::HumanConnonPreOcc.MarkOccupied(pSource, landingPos);
+							}
+						}
+					}
 				}
 				else if (weaponData->PumpAction)
 				{
@@ -66,6 +81,8 @@ bool BulletStatus::OnDetonate_SelfLaunch(CoordStruct* pCoords)
 {
 	if (_selfLaunch && !IsDead(pSource))
 	{
+		// 移除预占用
+		TechnoExt::HumanConnonPreOcc.ReleaseOccupancy(pSource);
 		// 发射者Limbo会移除抛射体的所属，要加回去
 		pBullet->Owner = pSource;
 		// 移动发射者到爆点

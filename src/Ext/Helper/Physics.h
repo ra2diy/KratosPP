@@ -10,6 +10,7 @@
 #include <InfantryClass.h>
 
 #include <Common/INI/INIConfig.h>
+#include <Ext/Common/PreOccupancyManager.h>
 
 #include "Status.h"
 
@@ -85,11 +86,11 @@ FallingError Falling(TechnoClass* pTechno, CoordStruct targetPos, int fallingDes
 /**
  *@brief 判断脚下能否着陆，然后往下摔
  *
- * @param pTechno 
- * @param fallingDestroyHeight 
- * @param hasParachute 
- * @return true 
- * @return false 
+ * @param pTechno
+ * @param fallingDestroyHeight
+ * @param hasParachute
+ * @return true
+ * @return false
  */
 FallingError FallingDown(TechnoClass* pTechno, int fallingDestroyHeight, bool hasParachute);
 
@@ -103,6 +104,24 @@ FallingError FallingDown(TechnoClass* pTechno, int fallingDestroyHeight, bool ha
  * @return false BOOM!
  */
 FallingError FallingExceptAircraft(TechnoClass* pTechno, int fallingDestroyHeight, bool hasParachute);
+
+/**
+ *@brief 查找 pTechno 与 targetPos 之间、距离 targetPos 最近的可落脚点
+ * 从目标格开始检查是否可通行/可进入（IsCellOccupied + IsClearToMove），
+ * 不可通过则用 Nearby_Location 逐格向外扩散（最多 9 格），返回第一个可用格。
+ * 空中单位（含 Jumpjet）直接以目标格为落点。
+ * 地面步兵额外调用引擎的子格选择（1/3格，避开已占用子格），Jumpjet 除外。
+ *
+ * @param pTechno 要落地的单位
+ * @param targetPos 期望落点坐标
+ * @param forceGround 为 true 时强制按地面单位搜索落点（忽略 IsInAir 早退，用于
+ * 人间大炮等"需要真实落脚点"的场景；默认 false 时空中单位直接以目标格为落点）
+ * @param pPreOccupancyManager 预占用管理器指针，用于预占用检查（可选）
+ * @return 落点坐标（不含空中高度）；找不到可落脚点时返回 CoordStruct::Empty
+ */
+CoordStruct FindLandingPoint(TechnoClass* pTechno, const CoordStruct& targetPos, bool forceGround = false, PreOccupancyManager* pPreOccupancyManager = nullptr);
+
+bool TryGetLandingPoint(TechnoClass* pTechno, const CoordStruct& targetPos, CoordStruct& landingPos, bool forceGround = false, PreOccupancyManager* pPreOccupancyManager = nullptr);
 
 // ============================================================================
 // 格子占用位备忘（2026-08-31 通过 gamemd.idb 反编译确认）
@@ -119,7 +138,8 @@ FallingError FallingExceptAircraft(TechnoClass* pTechno, int fallingDestroyHeigh
 //     +0x10 Is_Moving      +0x14 Destination      +0x18 HeadToCoord
 //     +0x40 Process        +0x44 Move_To          +0x48 Stop_Moving
 //     +0x70 Force_Track    +0x9C Mark_All_Occupation_Bits
-//   占格/释放的真正入口是本体（TechnoClass）虚表 +0xF0 / +0xF4：
+//   占格/释放的真正入口是本体（TechnoClass）虚表 +0xF0 / +0xF4，
+//   即 YRpp 命名的 MarkAllOccupationBits / UnmarkAllOccupationBits：
 //     InfantryClass_F0（0x5217C0）：cell->OccupationFlags |= 1 << subcellIndex（子格位）
 //     ObjectClass_F0  （0x5F60A0）：cell->OccupationFlags |= 0x40（载具位）
 //     BuildingClass_F0（0x453D60）：cell->OccupationFlags |= 0x80
@@ -143,24 +163,35 @@ FallingError FallingExceptAircraft(TechnoClass* pTechno, int fallingDestroyHeigh
 //   由 FootClass::Jumpjet_OccupyCell 维护；而且 Jumpjet 自己的降落逻辑
 //   （JumpjetLocomotionClass::Process 的 Descending 分支）会用 sub_481130
 //   检查目标子格的占用位，落地成功后才自己调 F0 写位。如果传送落地时提前
-//   用 OccupyCell 写了子格位，Jumpjet 会认为该格落不了，飞回起飞点并把
+//   用 MarkAllOccupationBits 写了子格位，Jumpjet 会认为该格落不了，飞回起飞点并把
 //   目的地改回原格，导致状态机来回跳（日志表现为 inAir=0、dest 变回起点）。
+//
+// 【伞兵投放 AircraftClass::Paradrop (0x415C60) 的空位查找流程】
+//   投放点 = 飞机位置沿当前朝向偏移，currentAmmo & 1 决定左右交替（±0x3FFF）；
+//   拿到 Target_Cell 后：
+//     1) passenger->IsCellOccupied(Target_Cell, -1, -1, 0, 1)
+//        —— 粗粒度检查。对同阵营 1~2 个步兵只累计 v47、不累计 v19，
+//           仍返回 Move::OK(0)；只有 3 个步兵位全占（field_124 & 0x1C == 28）
+//           才返回 7，有载具/建筑时返回 2/5/6。
+//     2) CellClass::PickInfantrySublocation(Target_Cell, ..., 0, 0, 0) (0x481180)
+//        —— 真正的子格空位查找。读取 OccupationFlags 的子格位：
+//           候选子格只取 2/3/4（byte_81CC84 / byte_81CC98 两张 4x4 表，
+//           0 和 1 在循环里被跳过），检查 (1 << 子格) 是否为空；
+//           0x20 位置位、或 0x40 载车位且无可穿越建筑 → 直接返回 -1 哨兵。
+//     3) SpawnParachuting (0x521760) → ObjectClass::Paradrop (0x5F5940)
+//        → InfantryClass::Put (0x51DFF0) → FootClass_Put (0x4D7170)。
+//        Put 时 Z != 地面高度，不会调 F0 写子格位——所以空中伞兵只在
+//        Content 列表里占格，OccupationFlags 全空；落地后才由 F0 写位。
+//   子格几何（sub_4810A0 坐标→子格索引；InitList_0644 0x48E489 填充表 0x89E9F0，
+//   格子内坐标 0~255，中心 128,128）：
+//     子格 0 = 中心 (128,128)（含 X<=128&&Y<=128 的外圈区域，未用）
+//     子格 2 = 东  (192,64)  → 位 0x04
+//     子格 3 = 南  (64,192)  → 位 0x08
+//     子格 4 = 东南 (192,192) → 位 0x10
+//   三个步兵位掩码 0x1C = 1<<2|1<<3|1<<4，步兵一格最多 3 个就是这三位。
+//   【FindLandingPoint 的对应处理】canLand 里步兵落点镜像上述子格位检查，
+//   并额外扫 Content：格子里存在任何步兵（含正在落伞、未写子格位的）都视为被占，
+//   这样"伞兵占的格子"能被正确过滤；PreOccupancyManager 的 3 个预占子格
+//   也改用引擎的子格 2/3/4 及其偏移（+64,-64 / -64,+64 / +64,+64），
+//   与引擎 F0 写入的位保持一致。
 // ============================================================================
-
-/**
- *@brief 占用格子：调用本体虚表 +0xF0，写 CellClass::OccupationFlags
- * 步兵写子格位（1<<子格），载具写 0x40 位，使 PickInfantrySublocation /
- * IsClearToMove 能感知到该格被占。
- *
- * @param pTechno 要占格的单位
- * @param coords 占格位置（步兵需为子格位置）
- */
-void OccupyCell(TechnoClass* pTechno, const CoordStruct& coords);
-
-/**
- *@brief 释放格子：调用本体虚表 +0xF4，清掉 CellClass::OccupationFlags 中本单位占的位
- *
- * @param pTechno 要释放的单位
- * @param coords 释放位置（步兵需为子格位置）
- */
-void ReleaseCell(TechnoClass* pTechno, const CoordStruct& coords);

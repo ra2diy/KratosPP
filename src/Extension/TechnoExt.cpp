@@ -1,4 +1,4 @@
-#include "TechnoExt.h"
+﻿#include "TechnoExt.h"
 
 #include <Ext/ObjectType/AttachEffect.h>
 #include <Ext/TechnoType/AircraftPut.h>
@@ -31,5 +31,7 @@ std::map<TechnoClass*, bool, TechnoClassLess> TechnoExt::BaseStandArray{};
 std::map<TechnoClass*, StandData, TechnoClassLess> TechnoExt::StandArray{};
 std::map<TechnoClass*, StandData, TechnoClassLess> TechnoExt::ImmuneStandArray{};
 std::vector<TechnoClass*> TechnoExt::VirtualUnitArray{};
+
+PreOccupancyManager TechnoExt::HumanConnonPreOcc{};
 
 HealthTextControlData TechnoExt::HealthTextControlData{};

@@ -173,6 +173,9 @@ void PumpState::OnEnd()
 
 	_isHumanCannon = false;
 	_flyTimer.Stop();
+
+	// 解除预占用
+	TechnoExt::HumanConnonPreOcc.ReleaseOccupancy(pTechno);
 }
 
 void PumpState::OnUpdate()

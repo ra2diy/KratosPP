@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <WeaponTypeClass.h>
 
@@ -44,6 +44,7 @@ public:
 		// Kratos
 		float RockerPitch = 0;
 		bool SelfLaunch = false;
+		bool SelfLaunchDash = false;
 		bool PumpAction = false;
 		Sequence PumpInfSequence = Sequence::Crawl;
 		int HumanCannon = -1;
@@ -100,6 +101,7 @@ public:
 
 			RockerPitch = reader->Get("RockerPitch", RockerPitch);
 			SelfLaunch = reader->Get("SelfLaunch", SelfLaunch);
+			SelfLaunchDash = reader->Get("SelfLaunch.Dash", SelfLaunchDash);
 			PumpAction = reader->Get("PumpAction", PumpAction);
 			PumpInfSequence = reader->Get("PumpAction.InfSequence", PumpInfSequence);
 			HumanCannon = reader->Get("HumanCannon", HumanCannon);
@@ -139,6 +141,7 @@ public:
 
 				.Process(this->RockerPitch)
 				.Process(this->SelfLaunch)
+				.Process(this->SelfLaunchDash)
 				.Process(this->PumpAction)
 				.Process(this->PumpInfSequence)
 				.Process(this->HumanCannon)
