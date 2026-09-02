@@ -16,8 +16,8 @@ bool DamageText::SkipDrawDamageText(WarheadTypeClass* pWH, DamageTextData*& dama
 
 void DamageText::OrderDamageText(std::wstring text, CoordStruct location, DamageTextEntity*& data)
 {
-	int x = Random::RandomRanged(data->XOffset.X, data->XOffset.Y);
-	int y = Random::RandomRanged(data->YOffset.X, data->YOffset.Y) - 15; // 离地高度
+	int x = Random::VisualRandomRanged(data->XOffset.X, data->XOffset.Y);
+	int y = Random::VisualRandomRanged(data->YOffset.X, data->YOffset.Y) - 15; // 离地高度
 	Point2D offset{ x, y };
 	// 横向锚点修正
 	int length = text.size() / 2;
