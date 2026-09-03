@@ -2269,6 +2269,7 @@ VectorResult VectorEffect::GetVectorResult()
 		if (effectiveDuration < 1) effectiveDuration = 1;
 		int remainingFrames = effectiveDuration - _movementFrames + 1;
 
+
 		// 到位帧（dirLen≈0）清零 Velocity（帧首即清，覆盖 EarlyEnd 等提前结束路径）：
 		// Vector 期间引擎仍对 Velocity 转向+加速（位置被帧尾 SetLocation 覆盖所以看不出），
 		// 若不清，Vector 结束（AE 移除）后引擎按累积的残留速度接管，会把停在目标点的弹体
@@ -2363,6 +2364,7 @@ VectorResult VectorEffect::GetVectorResult()
 	{
 		double speed = _motion.speed;
 
+
 		// 加速度
 		if (Data->Acceleration != 0)
 		{
@@ -2403,7 +2405,13 @@ VectorResult VectorEffect::GetVectorResult()
 			double realDY = frameTarget.Y - currentPos.Y;
 			double realDZ = frameTarget.Z - currentPos.Z;
 			double realDist = std::sqrt(realDX * realDX + realDY * realDY + realDZ * realDZ);
-			if (realDist <= speed)
+			// A：影子理论到位（shadowDist<=speed）也判到达——弧线时影子沿直线先到目标点，
+			// 弹体实际走弧线被甩在后面（realDist 仍 > speed），只判 realDist 永不满足 →
+			// 影子停推（disp=0）弹体僵直空中（日志实证：mf=38 起 disp=(0,0,0)、cur 恒定点、
+			// realDist≈43 > speed=30）。影子到位 = 理论飞行完成，立即 snap。
+			// B：判据内执行体 = SetLocation(frameTarget) 精确到位 + 清残留 Velocity
+			// （同 ReachTarget snap：引擎从静止接管，不再按累积速度把弹体推离爆点）
+			if (realDist <= speed || shadowDist <= speed)
 			{
 				// 强制挪移：到达帧直接把对象坐标设为目标格子坐标（完全重合），消除到位抖动
 				if (pBullet)
