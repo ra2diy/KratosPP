@@ -1,8 +1,11 @@
-﻿#pragma once
+#pragma once
 // ============================================================================
-// Vector — 逻辑层（从零重写版）
+// VectorEffect — 逻辑层（从零重写版）
 //
-// 设计目标（见 .workbuddy/notes/Vector重构操作计划.md）：
+// 已取消 ReVibed 后缀，重写版直接以标准文件名 VectorEffect.h 存在；
+// 类名保持 VectorEffect，注册键/INI 前缀与旧版完全一致。
+//
+// 设计目标：
 //   1. 编排层 + 子函数：OnStart/GetVectorResult 只做时序编排，计算全部拆出
 //   2. 主/大圆共用 MotionState + 数据驱动 StepMotion，消灭成对状态变量
 //   3. 公共数学函数：弧旋转/法向量旋转/三态跟踪/Target 链 全部归一
@@ -63,6 +66,20 @@ public:
 	void ParseSpeed();               // 初始速度（LinearSpeed/单位 Speed/弹体 Speed/随机）
 	void InitOrigin();               // _pLauncher/_pSource + CacheTargetNow + 按 Origin 锁定基线
 	void LockFacing();               // _facingDir/_facingRad/_tiltRad + 法向量初始化 + 角速度解析
+
+	// ========================================================================
+	// "取基准点"管线辅助（OriginFLH 偏移完整化，挂载快照/每帧刷新共用）
+	// 时序统一：取基准单位 → 定坐标系(facing+tilt) → 定偏移量(FLH) → 算完整基准点。
+	// 散落的取点机制（frameTarget/大圆基座/补读等）后续可并入本管线。
+	// ========================================================================
+	TechnoClass* FindOriginTechno();               // Origin=Target/Source/Launcher/Self 对应的单位（无单位返回 nullptr）
+	double SampleOriginTilt(TechnoClass* pUnit);   // 单位倾斜角：动态倾斜(AngleRotatedForwards)优先，为 0 时地形采样
+	CoordStruct ApplyOriginFlh(const CoordStruct& basePos, const CoordStruct& flh,
+		const DirStruct& facing, double tilt);
+	// 把偏移量按坐标系转成世界偏移加到基准坐标 → 完整基准点。
+	// 统一公式（无二维/三维分叉）：tilt 俯仰混合 F/H 后整体走引擎 API GetFLHAbsoluteCoords
+	// （内含 RA2 坐标系修正 RotateZ + Y 镜像，禁止裸 cos/sin 手写——引擎弧度体系有 90° 偏置）。
+	// tilt=0 时自然退化为纯水平摆放（等价二维）。
 
 	// ========================================================================
 	// 运动状态（主/大圆共用结构；VectorEffect 持两份：_motion + _originMotion）
@@ -201,6 +218,7 @@ public:
 	CoordStruct _initialLocation{};     // 首帧位置快照（弧线基准/Freeze 锚点）
 	CoordStruct _initialOriginPos{};    // 主 Origin 最后有效坐标（OnStart 锁定 + 每帧跟随）
 	CoordStruct _initialBaseCenter{};   // 大圆基座最后有效坐标（OriginOriginNoUpdate 冻结用）
+	CoordStruct _lockedTarget{};        // Speed 模式 NoUpdate 锁定的目标点（首帧计算一次，后续帧直接复用，不反复写入新目标点）
 	int _vectorAcquireZ = 0;            // 获取 Vector 时的抛射体 Z（Circle 圆心高度基准）
 	ObjectClass* _pLauncher = nullptr;  // 发射者（OnTechnoDelete 置空防悬垂）
 	ObjectClass* _pSource = nullptr;    // AE 来源（同上）
@@ -258,6 +276,7 @@ public:
 			.Process(this->_initialLocation)
 			.Process(this->_initialOriginPos)
 			.Process(this->_initialBaseCenter)
+			.Process(this->_lockedTarget)
 			.Process(this->_vectorAcquireZ)
 			.Process(this->_pLauncher)
 			.Process(this->_pSource)
