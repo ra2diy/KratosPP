@@ -204,11 +204,12 @@ void BulletStatus::OnUpdate()
 
 	CoordStruct location = pBullet->GetCoords();
 	// 潜地
-	// Vector 接管期间（HasActiveVector）弹体位置由 Vector 摆布，短暂入地（低空经过悬崖顶下方等）
-	// 属正常路径，不在此手动引爆——与 SubjectToGround=no 同效；Vector 结束判据变假后恢复原逻辑。
+	// Vector 接管 + Vector.SubjectToCliffs=no（默认，VectorIgnoresCliffs）期间弹体位置由 Vector
+	// 摆布，短暂入地（低空经过悬崖顶下方等）属正常路径，不在此手动引爆——与 SubjectToGround=no
+	// 同效；SubjectToCliffs=yes 显式配置则恢复原逻辑，Vector 结束判据变假同样恢复。
 	if (!life.IsDetonate && !HasPreImpactAnim(pBullet->WH))
 	{
-		if (!HasActiveVector() && (SubjectToGround || GetComponent<Bounce>()) && pBullet->GetHeight() < 0)
+		if (!VectorIgnoresCliffs() && (SubjectToGround || GetComponent<Bounce>()) && pBullet->GetHeight() < 0)
 		{
 			// 抛射体潜入地下，重新设置目标参数，并手动引爆
 			CoordStruct targetPos = location;

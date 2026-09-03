@@ -972,6 +972,9 @@ void VectorEffect::OnStart()
 VectorResult VectorEffect::GetVectorResult()
 {
 	VectorResult result;
+	// Vector 接管期悬崖/撞地引爆免疫（Vector.SubjectToCliffs=no 默认免疫；yes 则受悬崖影响爆炸）
+	// 即使本帧无位移（DisabledFrames/启动前），接管期内都应放行
+	result.SubjectToCliffs = Data->SubjectToCliffs;
 
 	// 首帧快照（仅一次，供弧高计算等）
 	if (_elapsedFrames == 0)

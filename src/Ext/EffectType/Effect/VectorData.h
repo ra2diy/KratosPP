@@ -37,6 +37,7 @@ public:
 	bool SyncFacing = false;             // yes=抛射体朝运动方向/单位转动，no=抛射体朝目标
 	bool OriginIsOnWorld = false;        // yes=OriginFLH用世界FLH(朝北)，不使用单位/弹体朝向
 	bool OriginIsOnBody = false;         // yes=单位取车身PrimaryFacing，无视炮塔TurretFacing
+	bool SubjectToCliffs = false;        // Vector 接管期是否受悬崖/撞地影响（与原版弹体标签同义；默认 no=接管期无视，免疫引爆）
 
 	enum class VectorOrigin : int
 	{
@@ -242,6 +243,7 @@ public:
 		SyncFacing = reader->Get(title + "SyncFacing", SyncFacing);
 		OriginIsOnWorld = reader->Get(title + "OriginIsOnWorld", OriginIsOnWorld);
 		OriginIsOnBody = reader->Get(title + "OriginIsOnBody", OriginIsOnBody);
+		SubjectToCliffs = reader->Get(title + "SubjectToCliffs", SubjectToCliffs);
 
 		std::string originStr = reader->Get(title + "Origin", std::string{ "Self" });
 		if (originStr == "Launcher") Origin = VectorOrigin::Launcher;
@@ -490,7 +492,7 @@ private:
 	bool Serialize(T& stream)
 	{
 		stream
-			.Process(this->TimeStep).Process(this->DisabledFrames).Process(this->SyncFacing).Process(this->OriginIsOnWorld).Process(this->OriginIsOnBody)
+			.Process(this->TimeStep).Process(this->DisabledFrames).Process(this->SyncFacing).Process(this->OriginIsOnWorld).Process(this->OriginIsOnBody).Process(this->SubjectToCliffs)
 			.Process(this->Origin)
 			.Process(this->OriginFLH)
 			.Process(this->OriginNoUpdate)
