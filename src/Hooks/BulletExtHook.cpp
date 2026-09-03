@@ -328,6 +328,8 @@ DEFINE_HOOK(0x4677C7, BulletClass_Update_ChangeVelocity_Locked, 0x8)
 
 // 导弹类抛射体当高度低于地面高度时强制引爆
 // 让直线导弹可以潜地
+// Vector 接管期间（HasActiveVector）同样跳过：Vector 强移可能把弹体短暂摆到
+// 地形（悬崖顶）以下，属正常路径，不在此引爆——与 SubjectToGround=no 同效。
 DEFINE_HOOK(0x466E18, BulletClass_CheckHight_UnderGround, 0x6)
 {
 	GET(BulletClass*, pBullet, ECX);
@@ -335,7 +337,7 @@ DEFINE_HOOK(0x466E18, BulletClass_CheckHight_UnderGround, 0x6)
 	{
 		if (BulletStatus* status = GetStatus<BulletExt, BulletStatus>(pBullet))
 		{
-			if (!status->SubjectToGround)
+			if (!status->SubjectToGround || status->HasActiveVector())
 			{
 				R->Stack<bool>(0x18, false);
 				R->Stack<unsigned int>(0x20, 0);
