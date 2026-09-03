@@ -2268,10 +2268,39 @@ VectorResult VectorEffect::GetVectorResult()
 			int effectiveDuration = _totalDuration - Data->DisabledFrames;
 		if (effectiveDuration < 1) effectiveDuration = 1;
 		int remainingFrames = effectiveDuration - _movementFrames + 1;
+
+		// 到位帧（dirLen≈0）清零 Velocity（帧首即清，覆盖 EarlyEnd 等提前结束路径）：
+		// Vector 期间引擎仍对 Velocity 转向+加速（位置被帧尾 SetLocation 覆盖所以看不出），
+		// 若不清，Vector 结束（AE 移除）后引擎按累积的残留速度接管，会把停在目标点的弹体
+		// 推走（ReachTarget 结束偏移的根因）。清零后引擎从静止接管，目标检测自然引爆于原位。
+		// 飞行中（dirLen 大）不触发——引擎还需速度续飞（EarlyEnd 提前结束由引擎飞完最后段）。
+		if (pBullet && dirLen <= 1e-6)
+		{
+			pBullet->Velocity.X = 0;
+			pBullet->Velocity.Y = 0;
+			pBullet->Velocity.Z = 0;
+		}
 		if (Data->ReachTargetEarlyEnd > 0 && Data->ReachTargetEarlyEnd < effectiveDuration
 			&& remainingFrames <= Data->ReachTargetEarlyEnd)
 		{
 			Deactivate();
+			AdvanceFrame();
+			return result;
+		}
+
+		// 最后运动帧（rem<=1）：均分位移有 int 截断残余（最后一帧常差 0~1.5 lepton 到位），
+		// 且帧首清 vel 只覆盖"已精确到位"的弹体——差最后一点的弹体位移补到位后 Velocity 仍残留
+		// （Vector 期间引擎累积的转向+加速），结束接管会把弹体推离目标（爆点偏移十几个 lepton）。
+		// 直接强制 SetLocation 精确 snap 到位 + 清 Velocity，引擎静止接管自然引爆于原位。
+		if (remainingFrames <= 1 && pBullet)
+		{
+			pBullet->SetLocation(frameTarget); // 官方API，不得修改：精确到位（同 SpeedEndOnReach 先例）
+			pBullet->SourceCoords = frameTarget;
+			pBullet->Velocity.X = 0;
+			pBullet->Velocity.Y = 0;
+			pBullet->Velocity.Z = 0;
+			result.MoveDisp = { 0, 0, 0 };
+			result.Force = false;
 			AdvanceFrame();
 			return result;
 		}
@@ -2380,6 +2409,11 @@ VectorResult VectorEffect::GetVectorResult()
 				if (pBullet)
 				{
 					pBullet->SetLocation(frameTarget);
+					// 清残留 Velocity（同 ReachTarget snap 处理）：Vector 期间引擎仍累积转向+加速，
+					// Deactivate 后引擎接管会按残留速度把停在目标点的弹体推走（爆点偏移）
+					pBullet->Velocity.X = 0;
+					pBullet->Velocity.Y = 0;
+					pBullet->Velocity.Z = 0;
 					// 零位移：位置已由 SetLocation 设定，不再让 Vector.cpp 回退
 					result.MoveDisp = { 0, 0, 0 };
 					result.Force = false;
