@@ -333,6 +333,142 @@ CoordStruct VectorEffect::ApplyOriginFlh(const CoordStruct& basePos, const Coord
 	return GetFLHAbsoluteCoords(basePos, flhRot, facing); // 官方API，不得修改：引擎坐标系修正
 }
 
+// ========================================================================
+// "坐标点取值管线"唯一摆点实现（归一化：OriginFLH/TargetFLH/大圆挂点共用）。
+// 语义定稿见"坐标点取值管线归一化_改动点.txt"四种摆法：
+//   ① UnitOwn+随倾斜 = AutoWeapon 深度（Locomotor 矩阵 + TurretOffset 转轴 + 炮塔/车身差角）
+//   ② UnitOwn+水平   = 只按炮塔/车身水平朝向摆（不随坡面俯仰）
+//   ③ LineC2P        = F 轴 = lineFrom 起点（Origin 本体中心）→ 弹体现在位置，
+//                       use3DLine(=CoordinateTilt)=yes 高低差进 3D（ApplyOriginFlh tilt 混合）
+//   ④ World          = 纯世界轴（DirStruct{} 直摆，无视姿态）
+// 基准点 base 由调用方按 NoUpdate 刷新；矩阵路径剥单位位移只留姿态偏移再叠 base。
+// ========================================================================
+CoordStruct VectorEffect::ResolveFlhPoint(const CoordStruct& base, const CoordStruct& flh,
+	FlhFrame frame, TechnoClass* pAnchor, bool isOnTurret, bool sameTilt,
+	const CoordStruct* lineFrom, bool use3DLine,
+	const DirStruct& fallbackFacing, const CoordStruct& currentPos)
+{
+	switch (frame)
+	{
+	case FlhFrame::World:
+		return GetFLHAbsoluteCoords(base, flh, DirStruct{}); // 官方API，不得修改：世界轴，无视姿态
+	case FlhFrame::UnitOwn:
+		if (pAnchor && !IsDeadOrInvisible(pAnchor))
+		{
+			if (sameTilt)
+			{
+				// ① AutoWeapon 深度：完整姿态矩阵（Locomotor 矩阵 + TurretOffset 转轴 + 炮塔/车身差角）。
+				// 剥掉单位位移只留姿态偏移，叠加到调用方计算点 base（NoUpdate 控制的基准）
+				CoordStruct mtxPos = GetFLHAbsoluteCoords(pAnchor, flh, isOnTurret); // 官方API，不得修改
+				return base + (mtxPos - pAnchor->GetCoords());
+			}
+			// ② 水平 2D：不随倾斜，只按炮塔/车身水平朝向
+			DirStruct hFacing = isOnTurret
+				? pAnchor->TurretFacing().Current()   // 官方API，不得修改
+				: pAnchor->PrimaryFacing.Current();   // 官方API，不得修改
+			return GetFLHAbsoluteCoords(base, flh, hFacing); // 官方API，不得修改
+		}
+		// 锚死/无锚：落水平兜底（与 frameTarget 死锚回退同语义）
+		return GetFLHAbsoluteCoords(base, flh, fallbackFacing); // 官方API，不得修改
+	case FlhFrame::LineC2P:
+	{
+		// ③ 连线坐标系：F 轴 = lineFrom 起点（Origin 本体中心）→ 弹体现在位置
+		CoordStruct lineFromCopy;
+		if (lineFrom)
+			lineFromCopy = *lineFrom; // 拷贝再判空（IsEmpty 非 const，不能经 const 指针直调）
+		if (lineFrom && !lineFromCopy.IsEmpty())
+		{
+			double ddx = static_cast<double>(currentPos.X - lineFromCopy.X);
+			double ddy = static_cast<double>(currentPos.Y - lineFromCopy.Y);
+			double ddz = static_cast<double>(currentPos.Z - lineFromCopy.Z);
+			double lenXY = std::sqrt(ddx * ddx + ddy * ddy);
+			double lineTilt = 0.0;
+			DirStruct lineDir = fallbackFacing;
+			if (lenXY > 1e-6)
+			{
+				if (use3DLine)
+					lineTilt = std::atan2(ddz, lenXY); // 连线高低角（弹体高于起点为正，F 朝上斜）
+				lineDir = Point2Dir(lineFromCopy, currentPos); // 官方API，不得修改
+			}
+			return ApplyOriginFlh(base, flh, lineDir, lineTilt);
+		}
+		return GetFLHAbsoluteCoords(base, flh, fallbackFacing); // 官方API，不得修改：无起点水平兜底
+	}
+	default: // FlhFrame::Fallback2D
+		return GetFLHAbsoluteCoords(base, flh, fallbackFacing); // 官方API，不得修改
+	}
+}
+
+// OriginFLH 复合解算入口：把 OriginFLH 按 OriginIsOnWorld / AllowOriginTilt / IsOnOrigin /
+// OriginIsOnBody 分派摆成世界偏移叠加到 base（挂载期/补读期/每帧共用，消灭三处手写拷贝）。
+// base = Origin 单位坐标（挂载/补读期）或本帧已刷新的单位坐标（每帧）；
+// fallbackFacing = 水平兜底朝向（挂载期 _facingDir，每帧 mainFacingDir）；
+// currentPos = 弹体现在位置（连线终点）。
+// 死亡 = 停止计算（基线）：参照单位死亡后不再刷新/回退/重算，本函数直接返回传入的
+// base（此时 base 已是死亡帧写回的完整解算点，见每帧调用点注释），与 NoUpdate=yes 同构；
+// AllowOriginTilt 只决定活时的深度（是否随姿态），不参与死后判定。
+CoordStruct VectorEffect::ResolveOriginFlh(const CoordStruct& base, const DirStruct& fallbackFacing,
+	const CoordStruct& currentPos)
+{
+	// ④ OriginIsOnWorld=yes：OriginFLH 纯世界轴（无视单位朝向/姿态）——最高优先
+	if (Data->OriginIsOnWorld)
+	{
+		return ResolveFlhPoint(base, Data->OriginFLH, FlhFrame::World, nullptr, false, false,
+			nullptr, false, fallbackFacing, currentPos);
+	}
+
+	// Self：载体（pTechno）或弹体（pBullet）活着是 Vector 运行的前提，无死锚概念
+	if (Data->Origin == VectorData::VectorOrigin::Self)
+	{
+		if (Data->AllowOriginTilt)
+		{
+			if (pTechno)
+			{
+				// ① 载体单位：AutoWeapon 矩阵深度（onTurret/onbody 由 OriginIsOnBody 分）
+				return ResolveFlhPoint(base, Data->OriginFLH, FlhFrame::UnitOwn, pTechno,
+					!Data->OriginIsOnBody, true, nullptr, false, fallbackFacing, currentPos);
+			}
+			if (pBullet)
+			{
+				// 弹体侧无单位锚：弹体自身朝向水平摆（fallbackFacing = 锁定弹体朝向）
+				return ResolveFlhPoint(base, Data->OriginFLH, FlhFrame::Fallback2D, nullptr, false, false,
+					nullptr, false, fallbackFacing, currentPos);
+			}
+			return base;
+		}
+		// ② Self + AllowOriginTilt=no：水平 2D
+		return ResolveFlhPoint(base, Data->OriginFLH, FlhFrame::Fallback2D, nullptr, false, false,
+			nullptr, false, fallbackFacing, currentPos);
+	}
+
+	// 非 Self：参照单位死亡 → 停止计算，OriginFLH 不再参与（无论 AllowOriginTilt）
+	TechnoClass* pOriginTechno = FindOriginTechno();
+	if (!pOriginTechno || IsDeadOrInvisible(pOriginTechno))
+	{
+		return base;
+	}
+
+	if (Data->AllowOriginTilt)
+	{
+		if (Data->IsOnOrigin)
+		{
+			// ① 单位自身坐标系：AutoWeapon 矩阵深度（退役"水平朝向+地形采样倾斜"，7a 决议）
+			return ResolveFlhPoint(base, Data->OriginFLH, FlhFrame::UnitOwn, pOriginTechno,
+				!Data->OriginIsOnBody, true, nullptr, false, fallbackFacing, currentPos);
+		}
+		// ③ 连线坐标系：F 轴 = Origin 本体中心 → 弹体现在位置
+		// （CoordinateTilt=yes 高低差进 3D，no=水平投影）
+		CoordStruct lineFromPos = pOriginTechno->GetCoords(); // 连线起点 = Origin 本体中心
+		return ResolveFlhPoint(base, Data->OriginFLH, FlhFrame::LineC2P, nullptr, false, false,
+			&lineFromPos, Data->CoordinateTilt, fallbackFacing, currentPos);
+	}
+
+	// ② 水平 2D（AllowOriginTilt=no，活锚）：fallbackFacing = mainFacingDir
+	//（每帧已按 IsOnOrigin 实时刷新单位/连线水平朝向）
+	return ResolveFlhPoint(base, Data->OriginFLH, FlhFrame::Fallback2D, nullptr, false, false,
+		nullptr, false, fallbackFacing, currentPos);
+}
+
 // Target 多级读取链：缓存（跟随锁定单位）→ 弹体目标 → 弹体落点 → 单位目标 → Kamikaze/SpawnManager
 bool VectorEffect::GetTargetPosFromChain(CoordStruct& out, bool preferCache)
 {
@@ -774,20 +910,25 @@ void VectorEffect::InitOrigin()
 		break;
 
 	case VectorData::VectorOrigin::Self:
+		// OriginFLH 摆点不在 InitOrigin 做（原此处 GetFLHAbsoluteCoords 直摆 = Self 特例，
+		// 且 pTechno 侧恒炮塔不查 OriginIsOnBody）——统一移交 LockFacing 尾挂载叠
+		// ResolveOriginFlh（归一化：所有 Origin 一条"坐标点取值"管线）。
+		// 此处只定朝向与单位坐标：pBullet=弹体速度朝向；pTechno=载体单位炮塔/车身朝向。
 		if (pBullet)
 		{
 			double bulletRad = std::atan2(pBullet->Velocity.X, pBullet->Velocity.Y);
 			DirStruct bulletFacing;
 			bulletFacing.SetValue(static_cast<short>(bulletRad * 32768.0 / M_PI));
-			_initialOriginPos = GetFLHAbsoluteCoords(pBullet->GetCoords(), Data->OriginFLH, bulletFacing);
+			_initialOriginPos = pBullet->GetCoords(); // 单位坐标，OriginFLH 偏移由挂载叠复合
 			_facingDir = bulletFacing; // 锁定初始朝向
 			_facingRad = _facingDir.GetRadian();
 		}
 		else if (pTechno)
 		{
-			CoordStruct unitPos = pTechno->GetCoords();
-			DirStruct unitFacing = pTechno->TurretFacing().Current();
-			_initialOriginPos = GetFLHAbsoluteCoords(unitPos, Data->OriginFLH, unitFacing);
+			DirStruct unitFacing = Data->OriginIsOnBody
+				? pTechno->PrimaryFacing.Current()     // 官方API，不得修改
+				: pTechno->TurretFacing().Current();   // 官方API，不得修改
+			_initialOriginPos = pTechno->GetCoords(); // 单位坐标，OriginFLH 偏移由挂载叠复合
 			_facingDir = unitFacing; // 锁定初始朝向
 			_facingRad = _facingDir.GetRadian();
 		}
@@ -957,42 +1098,14 @@ void VectorEffect::LockFacing()
 	}
 
 	// OriginFLH 挂载偏移算进存档点：取基准时就把偏移算好，NoUpdate=yes 直接用（完整基准点冻结）。
-	// 统一走"取基准点"管线 ApplyOriginFlh（挂载快照 = 生效瞬间一次，之后 yes 冻结）：
-	//   AllowOriginTilt=no：facing=_facingDir（IsOnOrigin 锁定朝向，与 NormalVector 解耦），tilt=0
-	//   AllowOriginTilt=yes：facing/倾斜按 IsOnOrigin 规则（F 轴归一）——
-	//     yes=Origin 单位自身朝向（OriginIsOnBody 分炮塔/车身）+ 挂载瞬间采样倾斜角；
-	//     no=单位→弹体连线（CoordinateTilt=yes 取真实 3D 连线含高低差，no=水平投影）
-	//   姿态随快照定死，NoUpdate=yes 后不跟随单位转身/俯仰。
-	// Self 排除：Self 在 InitOrigin 已用自身朝向算过偏移（避免算两次）。
+	// 统一走"坐标点取值管线" ResolveOriginFlh（挂载快照 = 生效瞬间一次，之后 yes 冻结）。
+	// 所有 Origin（含 Self，原 Self 在 InitOrigin 自摆 = 特例）一视同仁：Self 的 pTechno 载体
+	// 可走①矩阵深度（原只按水平朝向摆），弹体侧按自身朝向水平摆；姿态随快照定死。
 	// 存档点为空（techno 侧 Origin=Target 挂载瞬间目标未就绪，留待首帧补读）时不在此算，
 	// 等补读段补一次同款计算。
-	if (!Data->OriginFLH.IsEmpty() && Data->Origin != VectorData::VectorOrigin::Self
-		&& !_initialOriginPos.IsEmpty())
+	if (!Data->OriginFLH.IsEmpty() && !_initialOriginPos.IsEmpty())
 	{
-		if (Data->AllowOriginTilt)
-		{
-			TechnoClass* pOriginTechno = FindOriginTechno();
-			if (pOriginTechno && !IsDeadOrInvisible(pOriginTechno))
-			{
-				if (Data->IsOnOrigin)
-				{
-					_initialOriginPos = ApplyOriginFlh(_initialOriginPos, Data->OriginFLH,
-						(Data->OriginIsOnBody ? pOriginTechno->PrimaryFacing.Current() : pOriginTechno->TurretFacing().Current()), // 官方API，不得修改
-						SampleOriginTilt(pOriginTechno));
-				}
-				else
-				{
-					// 连线坐标系（IsOnOrigin=no）：CoordinateTilt=yes 取真实 3D 连线（挂点沿斜线摆），no=水平
-					double lineTilt = 0.0;
-					_initialOriginPos = ApplyOriginFlh(_initialOriginPos, Data->OriginFLH,
-						OriginLinePose(pOriginTechno, pObject->GetCoords(), Data->CoordinateTilt, lineTilt), lineTilt);
-				}
-			}
-		}
-		else
-		{
-			_initialOriginPos = ApplyOriginFlh(_initialOriginPos, Data->OriginFLH, _facingDir, 0.0);
-		}
+		_initialOriginPos = ResolveOriginFlh(_initialOriginPos, _facingDir, pObject->GetCoords());
 	}
 
 	// TargetOffsetNormal 世界固定（IsNormalOnOrigin=no）：把 FLH 落点按锁定朝向转成世界坐标，
@@ -1075,13 +1188,13 @@ VectorResult VectorEffect::GetVectorResult()
 		if (got)
 		{
 			_initialOriginPos = targetPos;
-			// NoUpdate=yes：每帧偏移计算（上方管线段）只对 no 执行，补读的裸坐标必须在此叠一次并冻结
+			// NoUpdate=yes：每帧偏移计算（下方管线段）只对 no 执行，补读的单位坐标必须在此复合一次并冻结
 			// （techno 侧 SpawnManager/Aircraft 挂载瞬间目标未就绪，挂载叠被空存档守卫拦住，
-			//  目标到手后补上这次"位置 + 朝向 + 偏移"计算，与 LockFacing 末尾挂载叠同语义。
-			//  二维路径走共享管线 ApplyOriginFlh；三维（AllowOriginTilt=yes）+ 补读组合暂未覆盖）
-			if (Data->OriginNoUpdate && !Data->AllowOriginTilt && !Data->OriginFLH.IsEmpty())
+			//  目标到手后补上这次"位置 + 朝向 + 偏移"计算，与 LockFacing 末尾挂载叠同语义，
+			//  统一走 ResolveOriginFlh——三维（AllowOriginTilt=yes）+ 补读组合缺口随归一化补齐）。
+			if (Data->OriginNoUpdate && !Data->OriginFLH.IsEmpty())
 			{
-				// F 轴基准永远按 IsOnOrigin 现算（与 NormalVector 解耦——它只决定圆面倾斜）：
+				// fallbackFacing（② 水平/兜底出口）按 IsOnOrigin 现算（mainFacingDir 段在本段之后才跑）：
 				// yes=目标单位自身朝向，无朝向（格子/死亡）回退 目标点→弹体 连线；no=连线。
 				DirStruct flhFacing;
 				if (Data->IsOnOrigin)
@@ -1098,7 +1211,7 @@ VectorResult VectorEffect::GetVectorResult()
 				{
 					flhFacing = Point2Dir(targetPos, pObject->GetCoords()); // 目标→弹体连线（IsOnOrigin 默认 no）
 				}
-				_initialOriginPos = ApplyOriginFlh(_initialOriginPos, Data->OriginFLH, flhFacing, 0.0);
+				_initialOriginPos = ResolveOriginFlh(_initialOriginPos, flhFacing, pObject->GetCoords());
 			}
 		}
 	}
@@ -1444,42 +1557,28 @@ VectorResult VectorEffect::GetVectorResult()
 		break;
 	}
 
-	// OriginFLH 偏移完整化：把基准点从"Origin 裸位置"变成"带挂载偏移的完整基准点"（圆心落点）。
-	// 统一走"取基准点"管线 ApplyOriginFlh（与挂载快照同一套逻辑）：
-	//   NoUpdate=yes 不在此算——存档点挂载时已含偏移，直接用（冻结）。
-	//   NoUpdate=no 才执行：本帧裸基准已刷新，用实时坐标系重算偏移。
-	// 二维（AllowOriginTilt=no）：facing=mainFacingDir（IsOnOrigin 实时朝向，与 NormalVector 解耦）；
-	//   含 Self（Self+no 也应有偏移）。
-	// 三维（AllowOriginTilt=yes）：facing/倾斜按 IsOnOrigin 规则（F 轴归一）——
-	//   yes=Origin 单位实时朝向（OriginIsOnBody 分炮塔/车身）+ 本帧采样倾斜角；
-	//   no=单位→弹体连线（CoordinateTilt=yes 取真实 3D 连线，no=水平投影）。
-	//   Origin 无单位（打格子/死亡）→ 保持裸基准（无姿态可参考）。Self 无三维（无法绕自己）。
+	// OriginFLH 完整解算：解算点的定义 = Origin 单位坐标 + OriginFLH 经
+	// OriginIsOnBody/AllowOriginTilt/CoordinateTilt 等复合计算的最终偏移（设计目标，偏移是
+	// 解算点的组成部分）。统一"坐标点取值管线" ResolveOriginFlh（与挂载叠/补读同一入口）：
+	//   NoUpdate=yes 不在此算——挂载叠已算入偏移冻结，直接用（冻结）。
+	//   NoUpdate=no 才执行：本帧单位坐标已刷新，按实时姿态复合计算偏移。分派：
+	//   ④ OriginIsOnWorld=yes → 纯世界轴；
+	//   ① AllowOriginTilt=yes+IsOnOrigin=yes → AutoWeapon 矩阵深度（onTurret/onbody 由
+	//      OriginIsOnBody 分；退役"水平朝向+地形倾斜近似"，7a 决议——tilt 由矩阵姿态接管）；
+	//   ③ AllowOriginTilt=yes+IsOnOrigin=no → 连线坐标系（CoordinateTilt=yes 取真实 3D 连线）；
+	//   ② AllowOriginTilt=no → 水平 2D（facing=mainFacingDir，主朝向段已按 IsOnOrigin 实时刷新）；
+	//   Self 不再特例排除（7b bug 修复：pTechno 载体 → ①；弹体无锚 → 弹体朝向水平摆）。
+	// 算完把完整解算点写回最后有效坐标 _initialOriginPos。
 	if (!Data->OriginNoUpdate && !Data->OriginFLH.IsEmpty())
 	{
-		if (Data->AllowOriginTilt && Data->Origin != VectorData::VectorOrigin::Self)
-		{
-			TechnoClass* pOriginTechno = FindOriginTechno();
-			if (pOriginTechno && !IsDeadOrInvisible(pOriginTechno))
-			{
-				if (Data->IsOnOrigin)
-				{
-					originPos = ApplyOriginFlh(originPos, Data->OriginFLH,
-						(Data->OriginIsOnBody ? pOriginTechno->PrimaryFacing.Current() : pOriginTechno->TurretFacing().Current()), // 官方API，不得修改
-						originTerrainTilt);
-				}
-				else
-				{
-					// 连线坐标系（IsOnOrigin=no）：CoordinateTilt=yes 取真实 3D 连线，no=水平
-					double lineTilt = 0.0;
-					originPos = ApplyOriginFlh(originPos, Data->OriginFLH,
-						OriginLinePose(pOriginTechno, currentPos, Data->CoordinateTilt, lineTilt), lineTilt);
-				}
-			}
-		}
-		else if (!Data->AllowOriginTilt)
-		{
-			originPos = ApplyOriginFlh(originPos, Data->OriginFLH, mainFacingDir, 0.0);
-		}
+		originPos = ResolveOriginFlh(originPos, mainFacingDir, currentPos);
+		// 死亡维持（基线：参照单位死亡后不再计算，解算点停在死亡前最后一刻的完整值）：
+		// 每帧把复合计算完的完整解算点写回最后有效坐标。参照单位活着时下一帧的
+		// 坐标刷新（TrackOriginCoord/目标链）会先覆盖它再重算；一旦死亡，刷新链停刷
+		// 不再覆盖 → 该值自然停在死亡帧的完整解算点（含 OriginFLH 偏移），后续帧
+		// 恒等返回，不回退不重算。与 OriginNoUpdate=yes 的"算一次后不重算"同构，
+		// 只是停点由死亡触发。
+		_initialOriginPos = originPos;
 	}
 
 // GetVectorResult：每帧计算位移（主体内联，段落化）
@@ -2224,6 +2323,8 @@ VectorResult VectorEffect::GetVectorResult()
 	// ========================================================================
 
 	// --- 目标世界坐标 ---
+	// TargetFLH 与 TargetOffset 的结算起点 = Origin（单位自身坐标系=Origin 单位/挂点，连线坐标系=
+	// Origin 本体中心）：什么都不写（TargetFLH=0 且无偏移）时目标点即 Origin 单位中心，弹体直冲中心。
 	CoordStruct frameTargetFlh;
 	// TargetOffsetNormal 世界固定：偏移已由 LockFacing 转成世界坐标，叠加在旋转后的 TargetFLH 上（不随 F 轴转）
 	bool targetOffsetWorld = !Data->IsNormalOnOrigin && !Data->TargetOffsetNormal.IsEmpty();
@@ -2243,39 +2344,69 @@ VectorResult VectorEffect::GetVectorResult()
 	}
 	else
 	{
-	bool isOnTurret = !Data->OriginIsOnBody; // AutoWeapon 语义：yes=炮塔指向，no=车身指向
+	// 单位自身坐标系（TargetFLH 挂单位）——统一找"坐标系所属单位"：
+	//   IsOnOrigin=yes 且对应对象是活单位才挂（Target 打格子/单位死 → 无锚回退 2D）。
+	//   连线坐标系（IsOnOrigin=no）不锚定，走下方 C→P 连线分支（含 Launcher——管线第 3 步补齐）。
+	TechnoClass* pAnchorUnit = nullptr;
 	switch (Data->Origin)
 	{
 	case VectorData::VectorOrigin::Launcher:
-		{
-			TechnoClass* pLT = abstract_cast<TechnoClass*>(_pLauncher);
-			if (pLT && !IsDeadOrInvisible(pLT))
-			{
-			// 已知不一致（用户决定不修）：OriginIsOnWorld=yes 时此路径仍用发射者炮塔矩阵旋转 FLH，
-			// 没有完全"无视单位朝向"（Self 分支有 OriginIsOnWorld 判断，Launcher 没有）。
-			// 实际中 OriginIsOnWorld + Origin=Launcher 组合过于怪异，不做处理。
-			CoordStruct mtxPos = GetFLHAbsoluteCoords(pLT, frameTargetFlh, isOnTurret);
-				frameTarget = originPos + (mtxPos - pLT->GetCoords());
-			}
-			else
-				frameTarget = GetFLHAbsoluteCoords(originPos, frameTargetFlh, mainFacingDir); // 官方API，不得修改
-		}
+		if (Data->IsOnOrigin)
+			pAnchorUnit = abstract_cast<TechnoClass*>(_pLauncher);
 		break;
 	case VectorData::VectorOrigin::Self:
-		if (Data->OriginIsOnWorld)
-			frameTarget = GetFLHAbsoluteCoords(originPos, frameTargetFlh, DirStruct{}); // 世界坐标系，无视倾斜
-		else if (pTechno)
+		if (!Data->OriginIsOnWorld && !Data->TargetIsOnWorld)
+			pAnchorUnit = pTechno; // 单位本体（弹体侧无单位，回退 2D）
+		break;
+	case VectorData::VectorOrigin::Target:
+		if (Data->IsOnOrigin)
 		{
-			// AutoWeapon 同款：Locomotor 矩阵 + TurretOffset + 炮塔旋转角
-			CoordStruct mtxPos = GetFLHAbsoluteCoords(pTechno, frameTargetFlh, isOnTurret);
-			frameTarget = originPos + (mtxPos - pTechno->GetCoords());
+			AbstractClass* pTgt = pBullet ? pBullet->Target : (pTechno ? pTechno->Target : nullptr);
+			pAnchorUnit = abstract_cast<TechnoClass*>(pTgt);
+		}
+		break;
+	case VectorData::VectorOrigin::Source:
+		if (Data->IsOnOrigin)
+			pAnchorUnit = abstract_cast<TechnoClass*>(_pSource);
+		break;
+	}
+	if (pAnchorUnit && !IsDeadOrInvisible(pAnchorUnit))
+	{
+		// 单位自身坐标系挂点（统一入口 ResolveFlhPoint，模式①/②）：
+		//   TargetSameTilt=yes（默认）= ① AutoWeapon 完整姿态（Locomotor 矩阵 + TurretOffset +
+		//     炮塔旋转角），含车体倾斜——成熟算法保默认；
+		//   TargetSameTilt=no = ② 抛弃倾斜（水平基准）：FLH 只按单位水平朝向旋转，
+		//     不随单位坡面俯仰（转轴 TurretOffset 不参与，近似水平挂点）。
+		//   TargetIsOnTurret=yes（默认）= 对齐炮塔（onTurret：矩阵落转轴+叠炮塔差角），
+		//   no = 对齐车身（onbody：车体矩阵+车身差角）。
+		//   基准点 originPos（NoUpdate 控制的计算点）取代单位位置，剥掉单位位移只留姿态偏移。
+		frameTarget = ResolveFlhPoint(originPos, frameTargetFlh, FlhFrame::UnitOwn, pAnchorUnit,
+			Data->TargetIsOnTurret, Data->TargetSameTilt, nullptr, false, mainFacingDir, currentPos);
+	}
+	else
+	{
+		// 无单位可锚：
+		// 1. 世界模式（TargetIsOnWorld 通用，或 Self+OriginIsOnWorld 兼容老配置）→ ④ 纯世界轴无视朝向
+		// 2. 连线坐标系（Origin≠Self 且 IsOnOrigin=no，含 Launcher/Source/Target）→ ③
+		//    F 轴 = Origin 本体中心（_initialOriginPos，主 Origin 段维护：no=每帧跟实时，yes=冻结）→ 抛射体；
+		//    CoordinateTilt=yes 取真实 3D 连线（高低差进 tilt），no=水平投影。抛射体从自身 FireFLH 出发，
+		//    不瞬移——连线的 C→P 方向只决定 TargetFLH 往哪摆（与取原点连线共用 ResolveFlhPoint 实现）
+		// 3. 其余（单位死/弹体侧 Self）→ mainFacingDir 水平旋转（② 兜底）
+		if (Data->TargetIsOnWorld || (Data->Origin == VectorData::VectorOrigin::Self && Data->OriginIsOnWorld))
+		{
+			frameTarget = ResolveFlhPoint(originPos, frameTargetFlh, FlhFrame::World, nullptr, false, false,
+				nullptr, false, mainFacingDir, currentPos);
+		}
+		else if (Data->Origin != VectorData::VectorOrigin::Self && !Data->IsOnOrigin)
+		{
+			frameTarget = ResolveFlhPoint(originPos, frameTargetFlh, FlhFrame::LineC2P, nullptr, false, false,
+				&_initialOriginPos, Data->CoordinateTilt, mainFacingDir, currentPos);
 		}
 		else
-			frameTarget = GetFLHAbsoluteCoords(originPos, frameTargetFlh, mainFacingDir); // 官方API，不得修改
-		break;
-	default: // Target / Source
-		frameTarget = GetFLHAbsoluteCoords(originPos, frameTargetFlh, mainFacingDir); // 官方API，不得修改
-		break;
+		{
+			frameTarget = ResolveFlhPoint(originPos, frameTargetFlh, FlhFrame::Fallback2D, nullptr, false, false,
+				nullptr, false, mainFacingDir, currentPos);
+		}
 	}
 	} // 关闭 NoUpdate 缓存的 else 块
 

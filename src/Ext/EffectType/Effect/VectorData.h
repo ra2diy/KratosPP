@@ -171,6 +171,15 @@ public:
 	// ========================================================================
 
 	CoordStruct TargetFLH{};
+	// TargetFLH 坐标系标签（只作用于 Speed/ReachTarget 直线模式的目标点取值）：
+	// 单位自身坐标系（OriginIsOnVectorOrigin=yes，Target/Source/Launcher 为活单位）时——
+	//   TargetIsOnTurret：yes（默认）=挂点对齐炮塔（炮塔转轴+随炮塔转），no=对齐车身
+	//   TargetSameTilt：yes（默认）=挂点随单位倾斜（坡上车身斜则挂点斜），no=抛弃倾斜按水平基准
+	// 连线坐标系（OriginIsOnVectorOrigin=no）下两者不适用（无单位坐标系概念），3D 归 CoordinateTilt
+	// TargetIsOnWorld：yes=TargetFLH 当纯世界偏移（无视单位朝向/姿态）；默认 no
+	bool TargetIsOnTurret = true;
+	bool TargetSameTilt = true;
+	bool TargetIsOnWorld = false;
 	int TargetOffsetFMin = 0;
 	int TargetOffsetFMax = 0;
 	int TargetOffsetLMin = 0;
@@ -395,6 +404,9 @@ public:
 
 		// --- Speed / ReachTarget ---
 		TargetFLH = reader->Get(title + "TargetFLH", TargetFLH);
+		TargetIsOnTurret = reader->Get(title + "TargetIsOnTurret", true); // 单位坐标系下默认对齐炮塔
+		TargetSameTilt = reader->Get(title + "TargetSameTilt", true);    // 默认随单位倾斜（成熟算法）
+		TargetIsOnWorld = reader->Get(title + "TargetIsOnWorld", false); // 纯世界偏移需显式
 		std::string targetOffsetFStr = reader->Get(title + "TargetOffsetF", std::string{ "" });
 		std::string targetOffsetLStr = reader->Get(title + "TargetOffsetL", std::string{ "" });
 		std::string targetOffsetHStr = reader->Get(title + "TargetOffsetH", std::string{ "" });
@@ -584,6 +596,7 @@ private:
 			.Process(this->OriginOriginFLH)
 
 			.Process(this->TargetFLH)
+			.Process(this->TargetIsOnTurret).Process(this->TargetSameTilt).Process(this->TargetIsOnWorld)
 			.Process(this->TargetOffsetFMin)
 			.Process(this->TargetOffsetFMax)
 			.Process(this->TargetOffsetLMin)

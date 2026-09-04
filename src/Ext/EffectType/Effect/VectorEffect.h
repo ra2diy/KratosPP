@@ -82,6 +82,38 @@ public:
 	// tilt=0 时自然退化为纯水平摆放（等价二维）。
 
 	// ========================================================================
+	// "坐标点取值管线"唯一摆点实现（归一化：OriginFLH/TargetFLH/大圆挂点共用）
+	// 四种摆法 = FlhFrame 选坐标系 × 参数定深度（语义定稿见改动点 txt）：
+	//   UnitOwn + sameTilt=true  → ① AutoWeapon 深度：Locomotor 完整姿态矩阵 +
+	//                               TurretOffset 转轴 + 炮塔/车身朝向差角（onTurret/onbody 两计算）
+	//   UnitOwn + sameTilt=false → ② 水平 2D：只按炮塔/车身水平朝向摆，俯仰不参与
+	//   LineC2P                    → ③ 连线：F 轴 = lineFrom 起点 → 弹体现在位置；
+	//                               use3DLine(=CoordinateTilt)=yes 高低差进 3D
+	//   World                      → ④ 纯世界轴：FLH 三轴直加，无视单位朝向/姿态
+	//   Fallback2D                 → 按 fallbackFacing 水平摆（无锚/无几何兜底）
+	// 锚单位死亡/不可用：UnitOwn 落水平兜底；LineC2P 无起点回退水平兜底。
+	// 基准点 base 语义：调用方已按 NoUpdate 刷新的计算点；矩阵路径剥单位位移只留姿态偏移叠 base。
+	// ========================================================================
+	enum class FlhFrame : int
+	{
+		UnitOwn = 0,
+		LineC2P,
+		World,
+		Fallback2D,
+	};
+	CoordStruct ResolveFlhPoint(const CoordStruct& base, const CoordStruct& flh,
+		FlhFrame frame, TechnoClass* pAnchor, bool isOnTurret, bool sameTilt,
+		const CoordStruct* lineFrom, bool use3DLine,
+		const DirStruct& fallbackFacing, const CoordStruct& currentPos);
+	// OriginFLH 摆点总入口：OriginIsOnWorld/AllowOriginTilt/IsOnOrigin/OriginIsOnBody/死锚
+	// 分派收敛成一份（挂载期/补读期/每帧共用，消灭三处手写拷贝）。
+	// base = Origin 单位坐标；fallbackFacing = 水平兜底朝向（挂载期 _facingDir，每帧 mainFacingDir）；
+	// currentPos = 弹体现在位置（连线终点）。非 Self 锚死（死亡冻结）：不加偏移。
+	// Self 不再特例排除（7b bug 修复）：pTechno 载体 → ①矩阵；弹体无锚 → 弹体朝向水平摆。
+	CoordStruct ResolveOriginFlh(const CoordStruct& base, const DirStruct& fallbackFacing,
+		const CoordStruct& currentPos);
+
+	// ========================================================================
 	// 运动状态（主/大圆共用结构；VectorEffect 持两份：_motion + _originMotion）
 	// ========================================================================
 	enum class MotionKind : int
@@ -216,7 +248,10 @@ public:
 
 	// --- 快照/引用 ---
 	CoordStruct _initialLocation{};     // 首帧位置快照（弧线基准/Freeze 锚点）
-	CoordStruct _initialOriginPos{};    // 主 Origin 最后有效坐标（OnStart 锁定 + 每帧跟随）
+	CoordStruct _initialOriginPos{};    // 主 Origin 最后有效坐标（OnStart 锁定 + 每帧跟随）。
+										// OriginNoUpdate=yes：挂载叠算入 OriginFLH 后冻结（完整解算点）；
+										// =no 且 OriginFLH 非空：每帧摆完写回完整解算点，参照单位死亡后
+										// 刷新链停刷，此值停在死亡帧的完整解算点（死亡=停止计算基线）。
 	CoordStruct _initialBaseCenter{};   // 大圆基座最后有效坐标（OriginOriginNoUpdate 冻结用）
 	CoordStruct _lockedTarget{};        // Speed 模式 NoUpdate 锁定的目标点（首帧计算一次，后续帧直接复用，不反复写入新目标点）
 	int _vectorAcquireZ = 0;            // 获取 Vector 时的抛射体 Z（Circle 圆心高度基准）
