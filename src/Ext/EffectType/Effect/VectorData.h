@@ -48,10 +48,13 @@ public:
 	bool OriginNoUpdate = false;
 	bool Force = true;                  // yes=SetLocation 硬控，默认所有 Vector 模式 Force
 	bool Freeze = false;
-	bool AllowCircleTilt = true;         // yes=允许圆面使用 NormalVector 或地形倾斜
+	// 圆面倾斜唯一来源 = 法向量体系（NormalVector + IsNormalOnOrigin 随单位转）——
+	// 原 AllowCircleTilt 已删除（语义被 IsNormalOnOrigin=no 世界固定取代，连线高低角倾斜作废）
 	bool IsOnOrigin = false;             // （INI: Vector.OriginIsOnVectorOrigin）FLH 参考系（F 轴）来源：yes=Origin 单位自身朝向，no=Origin→弹体连线
 										 // 默认按 Origin 类型推导（Launcher/Self→yes，Target/Source→no），与旧版行为一致
 	bool IsNormalOnOrigin = true;        // 圆面法向量：yes（默认）=每帧跟随 Origin 单位自身朝向转动，no=世界固定
+	bool CoordinateTilt = false;         // 连线坐标系（IsOnVectorOrigin=no 的 Target/Launcher/Source 通吃）F 轴是否取真实 3D 连线
+										 // （含 Origin→抛射体 高低差）；no（默认）=F 轴水平投影，与地面平行。只影响坐标系摆放，不碰圆面法向量。
 
 	// ========================================================================
 	// NormalVector 圆面法线
@@ -153,7 +156,8 @@ public:
 	double OriginNormalLAngleRMin = 0, OriginNormalLAngleRMax = 0, OriginNormalLAngleRMin2 = 0, OriginNormalLAngleRMax2 = 0;
 	double OriginNormalHAngleRMin = 0, OriginNormalHAngleRMax = 0, OriginNormalHAngleRMin2 = 0, OriginNormalHAngleRMax2 = 0;
 	// 圆心通用
-	bool OriginAllowCircleTilt = true;    // yes=大圆面跟随目标倾斜（Origin=Target 时有效）
+	// 大圆面倾斜唯一来源 = 大圆法向量体系（OriginNormalVector + OriginIsNormalOnOrigin）——
+	// 原 OriginAllowCircleTilt（跟随目标 Z 差）已删除
 	bool OriginIsNormalOnOrigin = true;   // 大圆法向量：yes（默认）=每帧跟随 OriginOrigin 单位自身朝向转动，no=世界固定
 	CoordStruct OriginCircleOffset{};     // 圆心原点偏移（世界坐标）
 	bool OriginAllowOriginTilt = true;
@@ -255,10 +259,10 @@ public:
 		OriginNoUpdate = reader->Get(title + "OriginNoUpdate", OriginNoUpdate);
 		Force = reader->Get(title + "Force", Force);
 		Freeze = reader->Get(title + "Freeze", Freeze);
-		AllowCircleTilt = reader->Get(title + "AllowCircleTilt", AllowCircleTilt);
 		// 默认按 Origin 类型推导旧版行为：Launcher/Self=单位自身朝向(yes)，Target/Source=连线(no)
 		IsOnOrigin = reader->Get(title + "OriginIsOnVectorOrigin", Origin == VectorOrigin::Launcher || Origin == VectorOrigin::Self);
 		IsNormalOnOrigin = reader->Get(title + "IsNormalOnOrigin", true); // 默认跟随 Origin 单位，no 才世界固定
+		CoordinateTilt = reader->Get(title + "CoordinateTilt", false);    // 连线坐标系 3D：默认 no=水平，显式 yes 才取真实连线
 		NormalVector = reader->Get(title + "NormalVector", NormalVector);
 		NormalRandomF = reader->Get(title + "NormalRandomF", NormalRandomF);
 		NormalRandomL = reader->Get(title + "NormalRandomL", NormalRandomL);
@@ -377,7 +381,6 @@ public:
 		OriginNormalFAnglePerStep = reader->Get(title + "Origin.NormalFAnglePerStep", 0.0);
 		OriginNormalLAnglePerStep = reader->Get(title + "Origin.NormalLAnglePerStep", 0.0);
 		OriginNormalHAnglePerStep = reader->Get(title + "Origin.NormalHAnglePerStep", 0.0);
-		OriginAllowCircleTilt = reader->Get(title + "Origin.AllowCircleTilt", OriginAllowCircleTilt);
 		OriginIsNormalOnOrigin = reader->Get(title + "Origin.IsNormalOnOrigin", true); // 默认跟随 OriginOrigin 单位，no 才世界固定
 		OriginCircleOffset = reader->Get(title + "Origin.CircleOrigin", OriginCircleOffset);
 		OriginAllowOriginTilt = reader->Get(title + "Origin.AllowOriginTilt", OriginAllowOriginTilt);
@@ -498,9 +501,9 @@ private:
 			.Process(this->OriginNoUpdate)
 			.Process(this->Force)
 			.Process(this->Freeze)
-			.Process(this->AllowCircleTilt)
 			.Process(this->IsOnOrigin)
 			.Process(this->IsNormalOnOrigin)
+			.Process(this->CoordinateTilt)
 			.Process(this->NormalVector)
 			.Process(this->NormalRandomF)
 			.Process(this->NormalRandomL)
@@ -574,7 +577,7 @@ private:
 			.Process(this->OriginNormalLAngleRMin2).Process(this->OriginNormalLAngleRMax2)
 			.Process(this->OriginNormalHAngleRMin).Process(this->OriginNormalHAngleRMax)
 			.Process(this->OriginNormalHAngleRMin2).Process(this->OriginNormalHAngleRMax2)
-			.Process(this->OriginAllowCircleTilt).Process(this->OriginIsNormalOnOrigin).Process(this->OriginCircleOffset)
+			.Process(this->OriginIsNormalOnOrigin).Process(this->OriginCircleOffset)
 			.Process(this->OriginAllowOriginTilt).Process(this->OriginOriginNoUpdate)
 			.Process(this->OriginLissajous)
 			.Process(this->OriginOrigin)

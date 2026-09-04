@@ -232,8 +232,8 @@ public:
 	double _originFacing = 0.0;         // 大圆有效 facing
 	double _originTilt = 0.0;           // 大圆有效 tilt
 	// 首帧锁定的基础法向量球坐标（OriginNormalVector/OriginNormalRandom/默认水平）：
-	// OriginIsNormalOnOrigin=yes 时每帧以此为基础随 OriginOrigin 单位转动（不随 _originTilt 被
-	// OriginAllowCircleTilt 每帧覆盖而污染）
+	// OriginIsNormalOnOrigin=yes 时每帧以此为基础随 OriginOrigin 单位转动（保持首帧锁定值，
+	// 不回写 _originFacing/_originTilt，杜绝法向量每帧自反馈累计旋转）
 	double _baseOriginFacing = 0.0;
 	double _baseOriginTilt = M_PI / 2.0;
 
