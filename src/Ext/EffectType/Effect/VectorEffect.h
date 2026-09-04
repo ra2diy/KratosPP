@@ -74,42 +74,34 @@ public:
 	// ========================================================================
 	TechnoClass* FindOriginTechno();               // Origin=Target/Source/Launcher/Self 对应的单位（无单位返回 nullptr）
 	double SampleOriginTilt(TechnoClass* pUnit);   // 单位倾斜角：动态倾斜(AngleRotatedForwards)优先，为 0 时地形采样
-		CoordStruct ResolveTilting(const CoordStruct& basePos, const CoordStruct& flh,
-		const DirStruct& facing, double tilt);
-	// 把偏移量按坐标系转成世界偏移加到基准坐标 → 完整基准点。
-	// 统一公式（无二维/三维分叉）：tilt 俯仰混合 F/H 后整体走引擎 API GetFLHAbsoluteCoords
-	// （内含 RA2 坐标系修正 RotateZ + Y 镜像，禁止裸 cos/sin 手写——引擎弧度体系有 90° 偏置）。
-	// tilt=0 时自然退化为纯水平摆放（等价二维）。
-
+		// ========================================================================
+	// 解算倾斜（局部偏移 FLH → 世界坐标点）—— 归一化单一实现
+	// 姿态参数包 = 一个请求的全部姿态输入；ResolveTilting 按固定优先级消费：
+	//   1. worldDirect=true      → 世界直加（唯一直加来源 = OriginIsOnWorld/TargetIsOnWorld，
+	//                             不由 AllowOriginTilt 决定）
+	//   2. useUnitPose=true 且锚活 → 引擎单位完整姿态（onTurret=true 挂炮塔：矩阵 + TurretOffset
+	//                             转轴 + 炮塔差角；false 挂车身。剥单位位移只留姿态叠 base）
+	//   3. 其余                  → facing 水平朝向 + tilt 俯仰（tilt 混合 F/H 后整体引擎旋转；
+	//                             tilt=0 自然退化为纯水平摆放）
+	// 调用点（origin 流程/target 流程）只负责"读自己的标签 → 填包 → 调 ResolveTilting"，
+	// 无任何坐标系枚举/分派层。
 	// ========================================================================
-	// "坐标点取值管线"唯一摆点实现（归一化：OriginFLH/TargetFLH/大圆挂点共用）
-	// 四种摆法 = FlhFrame 选坐标系 × 参数定深度（语义见同目录《坐标点取值管线归一化_INI标签说明书》）：
-	//   UnitOwn + sameTilt=true  → ① AutoWeapon 深度：Locomotor 完整姿态矩阵 +
-	//                               TurretOffset 转轴 + 炮塔/车身朝向差角（onTurret/onbody 两计算）
-	//   UnitOwn + sameTilt=false → ② 水平 2D：只按炮塔/车身水平朝向摆，俯仰不参与
-	//   LineC2P                    → ③ 连线：F 轴 = lineFrom 起点 → 弹体现在位置；
-	//                               use3DLine(=CoordinateTilt)=yes 高低差进 3D
-	//   World                      → ④ 纯世界轴：FLH 三轴直加，无视单位朝向/姿态
-	//   Fallback2D                 → 按 fallbackFacing 水平摆（无锚/无几何兜底）
-	// 锚单位死亡/不可用：UnitOwn 落水平兜底；LineC2P 无起点回退水平兜底。
-	// 基准点 base 语义：调用方已按 NoUpdate 刷新的计算点；矩阵路径剥单位位移只留姿态偏移叠 base。
-	// ========================================================================
-	enum class FlhFrame : int
+	struct PoseParams
 	{
-		UnitOwn = 0,
-		LineC2P,
-		World,
-		Fallback2D,
+		TechnoClass* anchor = nullptr;    // 引擎单位姿态的锚单位（useUnitPose 时有效）
+		bool useUnitPose = false;         // true=走引擎单位完整姿态（矩阵/转轴/差角）
+		bool onTurret = true;             // useUnitPose 时：true=挂炮塔（含 TurretOffset），false=挂车身
+		bool worldDirect = false;         // true=纯世界直加（无视一切姿态）
+		DirStruct facing{};               // 水平朝向（facing+tilt 路径）
+		double tilt = 0.0;                // 俯仰角（facing+tilt 路径；0=纯水平）
 	};
-	CoordStruct ResolveTiltingFrame(const CoordStruct& base, const CoordStruct& flh,
-		FlhFrame frame, TechnoClass* pAnchor, bool isOnTurret, bool sameTilt,
-		const CoordStruct* lineFrom, bool use3DLine,
-		const DirStruct& fallbackFacing, const CoordStruct& currentPos);
-	// OriginFLH 摆点总入口：OriginIsOnWorld/AllowOriginTilt/IsOnOrigin/OriginIsOnBody/死锚
-	// 分派收敛成一份（挂载期/补读期/每帧共用，消灭三处手写拷贝）。
-	// base = Origin 单位坐标；fallbackFacing = 水平兜底朝向（挂载期 _fAxisDir，每帧 fAxisDir）；
-	// currentPos = 弹体现在位置（连线终点）。非 Self 锚死（死亡冻结）：不加偏移。
-	// Self 不再特例排除（7b bug 修复）：pTechno 载体 → ①矩阵；弹体无锚 → 弹体朝向水平摆。
+	CoordStruct ResolveTilting(const CoordStruct& base, const CoordStruct& flh, const PoseParams& pose);
+	// OriginFLH 解算流程：读 Origin 系标签（OriginIsOnWorld/AllowOriginTilt/OriginIsOnBody/
+	// OriginIsOnVectorOrigin/CoordinateTilt）填 PoseParams → ResolveTilting。
+	// 解算偏移 = OriginFLH + CircleOrigin（主圆圆心偏移，同姿态线性合并一次摆）。
+	// base=Origin 单位坐标；fallbackFacing=水平兜底朝向（挂载期 _fAxisDir，每帧 fAxisDir）；
+	// currentPos=弹体现在位置（连线终点）。死亡/无锚 = 停止计算：直接返回 base
+	//（保持死亡帧完整解算点，调用点写回）；AllowOriginTilt 不参与死后判定。
 	CoordStruct ResolveOriginTilting(const CoordStruct& base, const DirStruct& fallbackFacing,
 		const CoordStruct& currentPos);
 
@@ -140,6 +132,9 @@ public:
 		double normalStepF = 0.0;       // 法线每步角速度（已解析：常数/区间随机）
 		double normalStepL = 0.0;
 		double normalStepH = 0.0;
+		double normalSpinF = 0.0;       // 法向量自旋累计角（NormalFAnglePerStep 每帧累加，度；管线末端
+		double normalSpinL = 0.0;       // 用累计总角从当帧基础法向量旋转——持续旋转且不回写锁定基础）
+		double normalSpinH = 0.0;
 		double normalX = 0.0, normalY = 0.0, normalZ = 1.0; // 3D 法向量（世界坐标，增量旋转维护）
 		double lissajousStep = 0.0;     // 圆周 F 偏移角速度（°/step），0=不偏移
 
@@ -173,6 +168,9 @@ public:
 				.Process(this->normalStepF)
 				.Process(this->normalStepL)
 				.Process(this->normalStepH)
+				.Process(this->normalSpinF)
+				.Process(this->normalSpinL)
+				.Process(this->normalSpinH)
 				.Process(this->normalX)
 				.Process(this->normalY)
 				.Process(this->normalZ)
@@ -229,7 +227,7 @@ public:
 	static double ResolveAngleStep(double perStep, double m1, double M1, double m2, double M2);
 
 	// 三态跟踪：NoUpdate=yes → 冻结 last；no + 单位存活 → 每帧快照 last；死亡 → 冻结 last
-	// 主 Origin（_startPoint）与大圆解算起始点（_bigCircleStartPoint）共用
+	// 主 Origin（_lastPoint）与大圆解算起始点（_bigCircleStartPoint）共用
 	static CoordStruct TrackOriginCoord(ObjectClass* pUnit, bool noUpdate, CoordStruct& last);
 
 	// Target 多级读取链（缓存 → 弹体 → 单位 → Kamikaze/SpawnManager），返回是否取到
@@ -248,7 +246,7 @@ public:
 
 	// --- 快照/引用 ---
 	CoordStruct _firstFramePos{};     // 首帧位置快照（弧线基准/Freeze 锚点）
-	CoordStruct _startPoint{};    // 主 Origin 最后有效坐标（OnStart 锁定 + 每帧跟随）。
+	CoordStruct _lastPoint{};    // 主 Origin 最后有效坐标（OnStart 锁定 + 每帧跟随）。
 										// OriginNoUpdate=yes：挂载复合算入 OriginFLH 后冻结（完整解算点）；
 										// =no 且 OriginFLH 非空：每帧摆完写回完整解算点，参照单位死亡后
 										// 刷新链停刷，此值停在死亡帧的完整解算点（死亡=停止计算基线）。
@@ -309,7 +307,7 @@ public:
 			.Process(this->_effectiveTimeStep)
 			.Process(this->_totalDuration)
 			.Process(this->_firstFramePos)
-			.Process(this->_startPoint)
+			.Process(this->_lastPoint)
 			.Process(this->_bigCircleStartPoint)
 			.Process(this->_lockedSmallCircleTarget)
 			.Process(this->_vectorAcquireZ)
