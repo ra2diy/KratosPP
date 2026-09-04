@@ -65,16 +65,16 @@ public:
 	void ParseArcParams(bool origin); // 弧参数三件套：origin=false 主，true 大圆
 	void ParseSpeed();               // 初始速度（LinearSpeed/单位 Speed/弹体 Speed/随机）
 	void InitOrigin();               // _pLauncher/_pSource + CacheTargetNow + 按 Origin 锁定基线
-	void LockFacing();               // _facingDir/_facingRad/_tiltRad + 法向量初始化 + 角速度解析
+	void LockFacing();               // _fAxisDir/_fAxisRad/_tiltRad + 法向量初始化 + 角速度解析
 
 	// ========================================================================
-	// "取基准点"管线辅助（OriginFLH 偏移完整化，挂载快照/每帧刷新共用）
+	// "解算倾斜"管线辅助（OriginFLH 偏移完整化，挂载快照/每帧刷新共用）
 	// 时序统一：取基准单位 → 定坐标系(facing+tilt) → 定偏移量(FLH) → 算完整基准点。
-	// 散落的取点机制（frameTarget/大圆基座/补读等）后续可并入本管线。
+	// 散落的取点机制（smallCircleTarget/大圆解算起始点/补读等）后续可并入本管线。
 	// ========================================================================
 	TechnoClass* FindOriginTechno();               // Origin=Target/Source/Launcher/Self 对应的单位（无单位返回 nullptr）
 	double SampleOriginTilt(TechnoClass* pUnit);   // 单位倾斜角：动态倾斜(AngleRotatedForwards)优先，为 0 时地形采样
-	CoordStruct ApplyOriginFlh(const CoordStruct& basePos, const CoordStruct& flh,
+		CoordStruct ResolveTilting(const CoordStruct& basePos, const CoordStruct& flh,
 		const DirStruct& facing, double tilt);
 	// 把偏移量按坐标系转成世界偏移加到基准坐标 → 完整基准点。
 	// 统一公式（无二维/三维分叉）：tilt 俯仰混合 F/H 后整体走引擎 API GetFLHAbsoluteCoords
@@ -83,7 +83,7 @@ public:
 
 	// ========================================================================
 	// "坐标点取值管线"唯一摆点实现（归一化：OriginFLH/TargetFLH/大圆挂点共用）
-	// 四种摆法 = FlhFrame 选坐标系 × 参数定深度（语义定稿见改动点 txt）：
+	// 四种摆法 = FlhFrame 选坐标系 × 参数定深度（语义见同目录《坐标点取值管线归一化_INI标签说明书》）：
 	//   UnitOwn + sameTilt=true  → ① AutoWeapon 深度：Locomotor 完整姿态矩阵 +
 	//                               TurretOffset 转轴 + 炮塔/车身朝向差角（onTurret/onbody 两计算）
 	//   UnitOwn + sameTilt=false → ② 水平 2D：只按炮塔/车身水平朝向摆，俯仰不参与
@@ -101,16 +101,16 @@ public:
 		World,
 		Fallback2D,
 	};
-	CoordStruct ResolveFlhPoint(const CoordStruct& base, const CoordStruct& flh,
+	CoordStruct ResolveTiltingFrame(const CoordStruct& base, const CoordStruct& flh,
 		FlhFrame frame, TechnoClass* pAnchor, bool isOnTurret, bool sameTilt,
 		const CoordStruct* lineFrom, bool use3DLine,
 		const DirStruct& fallbackFacing, const CoordStruct& currentPos);
 	// OriginFLH 摆点总入口：OriginIsOnWorld/AllowOriginTilt/IsOnOrigin/OriginIsOnBody/死锚
 	// 分派收敛成一份（挂载期/补读期/每帧共用，消灭三处手写拷贝）。
-	// base = Origin 单位坐标；fallbackFacing = 水平兜底朝向（挂载期 _facingDir，每帧 mainFacingDir）；
+	// base = Origin 单位坐标；fallbackFacing = 水平兜底朝向（挂载期 _fAxisDir，每帧 fAxisDir）；
 	// currentPos = 弹体现在位置（连线终点）。非 Self 锚死（死亡冻结）：不加偏移。
 	// Self 不再特例排除（7b bug 修复）：pTechno 载体 → ①矩阵；弹体无锚 → 弹体朝向水平摆。
-	CoordStruct ResolveOriginFlh(const CoordStruct& base, const DirStruct& fallbackFacing,
+	CoordStruct ResolveOriginTilting(const CoordStruct& base, const DirStruct& fallbackFacing,
 		const CoordStruct& currentPos);
 
 	// ========================================================================
@@ -216,7 +216,7 @@ public:
 	}
 
 	// 弧面旋转：把 arcDelta 按 Rodrigues 正交基分解到 XYZ（ReachTarget/Speed 4 处共用）
-	// D = 总位移向量（frameTarget - 起点），rotDeg = 弧面旋转角，arcDelta = 本帧弧高增量
+	// D = 总位移向量（smallCircleTarget - 起点），rotDeg = 弧面旋转角，arcDelta = 本帧弧高增量
 	// 返回 double 分量：取整时机由调用点决定（绝对位置用法先加后取整，增量用法先取整后加）
 	struct ArcDelta3D { double x, y, z; };
 	static ArcDelta3D RotateArcDelta(const CoordStruct& D, double rotDeg, double arcDelta);
@@ -229,7 +229,7 @@ public:
 	static double ResolveAngleStep(double perStep, double m1, double M1, double m2, double M2);
 
 	// 三态跟踪：NoUpdate=yes → 冻结 last；no + 单位存活 → 每帧快照 last；死亡 → 冻结 last
-	// 主 Origin（_initialOriginPos）与大圆基座（_initialBaseCenter）共用
+	// 主 Origin（_startPoint）与大圆解算起始点（_bigCircleStartPoint）共用
 	static CoordStruct TrackOriginCoord(ObjectClass* pUnit, bool noUpdate, CoordStruct& last);
 
 	// Target 多级读取链（缓存 → 弹体 → 单位 → Kamikaze/SpawnManager），返回是否取到
@@ -247,20 +247,20 @@ public:
 	int _totalDuration = 0;             // AE 总持续时间（ReachTarget 用，已除 TimeStep）
 
 	// --- 快照/引用 ---
-	CoordStruct _initialLocation{};     // 首帧位置快照（弧线基准/Freeze 锚点）
-	CoordStruct _initialOriginPos{};    // 主 Origin 最后有效坐标（OnStart 锁定 + 每帧跟随）。
-										// OriginNoUpdate=yes：挂载叠算入 OriginFLH 后冻结（完整解算点）；
+	CoordStruct _firstFramePos{};     // 首帧位置快照（弧线基准/Freeze 锚点）
+	CoordStruct _startPoint{};    // 主 Origin 最后有效坐标（OnStart 锁定 + 每帧跟随）。
+										// OriginNoUpdate=yes：挂载复合算入 OriginFLH 后冻结（完整解算点）；
 										// =no 且 OriginFLH 非空：每帧摆完写回完整解算点，参照单位死亡后
 										// 刷新链停刷，此值停在死亡帧的完整解算点（死亡=停止计算基线）。
-	CoordStruct _initialBaseCenter{};   // 大圆基座最后有效坐标（OriginOriginNoUpdate 冻结用）
-	CoordStruct _lockedTarget{};        // Speed 模式 NoUpdate 锁定的目标点（首帧计算一次，后续帧直接复用，不反复写入新目标点）
+	CoordStruct _bigCircleStartPoint{};   // 大圆解算起始点最后有效坐标（OriginOriginNoUpdate 冻结用）
+	CoordStruct _lockedSmallCircleTarget{};        // Speed 模式 NoUpdate 锁定的目标点（首帧计算一次，后续帧直接复用，不反复写入新目标点）
 	int _vectorAcquireZ = 0;            // 获取 Vector 时的抛射体 Z（Circle 圆心高度基准）
 	ObjectClass* _pLauncher = nullptr;  // 发射者（OnTechnoDelete 置空防悬垂）
 	ObjectClass* _pSource = nullptr;    // AE 来源（同上）
 
 	// --- 朝向（主模式参考系）---
-	double _facingRad = 0.0;            // OnStart 锁定的朝向弧度（FLH 旋转用）
-	DirStruct _facingDir;               // OnStart 锁定的朝向（Point2Dir 结果，Target/Source）
+	double _fAxisRad = 0.0;            // OnStart 锁定的朝向弧度（FLH 旋转用）
+	DirStruct _fAxisDir;               // OnStart 锁定的朝向（Point2Dir 结果，Target/Source）
 	double _tiltRad = 0.0;              // F 轴俯仰角（AllowedTilt 用）
 
 	// --- 大圆朝向（独立参考系）---
@@ -277,8 +277,8 @@ public:
 	CoordStruct _originTargetOffset{};  // 大圆 TargetFLH 随机偏移
 
 	// --- 大圆圆心运动 ---
-	CoordStruct _originOffset{};        // 圆心相对基座偏移（首帧 0，每帧累加 disp）
-	CoordStruct _prevCircleCenter{};    // 上一帧圆心位置（计算叠加位移用）
+	CoordStruct _bigCircleOffset{};        // 圆心相对解算起始点偏移（首帧 0，每帧累加 disp）
+	CoordStruct _prevBigCircleCenter{};    // 上一帧圆心位置（计算叠加位移用）
 	CoordStruct _circlePos{};           // 圆上内部跟踪位置（增量位移，不打架 MoveTo）
 
 	// --- 运动状态（主 + 大圆）---
@@ -308,15 +308,15 @@ public:
 			.Process(this->_movementFrames)
 			.Process(this->_effectiveTimeStep)
 			.Process(this->_totalDuration)
-			.Process(this->_initialLocation)
-			.Process(this->_initialOriginPos)
-			.Process(this->_initialBaseCenter)
-			.Process(this->_lockedTarget)
+			.Process(this->_firstFramePos)
+			.Process(this->_startPoint)
+			.Process(this->_bigCircleStartPoint)
+			.Process(this->_lockedSmallCircleTarget)
 			.Process(this->_vectorAcquireZ)
 			.Process(this->_pLauncher)
 			.Process(this->_pSource)
-			.Process(this->_facingRad)
-			.Process(this->_facingDir)
+			.Process(this->_fAxisRad)
+			.Process(this->_fAxisDir)
 			.Process(this->_tiltRad)
 			.Process(this->_originFacing)
 			.Process(this->_originTilt)
@@ -324,8 +324,8 @@ public:
 			.Process(this->_baseOriginTilt)
 			.Process(this->_randomTargetOffset)
 			.Process(this->_originTargetOffset)
-			.Process(this->_originOffset)
-			.Process(this->_prevCircleCenter)
+			.Process(this->_bigCircleOffset)
+			.Process(this->_prevBigCircleCenter)
 			.Process(this->_circlePos)
 			.Process(this->_motion)
 			.Process(this->_originMotion);

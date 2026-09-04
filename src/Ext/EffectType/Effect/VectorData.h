@@ -161,7 +161,7 @@ public:
 	bool OriginIsNormalOnOrigin = true;   // 大圆法向量：yes（默认）=每帧跟随 OriginOrigin 单位自身朝向转动，no=世界固定
 	CoordStruct OriginCircleOffset{};     // 圆心原点偏移（世界坐标）
 	bool OriginAllowOriginTilt = true;
-	bool OriginOriginNoUpdate = false;   // yes=圆心基座冻结在初始位置，不随目标移动
+	bool OriginOriginNoUpdate = false;   // yes=解算起始点冻结在初始位置，不随目标移动
 	double OriginLissajous = 0.0;        // 大圆圆周 F 轴偏移角速度（°/step），0=不偏移
 	VectorOrigin OriginOrigin = VectorOrigin::Self; // 圆心运动参考系
 	CoordStruct OriginOriginFLH{};      // OriginOrigin=FLH 时的 FLH 偏移

@@ -20,10 +20,10 @@
 #include <Ext/BulletType/BulletStatus.h>
 
 // ============================================================================
-// 法向量随单位姿态旋转（主圆/大圆共享数学——无状态纯函数，严禁在函数内共享任何状态）：
+// 法向量随单位姿态旋转（小圆/大圆共享数学——无状态纯函数，严禁在函数内共享任何状态）：
 // 基础法向量（球坐标 facing0/tilt0）先绕世界 Z 轴转 facingU（单位水平朝向角），
 // 再绕单位 L 轴 u=(-sinFU, cosFU, 0) 转 tiltU（单位倾斜角，Rodrigues）。
-// 主圆与大圆各自喂各自的输入（facing0/tilt0 来源不同、状态分别存 _motion/_originMotion），
+// 小圆与大圆各自喂各自的输入（facing0/tilt0 来源不同、状态分别存 _motion/_originMotion），
 // 两套法向量互相孤立——竖小圆+水平大圆等任意组合不产生耦合。
 // ============================================================================
 static void RotateNormalByUnit(double facing0, double tilt0, double facingU, double tiltU,
@@ -51,12 +51,12 @@ static void RotateNormalByUnit(double facing0, double tilt0, double facingU, dou
 }
 
 // ============================================================================
-// 连线坐标系（OriginIsOnVectorOrigin=no，Target/Launcher/Source 通吃）——取原点管线用：
+// 连线坐标系（OriginIsOnVectorOrigin=no，Target/Launcher/Source 通吃）——解算起始点管线用：
 // F 轴 = 单位→弹体的连线方向（水平投影角，RA2 坐标系由 Point2Dir 处理）。
-// CoordinateTilt 决定这条线取真实 3D（高低差进 tilt，ApplyOriginFlh 混合出斜向摆放）
+// CoordinateTilt 决定这条线取真实 3D（高低差进 tilt，ResolveTilting 混合出斜向摆放）
 // 还是水平投影（tilt=0，与地面平行）。
 // ============================================================================
-static DirStruct OriginLinePose(TechnoClass* pUnit, const CoordStruct& bulletPos, bool use3D, double& tiltOut)
+static DirStruct ResolveLinePose(TechnoClass* pUnit, const CoordStruct& bulletPos, bool use3D, double& tiltOut)
 {
 	tiltOut = 0.0;
 	CoordStruct uPos = pUnit->GetCoords();
@@ -144,16 +144,16 @@ void VectorEffect::Clean()
 	_effectiveTimeStep = 1;
 	_totalDuration = 0;
 
-	_initialLocation = {};
-	_initialOriginPos = {};
-	_initialBaseCenter = {};
-	_lockedTarget = {};
+	_firstFramePos = {};
+	_startPoint = {};
+	_bigCircleStartPoint = {};
+	_lockedSmallCircleTarget = {};
 	_vectorAcquireZ = 0;
 	_pLauncher = nullptr;
 	_pSource = nullptr;
 
-	_facingRad = 0.0;
-	_facingDir = DirStruct(0);
+	_fAxisRad = 0.0;
+	_fAxisDir = DirStruct(0);
 	_tiltRad = 0.0;
 
 	_originFacing = 0.0;
@@ -164,8 +164,8 @@ void VectorEffect::Clean()
 	_randomTargetOffset = {};
 	_originTargetOffset = {};
 
-	_originOffset = {};
-	_prevCircleCenter = {};
+	_bigCircleOffset = {};
+	_prevBigCircleCenter = {};
 	_circlePos = {};
 
 	_motion = MotionState{};
@@ -251,7 +251,7 @@ double VectorEffect::ResolveAngleStep(double perStep, double m1, double M1, doub
 }
 
 // 三态跟踪：NoUpdate=yes → 冻结 last；no + 单位存活 → 每帧快照 last；死亡 → 冻结 last
-// 主 Origin（_initialOriginPos）与大圆基座（_initialBaseCenter）共用
+// 主 Origin（_startPoint）与大圆解算起始点（_bigCircleStartPoint）共用
 CoordStruct VectorEffect::TrackOriginCoord(ObjectClass* pUnit, bool noUpdate, CoordStruct& last)
 {
 	if (!noUpdate && pUnit && !IsDeadOrInvisible(pUnit))
@@ -260,10 +260,10 @@ CoordStruct VectorEffect::TrackOriginCoord(ObjectClass* pUnit, bool noUpdate, Co
 }
 
 // ========================================================================
-// "取基准点"管线辅助实现（OriginFLH 偏移完整化）
+// "解算倾斜"管线辅助实现（OriginFLH 偏移完整化）
 // 时序统一：取基准单位 → 定坐标系(facing+tilt) → 定偏移量(FLH) → 算完整基准点。
 // 挂载快照（LockFacing/补读）与每帧刷新（GetVectorResult）共用同一套逻辑；
-// 其他散落取点机制（frameTarget/大圆基座等）可并入本管线。
+// 其他散落取点机制（smallCircleTarget/大圆解算起始点等）可并入本管线。
 // ========================================================================
 
 // Origin=Target/Source/Launcher/Self 对应的单位对象（打格子/无单位返回 nullptr）
@@ -322,7 +322,7 @@ double VectorEffect::SampleOriginTilt(TechnoClass* pUnit)
 //      禁止裸 cos/sin 手写旋转：引擎 DirStruct 弧度体系与数学弧度有 90° 偏置/镜像
 //      （YRpp Dir.h GetRadian "LRotate 90 degrees"；BINARY_ANGLE_MAGIC 为负），
 //      裸旋转会把"前方"摆成"左侧"。tilt=0 时 f'=f、h'=h，本函数退化为纯二维 API 调用。
-CoordStruct VectorEffect::ApplyOriginFlh(const CoordStruct& basePos, const CoordStruct& flh,
+CoordStruct VectorEffect::ResolveTilting(const CoordStruct& basePos, const CoordStruct& flh,
 	const DirStruct& facing, double tilt)
 {
 	double cosT = std::cos(tilt), sinT = std::sin(tilt);
@@ -339,11 +339,11 @@ CoordStruct VectorEffect::ApplyOriginFlh(const CoordStruct& basePos, const Coord
 //   ① UnitOwn+随倾斜 = AutoWeapon 深度（Locomotor 矩阵 + TurretOffset 转轴 + 炮塔/车身差角）
 //   ② UnitOwn+水平   = 只按炮塔/车身水平朝向摆（不随坡面俯仰）
 //   ③ LineC2P        = F 轴 = lineFrom 起点（Origin 本体中心）→ 弹体现在位置，
-//                       use3DLine(=CoordinateTilt)=yes 高低差进 3D（ApplyOriginFlh tilt 混合）
+//                       use3DLine(=CoordinateTilt)=yes 高低差进 3D（ResolveTilting tilt 混合）
 //   ④ World          = 纯世界轴（DirStruct{} 直摆，无视姿态）
 // 基准点 base 由调用方按 NoUpdate 刷新；矩阵路径剥单位位移只留姿态偏移再叠 base。
 // ========================================================================
-CoordStruct VectorEffect::ResolveFlhPoint(const CoordStruct& base, const CoordStruct& flh,
+CoordStruct VectorEffect::ResolveTiltingFrame(const CoordStruct& base, const CoordStruct& flh,
 	FlhFrame frame, TechnoClass* pAnchor, bool isOnTurret, bool sameTilt,
 	const CoordStruct* lineFrom, bool use3DLine,
 	const DirStruct& fallbackFacing, const CoordStruct& currentPos)
@@ -368,7 +368,7 @@ CoordStruct VectorEffect::ResolveFlhPoint(const CoordStruct& base, const CoordSt
 				: pAnchor->PrimaryFacing.Current();   // 官方API，不得修改
 			return GetFLHAbsoluteCoords(base, flh, hFacing); // 官方API，不得修改
 		}
-		// 锚死/无锚：落水平兜底（与 frameTarget 死锚回退同语义）
+		// 锚死/无锚：落水平兜底（与 smallCircleTarget 死锚回退同语义）
 		return GetFLHAbsoluteCoords(base, flh, fallbackFacing); // 官方API，不得修改
 	case FlhFrame::LineC2P:
 	{
@@ -390,7 +390,7 @@ CoordStruct VectorEffect::ResolveFlhPoint(const CoordStruct& base, const CoordSt
 					lineTilt = std::atan2(ddz, lenXY); // 连线高低角（弹体高于起点为正，F 朝上斜）
 				lineDir = Point2Dir(lineFromCopy, currentPos); // 官方API，不得修改
 			}
-			return ApplyOriginFlh(base, flh, lineDir, lineTilt);
+			return ResolveTilting(base, flh, lineDir, lineTilt);
 		}
 		return GetFLHAbsoluteCoords(base, flh, fallbackFacing); // 官方API，不得修改：无起点水平兜底
 	}
@@ -402,18 +402,18 @@ CoordStruct VectorEffect::ResolveFlhPoint(const CoordStruct& base, const CoordSt
 // OriginFLH 复合解算入口：把 OriginFLH 按 OriginIsOnWorld / AllowOriginTilt / IsOnOrigin /
 // OriginIsOnBody 分派摆成世界偏移叠加到 base（挂载期/补读期/每帧共用，消灭三处手写拷贝）。
 // base = Origin 单位坐标（挂载/补读期）或本帧已刷新的单位坐标（每帧）；
-// fallbackFacing = 水平兜底朝向（挂载期 _facingDir，每帧 mainFacingDir）；
+// fallbackFacing = 水平兜底朝向（挂载期 _fAxisDir，每帧 fAxisDir）；
 // currentPos = 弹体现在位置（连线终点）。
 // 死亡 = 停止计算（基线）：参照单位死亡后不再刷新/回退/重算，本函数直接返回传入的
 // base（此时 base 已是死亡帧写回的完整解算点，见每帧调用点注释），与 NoUpdate=yes 同构；
 // AllowOriginTilt 只决定活时的深度（是否随姿态），不参与死后判定。
-CoordStruct VectorEffect::ResolveOriginFlh(const CoordStruct& base, const DirStruct& fallbackFacing,
+CoordStruct VectorEffect::ResolveOriginTilting(const CoordStruct& base, const DirStruct& fallbackFacing,
 	const CoordStruct& currentPos)
 {
 	// ④ OriginIsOnWorld=yes：OriginFLH 纯世界轴（无视单位朝向/姿态）——最高优先
 	if (Data->OriginIsOnWorld)
 	{
-		return ResolveFlhPoint(base, Data->OriginFLH, FlhFrame::World, nullptr, false, false,
+		return ResolveTiltingFrame(base, Data->OriginFLH, FlhFrame::World, nullptr, false, false,
 			nullptr, false, fallbackFacing, currentPos);
 	}
 
@@ -425,19 +425,19 @@ CoordStruct VectorEffect::ResolveOriginFlh(const CoordStruct& base, const DirStr
 			if (pTechno)
 			{
 				// ① 载体单位：AutoWeapon 矩阵深度（onTurret/onbody 由 OriginIsOnBody 分）
-				return ResolveFlhPoint(base, Data->OriginFLH, FlhFrame::UnitOwn, pTechno,
+				return ResolveTiltingFrame(base, Data->OriginFLH, FlhFrame::UnitOwn, pTechno,
 					!Data->OriginIsOnBody, true, nullptr, false, fallbackFacing, currentPos);
 			}
 			if (pBullet)
 			{
 				// 弹体侧无单位锚：弹体自身朝向水平摆（fallbackFacing = 锁定弹体朝向）
-				return ResolveFlhPoint(base, Data->OriginFLH, FlhFrame::Fallback2D, nullptr, false, false,
+				return ResolveTiltingFrame(base, Data->OriginFLH, FlhFrame::Fallback2D, nullptr, false, false,
 					nullptr, false, fallbackFacing, currentPos);
 			}
 			return base;
 		}
 		// ② Self + AllowOriginTilt=no：水平 2D
-		return ResolveFlhPoint(base, Data->OriginFLH, FlhFrame::Fallback2D, nullptr, false, false,
+		return ResolveTiltingFrame(base, Data->OriginFLH, FlhFrame::Fallback2D, nullptr, false, false,
 			nullptr, false, fallbackFacing, currentPos);
 	}
 
@@ -453,19 +453,19 @@ CoordStruct VectorEffect::ResolveOriginFlh(const CoordStruct& base, const DirStr
 		if (Data->IsOnOrigin)
 		{
 			// ① 单位自身坐标系：AutoWeapon 矩阵深度（退役"水平朝向+地形采样倾斜"，7a 决议）
-			return ResolveFlhPoint(base, Data->OriginFLH, FlhFrame::UnitOwn, pOriginTechno,
+			return ResolveTiltingFrame(base, Data->OriginFLH, FlhFrame::UnitOwn, pOriginTechno,
 				!Data->OriginIsOnBody, true, nullptr, false, fallbackFacing, currentPos);
 		}
 		// ③ 连线坐标系：F 轴 = Origin 本体中心 → 弹体现在位置
 		// （CoordinateTilt=yes 高低差进 3D，no=水平投影）
 		CoordStruct lineFromPos = pOriginTechno->GetCoords(); // 连线起点 = Origin 本体中心
-		return ResolveFlhPoint(base, Data->OriginFLH, FlhFrame::LineC2P, nullptr, false, false,
+		return ResolveTiltingFrame(base, Data->OriginFLH, FlhFrame::LineC2P, nullptr, false, false,
 			&lineFromPos, Data->CoordinateTilt, fallbackFacing, currentPos);
 	}
 
-	// ② 水平 2D（AllowOriginTilt=no，活锚）：fallbackFacing = mainFacingDir
+	// ② 水平 2D（AllowOriginTilt=no，活锚）：fallbackFacing = fAxisDir
 	//（每帧已按 IsOnOrigin 实时刷新单位/连线水平朝向）
-	return ResolveFlhPoint(base, Data->OriginFLH, FlhFrame::Fallback2D, nullptr, false, false,
+	return ResolveTiltingFrame(base, Data->OriginFLH, FlhFrame::Fallback2D, nullptr, false, false,
 		nullptr, false, fallbackFacing, currentPos);
 }
 
@@ -622,10 +622,10 @@ void VectorEffect::ParseCommon()
 	_moveFrame = 0;
 	_movementFrames = 0;
 	_effectiveTimeStep = Data->TimeStep;
-	// _prevCircleCenter 不在此初始化：圆心追踪依赖 Origin 移动系统首帧的 skipOriginUpdate 赋值
+	// _prevBigCircleCenter 不在此初始化：圆心追踪依赖 Origin 移动系统首帧的 skipOriginUpdate 赋值
 
-	_initialLocation = pObject->GetCoords();
-	_vectorAcquireZ = _initialLocation.Z;  // Circle 圆心高度基准：获取 Vector 时的 Z
+	_firstFramePos = pObject->GetCoords();
+	_vectorAcquireZ = _firstFramePos.Z;  // Circle 圆心高度基准：获取 Vector 时的 Z
 	_totalDuration = AE->AEData.GetDuration() / _effectiveTimeStep;
 }
 
@@ -651,10 +651,10 @@ void VectorEffect::ParseTargetOffset()
 		else
 		{
 			// XY 圆环：角度默认全向，TargetOffsetAngles 限制时按区间加权均匀
-			// 消费端 GetFLHAbsoluteOffset 世界角 = -(mainFacingDir + flhAngle)，要求 = 近交点角 + deg：
-			// flhAngle = -mainFacingDirSim - β - deg
+			// 消费端 GetFLHAbsoluteOffset 世界角 = -(fAxisDir + flhAngle)，要求 = 近交点角 + deg：
+			// flhAngle = -fAxisDirSim - β - deg
 			//   β = atan2 近交点世界角（目标点指向抛射体）
-			//   mainFacingDirSim = 消费端 mainFacingDir 统一取 DirStruct 原值（NoUpdate 不影响坐标系）
+			//   fAxisDirSim = 消费端 fAxisDir 统一取 DirStruct 原值（NoUpdate 不影响坐标系）
 			double flhAngle;
 			bool hasAngleRange = (Data->TargetOffsetAngleMin < Data->TargetOffsetAngleMax)
 				|| (Data->TargetOffsetAngleMin2 < Data->TargetOffsetAngleMax2);
@@ -670,7 +670,7 @@ void VectorEffect::ParseTargetOffset()
 					deg = Data->TargetOffsetAngleMin + u;
 				else
 					deg = Data->TargetOffsetAngleMin2 + (u - (len1 > 0 ? len1 : 0.0));
-				// 近交点基准：targetPos 取 pBullet->TargetCoords（与 OnStart 326 行 _facingDir 一致）
+				// 近交点基准：targetPos 取 pBullet->TargetCoords（与 OnStart 326 行 _fAxisDir 一致）
 				bool hasBase = false;
 				CoordStruct bulletPos = pObject->GetCoords();
 				CoordStruct targetPos{};
@@ -688,9 +688,9 @@ void VectorEffect::ParseTargetOffset()
 				{
 					double beta = std::atan2(bulletPos.Y - targetPos.Y, bulletPos.X - targetPos.X); // 近交点世界角
 					double alpha = Point2Dir(targetPos, bulletPos).GetRadian(); // 近交点 DirStruct 角
-					// 消费端 mainFacingDir 统一取 DirStruct 原值（NoUpdate 不影响坐标系），直接复刻
-					double mainFacingDirSim = alpha;
-					flhAngle = -mainFacingDirSim - beta - Math::deg2rad(deg);
+					// 消费端 fAxisDir 统一取 DirStruct 原值（NoUpdate 不影响坐标系），直接复刻
+					double fAxisDirSim = alpha;
+					flhAngle = -fAxisDirSim - beta - Math::deg2rad(deg);
 				}
 				else
 				{
@@ -857,34 +857,34 @@ void VectorEffect::InitOrigin()
 			TechnoStatus* cacheStatus = GetStatus<TechnoExt, TechnoStatus>(pTechno);
 			if (cacheStatus && cacheStatus->HasVectorTargetCache())
 			{
-				_initialOriginPos = cacheStatus->GetVectorCachedCell();
+				_startPoint = cacheStatus->GetVectorCachedCell();
 			}
 			else if (gotKamikaze)
 			{
-				_initialOriginPos = kamikazePos;
+				_startPoint = kamikazePos;
 			}
-			else if (TryGetSpawnManagerTarget(pTechno, _initialOriginPos))
+			else if (TryGetSpawnManagerTarget(pTechno, _startPoint))
 			{
 				// 未进 Kamikaze 容器（导弹未全部发射）时读源头：SpawnManager 目标
 			}
 			else if (pTechno->Target)
 			{
-				_initialOriginPos = pTechno->Target->GetCoords();
+				_startPoint = pTechno->Target->GetCoords();
 			}
 			else
 			{
 				// Kamikaze 容器此刻可能还没加入导弹（发射后才加入）：不锁自身，
 				// 留空由 GetVectorResult 首帧补读
-				_initialOriginPos = CoordStruct::Empty;
+				_startPoint = CoordStruct::Empty;
 			}
 		}
 		else if (pBullet)
 		{
-			_initialOriginPos = pBullet->TargetCoords;
+			_startPoint = pBullet->TargetCoords;
 		}
 		else
 		{
-			_initialOriginPos = pObject->GetCoords();
+			_startPoint = pObject->GetCoords();
 		}
 		break;
 
@@ -892,45 +892,45 @@ void VectorEffect::InitOrigin()
 		// 无论 NoUpdate 都锁定基线（与 Target 分支一致）：NoUpdate=yes 直接用，
 		// no 每帧快照刷新覆盖；launcher 死亡时冻结此基线作为 origin 解算起点
 		if (pBullet && pBullet->Owner)
-			_initialOriginPos = pBullet->Owner->GetCoords();
+			_startPoint = pBullet->Owner->GetCoords();
 		else if (pTechno)
-			_initialOriginPos = pTechno->GetCoords();
+			_startPoint = pTechno->GetCoords();
 		else
-			_initialOriginPos = pObject->GetCoords();
+			_startPoint = pObject->GetCoords();
 		break;
 
 	case VectorData::VectorOrigin::Source:
 		// 无论 NoUpdate 都锁定基线（与 Target/Launcher 分支一致）：死亡时冻结此基线
 		if (AE && AE->pSource)
-			_initialOriginPos = AE->pSource->GetCoords();
+			_startPoint = AE->pSource->GetCoords();
 		else
-			_initialOriginPos = pObject->GetCoords(); // 兜底与 Target 分支一致
+			_startPoint = pObject->GetCoords(); // 兜底与 Target 分支一致
 		if (AE && AE->pSource)
 			_pSource = AE->pSource;
 		break;
 
 	case VectorData::VectorOrigin::Self:
 		// OriginFLH 摆点不在 InitOrigin 做（原此处 GetFLHAbsoluteCoords 直摆 = Self 特例，
-		// 且 pTechno 侧恒炮塔不查 OriginIsOnBody）——统一移交 LockFacing 尾挂载叠
-		// ResolveOriginFlh（归一化：所有 Origin 一条"坐标点取值"管线）。
+		// 且 pTechno 侧恒炮塔不查 OriginIsOnBody）——统一移交 LockFacing 尾挂载复合
+		// ResolveOriginTilting（归一化：所有 Origin 一条"坐标点取值"管线）。
 		// 此处只定朝向与单位坐标：pBullet=弹体速度朝向；pTechno=载体单位炮塔/车身朝向。
 		if (pBullet)
 		{
 			double bulletRad = std::atan2(pBullet->Velocity.X, pBullet->Velocity.Y);
 			DirStruct bulletFacing;
 			bulletFacing.SetValue(static_cast<short>(bulletRad * 32768.0 / M_PI));
-			_initialOriginPos = pBullet->GetCoords(); // 单位坐标，OriginFLH 偏移由挂载叠复合
-			_facingDir = bulletFacing; // 锁定初始朝向
-			_facingRad = _facingDir.GetRadian();
+			_startPoint = pBullet->GetCoords(); // 单位坐标，OriginFLH 偏移由挂载复合复合
+			_fAxisDir = bulletFacing; // 锁定初始朝向
+			_fAxisRad = _fAxisDir.GetRadian();
 		}
 		else if (pTechno)
 		{
 			DirStruct unitFacing = Data->OriginIsOnBody
 				? pTechno->PrimaryFacing.Current()     // 官方API，不得修改
 				: pTechno->TurretFacing().Current();   // 官方API，不得修改
-			_initialOriginPos = pTechno->GetCoords(); // 单位坐标，OriginFLH 偏移由挂载叠复合
-			_facingDir = unitFacing; // 锁定初始朝向
-			_facingRad = _facingDir.GetRadian();
+			_startPoint = pTechno->GetCoords(); // 单位坐标，OriginFLH 偏移由挂载复合复合
+			_fAxisDir = unitFacing; // 锁定初始朝向
+			_fAxisRad = _fAxisDir.GetRadian();
 		}
 		break;
 	}
@@ -965,7 +965,7 @@ void VectorEffect::LockFacing()
 		// 法向量球坐标：facing = 法线在 XY 平面的方位角，tilt = 法线仰角（与水平面的夹角）
 		// 注意：tilt 是"仰角"不是"偏离垂直的角度"——tilt=PI/2 表示法线垂直向上（水平圆面），
 		// tilt=0 表示法线水平（侧立圆面）。与倾斜圆面取点数学（useTiltPlane 分支）的语义配套。
-		_facingRad = lenXY > 1e-6 ? std::atan2(fwY, fwX) : 0.0;
+		_fAxisRad = lenXY > 1e-6 ? std::atan2(fwY, fwX) : 0.0;
 		_tiltRad = lenXY > 1e-6 ? std::atan2(fwZ, lenXY) : (fwZ > 0 ? M_PI / 2.0 : -M_PI / 2.0);
 	}
 	else
@@ -979,13 +979,13 @@ void VectorEffect::LockFacing()
 	_motion.normalStepH = ResolveAngleStep(Data->NormalHAnglePerStep, Data->NormalHAngleRMin, Data->NormalHAngleRMax, Data->NormalHAngleRMin2, Data->NormalHAngleRMax2);
 	_motion.lissajousStep = Data->Lissajous;
 
-	// 初始化 3D 法向量（从球坐标 _facingRad/_tiltRad 转换）
+	// 初始化 3D 法向量（从球坐标 _fAxisRad/_tiltRad 转换）
 	// 球坐标→笛卡尔：X=cos(tilt)cos(facing), Y=cos(tilt)sin(facing), Z=sin(tilt)
 	// _motion.normalX/Y/Z 是世界单位法向量（圆面法线方向）：
 	//   facing 影响法线在 XY 平面的指向，tilt 影响法线仰角（tilt=PI/2 → (0,0,1) 垂直向上）
 	{
 		double ct = std::cos(_tiltRad), st = std::sin(_tiltRad);
-		double cf = std::cos(_facingRad), sf = std::sin(_facingRad);
+		double cf = std::cos(_fAxisRad), sf = std::sin(_fAxisRad);
 		_motion.normalX = ct * cf;
 		_motion.normalY = ct * sf;
 		_motion.normalZ = st;
@@ -995,7 +995,7 @@ void VectorEffect::LockFacing()
 	// F 轴参考系来源：IsOnOrigin=yes 用 Origin 单位自身朝向，no 用 Origin→弹体连线
 	// （默认值按 Origin 类型推导：Launcher/Self→yes，Target/Source→no，见 VectorData.h 解析处）
 	// 无论设不设 NormalVector 都执行（NormalVector 只决定圆面倾斜，不得参与 F 轴基准取值）。
-	// _facingRad 的同步只在 !hasNormal 做（hasNormal 时 _facingRad 归法向量维护，见上方球坐标段）。
+	// _fAxisRad 的同步只在 !hasNormal 做（hasNormal 时 _fAxisRad 归法向量维护，见上方球坐标段）。
 	{
 		switch (Data->Origin)
 		{
@@ -1006,15 +1006,15 @@ void VectorEffect::LockFacing()
 			{
 				if (Data->IsOnOrigin)
 				{
-					_facingDir = Data->OriginIsOnBody
+					_fAxisDir = Data->OriginIsOnBody
 						? pLauncherTechno->PrimaryFacing.Current()     // 官方API，不得修改
 						: pLauncherTechno->TurretFacing().Current();   // 官方API，不得修改
 				}
 				else
 				{
-					_facingDir = Point2Dir(pLauncherTechno->GetCoords(), pObject->GetCoords()); // 发射者→弹体连线
+					_fAxisDir = Point2Dir(pLauncherTechno->GetCoords(), pObject->GetCoords()); // 发射者→弹体连线
 				}
-				if (!hasNormal) _facingRad = _facingDir.GetRadian();
+				if (!hasNormal) _fAxisRad = _fAxisDir.GetRadian();
 			}
 			break;
 		}
@@ -1042,16 +1042,16 @@ void VectorEffect::LockFacing()
 					TechnoClass* pTargetTechno = abstract_cast<TechnoClass*>(pTgt);
 					if (pTargetTechno && !IsDeadOrInvisible(pTargetTechno))
 					{
-						_facingDir = Data->OriginIsOnBody
+						_fAxisDir = Data->OriginIsOnBody
 							? pTargetTechno->PrimaryFacing.Current()     // 官方API，不得修改
 							: pTargetTechno->TurretFacing().Current();   // 官方API，不得修改
-						if (!hasNormal) _facingRad = _facingDir.GetRadian();
+						if (!hasNormal) _fAxisRad = _fAxisDir.GetRadian();
 						break;
 					}
 					// 目标无朝向（格子）：回退连线
 				}
-				_facingDir = Point2Dir(targetPos, pObject->GetCoords()); // 官方API，不得修改：目标→弹体连线
-				if (!hasNormal) _facingRad = _facingDir.GetRadian();
+				_fAxisDir = Point2Dir(targetPos, pObject->GetCoords()); // 官方API，不得修改：目标→弹体连线
+				if (!hasNormal) _fAxisRad = _fAxisDir.GetRadian();
 			}
 			break;
 		}
@@ -1067,30 +1067,30 @@ void VectorEffect::LockFacing()
 					TechnoClass* pSourceTechno = abstract_cast<TechnoClass*>(AE->pSource);
 					if (pSourceTechno && !IsDeadOrInvisible(pSourceTechno))
 					{
-						_facingDir = Data->OriginIsOnBody
+						_fAxisDir = Data->OriginIsOnBody
 							? pSourceTechno->PrimaryFacing.Current()     // 官方API，不得修改
 							: pSourceTechno->TurretFacing().Current();   // 官方API，不得修改
-						if (!hasNormal) _facingRad = _facingDir.GetRadian();
+						if (!hasNormal) _fAxisRad = _fAxisDir.GetRadian();
 						break;
 					}
 					// 来源无朝向：回退连线
 				}
-				_facingDir = Point2Dir(sourcePos, pObject->GetCoords()); // 官方API：Source→弹体连线
-				if (!hasNormal) _facingRad = _facingDir.GetRadian();
+				_fAxisDir = Point2Dir(sourcePos, pObject->GetCoords()); // 官方API：Source→弹体连线
+				if (!hasNormal) _fAxisRad = _fAxisDir.GetRadian();
 			}
 			break;
 		}
 
 		default: // Self（自身朝向即 F 轴，无"另一单位朝向"，IsOnOrigin 不区分）
 		{
-			// Self 的 _facingDir/_facingRad 挂载值 InitOrigin 已按自身朝向设好；这里只在 !hasNormal
-			// 重同步一次 _facingRad（hasNormal 时 _facingRad 归法向量维护，Self 也不例外）。
+			// Self 的 _fAxisDir/_fAxisRad 挂载值 InitOrigin 已按自身朝向设好；这里只在 !hasNormal
+			// 重同步一次 _fAxisRad（hasNormal 时 _fAxisRad 归法向量维护，Self 也不例外）。
 			if (!hasNormal)
 			{
 				if (pBullet)
-					_facingRad = std::atan2(pBullet->Velocity.X, pBullet->Velocity.Y);
+					_fAxisRad = std::atan2(pBullet->Velocity.X, pBullet->Velocity.Y);
 				else if (pTechno)
-					_facingRad = pTechno->TurretFacing().Current().GetRadian();
+					_fAxisRad = pTechno->TurretFacing().Current().GetRadian();
 			}
 			break;
 		}
@@ -1098,22 +1098,22 @@ void VectorEffect::LockFacing()
 	}
 
 	// OriginFLH 挂载偏移算进存档点：取基准时就把偏移算好，NoUpdate=yes 直接用（完整基准点冻结）。
-	// 统一走"坐标点取值管线" ResolveOriginFlh（挂载快照 = 生效瞬间一次，之后 yes 冻结）。
+	// 统一走"坐标点取值管线" ResolveOriginTilting（挂载快照 = 生效瞬间一次，之后 yes 冻结）。
 	// 所有 Origin（含 Self，原 Self 在 InitOrigin 自摆 = 特例）一视同仁：Self 的 pTechno 载体
 	// 可走①矩阵深度（原只按水平朝向摆），弹体侧按自身朝向水平摆；姿态随快照定死。
 	// 存档点为空（techno 侧 Origin=Target 挂载瞬间目标未就绪，留待首帧补读）时不在此算，
 	// 等补读段补一次同款计算。
-	if (!Data->OriginFLH.IsEmpty() && !_initialOriginPos.IsEmpty())
+	if (!Data->OriginFLH.IsEmpty() && !_startPoint.IsEmpty())
 	{
-		_initialOriginPos = ResolveOriginFlh(_initialOriginPos, _facingDir, pObject->GetCoords());
+		_startPoint = ResolveOriginTilting(_startPoint, _fAxisDir, pObject->GetCoords());
 	}
 
 	// TargetOffsetNormal 世界固定（IsNormalOnOrigin=no）：把 FLH 落点按锁定朝向转成世界坐标，
 	// 消费端把偏移叠加在旋转后的 TargetFLH 上，不随 F 轴（单位朝向）转动。
-	// 注：hasNormal 时 _facingDir 未锁定（默认朝向），该组合的世界固定基准按实测调整。
+	// 注：hasNormal 时 _fAxisDir 未锁定（默认朝向），该组合的世界固定基准按实测调整。
 	if (!Data->IsNormalOnOrigin && !Data->TargetOffsetNormal.IsEmpty())
 	{
-		_randomTargetOffset = GetFLHAbsoluteCoords(CoordStruct::Empty, _randomTargetOffset, _facingDir); // 官方API
+		_randomTargetOffset = GetFLHAbsoluteCoords(CoordStruct::Empty, _randomTargetOffset, _fAxisDir); // 官方API
 	}
 }
 
@@ -1131,9 +1131,9 @@ void VectorEffect::OnStart()
 	ParseCommon();
 
 	// 影子坐标（Speed 模式弧高进度基准，不受弧高 Z 偏移污染）
-	_motion.shadowX = _initialLocation.X;
-	_motion.shadowY = _initialLocation.Y;
-	_motion.shadowZ = _initialLocation.Z;
+	_motion.shadowX = _firstFramePos.X;
+	_motion.shadowY = _firstFramePos.Y;
+	_motion.shadowZ = _firstFramePos.Z;
 	_motion.shadowTraveled = 0.0;
 
 	ParseTargetOffset();
@@ -1154,7 +1154,7 @@ VectorResult VectorEffect::GetVectorResult()
 
 	// 首帧快照（仅一次，供弧高计算等）
 	if (_elapsedFrames == 0)
-		_initialLocation = pObject->GetCoords();
+		_firstFramePos = pObject->GetCoords();
 
 	// InitialDelay 期间 AE 存在但未启动，不施加任何位移
 	if (!_started)
@@ -1167,10 +1167,10 @@ VectorResult VectorEffect::GetVectorResult()
 	// 目标死亡时停止写入，冻结最后有效值
 	CacheTargetNow();
 
-	// 目标坐标固化：OnStart 未锁定（Pending）时补读，读到即锁定到 _initialOriginPos，
-	// 防止引擎后续清空（目标死亡/管理器清空）导致 frameTarget 失效
+	// 目标坐标固化：OnStart 未锁定（Pending）时补读，读到即锁定到 _startPoint，
+	// 防止引擎后续清空（目标死亡/管理器清空）导致 smallCircleTarget 失效
 	if (Data->Origin == VectorData::VectorOrigin::Target
-		&& _initialOriginPos.IsEmpty() && pTechno)
+		&& _startPoint.IsEmpty() && pTechno)
 	{
 		CoordStruct targetPos{};
 		bool got = false;
@@ -1187,14 +1187,14 @@ VectorResult VectorEffect::GetVectorResult()
 		if (!got && pTechno->Target) { targetPos = pTechno->Target->GetCoords(); got = true; }
 		if (got)
 		{
-			_initialOriginPos = targetPos;
+			_startPoint = targetPos;
 			// NoUpdate=yes：每帧偏移计算（下方管线段）只对 no 执行，补读的单位坐标必须在此复合一次并冻结
-			// （techno 侧 SpawnManager/Aircraft 挂载瞬间目标未就绪，挂载叠被空存档守卫拦住，
-			//  目标到手后补上这次"位置 + 朝向 + 偏移"计算，与 LockFacing 末尾挂载叠同语义，
-			//  统一走 ResolveOriginFlh——三维（AllowOriginTilt=yes）+ 补读组合缺口随归一化补齐）。
+			// （techno 侧 SpawnManager/Aircraft 挂载瞬间目标未就绪，挂载复合被空存档守卫拦住，
+			//  目标到手后补上这次"位置 + 朝向 + 偏移"计算，与 LockFacing 末尾挂载复合同语义，
+			//  统一走 ResolveOriginTilting——三维（AllowOriginTilt=yes）+ 补读组合缺口随归一化补齐）。
 			if (Data->OriginNoUpdate && !Data->OriginFLH.IsEmpty())
 			{
-				// fallbackFacing（② 水平/兜底出口）按 IsOnOrigin 现算（mainFacingDir 段在本段之后才跑）：
+				// fallbackFacing（② 水平/兜底出口）按 IsOnOrigin 现算（fAxisDir 段在本段之后才跑）：
 				// yes=目标单位自身朝向，无朝向（格子/死亡）回退 目标点→弹体 连线；no=连线。
 				DirStruct flhFacing;
 				if (Data->IsOnOrigin)
@@ -1211,7 +1211,7 @@ VectorResult VectorEffect::GetVectorResult()
 				{
 					flhFacing = Point2Dir(targetPos, pObject->GetCoords()); // 目标→弹体连线（IsOnOrigin 默认 no）
 				}
-				_initialOriginPos = ResolveOriginFlh(_initialOriginPos, flhFacing, pObject->GetCoords());
+				_startPoint = ResolveOriginTilting(_startPoint, flhFacing, pObject->GetCoords());
 			}
 		}
 	}
@@ -1262,7 +1262,7 @@ VectorResult VectorEffect::GetVectorResult()
 		result.Freeze = true;
 		result.Force = true;  // 抛射体 Freeze 必须 Force，否则引擎检测"卡住"自爆
 		if (result.FrozenPos.IsEmpty())
-			result.FrozenPos = _initialLocation;
+			result.FrozenPos = _firstFramePos;
 		CoordStruct currentPos = pObject->GetCoords();
 		result.MoveDisp = result.FrozenPos - currentPos;
 		return result;
@@ -1293,10 +1293,10 @@ VectorResult VectorEffect::GetVectorResult()
 	// ========================================================================
 
 	// originTerrainTilt：Origin 单位倾斜角（AngleRotatedForwards 动态倾斜优先，否则地形采样）。
-	// 供多处使用：AllowOriginTilt 的 OriginFLH/CircleOrigin 旋转（取原点）、主圆/大圆法向量随单位
+	// 供多处使用：AllowOriginTilt 的 OriginFLH/CircleOrigin 旋转（解算起始点）、小圆/大圆法向量随单位
 	// 倾斜转动（IsNormalOnOrigin / OriginIsNormalOnOrigin 的 tiltU）。只计算不注入（法向量跟随由
 	// 对应 IsNormalOnOrigin 段负责）。采样逻辑与挂载快照共用 SampleOriginTilt。
-	// 触发条件 = 谁消费谁触发：取原点三维（AllowOriginTilt）、主圆法向量随动（IsNormalOnOrigin）、
+	// 触发条件 = 谁消费谁触发：解算起始点三维（AllowOriginTilt）、小圆法向量随动（IsNormalOnOrigin）、
 	// 大圆法向量随动（OriginIsNormalOnOrigin）——三者任一需要且配了 Circle 参数才采样。
 	double originTerrainTilt = 0.0;
 	bool hasCircleForTilt = Data->CircleRadius > 0 || Data->CircleAnglePerStep > 0.0
@@ -1307,12 +1307,12 @@ VectorResult VectorEffect::GetVectorResult()
 		originTerrainTilt = SampleOriginTilt(FindOriginTechno());
 	}
 
-	double effectiveFacing = _facingRad;    // 倾斜域初始（hasNormal 时 = 法向量球坐标 facing；!hasNormal 时下方同步为 F 轴基准）
+	double effectiveFacing = _fAxisRad;    // 倾斜域初始（hasNormal 时 = 法向量球坐标 facing；!hasNormal 时下方同步为 F 轴基准）
 	double effectiveTilt = _tiltRad;        // 倾斜域初始（hasNormal 时 = 法向量 tilt）
-	// F 轴基准（摆放 FLH 用）初值 = 挂载时按 IsOnOrigin 锁定的 _facingDir（与 NormalVector 解耦）。
-	// 不用 Radians2Dir(_facingRad)：hasNormal 时 _facingRad 是法向量 facing，会污染摆放基准。
-	// （Radians2Dir(GetRadian()) 往返另有 90° 偏置，_facingDir 保留 DirStruct 原值不往返）
-	DirStruct mainFacingDir = _facingDir; // 官方API，不得修改
+	// F 轴基准（摆放 FLH 用）初值 = 挂载时按 IsOnOrigin 锁定的 _fAxisDir（与 NormalVector 解耦）。
+	// 不用 Radians2Dir(_fAxisRad)：hasNormal 时 _fAxisRad 是法向量 facing，会污染摆放基准。
+	// （Radians2Dir(GetRadian()) 往返另有 90° 偏置，_fAxisDir 保留 DirStruct 原值不往返）
+	DirStruct fAxisDir = _fAxisDir; // 官方API，不得修改
 	// Target/Source/Launcher/Self：统一用 OnStart 存的 DirStruct 作基础朝向。
 	// NoUpdate 只决定原点是否动态刷新，不影响坐标系计算。
 	bool hasNormal = !Data->NormalVector.IsEmpty()
@@ -1323,48 +1323,48 @@ VectorResult VectorEffect::GetVectorResult()
 	// hasNormal 时 effectiveFacing 归法向量维护，不在此同步。
 	if (!hasNormal)
 	{
-		effectiveFacing = _facingDir.GetRadian();
+		effectiveFacing = _fAxisDir.GetRadian();
 	}
 
 	// OriginIsOnWorld：锁定世界坐标系（朝北），覆盖 Origin 朝向
 	if (Data->OriginIsOnWorld)
 	{
-		mainFacingDir = DirStruct{};
+		fAxisDir = DirStruct{};
 		effectiveFacing = 0.0;
 		effectiveTilt = 0.0;
 	}
 
-	// 统一朝向算法（每帧）：计算 F 轴基准 mainFacingDir（摆放 FLH 用，与 NormalVector 解耦）——
+	// 统一朝向算法（每帧）：计算 F 轴基准 fAxisDir（摆放 FLH 用，与 NormalVector 解耦）——
 	// F 轴来源：IsOnOrigin=yes 用 Origin 单位自身朝向，no 用 Origin→弹体连线（默认值按 Origin 类型推导）。
 	// 无论设不设 NormalVector 都执行：NormalVector 只决定圆面倾斜，不得参与 F 轴基准取值。
 	// 段内对倾斜量（effectiveFacing/effectiveTilt）的同步只在 !hasNormal 执行
 	// （hasNormal 时倾斜量归法向量维护，见 IsNormalOnOrigin 段）。
-	// 另：NoUpdate 只切换计算点（锁定 _initialOriginPos vs 实时坐标），不切换坐标系/朝向算法。
+	// 另：NoUpdate 只切换计算点（锁定 _startPoint vs 实时坐标），不切换坐标系/朝向算法。
 	if (!Data->AllowOriginTilt && !Data->OriginIsOnWorld)
 	{
 		switch (Data->Origin)
 		{
 		case VectorData::VectorOrigin::Source:
 			// 计算点：NoUpdate=yes 用锁定值，no 每帧刷新（三态跟踪：死亡冻结）
-			TrackOriginCoord(_pSource, Data->OriginNoUpdate, _initialOriginPos);
-			if (!_initialOriginPos.IsEmpty())
+			TrackOriginCoord(_pSource, Data->OriginNoUpdate, _startPoint);
+			if (!_startPoint.IsEmpty())
 			{
 				if (Data->IsOnOrigin)
 				{
 					TechnoClass* pSourceTechno = abstract_cast<TechnoClass*>(_pSource);
 					if (pSourceTechno && !IsDeadOrInvisible(pSourceTechno))
 					{
-						mainFacingDir = Data->OriginIsOnBody
+						fAxisDir = Data->OriginIsOnBody
 							? pSourceTechno->PrimaryFacing.Current()     // 官方API，不得修改
 							: pSourceTechno->TurretFacing().Current();   // 官方API，不得修改
-						if (!hasNormal) effectiveFacing = mainFacingDir.GetRadian();
+						if (!hasNormal) effectiveFacing = fAxisDir.GetRadian();
 						break;
 					}
 					// 来源无朝向：回退连线
 				}
 				// 来源活着或已死亡：都用快照算朝向（死亡后冻结指向死亡点）
-				mainFacingDir = Point2Dir(_initialOriginPos, currentPos); // 官方API，不得修改
-				if (!hasNormal) effectiveFacing = mainFacingDir.GetRadian();
+				fAxisDir = Point2Dir(_startPoint, currentPos); // 官方API，不得修改
+				if (!hasNormal) effectiveFacing = fAxisDir.GetRadian();
 				// 连线高低角不再进圆面倾斜（effectiveTilt）——圆面倾斜唯一来源 = IsNormalOnOrigin 法向量随动
 			}
 			break;
@@ -1374,14 +1374,14 @@ VectorResult VectorEffect::GetVectorResult()
 			if (isGround && _movementFrames > 1)
 				break;
 			// 计算点：默认锁定值起步，NoUpdate=no 才走缓存/引擎链动态获取
-			CoordStruct targetPos = _initialOriginPos;
+			CoordStruct targetPos = _startPoint;
 			bool gotTarget = !targetPos.IsEmpty();
 			if (!gotTarget && !Data->OriginNoUpdate)
 			{
 				gotTarget = GetTargetPosFromChain(targetPos, true);
 			}
 			if (gotTarget)
-				_initialOriginPos = targetPos; // 跟随：更新锁定值
+				_startPoint = targetPos; // 跟随：更新锁定值
 			else if (targetPos.IsEmpty())
 				break; // 从未有过目标：保持朝向
 			if (Data->IsOnOrigin)
@@ -1390,16 +1390,16 @@ VectorResult VectorEffect::GetVectorResult()
 				TechnoClass* pTargetTechno = abstract_cast<TechnoClass*>(pTgt);
 				if (pTargetTechno && !IsDeadOrInvisible(pTargetTechno))
 				{
-					mainFacingDir = Data->OriginIsOnBody
+					fAxisDir = Data->OriginIsOnBody
 						? pTargetTechno->PrimaryFacing.Current()     // 官方API，不得修改
 						: pTargetTechno->TurretFacing().Current();   // 官方API，不得修改
-					if (!hasNormal) effectiveFacing = mainFacingDir.GetRadian();
+					if (!hasNormal) effectiveFacing = fAxisDir.GetRadian();
 					break;
 				}
 				// 目标无朝向（格子）：回退连线
 			}
-			mainFacingDir = Point2Dir(targetPos, currentPos); // 官方API，不得修改
-			if (!hasNormal) effectiveFacing = mainFacingDir.GetRadian();
+			fAxisDir = Point2Dir(targetPos, currentPos); // 官方API，不得修改
+			if (!hasNormal) effectiveFacing = fAxisDir.GetRadian();
 			// 连线高低角不再进圆面倾斜（effectiveTilt）——圆面倾斜唯一来源 = IsNormalOnOrigin 法向量随动
 		}
 			break;
@@ -1407,15 +1407,15 @@ VectorResult VectorEffect::GetVectorResult()
 		case VectorData::VectorOrigin::Self:
 			if (pTechno)
 			{
-				mainFacingDir = Data->OriginIsOnBody
+				fAxisDir = Data->OriginIsOnBody
 					? pTechno->PrimaryFacing.Current()     // 官方API，不得修改
 					: pTechno->TurretFacing().Current();   // 官方API，不得修改
-				if (!hasNormal) effectiveFacing = mainFacingDir.GetRadian();
+				if (!hasNormal) effectiveFacing = fAxisDir.GetRadian();
 			}
 			else if (pBullet)
 			{
-				mainFacingDir = Facing(pBullet, currentPos); // 官方API，不得修改
-				if (!hasNormal) effectiveFacing = mainFacingDir.GetRadian();
+				fAxisDir = Facing(pBullet, currentPos); // 官方API，不得修改
+				if (!hasNormal) effectiveFacing = fAxisDir.GetRadian();
 			}
 			break;
 
@@ -1427,16 +1427,16 @@ VectorResult VectorEffect::GetVectorResult()
 				{
 					if (Data->IsOnOrigin)
 					{
-						mainFacingDir = Data->OriginIsOnBody
+						fAxisDir = Data->OriginIsOnBody
 							? pLauncherTechno->PrimaryFacing.Current()     // 官方API，不得修改
 							: pLauncherTechno->TurretFacing().Current();   // 官方API，不得修改
-						if (!hasNormal) effectiveFacing = mainFacingDir.GetRadian();
+						if (!hasNormal) effectiveFacing = fAxisDir.GetRadian();
 					}
 					else
 					{
 						// 发射者→弹体连线
-						mainFacingDir = Point2Dir(pLauncherTechno->GetCoords(), currentPos); // 官方API，不得修改
-						if (!hasNormal) effectiveFacing = mainFacingDir.GetRadian();
+						fAxisDir = Point2Dir(pLauncherTechno->GetCoords(), currentPos); // 官方API，不得修改
+						if (!hasNormal) effectiveFacing = fAxisDir.GetRadian();
 					}
 				}
 			}
@@ -1445,7 +1445,7 @@ VectorResult VectorEffect::GetVectorResult()
 	}
 
 	// IsNormalOnOrigin：圆面法向量随 Origin 单位转动（facing + tilt 全跟随）
-	// 基础法向量 = OnStart 锁定的球坐标（_facingRad/_tiltRad，来自 NormalVector/NormalRandom/默认水平），
+	// 基础法向量 = OnStart 锁定的球坐标（_fAxisRad/_tiltRad，来自 NormalVector/NormalRandom/默认水平），
 	// 每帧按单位朝向（facingU）+ 单位倾斜（originTerrainTilt）转动：
 	//   1. 绕 Z 轴转 facingU（单位水平朝向）
 	//   2. 绕单位 L 轴（(-sinFU, cosFU, 0)，水平左方向）转 tiltU（Rodrigues：n' = n cosθ + (u×n) sinθ + u(u·n)(1-cosθ)）
@@ -1486,7 +1486,7 @@ VectorResult VectorEffect::GetVectorResult()
 		// 基础法向量（OnStart 锁定）随单位姿态旋转（共享管线 RotateNormalByUnit，无状态）；
 		// 无自定义法线时基础法向量默认竖直（水平圆面），单位倾斜 → 法向量转 → 圆面自然倾斜。
 		double baseTilt = hasNormal ? _tiltRad : M_PI / 2.0;
-		RotateNormalByUnit(_facingRad, baseTilt, facingU, tiltU,
+		RotateNormalByUnit(_fAxisRad, baseTilt, facingU, tiltU,
 			_motion.normalX, _motion.normalY, _motion.normalZ);
 
 		// 同步倾斜圆面数学输入（最终法向量 → 球坐标）
@@ -1495,8 +1495,8 @@ VectorResult VectorEffect::GetVectorResult()
 		effectiveTilt = lenXY > 1e-6 ? std::atan2(_motion.normalZ, lenXY) : (_motion.normalZ > 0 ? M_PI / 2.0 : -M_PI / 2.0);
 	}
 
-	// 3D 法向量旋转覆盖：当 NormalF/L/HAnglePerStep 设定时，无视基座变化
-	// 只更新倾斜量（effectiveFacing/effectiveTilt）；不碰 mainFacingDir——
+	// 3D 法向量旋转覆盖：当 NormalF/L/HAnglePerStep 设定时，无视 F 轴基准变化
+	// 只更新倾斜量（effectiveFacing/effectiveTilt）；不碰 fAxisDir——
 	// 法向量与 F 轴基准已解耦，法向量自旋不得污染摆放 FLH 的基准。
 	if (_motion.normalStepF != 0.0 || _motion.normalStepL != 0.0 || _motion.normalStepH != 0.0)
 	{
@@ -1508,13 +1508,13 @@ VectorResult VectorEffect::GetVectorResult()
 	// ========================================================================
 	// Origin 坐标（主 Origin 计算点）
 	// ========================================================================
-	CoordStruct originPos = currentPos;
+	CoordStruct startPoint = currentPos;
 
 	switch (Data->Origin)
 	{
 	case VectorData::VectorOrigin::Target:
 		if (Data->OriginNoUpdate)
-			originPos = _initialOriginPos.IsEmpty() ? currentPos : _initialOriginPos; // 锁定初始目标
+			startPoint = _startPoint.IsEmpty() ? currentPos : _startPoint; // 锁定初始目标
 		else
 		{
 			// 允许更新（NoUpdate=no）：缓存优先（只跟随锁定单位，防引擎集结目标点污染），
@@ -1527,58 +1527,58 @@ VectorResult VectorEffect::GetVectorResult()
 			}
 			if (gotUpdate)
 			{
-				_initialOriginPos = updated; // 跟随：更新锁定值
-				originPos = _initialOriginPos;
+				_startPoint = updated; // 跟随：更新锁定值
+				startPoint = _startPoint;
 			}
 			else
-				originPos = _initialOriginPos.IsEmpty() ? currentPos : _initialOriginPos; // 抛弃 update → 回退锁定坐标
+				startPoint = _startPoint.IsEmpty() ? currentPos : _startPoint; // 抛弃 update → 回退锁定坐标
 		}
 		break;
 	case VectorData::VectorOrigin::Launcher:
 		if (Data->OriginNoUpdate)
-			originPos = _initialOriginPos;
+			startPoint = _startPoint;
 		else
 		{
-			TrackOriginCoord(_pLauncher, false, _initialOriginPos); // 发射者活着：每帧快照；死亡：冻结
-			originPos = _initialOriginPos;
+			TrackOriginCoord(_pLauncher, false, _startPoint); // 发射者活着：每帧快照；死亡：冻结
+			startPoint = _startPoint;
 		}
 		break;
 	case VectorData::VectorOrigin::Source:
 		if (Data->OriginNoUpdate)
-			originPos = _initialOriginPos;
+			startPoint = _startPoint;
 		else
 		{
-			TrackOriginCoord(_pSource, false, _initialOriginPos); // 来源活着：每帧快照；死亡：冻结
-			originPos = _initialOriginPos;
+			TrackOriginCoord(_pSource, false, _startPoint); // 来源活着：每帧快照；死亡：冻结
+			startPoint = _startPoint;
 		}
 		break;
 	case VectorData::VectorOrigin::Self:
-		originPos = Data->OriginNoUpdate ? _initialOriginPos : currentPos;
+		startPoint = Data->OriginNoUpdate ? _startPoint : currentPos;
 		break;
 	}
 
 	// OriginFLH 完整解算：解算点的定义 = Origin 单位坐标 + OriginFLH 经
 	// OriginIsOnBody/AllowOriginTilt/CoordinateTilt 等复合计算的最终偏移（设计目标，偏移是
-	// 解算点的组成部分）。统一"坐标点取值管线" ResolveOriginFlh（与挂载叠/补读同一入口）：
-	//   NoUpdate=yes 不在此算——挂载叠已算入偏移冻结，直接用（冻结）。
+	// 解算点的组成部分）。统一"坐标点取值管线" ResolveOriginTilting（与挂载复合/补读同一入口）：
+	//   NoUpdate=yes 不在此算——挂载复合已算入偏移冻结，直接用（冻结）。
 	//   NoUpdate=no 才执行：本帧单位坐标已刷新，按实时姿态复合计算偏移。分派：
 	//   ④ OriginIsOnWorld=yes → 纯世界轴；
 	//   ① AllowOriginTilt=yes+IsOnOrigin=yes → AutoWeapon 矩阵深度（onTurret/onbody 由
 	//      OriginIsOnBody 分；退役"水平朝向+地形倾斜近似"，7a 决议——tilt 由矩阵姿态接管）；
 	//   ③ AllowOriginTilt=yes+IsOnOrigin=no → 连线坐标系（CoordinateTilt=yes 取真实 3D 连线）；
-	//   ② AllowOriginTilt=no → 水平 2D（facing=mainFacingDir，主朝向段已按 IsOnOrigin 实时刷新）；
+	//   ② AllowOriginTilt=no → 水平 2D（facing=fAxisDir，主朝向段已按 IsOnOrigin 实时刷新）；
 	//   Self 不再特例排除（7b bug 修复：pTechno 载体 → ①；弹体无锚 → 弹体朝向水平摆）。
-	// 算完把完整解算点写回最后有效坐标 _initialOriginPos。
+	// 算完把完整解算点写回最后有效坐标 _startPoint。
 	if (!Data->OriginNoUpdate && !Data->OriginFLH.IsEmpty())
 	{
-		originPos = ResolveOriginFlh(originPos, mainFacingDir, currentPos);
+		startPoint = ResolveOriginTilting(startPoint, fAxisDir, currentPos);
 		// 死亡维持（基线：参照单位死亡后不再计算，解算点停在死亡前最后一刻的完整值）：
 		// 每帧把复合计算完的完整解算点写回最后有效坐标。参照单位活着时下一帧的
 		// 坐标刷新（TrackOriginCoord/目标链）会先覆盖它再重算；一旦死亡，刷新链停刷
 		// 不再覆盖 → 该值自然停在死亡帧的完整解算点（含 OriginFLH 偏移），后续帧
 		// 恒等返回，不回退不重算。与 OriginNoUpdate=yes 的"算一次后不重算"同构，
 		// 只是停点由死亡触发。
-		_initialOriginPos = originPos;
+		_startPoint = startPoint;
 	}
 
 // GetVectorResult：每帧计算位移（主体内联，段落化）
@@ -1595,8 +1595,8 @@ VectorResult VectorEffect::GetVectorResult()
 		double calcRadius = static_cast<double>(Data->CircleRadius);
 		if (calcRadius <= 0.0)
 		{
-			double tdx = currentPos.X - originPos.X;
-			double tdy = currentPos.Y - originPos.Y;
+			double tdx = currentPos.X - startPoint.X;
+			double tdy = currentPos.Y - startPoint.Y;
 			calcRadius = std::sqrt(tdx * tdx + tdy * tdy);
 		}
 		if (calcRadius < 1.0)
@@ -1633,17 +1633,17 @@ VectorResult VectorEffect::GetVectorResult()
 	if (!Data->CircleOrigin.IsEmpty())
 		adjustedCircleOrigin.Z = Data->OriginFLH.Z + Data->CircleOrigin.Z;
 
-	CoordStruct circleCenter = originPos;
+	CoordStruct smallCircleCenter = startPoint;
 
-	// （AllowOriginTilt=yes 的 OriginFLH 三维旋转已并入上方"取基准点"管线 ApplyOriginFlh，
-	//   在 originPos 级完成——挂载快照定死 / no 每帧刷新，circleCenter 直接消费完整基准点，
-	//   此处不再重复叠加。原 circleCenter 级三维分支已删除。）
+	// （AllowOriginTilt=yes 的 OriginFLH 三维旋转已并入上方"解算倾斜"管线 ResolveTilting，
+	//   在 startPoint 级完成——挂载快照定死 / no 每帧刷新，smallCircleCenter 直接消费完整基准点，
+	//   此处不再重复叠加。原 smallCircleCenter 级三维分支已删除。）
 
 	if (!Data->CircleOrigin.IsEmpty())
 	{
 		if (Data->AllowOriginTilt)
 		{
-			// CircleOrigin 作为 FLH 偏移并入"取基准点"管线 ApplyOriginFlh：
+			// CircleOrigin 作为 FLH 偏移并入"解算倾斜"管线 ResolveTilting：
 			// AllowOriginTilt=yes 时跟随转轴旋转（F=沿 facing，L=垂直 facing，H=Z），
 			// facing/倾斜按 IsOnOrigin 规则（F 轴归一，同 OriginFLH 三维）：
 			// yes=单位自身朝向（OriginIsOnBody 分炮塔/车身）+ 本帧采样倾斜角；
@@ -1655,7 +1655,7 @@ VectorResult VectorEffect::GetVectorResult()
 			{
 				if (Data->IsOnOrigin)
 				{
-					circleCenter = ApplyOriginFlh(circleCenter, adjustedCircleOrigin,
+					smallCircleCenter = ResolveTilting(smallCircleCenter, adjustedCircleOrigin,
 						(Data->OriginIsOnBody ? pOriginTechno->PrimaryFacing.Current() : pOriginTechno->TurretFacing().Current()), // 官方API，不得修改
 						originTerrainTilt);
 				}
@@ -1663,34 +1663,34 @@ VectorResult VectorEffect::GetVectorResult()
 				{
 					// 连线坐标系（IsOnOrigin=no）：CoordinateTilt=yes 取真实 3D 连线，no=水平
 					double lineTilt = 0.0;
-					circleCenter = ApplyOriginFlh(circleCenter, adjustedCircleOrigin,
-						OriginLinePose(pOriginTechno, currentPos, Data->CoordinateTilt, lineTilt), lineTilt);
+					smallCircleCenter = ResolveTilting(smallCircleCenter, adjustedCircleOrigin,
+						ResolveLinePose(pOriginTechno, currentPos, Data->CoordinateTilt, lineTilt), lineTilt);
 				}
 			}
 			else
 			{
 				// Origin 无单位（打格子/死亡）：无转轴可跟随 → 按纯世界坐标加法处理
-				circleCenter = originPos + adjustedCircleOrigin;
+				smallCircleCenter = startPoint + adjustedCircleOrigin;
 			}
 		}
 		else
 		{
 			// AllowOriginTilt=no：纯世界坐标加法、无视朝向（与 yes 分支刻意不同）
-			circleCenter = originPos + adjustedCircleOrigin;
+			smallCircleCenter = startPoint + adjustedCircleOrigin;
 		}
 	}
 	else if (!Data->OriginFLH.IsEmpty())
 	{
 		// 仅 OriginFLH：CircleOrigin 为空时不走 FLH 转换，手动设 Z
-		circleCenter.Z = _vectorAcquireZ + Data->OriginFLH.Z;
+		smallCircleCenter.Z = _vectorAcquireZ + Data->OriginFLH.Z;
 	}
 
 		// 圆心移动：Vector.Origin.* 系统
 		if (!Data->OriginMoveTo.IsEmpty() || Data->OriginReachTarget || Data->OriginLinearSpeed >= 0 || !Data->OriginTargetFLH.IsEmpty()
 			|| Data->OriginCircleRadius >= 0 || Data->OriginCircleSpeed != 0 || Data->OriginCircleAnglePerStep != 0)
 		{
-			// 基座：默认 originPos，OriginOrigin 可替换为独立参考系
-			CoordStruct baseCenter = originPos;
+			// 解算起始点：默认 startPoint，OriginOrigin 可替换为独立参考系
+			CoordStruct bigCircleStartPoint = startPoint;
 			if (Data->OriginOrigin != VectorData::VectorOrigin::Self)
 			{
 				switch (Data->OriginOrigin)
@@ -1699,11 +1699,11 @@ VectorResult VectorEffect::GetVectorResult()
 					if (_pLauncher && !IsDeadOrInvisible(_pLauncher))
 					{
 						if (!Data->OriginOriginNoUpdate)
-							_initialBaseCenter = _pLauncher->GetCoords(); // 发射者活着：每帧快照（NoUpdate=yes 冻结首帧不更新）
-						baseCenter = _pLauncher->GetCoords();
+							_bigCircleStartPoint = _pLauncher->GetCoords(); // 发射者活着：每帧快照（NoUpdate=yes 冻结首帧不更新）
+						bigCircleStartPoint = _pLauncher->GetCoords();
 					}
 					else
-						baseCenter = _initialBaseCenter; // 发射者死亡：冻结快照（首帧或最后跟随值），不再读指针
+						bigCircleStartPoint = _bigCircleStartPoint; // 发射者死亡：冻结快照（首帧或最后跟随值），不再读指针
 					break;
 				case VectorData::VectorOrigin::Target:
 					{
@@ -1741,34 +1741,34 @@ VectorResult VectorEffect::GetVectorResult()
 						if (gotTargetBase)
 						{
 							if (!Data->OriginOriginNoUpdate)
-								_initialBaseCenter = targetBase; // 目标活着：每帧快照（NoUpdate=yes 冻结首帧不更新）
-							baseCenter = targetBase;
+								_bigCircleStartPoint = targetBase; // 目标活着：每帧快照（NoUpdate=yes 冻结首帧不更新）
+							bigCircleStartPoint = targetBase;
 						}
 						else
-							baseCenter = _initialBaseCenter; // 目标失效：冻结快照（首帧或最后跟随值），不再掉回 originPos
+							bigCircleStartPoint = _bigCircleStartPoint; // 目标失效：冻结快照（首帧或最后跟随值），不再掉回 startPoint
 					}
 					break;
 				case VectorData::VectorOrigin::Source:
 					if (_pSource && !IsDeadOrInvisible(_pSource))
 					{
 						if (!Data->OriginOriginNoUpdate)
-							_initialBaseCenter = _pSource->GetCoords(); // 来源活着：每帧快照（NoUpdate=yes 冻结首帧不更新）
-						baseCenter = _pSource->GetCoords();
+							_bigCircleStartPoint = _pSource->GetCoords(); // 来源活着：每帧快照（NoUpdate=yes 冻结首帧不更新）
+						bigCircleStartPoint = _pSource->GetCoords();
 					}
 					else
-						baseCenter = _initialBaseCenter; // 来源死亡：冻结快照（首帧或最后跟随值），不再读指针
+						bigCircleStartPoint = _bigCircleStartPoint; // 来源死亡：冻结快照（首帧或最后跟随值），不再读指针
 					break;
 				}
 			}
 
-			// OriginOriginFLH 挂点偏移（对齐主圆 OriginFLH——原实现只在 OriginOrigin=Self 时生效且纯加法，
+			// OriginOriginFLH 挂点偏移（对齐小圆参照FLH——原实现只在 OriginOrigin=Self 时生效且纯加法，
 			// 属历史残缺；现对任意 OriginOrigin 生效）：
 			//   Origin.AllowOriginTilt=yes 且 OriginOrigin 有存活单位 → 按单位姿态 3D 摆放
 			//     （facing=单位自身朝向 TurretFacing，tilt=单位倾斜采样）；
 			//   no / 单位死 / 无单位（打格子）→ 纯世界坐标加法（无姿态可跟随）
 			if (!Data->OriginOriginFLH.IsEmpty())
 			{
-				TechnoClass* pOO = nullptr; // OriginOrigin 对应单位（Self → 主圆 Origin 单位）
+				TechnoClass* pOO = nullptr; // OriginOrigin 对应单位（Self → 小圆参照 单位）
 				if (Data->OriginOrigin == VectorData::VectorOrigin::Launcher)
 					pOO = abstract_cast<TechnoClass*>(_pLauncher);
 				else if (Data->OriginOrigin == VectorData::VectorOrigin::Source)
@@ -1779,35 +1779,35 @@ VectorResult VectorEffect::GetVectorResult()
 					pOO = abstract_cast<TechnoClass*>(pTgt);
 				}
 				else
-					pOO = FindOriginTechno(); // OriginOrigin=Self：基座跟主圆，姿态跟主圆 Origin 单位
+					pOO = FindOriginTechno(); // OriginOrigin=Self：解算起始点跟小圆，姿态跟小圆参照 单位
 				if (Data->OriginAllowOriginTilt && pOO && !IsDeadOrInvisible(pOO))
 				{
-					baseCenter = ApplyOriginFlh(baseCenter, Data->OriginOriginFLH,
+					bigCircleStartPoint = ResolveTilting(bigCircleStartPoint, Data->OriginOriginFLH,
 						pOO->TurretFacing().Current(), SampleOriginTilt(pOO)); // 官方API，不得修改
 				}
 				else
 				{
-					baseCenter.X += Data->OriginOriginFLH.X;
-					baseCenter.Y += Data->OriginOriginFLH.Y;
-					baseCenter.Z += Data->OriginOriginFLH.Z;
+					bigCircleStartPoint.X += Data->OriginOriginFLH.X;
+					bigCircleStartPoint.Y += Data->OriginOriginFLH.Y;
+					bigCircleStartPoint.Z += Data->OriginOriginFLH.Z;
 				}
 			}
 
 			// Origin.CircleOffset 世界偏移
 			if (!Data->OriginCircleOffset.IsEmpty())
-				baseCenter = baseCenter + Data->OriginCircleOffset;
+				bigCircleStartPoint = bigCircleStartPoint + Data->OriginCircleOffset;
 
-			// OriginNoUpdate：首帧快照基座，后续帧冻结
+			// OriginNoUpdate：首帧快照解算起始点，后续帧冻结
 			if (_elapsedFrames == 0)
-				_initialBaseCenter = baseCenter;
+				_bigCircleStartPoint = bigCircleStartPoint;
 			else if (Data->OriginOriginNoUpdate)
-				baseCenter = _initialBaseCenter;
+				bigCircleStartPoint = _bigCircleStartPoint;
 
 			if (_elapsedFrames == 0)
 			{
-				// 初始偏移 = 0：大圆圆心直接用大圆基座（baseCenter，已含 Origin.CircleOrigin 偏移），
-				// 不绑定主圆圆心（circleCenter）。主圆围绕大圆转，主圆圆心坐标对大圆无意义。
-				_originOffset = {};
+				// 初始偏移 = 0：大圆圆心直接用大圆解算起始点（bigCircleStartPoint，已含 Origin.CircleOrigin 偏移），
+				// 不绑定小圆圆心（smallCircleCenter）。小圆围绕大圆转，小圆圆心坐标对大圆无意义。
+				_bigCircleOffset = {};
 				// Circle 初始化
 				_originMotion.circleRadius = Data->OriginCircleRadius;
 				_originMotion.circleSpeed = Data->OriginCircleSpeed;
@@ -1815,9 +1815,9 @@ VectorResult VectorEffect::GetVectorResult()
 				// 未显式设半径：取当前偏移的水平距离
 				if (_originMotion.circleRadius < 0)
 					_originMotion.circleRadius = (int)std::sqrt(
-						(double)_originOffset.X * _originOffset.X +
-						(double)_originOffset.Y * _originOffset.Y +
-						(double)_originOffset.Z * _originOffset.Z);
+						(double)_bigCircleOffset.X * _bigCircleOffset.X +
+						(double)_bigCircleOffset.Y * _bigCircleOffset.Y +
+						(double)_bigCircleOffset.Z * _bigCircleOffset.Z);
 				// 随机
 				if (Data->OriginCircleRandomRadiusMax > Data->OriginCircleRandomRadiusMin)
 					_originMotion.circleRadius = Random::RandomRanged(Data->OriginCircleRandomRadiusMin, Data->OriginCircleRandomRadiusMax);
@@ -1863,11 +1863,11 @@ VectorResult VectorEffect::GetVectorResult()
 					_originMotion.normalZ = st;
 				}
 			}
-		// OriginIsNormalOnOrigin：大圆法向量随 OriginOrigin 单位转动（facing + tilt 全跟随，同主圆）。
+		// OriginIsNormalOnOrigin：大圆法向量随 OriginOrigin 单位转动（facing + tilt 全跟随，同小圆）。
 		// 基础 = 首帧锁定的 _baseOriginFacing/_baseOriginTilt（OriginNormalVector/随机/默认水平），
 		// 每帧按 OriginOrigin 单位朝向（facingU）+ 单位倾斜（originTerrainTilt）转动（Rodrigues）。
 		// 更新 _originMotion.normalX/Y/Z（Circle 运动消费点在段外从法向量现算球坐标）。
-		// 不回写成员 _originFacing/_originTilt（保持首帧锁定值，同主圆 effectiveFacing/effectiveTilt 模式）。
+		// 不回写成员 _originFacing/_originTilt（保持首帧锁定值，同小圆 effectiveFacing/effectiveTilt 模式）。
 		// no（显式）= 世界固定，保持首帧值。
 		if (Data->OriginIsNormalOnOrigin && !Data->OriginNormalVector.IsEmpty())
 		{
@@ -1888,7 +1888,7 @@ VectorResult VectorEffect::GetVectorResult()
 					TechnoClass* pTT = abstract_cast<TechnoClass*>(pTgt);
 					if (pTT && !IsDeadOrInvisible(pTT))
 						facingU = pTT->TurretFacing().Current().GetRadian(); // 官方API，不得修改
-					// 目标无朝向（格子/地面）：保持 facingU 初值（世界固定），不回退连线（同主圆 IsNormalOnOrigin 处理）
+					// 目标无朝向（格子/地面）：保持 facingU 初值（世界固定），不回退连线（同小圆 IsNormalOnOrigin 处理）
 				}
 				break;
 			case VectorData::VectorOrigin::Source:
@@ -1912,10 +1912,10 @@ VectorResult VectorEffect::GetVectorResult()
 			double tiltU = originTerrainTilt; // 单位倾斜
 
 			// 基础法向量（首帧锁定）随单位姿态旋转（共享管线 RotateNormalByUnit，无状态）；
-			// 大圆法向量状态独立于主圆（各自喂输入、各存 _originMotion），两套互不耦合
+			// 大圆法向量状态独立于小圆（各自喂输入、各存 _originMotion），两套互不耦合
 			RotateNormalByUnit(_baseOriginFacing, _baseOriginTilt, facingU, tiltU,
 				_originMotion.normalX, _originMotion.normalY, _originMotion.normalZ);
-			// 不回写 _originFacing/_originTilt（同主圆 IsNormalOnOrigin：基座球坐标永远保持首帧锁定值，
+			// 不回写 _originFacing/_originTilt（同小圆 IsNormalOnOrigin：基础法向量球坐标永远保持首帧锁定值，
 			// 段外消费点从 _originMotion.normalX/Y/Z 现算，杜绝法向量每帧自反馈累计旋转）
 		}
 		// 每帧累加 Lissajous + 3D 法向量增量旋转
@@ -1926,7 +1926,7 @@ VectorResult VectorEffect::GetVectorResult()
 				_originMotion.normalStepF, _originMotion.normalStepL, _originMotion.normalStepH);
 		}
 
-			// 从法向量现算球坐标（同主圆 effectiveFacing/effectiveTilt 消费模式）：
+			// 从法向量现算球坐标（同小圆 effectiveFacing/effectiveTilt 消费模式）：
 			// 段内 OriginIsNormalOnOrigin 每帧旋转结果已在 _originMotion.normalX/Y/Z，
 			// 这里现算 oFacing/oFacingTilt 供 Circle 运动消费；不回读成员 _originFacing/_originTilt（保持首帧锁定值）。
 			double oFacing = 0.0, oTilt = 0.0;
@@ -1936,7 +1936,7 @@ VectorResult VectorEffect::GetVectorResult()
 				oTilt = lenXY > 1e-6 ? std::atan2(_originMotion.normalZ, lenXY) : (_originMotion.normalZ > 0 ? M_PI / 2.0 : -M_PI / 2.0);
 			}
 			// 大圆面倾斜唯一来源 = 大圆法向量（OriginNormalVector + OriginIsNormalOnOrigin 随动）：
-			// OriginAllowOriginTilt 不再叠加单位倾斜进 oTilt（它只管大圆取原点，见 VectorData.h 注释）。
+			// OriginAllowOriginTilt 不再叠加单位倾斜进 oTilt（它只管大圆解算起始点，见 VectorData.h 注释）。
 			// 3D 法向量旋转覆盖
 			if (_originMotion.normalStepF != 0.0 || _originMotion.normalStepL != 0.0 || _originMotion.normalStepH != 0.0)
 			{
@@ -1946,8 +1946,8 @@ VectorResult VectorEffect::GetVectorResult()
 			}
 			DirStruct oFacingDir = Radians2Dir(oFacing); // 官方API，不得修改：弧度→DirStruct
 
-			// 当前圆心绝对位置 = 基座 + 偏移
-			CoordStruct originCenter = baseCenter + _originOffset;
+			// 当前圆心绝对位置 = 解算起始点 + 位移
+			CoordStruct bigCircleCenter = bigCircleStartPoint + _bigCircleOffset;
 
 			CoordStruct disp;
 			if (!Data->OriginMoveTo.IsEmpty())
@@ -1964,13 +1964,13 @@ VectorResult VectorEffect::GetVectorResult()
 				if (_originMotion.elapsed == 0)
 				{
 					_originMotion.speed = Data->OriginLinearSpeed >= 0 ? Data->OriginLinearSpeed : (pTechno ? pTechno->GetTechnoType()->Speed : 40.0);
-					_originMotion.arcStartCenter = originCenter;
+					_originMotion.arcStartCenter = bigCircleCenter;
 				}
 
 				// OriginOrigin 的 F 轴基准（摆放 OriginTargetFLH 用；与法向量彻底解耦）：
-				// 单位存活 → 单位自身炮塔朝向；打格子/地面/目标死亡 → 基座点指向抛射体的水平连线；
-				// OriginOrigin=Self（基座跟主圆）→ 跟主圆 F 轴基准（mainFacingDir）。
-				DirStruct originOriginFacing = mainFacingDir;
+				// 单位存活 → 单位自身炮塔朝向；打格子/地面/目标死亡 → 解算起始点指向抛射体的水平连线；
+				// OriginOrigin=Self（解算起始点跟小圆）→ 跟小圆 F 轴基准（fAxisDir）。
+				DirStruct originOriginFacing = fAxisDir;
 				if (Data->OriginOrigin != VectorData::VectorOrigin::Self)
 				{
 					TechnoClass* pOO = nullptr;
@@ -1986,10 +1986,10 @@ VectorResult VectorEffect::GetVectorResult()
 					if (pOO && !IsDeadOrInvisible(pOO))
 						originOriginFacing = pOO->TurretFacing().Current(); // 官方API，不得修改：单位自身朝向
 					else
-						originOriginFacing = Point2Dir(baseCenter, pObject->GetCoords()); // 官方API，不得修改：基座点→弹体水平连线
+						originOriginFacing = Point2Dir(bigCircleStartPoint, pObject->GetCoords()); // 官方API，不得修改：解算起始点→弹体水平连线
 				}
 
-				CoordStruct targetWorld = GetFLHAbsoluteCoords(baseCenter, Data->OriginTargetFLH + _originTargetOffset, originOriginFacing); // 官方API，不得修改
+				CoordStruct bigCircleTarget = GetFLHAbsoluteCoords(bigCircleStartPoint, Data->OriginTargetFLH + _originTargetOffset, originOriginFacing); // 官方API，不得修改
 				if (Data->OriginReachTarget)
 				{
 					int effectiveSteps = (AE->AEData.GetDuration() - Data->DisabledFrames) / _effectiveTimeStep;
@@ -1997,37 +1997,37 @@ VectorResult VectorEffect::GetVectorResult()
 					int rem = effectiveSteps - _movementFrames;
 					if (rem <= 0)
 					{
-						disp = targetWorld - originCenter;
-						_originOffset += disp;
-						circleCenter = baseCenter + _originOffset;
-						_prevCircleCenter = circleCenter;
+						disp = bigCircleTarget - bigCircleCenter;
+						_bigCircleOffset += disp;
+						smallCircleCenter = bigCircleStartPoint + _bigCircleOffset;
+						_prevBigCircleCenter = smallCircleCenter;
 						Deactivate();
 						goto skipOriginUpdate;
 					}
-					disp.X = (targetWorld.X - originCenter.X) / rem;
-					disp.Y = (targetWorld.Y - originCenter.Y) / rem;
-					disp.Z = (targetWorld.Z - originCenter.Z) / rem;
+					disp.X = (bigCircleTarget.X - bigCircleCenter.X) / rem;
+					disp.Y = (bigCircleTarget.Y - bigCircleCenter.Y) / rem;
+					disp.Z = (bigCircleTarget.Z - bigCircleCenter.Z) / rem;
 					if (_originMotion.arcHeight != 0)
 					{
 						double t = static_cast<double>(_movementFrames) / effectiveSteps;
 						double arcOffset = CalcArcOffsetAt(static_cast<int>(_originMotion.arcHeight), _originMotion.arcPeakPercent, t);
-						double baseX = _originMotion.arcStartCenter.X + (targetWorld.X - _originMotion.arcStartCenter.X) * t;
-						double baseY = _originMotion.arcStartCenter.Y + (targetWorld.Y - _originMotion.arcStartCenter.Y) * t;
-						double baseZ = _originMotion.arcStartCenter.Z + (targetWorld.Z - _originMotion.arcStartCenter.Z) * t;
+						double baseX = _originMotion.arcStartCenter.X + (bigCircleTarget.X - _originMotion.arcStartCenter.X) * t;
+						double baseY = _originMotion.arcStartCenter.Y + (bigCircleTarget.Y - _originMotion.arcStartCenter.Y) * t;
+						double baseZ = _originMotion.arcStartCenter.Z + (bigCircleTarget.Z - _originMotion.arcStartCenter.Z) * t;
 						if (_originMotion.arcRotation == 0.0)
 						{
-							disp.Z = static_cast<int>(baseZ + arcOffset) - originCenter.Z;
+							disp.Z = static_cast<int>(baseZ + arcOffset) - bigCircleCenter.Z;
 						}
 						else
 						{
 							CoordStruct arcD{
-								targetWorld.X - _originMotion.arcStartCenter.X,
-								targetWorld.Y - _originMotion.arcStartCenter.Y,
-								targetWorld.Z - _originMotion.arcStartCenter.Z };
+								bigCircleTarget.X - _originMotion.arcStartCenter.X,
+								bigCircleTarget.Y - _originMotion.arcStartCenter.Y,
+								bigCircleTarget.Z - _originMotion.arcStartCenter.Z };
 							ArcDelta3D ad = RotateArcDelta(arcD, _originMotion.arcRotation, arcOffset);
-							disp.X = static_cast<int>(baseX + ad.x) - originCenter.X;
-							disp.Y = static_cast<int>(baseY + ad.y) - originCenter.Y;
-							disp.Z = static_cast<int>(baseZ + ad.z) - originCenter.Z;
+							disp.X = static_cast<int>(baseX + ad.x) - bigCircleCenter.X;
+							disp.Y = static_cast<int>(baseY + ad.y) - bigCircleCenter.Y;
+							disp.Z = static_cast<int>(baseZ + ad.z) - bigCircleCenter.Z;
 						}
 					}
 				}
@@ -2036,7 +2036,7 @@ VectorResult VectorEffect::GetVectorResult()
 					_originMotion.speed += Data->OriginAcceleration;
 					if (Data->OriginMaxSpeed >= 0 && _originMotion.speed > Data->OriginMaxSpeed) _originMotion.speed = Data->OriginMaxSpeed;
 					if (Data->OriginMinSpeed >= 0 && _originMotion.speed < Data->OriginMinSpeed) _originMotion.speed = Data->OriginMinSpeed;
-					int dx = targetWorld.X - originCenter.X, dy = targetWorld.Y - originCenter.Y, dz = targetWorld.Z - originCenter.Z;
+					int dx = bigCircleTarget.X - bigCircleCenter.X, dy = bigCircleTarget.Y - bigCircleCenter.Y, dz = bigCircleTarget.Z - bigCircleCenter.Z;
 					double dist = std::sqrt((double)dx*dx + dy*dy + dz*dz);
 					if (dist < 1.0) disp = {};
 					else if (Data->OriginSpeedEndOnReach && _originMotion.speed >= dist)
@@ -2057,9 +2057,9 @@ VectorResult VectorEffect::GetVectorResult()
 						double arcDelta = arcThis - _originMotion.prevArcOffset;
 						_originMotion.prevArcOffset = arcThis;
 						CoordStruct arcD{
-							targetWorld.X - _originMotion.arcStartCenter.X,
-							targetWorld.Y - _originMotion.arcStartCenter.Y,
-							targetWorld.Z - _originMotion.arcStartCenter.Z };
+							bigCircleTarget.X - _originMotion.arcStartCenter.X,
+							bigCircleTarget.Y - _originMotion.arcStartCenter.Y,
+							bigCircleTarget.Z - _originMotion.arcStartCenter.Z };
 						ArcDelta3D ad = RotateArcDelta(arcD, _originMotion.arcRotation, arcDelta);
 						disp.X += static_cast<int>(ad.x);
 						disp.Y += static_cast<int>(ad.y);
@@ -2081,13 +2081,13 @@ VectorResult VectorEffect::GetVectorResult()
 			_originMotion.angle += originAngleStep;
 			double r = Data->OriginLissajous > 0.0 ? Math::deg2rad(_originMotion.angle + _originMotion.normalRotF) : Math::deg2rad(originAngleStep + _originMotion.normalRotF);
 				double ca = std::cos(r), sa = std::sin(r);
-				// 当前圆心相对基座的偏移在 LH 平面投影
-				double dx = (double)_originOffset.X, dy = (double)_originOffset.Y, dz = (double)_originOffset.Z;
+				// 当前圆心相对解算起始点的偏移在 LH 平面投影
+				double dx = (double)_bigCircleOffset.X, dy = (double)_bigCircleOffset.Y, dz = (double)_bigCircleOffset.Z;
 				double cf = std::cos(oFacing), sf = std::sin(oFacing), ct = std::cos(oTilt), st = std::sin(oTilt);
 				double dL = dx*(-sf) + dy*cf;
 				double dH = dx*(-cf*st) + dy*(-sf*st) + dz*ct;
 				double cd = std::sqrt(dL*dL + dH*dH);
-				// 圆心在基座上（偏移≈0），初始化到半径位置
+				// 圆心在解算起始点上（偏移≈0），初始化到半径位置
 				if (cd < 1.0 && tr > 0)
 				{
 					dL = tr; dH = 0; cd = tr;
@@ -2099,26 +2099,26 @@ VectorResult VectorEffect::GetVectorResult()
 				newOffset.X = (int)(rL*(-sf) + rH*(-cf*st));
 				newOffset.Y = (int)(rL*cf + rH*(-sf*st));
 				newOffset.Z = (int)(rH*ct);
-				disp.X = newOffset.X - _originOffset.X;
-				disp.Y = newOffset.Y - _originOffset.Y;
-				disp.Z = newOffset.Z - _originOffset.Z;
+				disp.X = newOffset.X - _bigCircleOffset.X;
+				disp.Y = newOffset.Y - _bigCircleOffset.Y;
+				disp.Z = newOffset.Z - _bigCircleOffset.Z;
 			}
 	skipOriginUpdate:
-		_originOffset += disp;
-		circleCenter = baseCenter + _originOffset;
+		_bigCircleOffset += disp;
+		smallCircleCenter = bigCircleStartPoint + _bigCircleOffset;
 		_originMotion.elapsed++;
 	}
 
 	// 圆心位移叠加：Circle 模式追踪圆心→调整 currentPos
 	CoordStruct centerDelta{ 0, 0, 0 };  // 初始化避免 C4701 警告
 	bool useCenterTracking = false;
-	if (_prevCircleCenter.X || _prevCircleCenter.Y || _prevCircleCenter.Z)
+	if (_prevBigCircleCenter.X || _prevBigCircleCenter.Y || _prevBigCircleCenter.Z)
 	{
-		centerDelta = circleCenter - _prevCircleCenter;
+		centerDelta = smallCircleCenter - _prevBigCircleCenter;
 		if (Data->OriginLissajous <= 0.0 && (Data->OriginCircleRadius >= 0 || Data->OriginCircleSpeed != 0 || Data->OriginLinearSpeed >= 0 || Data->OriginCircleAnglePerStep != 0.0))
 			useCenterTracking = true;
 	}
-	_prevCircleCenter = circleCenter;
+	_prevBigCircleCenter = smallCircleCenter;
 
 	// 圆上目标基于内部跟踪位置（非 currentPos），避免与 MoveTo 等 AE 的位移打架
 	if (_circlePos.IsEmpty())
@@ -2130,9 +2130,9 @@ VectorResult VectorEffect::GetVectorResult()
 		trackPos.Y += centerDelta.Y;
 		trackPos.Z += centerDelta.Z;
 	}
-	double dx = static_cast<double>(trackPos.X - circleCenter.X);
-	double dy = static_cast<double>(trackPos.Y - circleCenter.Y);
-	double dz = static_cast<double>(trackPos.Z - circleCenter.Z);
+	double dx = static_cast<double>(trackPos.X - smallCircleCenter.X);
+	double dy = static_cast<double>(trackPos.Y - smallCircleCenter.Y);
+	double dz = static_cast<double>(trackPos.Z - smallCircleCenter.Z);
 		double currentDist;
 		// 圆面取点：法向量域（hasNormal 显式法向量，或 IsNormalOnOrigin 随动产生的 effectiveTilt）→ 倾斜面；
 		// 二者皆无（无法向量且 IsNormalOnOrigin=no，世界固定水平圆面）→ 传统 2D 平面。
@@ -2197,9 +2197,9 @@ VectorResult VectorEffect::GetVectorResult()
 			double ndH = (dH / curDist * targetRadius);
 			double rL = ndL * cosA - ndH * sinA;
 			double rH = ndL * sinA + ndH * cosA;
-			result.MoveDisp.X = circleCenter.X + static_cast<int>(rL * (-sinF) + rH * (-cosF * sinT)) - _circlePos.X;
-			result.MoveDisp.Y = circleCenter.Y + static_cast<int>(rL * cosF + rH * (-sinF * sinT)) - _circlePos.Y;
-			result.MoveDisp.Z = circleCenter.Z + static_cast<int>(rH * cosT) - _circlePos.Z;
+			result.MoveDisp.X = smallCircleCenter.X + static_cast<int>(rL * (-sinF) + rH * (-cosF * sinT)) - _circlePos.X;
+			result.MoveDisp.Y = smallCircleCenter.Y + static_cast<int>(rL * cosF + rH * (-sinF * sinT)) - _circlePos.Y;
+			result.MoveDisp.Z = smallCircleCenter.Z + static_cast<int>(rH * cosT) - _circlePos.Z;
 		}
 		else
 		{
@@ -2208,10 +2208,10 @@ VectorResult VectorEffect::GetVectorResult()
 			double ndy = (dy / currentDist * targetRadius);
 			double rx = ndx * cosA - ndy * sinA;
 			double ry = ndx * sinA + ndy * cosA;
-			result.MoveDisp.X = circleCenter.X + static_cast<int>(rx) - _circlePos.X;
-			result.MoveDisp.Y = circleCenter.Y + static_cast<int>(ry) - _circlePos.Y;
+			result.MoveDisp.X = smallCircleCenter.X + static_cast<int>(rx) - _circlePos.X;
+			result.MoveDisp.Y = smallCircleCenter.Y + static_cast<int>(ry) - _circlePos.Y;
 			result.MoveDisp.Z = Data->CircleOrigin.IsEmpty() && Data->OriginFLH.IsEmpty()
-				? 0 : circleCenter.Z - _circlePos.Z;  // 有显式高度指定时拉 Z，否则维持抛射体自身高度
+				? 0 : smallCircleCenter.Z - _circlePos.Z;  // 有显式高度指定时拉 Z，否则维持抛射体自身高度
 		}
 		_circlePos.X += result.MoveDisp.X;
 		_circlePos.Y += result.MoveDisp.Y;
@@ -2239,7 +2239,7 @@ VectorResult VectorEffect::GetVectorResult()
 	// ========================================================================
 	if (!Data->MoveTo.IsEmpty())
 	{
-		DirStruct moveDir = mainFacingDir;
+		DirStruct moveDir = fAxisDir;
 		double useCosT = 1.0, useSinT = 0.0;
 		// 非 Target 的 MoveTo F 轴恒水平（不再吃圆面 effectiveTilt——MoveTo 直线移动与圆面/法向量域无关）；
 		// 仅 Target + CoordinateTilt（连线 F 轴取真实 3D）时才带倾斜。
@@ -2325,22 +2325,22 @@ VectorResult VectorEffect::GetVectorResult()
 	// --- 目标世界坐标 ---
 	// TargetFLH 与 TargetOffset 的结算起点 = Origin（单位自身坐标系=Origin 单位/挂点，连线坐标系=
 	// Origin 本体中心）：什么都不写（TargetFLH=0 且无偏移）时目标点即 Origin 单位中心，弹体直冲中心。
-	CoordStruct frameTargetFlh;
+	CoordStruct smallCircleTargetFlh;
 	// TargetOffsetNormal 世界固定：偏移已由 LockFacing 转成世界坐标，叠加在旋转后的 TargetFLH 上（不随 F 轴转）
 	bool targetOffsetWorld = !Data->IsNormalOnOrigin && !Data->TargetOffsetNormal.IsEmpty();
-	frameTargetFlh.X = Data->TargetFLH.X + (targetOffsetWorld ? 0 : _randomTargetOffset.X);
-	frameTargetFlh.Y = Data->TargetFLH.Y + (targetOffsetWorld ? 0 : _randomTargetOffset.Y);
-	frameTargetFlh.Z = Data->TargetFLH.Z + (targetOffsetWorld ? 0 : _randomTargetOffset.Z);
+	smallCircleTargetFlh.X = Data->TargetFLH.X + (targetOffsetWorld ? 0 : _randomTargetOffset.X);
+	smallCircleTargetFlh.Y = Data->TargetFLH.Y + (targetOffsetWorld ? 0 : _randomTargetOffset.Y);
+	smallCircleTargetFlh.Z = Data->TargetFLH.Z + (targetOffsetWorld ? 0 : _randomTargetOffset.Z);
 
 	// TargetFLH → 世界坐标：AutoWeapon 同款管线
-	// 坐标系统一：矩阵偏移（含 IsOnTurret 炮塔/车身）+ NoUpdate 控制的计算点 originPos
-	CoordStruct frameTarget;
-	// NoUpdate=yes：目标点锁定。首帧正常计算一次缓存，后续每帧直接复用 _lockedTarget，
+	// 坐标系统一：矩阵偏移（含 IsOnTurret 炮塔/车身）+ NoUpdate 控制的计算点 startPoint
+	CoordStruct smallCircleTarget;
+	// NoUpdate=yes：目标点锁定。首帧正常计算一次缓存，后续每帧直接复用 _lockedSmallCircleTarget，
 	// 不再执行"读发射者实时坐标/朝向 → 算新目标点"的每帧刷新（Origin=Launcher 时
 	// mtxPos = 发射者实时坐标+实时朝向旋转 FLH，NoUpdate 若不隔离这里，目标点每帧被重写）
-	if (Data->OriginNoUpdate && !_lockedTarget.IsEmpty())
+	if (Data->OriginNoUpdate && !_lockedSmallCircleTarget.IsEmpty())
 	{
-		frameTarget = _lockedTarget;
+		smallCircleTarget = _lockedSmallCircleTarget;
 	}
 	else
 	{
@@ -2372,40 +2372,40 @@ VectorResult VectorEffect::GetVectorResult()
 	}
 	if (pAnchorUnit && !IsDeadOrInvisible(pAnchorUnit))
 	{
-		// 单位自身坐标系挂点（统一入口 ResolveFlhPoint，模式①/②）：
+		// 单位自身坐标系挂点（统一入口 ResolveTiltingFrame，模式①/②）：
 		//   TargetSameTilt=yes（默认）= ① AutoWeapon 完整姿态（Locomotor 矩阵 + TurretOffset +
 		//     炮塔旋转角），含车体倾斜——成熟算法保默认；
 		//   TargetSameTilt=no = ② 抛弃倾斜（水平基准）：FLH 只按单位水平朝向旋转，
 		//     不随单位坡面俯仰（转轴 TurretOffset 不参与，近似水平挂点）。
 		//   TargetIsOnTurret=yes（默认）= 对齐炮塔（onTurret：矩阵落转轴+叠炮塔差角），
 		//   no = 对齐车身（onbody：车体矩阵+车身差角）。
-		//   基准点 originPos（NoUpdate 控制的计算点）取代单位位置，剥掉单位位移只留姿态偏移。
-		frameTarget = ResolveFlhPoint(originPos, frameTargetFlh, FlhFrame::UnitOwn, pAnchorUnit,
-			Data->TargetIsOnTurret, Data->TargetSameTilt, nullptr, false, mainFacingDir, currentPos);
+		//   基准点 startPoint（NoUpdate 控制的计算点）取代单位位置，剥掉单位位移只留姿态偏移。
+		smallCircleTarget = ResolveTiltingFrame(startPoint, smallCircleTargetFlh, FlhFrame::UnitOwn, pAnchorUnit,
+			Data->TargetIsOnTurret, Data->TargetSameTilt, nullptr, false, fAxisDir, currentPos);
 	}
 	else
 	{
 		// 无单位可锚：
 		// 1. 世界模式（TargetIsOnWorld 通用，或 Self+OriginIsOnWorld 兼容老配置）→ ④ 纯世界轴无视朝向
 		// 2. 连线坐标系（Origin≠Self 且 IsOnOrigin=no，含 Launcher/Source/Target）→ ③
-		//    F 轴 = Origin 本体中心（_initialOriginPos，主 Origin 段维护：no=每帧跟实时，yes=冻结）→ 抛射体；
+		//    F 轴 = Origin 本体中心（_startPoint，主 Origin 段维护：no=每帧跟实时，yes=冻结）→ 抛射体；
 		//    CoordinateTilt=yes 取真实 3D 连线（高低差进 tilt），no=水平投影。抛射体从自身 FireFLH 出发，
-		//    不瞬移——连线的 C→P 方向只决定 TargetFLH 往哪摆（与取原点连线共用 ResolveFlhPoint 实现）
-		// 3. 其余（单位死/弹体侧 Self）→ mainFacingDir 水平旋转（② 兜底）
+		//    不瞬移——连线的 C→P 方向只决定 TargetFLH 往哪摆（与解算起始点连线共用 ResolveTiltingFrame 实现）
+		// 3. 其余（单位死/弹体侧 Self）→ fAxisDir 水平旋转（② 兜底）
 		if (Data->TargetIsOnWorld || (Data->Origin == VectorData::VectorOrigin::Self && Data->OriginIsOnWorld))
 		{
-			frameTarget = ResolveFlhPoint(originPos, frameTargetFlh, FlhFrame::World, nullptr, false, false,
-				nullptr, false, mainFacingDir, currentPos);
+			smallCircleTarget = ResolveTiltingFrame(startPoint, smallCircleTargetFlh, FlhFrame::World, nullptr, false, false,
+				nullptr, false, fAxisDir, currentPos);
 		}
 		else if (Data->Origin != VectorData::VectorOrigin::Self && !Data->IsOnOrigin)
 		{
-			frameTarget = ResolveFlhPoint(originPos, frameTargetFlh, FlhFrame::LineC2P, nullptr, false, false,
-				&_initialOriginPos, Data->CoordinateTilt, mainFacingDir, currentPos);
+			smallCircleTarget = ResolveTiltingFrame(startPoint, smallCircleTargetFlh, FlhFrame::LineC2P, nullptr, false, false,
+				&_startPoint, Data->CoordinateTilt, fAxisDir, currentPos);
 		}
 		else
 		{
-			frameTarget = ResolveFlhPoint(originPos, frameTargetFlh, FlhFrame::Fallback2D, nullptr, false, false,
-				nullptr, false, mainFacingDir, currentPos);
+			smallCircleTarget = ResolveTiltingFrame(startPoint, smallCircleTargetFlh, FlhFrame::Fallback2D, nullptr, false, false,
+				nullptr, false, fAxisDir, currentPos);
 		}
 	}
 	} // 关闭 NoUpdate 缓存的 else 块
@@ -2413,21 +2413,21 @@ VectorResult VectorEffect::GetVectorResult()
 	// TargetOffsetNormal 世界固定：偏移（世界坐标）叠加在旋转后的 TargetFLH 上，不随 F 轴转
 	if (targetOffsetWorld)
 	{
-		frameTarget.X += _randomTargetOffset.X;
-		frameTarget.Y += _randomTargetOffset.Y;
-		frameTarget.Z += _randomTargetOffset.Z;
+		smallCircleTarget.X += _randomTargetOffset.X;
+		smallCircleTarget.Y += _randomTargetOffset.Y;
+		smallCircleTarget.Z += _randomTargetOffset.Z;
 	}
 
 	// NoUpdate=yes：首帧算完缓存锁定，后续帧走缓存，不再每帧重算
 	if (Data->OriginNoUpdate)
 	{
-		_lockedTarget = frameTarget;
+		_lockedSmallCircleTarget = smallCircleTarget;
 	}
 
 	CoordStruct dirVec;
-	dirVec.X = frameTarget.X - currentPos.X;
-	dirVec.Y = frameTarget.Y - currentPos.Y;
-	dirVec.Z = frameTarget.Z - currentPos.Z;
+	dirVec.X = smallCircleTarget.X - currentPos.X;
+	dirVec.Y = smallCircleTarget.Y - currentPos.Y;
+	dirVec.Z = smallCircleTarget.Z - currentPos.Z;
 	double dirLen = std::sqrt(static_cast<double>(dirVec.X * dirVec.X + dirVec.Y * dirVec.Y + dirVec.Z * dirVec.Z));
 
 	// 同步 Rocket loco 俯仰角：引擎自主移动姿态与 Vector 移动向量一致，
@@ -2479,8 +2479,8 @@ VectorResult VectorEffect::GetVectorResult()
 		// 直接强制 SetLocation 精确 snap 到位 + 清 Velocity，引擎静止接管自然引爆于原位。
 		if (remainingFrames <= 1 && pBullet)
 		{
-			pBullet->SetLocation(frameTarget); // 官方API，不得修改：精确到位（同 SpeedEndOnReach 先例）
-			pBullet->SourceCoords = frameTarget;
+			pBullet->SetLocation(smallCircleTarget); // 官方API，不得修改：精确到位（同 SpeedEndOnReach 先例）
+			pBullet->SourceCoords = smallCircleTarget;
 			pBullet->Velocity.X = 0;
 			pBullet->Velocity.Y = 0;
 			pBullet->Velocity.Z = 0;
@@ -2501,7 +2501,7 @@ VectorResult VectorEffect::GetVectorResult()
 			// 抛物线弧高（Speed 模式影子算法：增量叠加，t 跟随实际路程，目标移动自动校准）
 			if (_motion.arcHeight != 0)
 			{
-				// 影子沿 frameTarget 方向推进 adjustedSpeed（与直线均分同步）
+				// 影子沿 smallCircleTarget 方向推进 adjustedSpeed（与直线均分同步）
 				double ux = dirVec.X / dirLen, uy = dirVec.Y / dirLen, uz = dirVec.Z / dirLen;
 				_motion.shadowX += ux * adjustedSpeed;
 				_motion.shadowY += uy * adjustedSpeed;
@@ -2509,9 +2509,9 @@ VectorResult VectorEffect::GetVectorResult()
 				_motion.shadowTraveled += adjustedSpeed;
 
 				// 剩余影子距离（3D）
-				double sdx = frameTarget.X - _motion.shadowX;
-				double sdy = frameTarget.Y - _motion.shadowY;
-				double sdz = frameTarget.Z - _motion.shadowZ;
+				double sdx = smallCircleTarget.X - _motion.shadowX;
+				double sdy = smallCircleTarget.Y - _motion.shadowY;
+				double sdz = smallCircleTarget.Z - _motion.shadowZ;
 				double shadowDist = std::sqrt(sdx * sdx + sdy * sdy + sdz * sdz);
 
 				// t = 已走路程 / 总路程（动态更新，目标移动时自动调整）
@@ -2525,9 +2525,9 @@ VectorResult VectorEffect::GetVectorResult()
 				_motion.prevArcOffset = arcOffset;
 
 				CoordStruct arcD{
-					frameTarget.X - _initialLocation.X,
-					frameTarget.Y - _initialLocation.Y,
-					frameTarget.Z - _initialLocation.Z };
+					smallCircleTarget.X - _firstFramePos.X,
+					smallCircleTarget.Y - _firstFramePos.Y,
+					smallCircleTarget.Z - _firstFramePos.Z };
 				ArcDelta3D ad = RotateArcDelta(arcD, _motion.arcRotation, arcDelta);
 				resultDisp.X += static_cast<int>(ad.x);
 				resultDisp.Y += static_cast<int>(ad.y);
@@ -2541,7 +2541,7 @@ VectorResult VectorEffect::GetVectorResult()
 
 	// ========================================================================
 	// 模式5: Speed（直线追踪 + 加速度 + 影子坐标弧高）
-	// 影子沿 _shadowPos→frameTarget 方向推进，不受弧高Z偏移污染
+	// 影子沿 _shadowPos→smallCircleTarget 方向推进，不受弧高Z偏移污染
 	// SpeedEndOnReach 和 t 均基于影子距离判定
 	// ========================================================================
 	if (Data->LinearSpeed >= 0)
@@ -2566,12 +2566,12 @@ VectorResult VectorEffect::GetVectorResult()
 
 		// 以下：SpeedEndOnReach=yes，走影子系统
 		// 有弧线：影子追踪完整 3D，弧高增量叠加
-		double sdx = frameTarget.X - _motion.shadowX;
-		double sdy = frameTarget.Y - _motion.shadowY;
+		double sdx = smallCircleTarget.X - _motion.shadowX;
+		double sdy = smallCircleTarget.Y - _motion.shadowY;
 		double sdz, shadowDist;
 		if (_motion.arcHeight != 0)
 		{
-			sdz = frameTarget.Z - _motion.shadowZ;
+			sdz = smallCircleTarget.Z - _motion.shadowZ;
 			shadowDist = std::sqrt(sdx * sdx + sdy * sdy + sdz * sdz);
 		}
 		else
@@ -2585,22 +2585,22 @@ VectorResult VectorEffect::GetVectorResult()
 		// 到达判定用真实 3D 距离（含 Z），避免高空俯冲时 XY 先对齐导致误判到达
 		if (Data->SpeedEndOnReach)
 		{
-			double realDX = frameTarget.X - currentPos.X;
-			double realDY = frameTarget.Y - currentPos.Y;
-			double realDZ = frameTarget.Z - currentPos.Z;
+			double realDX = smallCircleTarget.X - currentPos.X;
+			double realDY = smallCircleTarget.Y - currentPos.Y;
+			double realDZ = smallCircleTarget.Z - currentPos.Z;
 			double realDist = std::sqrt(realDX * realDX + realDY * realDY + realDZ * realDZ);
 			// A：影子理论到位（shadowDist<=speed）也判到达——弧线时影子沿直线先到目标点，
 			// 弹体实际走弧线被甩在后面（realDist 仍 > speed），只判 realDist 永不满足 →
 			// 影子停推（disp=0）弹体僵直空中（日志实证：mf=38 起 disp=(0,0,0)、cur 恒定点、
 			// realDist≈43 > speed=30）。影子到位 = 理论飞行完成，立即 snap。
-			// B：判据内执行体 = SetLocation(frameTarget) 精确到位 + 清残留 Velocity
+			// B：判据内执行体 = SetLocation(smallCircleTarget) 精确到位 + 清残留 Velocity
 			// （同 ReachTarget snap：引擎从静止接管，不再按累积速度把弹体推离爆点）
 			if (realDist <= speed || shadowDist <= speed)
 			{
 				// 强制挪移：到达帧直接把对象坐标设为目标格子坐标（完全重合），消除到位抖动
 				if (pBullet)
 				{
-					pBullet->SetLocation(frameTarget);
+					pBullet->SetLocation(smallCircleTarget);
 					// 清残留 Velocity（同 ReachTarget snap 处理）：Vector 期间引擎仍累积转向+加速，
 					// Deactivate 后引擎接管会按残留速度把停在目标点的弹体推走（爆点偏移）
 					pBullet->Velocity.X = 0;
@@ -2616,7 +2616,7 @@ VectorResult VectorEffect::GetVectorResult()
 					bool onBridge = pTechno->OnBridge;
 					pTechno->UpdatePlacement(PlacementType::Remove);
 					pTechno->OnBridge = onBridge;
-					pTechno->SetLocation(frameTarget);
+					pTechno->SetLocation(smallCircleTarget);
 					pTechno->UpdatePlacement(PlacementType::Put);
 					result.MoveDisp = { 0, 0, 0 };
 					result.Force = false;
@@ -2643,15 +2643,15 @@ VectorResult VectorEffect::GetVectorResult()
 				shadowStepZ = sdz * sInv * step;
 				_motion.shadowZ += shadowStepZ;
 			}
-			// 无弧线：_shadowPosZ 不变（始终 = _initialLocation.Z），Z 由 t 插值
+			// 无弧线：_shadowPosZ 不变（始终 = _firstFramePos.Z），Z 由 t 插值
 			_motion.shadowTraveled += step;
 
 			// 重新计算影子距离（影子已移动）
-			sdx = frameTarget.X - _motion.shadowX;
-			sdy = frameTarget.Y - _motion.shadowY;
+			sdx = smallCircleTarget.X - _motion.shadowX;
+			sdy = smallCircleTarget.Y - _motion.shadowY;
 			if (_motion.arcHeight != 0)
 			{
-				sdz = frameTarget.Z - _motion.shadowZ;
+				sdz = smallCircleTarget.Z - _motion.shadowZ;
 				shadowDist = std::sqrt(sdx * sdx + sdy * sdy + sdz * sdz);
 			}
 			else
@@ -2676,8 +2676,8 @@ VectorResult VectorEffect::GetVectorResult()
 			else
 			{
 				// 无弧线：Z 从抛射体起始高度 lerp 到目标高度
-				// _shadowPosZ 在无弧线时冻结为抛射体起始 Z，_initialLocation.Z 可能是目标 Z（Origin=Target 时不同）
-				double targetZ = _motion.shadowZ + (frameTarget.Z - _motion.shadowZ) * t;
+				// _shadowPosZ 在无弧线时冻结为抛射体起始 Z，_firstFramePos.Z 可能是目标 Z（Origin=Target 时不同）
+				double targetZ = _motion.shadowZ + (smallCircleTarget.Z - _motion.shadowZ) * t;
 				resultDisp.Z = static_cast<int>(targetZ - currentPos.Z);
 			}
 
@@ -2688,9 +2688,9 @@ VectorResult VectorEffect::GetVectorResult()
 				_motion.prevArcOffset = arcOffset;
 
 				CoordStruct arcD{
-					frameTarget.X - _initialLocation.X,
-					frameTarget.Y - _initialLocation.Y,
-					frameTarget.Z - _initialLocation.Z };
+					smallCircleTarget.X - _firstFramePos.X,
+					smallCircleTarget.Y - _firstFramePos.Y,
+					smallCircleTarget.Z - _firstFramePos.Z };
 				ArcDelta3D ad = RotateArcDelta(arcD, _motion.arcRotation, arcDelta);
 				resultDisp.X += static_cast<int>(ad.x);
 				resultDisp.Y += static_cast<int>(ad.y);
