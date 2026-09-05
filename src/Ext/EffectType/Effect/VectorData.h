@@ -36,7 +36,7 @@ public:
 	int DisabledFrames = 0;              // 首帧快照后冻结 N 帧，不计入运动时间
 	bool SyncFacing = false;             // yes=抛射体朝运动方向/单位转动，no=抛射体朝目标
 	bool OriginIsOnWorld = false;        // yes=OriginFLH用世界FLH(朝北)，不使用单位/弹体朝向
-	bool OriginIsOnBody = false;         // yes=单位取车身PrimaryFacing，无视炮塔TurretFacing
+	bool OriginIsOnTurret = false;       // yes=挂炮塔（TurretFacing，炮塔差角跟随），no=挂车身（PrimaryFacing，默认）。INI: Vector.OriginIsOnTurret（改名自 OriginIsOnBody，语义反转）
 	bool SubjectToCliffs = false;        // Vector 接管期是否受悬崖/撞地影响（与原版弹体标签同义；默认 no=接管期无视，免疫引爆）
 
 	enum class VectorOrigin : int
@@ -165,7 +165,7 @@ public:
 	double OriginLissajous = 0.0;        // 大圆圆周 F 轴偏移角速度（°/step），0=不偏移
 	VectorOrigin OriginOrigin = VectorOrigin::Self; // 圆心运动参考系
 	CoordStruct OriginOriginFLH{};      // OriginOrigin=FLH 时的 FLH 偏移
-	bool OriginOriginIsOnBody = false;  // OriginOriginFLH 挂点坐标系：yes=挂 OriginOrigin 单位车身（PrimaryFacing），no=挂炮塔（TurretFacing，默认）
+	bool OriginOriginIsOnTurret = false; // OriginOriginFLH 挂点坐标系：yes=挂 OriginOrigin 单位炮塔（TurretFacing），no=挂车身（PrimaryFacing，默认）。INI: Vector.Origin.OriginIsOnTurret（改名自 Origin.Origin.OriginIsOnBody，语义反转）
 
 	// ========================================================================
 	// Speed 模式（直线追踪 + 加速度）
@@ -200,7 +200,8 @@ public:
 	int TargetOffsetRadiusMin2 = 0;  // 四参数版（TargetOffsetRadiusRanges）区间2，区间1复用 Min/Max
 	int TargetOffsetRadiusMax2 = 0;
 	bool TargetOffsetSphere = false;   // yes=球面全向（含H），no=XY圆环+H用TargetOffsetH
-	CoordStruct TargetOffsetNormal{};  // 圆环法向量（FLH），非空时 TargetOffsetSphere=no 的落点在倾斜圆面上（法向量定义圆面）
+	CoordStruct TargetOffsetNormal{};  // 圆环法向量（FLH），非空时 TargetOffsetSphere=no 的落点在倾斜圆面上（法向量定义圆面）。仅圆环模式有意义
+	bool TargetOffsetNormalOnOrigin = true; // TargetOffsetNormal 分量坐标系（OnOrigin 统一语义）：yes=在 Origin 单位自身 FLH 轴系解释（圆环随单位转/斜），no=世界坐标系（圆环面朝世界，落点直摆世界坐标）
 	// 角度限制（TargetOffsetAngles，仅圆环模式）：双区间，0度=目标点指向抛射体（近交点）
 	int TargetOffsetAngleMin = 0;
 	int TargetOffsetAngleMax = 0;
@@ -256,7 +257,7 @@ public:
 		DisabledFrames = reader->Get(title + "DisabledFrames", 0);
 		SyncFacing = reader->Get(title + "SyncFacing", SyncFacing);
 		OriginIsOnWorld = reader->Get(title + "OriginIsOnWorld", OriginIsOnWorld);
-		OriginIsOnBody = reader->Get(title + "OriginIsOnBody", OriginIsOnBody);
+		OriginIsOnTurret = reader->Get(title + "OriginIsOnTurret", false); // 默认挂车身（no）；旧键 OriginIsOnBody 失效
 		SubjectToCliffs = reader->Get(title + "SubjectToCliffs", SubjectToCliffs);
 
 		std::string originStr = reader->Get(title + "Origin", std::string{ "Self" });
@@ -402,7 +403,7 @@ public:
 		else if (originOriginStr == "Source") OriginOrigin = VectorOrigin::Source;
 		else OriginOrigin = VectorOrigin::Self;
 		OriginOriginFLH = reader->Get(title + "Origin.OriginFLH", OriginOriginFLH);
-		OriginOriginIsOnBody = reader->Get(title + "Origin.OriginIsOnBody", false); // 默认挂炮塔（no），行为与旧实现一致
+		OriginOriginIsOnTurret = reader->Get(title + "Origin.OriginIsOnTurret", false); // 默认挂车身（no），行为与"OriginIsOnTurret 反转"一致；旧键 Origin.Origin.OriginIsOnBody 失效
 
 		// --- Speed / ReachTarget ---
 		TargetFLH = reader->Get(title + "TargetFLH", TargetFLH);
@@ -441,6 +442,7 @@ public:
 		ParseMinMax(targetOffsetRadiusStr, TargetOffsetRadiusMin, TargetOffsetRadiusMax);
 		TargetOffsetSphere = reader->Get(title + "TargetOffsetSphere", TargetOffsetSphere);
 		TargetOffsetNormal = reader->Get(title + "TargetOffsetNormal", TargetOffsetNormal);
+		TargetOffsetNormalOnOrigin = reader->Get(title + "TargetOffsetNormalOnOrigin", true); // 默认 yes=单位自身坐标系（OnOrigin 统一语义）
 		ReachTarget = reader->Get(title + "ReachTarget", ReachTarget);
 		ReachTargetEarlyEnd = reader->Get(title + "ReachTargetEarlyEnd", ReachTargetEarlyEnd);
 		ArcHeight = reader->Get(title + "ArcHeight", 0);
@@ -509,7 +511,7 @@ private:
 	bool Serialize(T& stream)
 	{
 		stream
-			.Process(this->TimeStep).Process(this->DisabledFrames).Process(this->SyncFacing).Process(this->OriginIsOnWorld).Process(this->OriginIsOnBody).Process(this->SubjectToCliffs)
+			.Process(this->TimeStep).Process(this->DisabledFrames).Process(this->SyncFacing).Process(this->OriginIsOnWorld).Process(this->OriginIsOnTurret).Process(this->SubjectToCliffs)
 			.Process(this->Origin)
 			.Process(this->OriginFLH)
 			.Process(this->OriginNoUpdate)
@@ -617,6 +619,7 @@ private:
 			.Process(this->TargetOffsetRadiusMax2)
 			.Process(this->TargetOffsetSphere)
 			.Process(this->TargetOffsetNormal)
+			.Process(this->TargetOffsetNormalOnOrigin)
 			.Process(this->TargetOffsetAngleMin)
 			.Process(this->TargetOffsetAngleMax)
 			.Process(this->TargetOffsetAngleMin2)
@@ -641,7 +644,7 @@ private:
 			.Process(this->MinSpeed)
 			.Process(this->Acceleration)
 			.Process(this->SpeedEndOnReach)
-			.Process(this->OriginOriginIsOnBody); // 2026-09-05 新增（追加尾部保证旧存档顺序兼容）
+			.Process(this->OriginOriginIsOnTurret); // 2026-09-05 改名（原 OriginOriginIsOnBody，语义反转）
 		return stream.Success();
 	};
 

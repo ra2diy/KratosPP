@@ -96,7 +96,7 @@ public:
 		double tilt = 0.0;                // 俯仰角（facing+tilt 路径；0=纯水平）
 	};
 	CoordStruct ResolveTilting(const CoordStruct& base, const CoordStruct& flh, const PoseParams& pose);
-	// OriginFLH 解算流程：读 Origin 系标签（OriginIsOnWorld/AllowOriginTilt/OriginIsOnBody/
+	// OriginFLH 解算流程：读 Origin 系标签（OriginIsOnWorld/AllowOriginTilt/OriginIsOnTurret/
 	// OriginIsOnVectorOrigin/CoordinateTilt）填 PoseParams → ResolveTilting。
 	// 解算偏移 = OriginFLH + CircleOrigin（主圆圆心偏移，同姿态线性合并一次摆）。
 	// base=Origin 单位坐标；fallbackFacing=水平兜底朝向（挂载期 _fAxisDir，每帧 fAxisDir）；
