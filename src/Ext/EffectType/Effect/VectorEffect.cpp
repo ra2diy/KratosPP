@@ -885,11 +885,8 @@ void VectorEffect::InitOrigin()
 		// 此处只定朝向与单位坐标：pBullet=弹体速度朝向；pTechno=载体单位炮塔/车身朝向。
 		if (pBullet)
 		{
-			double bulletRad = std::atan2(pBullet->Velocity.X, pBullet->Velocity.Y);
-			DirStruct bulletFacing;
-			bulletFacing.SetValue(static_cast<short>(bulletRad * 32768.0 / M_PI));
 			_lastPoint = pBullet->GetCoords(); // 单位坐标，OriginFLH 偏移由挂载复合复合
-			_fAxisDir = bulletFacing; // 锁定初始朝向
+			_fAxisDir = Facing(pBullet); // 官方API：弹体速度朝向（Point2Dir 内含 RA2 修正），锁定初始朝向
 			_fAxisRad = _fAxisDir.GetRadian();
 		}
 		else if (pTechno)
@@ -1057,9 +1054,9 @@ void VectorEffect::LockFacing()
 			if (!hasNormal)
 			{
 				if (pBullet)
-					_fAxisRad = std::atan2(pBullet->Velocity.X, pBullet->Velocity.Y);
+					_fAxisRad = _fAxisDir.GetRadian(); // 官方API：InitOrigin 已用 Facing(pBullet) 锁定弹体朝向，同帧同源直接取
 				else if (pTechno)
-					_fAxisRad = pTechno->TurretFacing().Current().GetRadian();
+					_fAxisRad = pTechno->TurretFacing().Current().GetRadian(); // 官方API，不得修改
 			}
 			break;
 		}
@@ -1624,120 +1621,134 @@ VectorResult VectorEffect::GetVectorResult()
 		{
 			// 解算起始点：默认 startPoint，OriginOrigin 可替换为独立参考系
 			CoordStruct bigCircleStartPoint = startPoint;
-			if (Data->OriginOrigin != VectorData::VectorOrigin::Self)
+
+			// ====================================================================
+			// 大圆基准点快照机制（_bigCircleStartPoint 只存"完整最终结果"）：
+			//   完整结果 = OriginOrigin 参考坐标 + OriginOriginFLH 挂点 + OriginCircleOffset，全部算完后的值。
+			//   首次（快照未建立）：无条件完整算一次写入快照——打格子/目标未就绪在此固化初始结果。
+			//   后续帧：读到活锚单位（OriginOriginNoUpdate=no）→ 完整重算并刷新快照；
+			//           读不到锚单位（目标死亡被清空 / 打格子从无单位 / NoUpdate 冻结）
+			//           → 直接取快照（停止更新，不重算挂点/偏移，无跳变）。
+			//   注：单位死亡 = "变 null 前的缓存结果"，由快照承载；打格子 = 格子静止，快照恒正确。
+			// ====================================================================
+			TechnoClass* pBigCircleAnchorUnit = nullptr; // OriginOrigin 对应单位（Self → 小圆参照 单位；无单位=打格子）
+			if (Data->OriginOrigin == VectorData::VectorOrigin::Launcher)
+				pBigCircleAnchorUnit = abstract_cast<TechnoClass*>(_pLauncher);
+			else if (Data->OriginOrigin == VectorData::VectorOrigin::Source)
+				pBigCircleAnchorUnit = abstract_cast<TechnoClass*>(_pSource);
+			else if (Data->OriginOrigin == VectorData::VectorOrigin::Target)
 			{
-				switch (Data->OriginOrigin)
+				AbstractClass* pTgt = pBullet ? pBullet->Target : (pTechno ? pTechno->Target : nullptr);
+				pBigCircleAnchorUnit = abstract_cast<TechnoClass*>(pTgt);
+			}
+			else
+				pBigCircleAnchorUnit = FindOriginTechno(); // OriginOrigin=Self：解算起始点跟小圆，姿态跟小圆参照 单位
+			bool anchorAlive = pBigCircleAnchorUnit && !IsDeadOrInvisible(pBigCircleAnchorUnit); // 本帧是否锁定到活锚单位
+			// 首次（快照未建立）必算：固化初始快照（打格子/目标未就绪在此落底）；之后仅在
+			// 允许更新 + 锚单位活着 时重算。快照建立与否以 IsEmpty 判定（不依赖帧计数，
+			// DisabledFrames>0 时首次到达此处帧计数已过 0）。
+			bool recalc = _bigCircleStartPoint.IsEmpty() || (!Data->OriginOriginNoUpdate && anchorAlive);
+			if (recalc)
+			{
+				// 参考坐标：锚单位活 → 其坐标；首帧无锚（打格子/目标未就绪）→ startPoint 兜底，
+				// Target 打格子另有读链兜底（见下）
+				bigCircleStartPoint = startPoint;
+				if (Data->OriginOrigin != VectorData::VectorOrigin::Self)
 				{
-				case VectorData::VectorOrigin::Launcher:
-					if (_pLauncher && !IsDeadOrInvisible(_pLauncher))
+					switch (Data->OriginOrigin)
 					{
-						if (!Data->OriginOriginNoUpdate)
-							_bigCircleStartPoint = _pLauncher->GetCoords(); // 发射者活着：每帧快照（NoUpdate=yes 冻结首帧不更新）
-						bigCircleStartPoint = _pLauncher->GetCoords();
-					}
-					else
-						bigCircleStartPoint = _bigCircleStartPoint; // 发射者死亡：冻结快照（首帧或最后跟随值），不再读指针
-					break;
-				case VectorData::VectorOrigin::Target:
-					{
-						CoordStruct targetBase{};
-						bool gotTargetBase = false;
-						if (pTechno && pTechno->Target)
+					case VectorData::VectorOrigin::Launcher:
+						if (anchorAlive)
+							bigCircleStartPoint = pBigCircleAnchorUnit->GetCoords(); // 发射者活着：每帧跟随
+						break;
+					case VectorData::VectorOrigin::Source:
+						if (anchorAlive)
+							bigCircleStartPoint = pBigCircleAnchorUnit->GetCoords(); // 来源活着：每帧跟随
+						break;
+					case VectorData::VectorOrigin::Target:
+						if (anchorAlive)
 						{
-							targetBase = pTechno->Target->GetCoords();
-							gotTargetBase = true;
-						}
-						else if (pTechno)
-						{
-							FootClass* pFoot = abstract_cast<FootClass*>(pTechno);
-							if (pFoot && pFoot->Destination)
-							{
-								targetBase = pFoot->Destination->GetCoords();
-								gotTargetBase = true;
-							}
-						}
-						else if (pBullet && pBullet->Target)
-						{
-							targetBase = pBullet->Target->GetCoords();
-							gotTargetBase = true;
-						}
-						else if (pBullet && pBullet->Owner && pBullet->Owner->Target)
-						{
-							targetBase = pBullet->Owner->Target->GetCoords();
-							gotTargetBase = true;
-						}
-						else if (pBullet)
-						{
-							targetBase = pBullet->TargetCoords;
-							gotTargetBase = true;
-						}
-						if (gotTargetBase)
-						{
-							if (!Data->OriginOriginNoUpdate)
-								_bigCircleStartPoint = targetBase; // 目标活着：每帧快照（NoUpdate=yes 冻结首帧不更新）
-							bigCircleStartPoint = targetBase;
+							bigCircleStartPoint = pBigCircleAnchorUnit->GetCoords(); // 目标单位活着：每帧跟随
 						}
 						else
-							bigCircleStartPoint = _bigCircleStartPoint; // 目标失效：冻结快照（首帧或最后跟随值），不再掉回 startPoint
+						{
+							// 快照未建立 + 无活锚单位（目标未就绪/打格子）首次落底：读链兜底取一次参考坐标
+							// （补读只为获取目标；此后快照非空即恒用快照，不再走本兜底）
+							CoordStruct targetBase{};
+							bool gotTargetBase = false;
+							if (pTechno && pTechno->Target)
+							{
+								targetBase = pTechno->Target->GetCoords();
+								gotTargetBase = true;
+							}
+							else if (pTechno)
+							{
+								FootClass* pFoot = abstract_cast<FootClass*>(pTechno);
+								if (pFoot && pFoot->Destination)
+								{
+									targetBase = pFoot->Destination->GetCoords();
+									gotTargetBase = true;
+								}
+							}
+							else if (pBullet && pBullet->Target)
+							{
+								targetBase = pBullet->Target->GetCoords();
+								gotTargetBase = true;
+							}
+							else if (pBullet && pBullet->Owner && pBullet->Owner->Target)
+							{
+								targetBase = pBullet->Owner->Target->GetCoords();
+								gotTargetBase = true;
+							}
+							else if (pBullet)
+							{
+								targetBase = pBullet->TargetCoords;
+								gotTargetBase = true;
+							}
+							if (gotTargetBase)
+								bigCircleStartPoint = targetBase; // 格子坐标（静态，固化后恒用快照）
+						}
+						// 其余（快照已建立 + 目标死亡/格子）：recalc=false 已拦截，走快照
+						break;
 					}
-					break;
-				case VectorData::VectorOrigin::Source:
-					if (_pSource && !IsDeadOrInvisible(_pSource))
+				}
+
+				// OriginOriginFLH 挂点偏移（对齐小圆参照FLH——原实现只在 OriginOrigin=Self 时生效且纯加法，
+				// 属历史残缺；现对任意 OriginOrigin 生效）：
+				//   Origin.AllowOriginTilt=yes 且 OriginOrigin 有存活单位 → 按单位完整姿态矩阵摆放
+				//     （useUnitPose：GetFLHAbsoluteCoords 含车身矩阵 + TurretOffset 转轴 + 炮塔差角；
+				//       onTurret 由 Origin.OriginIsOnBody 决定：yes=挂车身，no=挂炮塔）；
+				//   no / 单位死 / 无单位（打格子）→ 纯世界坐标加法（无姿态可跟随，配置语义）
+				if (!Data->OriginOriginFLH.IsEmpty())
+				{
+					if (Data->OriginAllowOriginTilt && anchorAlive)
 					{
-						if (!Data->OriginOriginNoUpdate)
-							_bigCircleStartPoint = _pSource->GetCoords(); // 来源活着：每帧快照（NoUpdate=yes 冻结首帧不更新）
-						bigCircleStartPoint = _pSource->GetCoords();
+						PoseParams pose;
+						pose.useUnitPose = true;
+						pose.anchor = pBigCircleAnchorUnit;
+						pose.onTurret = !Data->OriginOriginIsOnBody;
+						bigCircleStartPoint = ResolveTilting(bigCircleStartPoint, Data->OriginOriginFLH, pose);
 					}
 					else
-						bigCircleStartPoint = _bigCircleStartPoint; // 来源死亡：冻结快照（首帧或最后跟随值），不再读指针
-					break;
+					{
+						bigCircleStartPoint.X += Data->OriginOriginFLH.X;
+						bigCircleStartPoint.Y += Data->OriginOriginFLH.Y;
+						bigCircleStartPoint.Z += Data->OriginOriginFLH.Z;
+					}
 				}
-			}
 
-			// OriginOriginFLH 挂点偏移（对齐小圆参照FLH——原实现只在 OriginOrigin=Self 时生效且纯加法，
-			// 属历史残缺；现对任意 OriginOrigin 生效）：
-			//   Origin.AllowOriginTilt=yes 且 OriginOrigin 有存活单位 → 按单位姿态 3D 摆放
-			//     （facing=单位自身朝向 TurretFacing，tilt=单位倾斜采样）；
-			//   no / 单位死 / 无单位（打格子）→ 纯世界坐标加法（无姿态可跟随）
-			if (!Data->OriginOriginFLH.IsEmpty())
-			{
-				TechnoClass* pOO = nullptr; // OriginOrigin 对应单位（Self → 小圆参照 单位）
-				if (Data->OriginOrigin == VectorData::VectorOrigin::Launcher)
-					pOO = abstract_cast<TechnoClass*>(_pLauncher);
-				else if (Data->OriginOrigin == VectorData::VectorOrigin::Source)
-					pOO = abstract_cast<TechnoClass*>(_pSource);
-				else if (Data->OriginOrigin == VectorData::VectorOrigin::Target)
-				{
-					AbstractClass* pTgt = pBullet ? pBullet->Target : (pTechno ? pTechno->Target : nullptr);
-					pOO = abstract_cast<TechnoClass*>(pTgt);
-				}
-				else
-					pOO = FindOriginTechno(); // OriginOrigin=Self：解算起始点跟小圆，姿态跟小圆参照 单位
-			if (Data->OriginAllowOriginTilt && pOO && !IsDeadOrInvisible(pOO))
-			{
-				// 按单位姿态 3D 解算（facing=TurretFacing，tilt=单位倾斜采样）
-				PoseParams pose;
-				pose.facing = pOO->TurretFacing().Current(); // 官方API，不得修改
-				pose.tilt = SampleOriginTilt(pOO);
-				bigCircleStartPoint = ResolveTilting(bigCircleStartPoint, Data->OriginOriginFLH, pose);
-			}
-				else
-				{
-					bigCircleStartPoint.X += Data->OriginOriginFLH.X;
-					bigCircleStartPoint.Y += Data->OriginOriginFLH.Y;
-					bigCircleStartPoint.Z += Data->OriginOriginFLH.Z;
-				}
-			}
+				// Origin.CircleOffset 世界偏移
+				if (!Data->OriginCircleOffset.IsEmpty())
+					bigCircleStartPoint = bigCircleStartPoint + Data->OriginCircleOffset;
 
-			// Origin.CircleOffset 世界偏移
-			if (!Data->OriginCircleOffset.IsEmpty())
-				bigCircleStartPoint = bigCircleStartPoint + Data->OriginCircleOffset;
-
-			// OriginNoUpdate：首帧快照解算起始点，后续帧冻结
-			if (_elapsedFrames == 0)
+				// 快照 = 完整最终结果（首帧或锚单位活时每帧刷新；NoUpdate=yes 只有首帧走这里）
 				_bigCircleStartPoint = bigCircleStartPoint;
-			else if (Data->OriginOriginNoUpdate)
+			}
+			else
+			{
+				// 无活锚单位（目标死亡 / 打格子 / NoUpdate 冻结）：停止更新，直接用快照
 				bigCircleStartPoint = _bigCircleStartPoint;
+			}
 
 			if (_elapsedFrames == 0)
 			{
@@ -1841,7 +1852,7 @@ VectorResult VectorEffect::GetVectorResult()
 					double fy = Data->OriginOriginFLH.X, fx = Data->OriginOriginFLH.Y;
 					facingU = std::atan2(fy, fx);
 				}
-				else if (pBullet) facingU = pBullet->Velocity.Magnitude() > 0 ? std::atan2(pBullet->Velocity.X, pBullet->Velocity.Y) : 0.0;
+				else if (pBullet) facingU = pBullet->Velocity.Magnitude() > 0 ? Facing(pBullet).GetRadian() : 0.0; // 官方API：弹体速度朝向
 				else if (pTechno) facingU = pTechno->TurretFacing().Current().GetRadian(); // 官方API，不得修改
 				break;
 			}

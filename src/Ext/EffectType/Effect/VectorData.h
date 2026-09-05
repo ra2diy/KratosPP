@@ -165,6 +165,7 @@ public:
 	double OriginLissajous = 0.0;        // 大圆圆周 F 轴偏移角速度（°/step），0=不偏移
 	VectorOrigin OriginOrigin = VectorOrigin::Self; // 圆心运动参考系
 	CoordStruct OriginOriginFLH{};      // OriginOrigin=FLH 时的 FLH 偏移
+	bool OriginOriginIsOnBody = false;  // OriginOriginFLH 挂点坐标系：yes=挂 OriginOrigin 单位车身（PrimaryFacing），no=挂炮塔（TurretFacing，默认）
 
 	// ========================================================================
 	// Speed 模式（直线追踪 + 加速度）
@@ -401,6 +402,7 @@ public:
 		else if (originOriginStr == "Source") OriginOrigin = VectorOrigin::Source;
 		else OriginOrigin = VectorOrigin::Self;
 		OriginOriginFLH = reader->Get(title + "Origin.OriginFLH", OriginOriginFLH);
+		OriginOriginIsOnBody = reader->Get(title + "Origin.OriginIsOnBody", false); // 默认挂炮塔（no），行为与旧实现一致
 
 		// --- Speed / ReachTarget ---
 		TargetFLH = reader->Get(title + "TargetFLH", TargetFLH);
@@ -638,7 +640,8 @@ private:
 			.Process(this->MaxSpeed)
 			.Process(this->MinSpeed)
 			.Process(this->Acceleration)
-			.Process(this->SpeedEndOnReach);
+			.Process(this->SpeedEndOnReach)
+			.Process(this->OriginOriginIsOnBody); // 2026-09-05 新增（追加尾部保证旧存档顺序兼容）
 		return stream.Success();
 	};
 
