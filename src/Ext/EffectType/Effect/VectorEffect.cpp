@@ -2248,9 +2248,13 @@ VectorResult VectorEffect::GetVectorResult()
 			}
 			double rL = ndL * cosA - ndH * sinA;
 			double rH = ndL * sinA + ndH * cosA;
-			result.MoveDisp.X = smallCircleCenter.X + static_cast<int>(rL * (-sinF) + rH * (-cosF * sinT)) - _circlePos.X;
-			result.MoveDisp.Y = smallCircleCenter.Y + static_cast<int>(rL * cosF + rH * (-sinF * sinT)) - _circlePos.Y;
-			result.MoveDisp.Z = smallCircleCenter.Z + static_cast<int>(rH * cosT) - _circlePos.Z;
+			// 位移基准 = 弹体实际位置 currentPos（2026-09-06 自愈式，用户拍板方案 A）：
+			// desired = 圆周下一相位绝对点。任意单帧丢失（段切换首帧 OnUpdateEnd 未触发等）
+			// 会被下一帧自动补偿（径向 + Z 修正），弹体最终必收敛到圆周——不再依赖内部
+			// _circlePos 与弹体位置严格同步（首帧大位移丢失曾导致圆高/圆心随进入点漂移）。
+			result.MoveDisp.X = smallCircleCenter.X + static_cast<int>(rL * (-sinF) + rH * (-cosF * sinT)) - currentPos.X;
+			result.MoveDisp.Y = smallCircleCenter.Y + static_cast<int>(rL * cosF + rH * (-sinF * sinT)) - currentPos.Y;
+			result.MoveDisp.Z = smallCircleCenter.Z + static_cast<int>(rH * cosT) - currentPos.Z;
 		}
 		else
 		{
@@ -2269,14 +2273,20 @@ VectorResult VectorEffect::GetVectorResult()
 			}
 			double rx = ndx * cosA - ndy * sinA;
 			double ry = ndx * sinA + ndy * cosA;
-			result.MoveDisp.X = smallCircleCenter.X + static_cast<int>(rx) - _circlePos.X;
-			result.MoveDisp.Y = smallCircleCenter.Y + static_cast<int>(ry) - _circlePos.Y;
+			// 位移基准 = 弹体实际位置 currentPos（2026-09-06 自愈式，同倾斜分支注释）
+			result.MoveDisp.X = smallCircleCenter.X + static_cast<int>(rx) - currentPos.X;
+			result.MoveDisp.Y = smallCircleCenter.Y + static_cast<int>(ry) - currentPos.Y;
 			result.MoveDisp.Z = Data->CircleOrigin.IsEmpty() && Data->OriginFLH.IsEmpty()
-				? 0 : smallCircleCenter.Z - _circlePos.Z;  // 有显式高度指定时拉 Z，否则维持抛射体自身高度
+				? 0 : smallCircleCenter.Z - currentPos.Z;  // 有显式高度指定时拉 Z（自愈），否则维持抛射体自身高度
 		}
-		_circlePos.X += result.MoveDisp.X;
-		_circlePos.Y += result.MoveDisp.Y;
-		_circlePos.Z += result.MoveDisp.Z;
+		// _circlePos 更新 = 本帧目标圆周点（绝对，2026-09-06）：MoveDisp 基准已改为 currentPos
+		// （自愈式），若 _circlePos 仍 += disp，弹体与内部相位脱节（段切换首帧应用丢失）时
+		// 差值会被累进 _circlePos → 相位飞离圆周（曾实证 cPos 距圆心 2064、Z 发散 2998）。
+		// 直接设到 currentPos + MoveDisp（= 圆周下一相位点绝对坐标）→ _circlePos 恒在圆周，
+		// trackPos 方向不漂移。
+		_circlePos.X = currentPos.X + result.MoveDisp.X;
+		_circlePos.Y = currentPos.Y + result.MoveDisp.Y;
+		_circlePos.Z = currentPos.Z + result.MoveDisp.Z;
 		result.Force = true;
 
 		// 到达边界时结束 AE
