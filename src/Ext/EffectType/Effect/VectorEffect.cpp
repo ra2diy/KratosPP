@@ -2378,14 +2378,12 @@ VectorResult VectorEffect::GetVectorResult()
 	// --- 目标世界坐标 ---
 	// TargetFLH 与 TargetOffset 的结算起点 = Origin（单位自身坐标系=Origin 单位/挂点，连线坐标系=
 	// Origin 本体中心）：什么都不写（TargetFLH=0 且无偏移）时目标点即 Origin 单位中心，弹体直冲中心。
-	CoordStruct smallCircleTargetFlh;
-	// TargetOffsetNormal 世界固定：偏移已由 LockFacing 转成世界坐标，叠加在旋转后的 TargetFLH 上（不随 F 轴转）
-	// TargetOffsetNormal 世界固定（TargetOffsetNormalOnOrigin=no）：偏移已由 LockFacing 直摆成世界坐标，
-	// 叠加在旋转后的 TargetFLH 上（不随 F 轴转）；yes=分量落点按 FLH 叠加进 TargetFLH 一起摆（随单位）
-	bool targetOffsetWorld = !Data->TargetOffsetNormalOnOrigin && !Data->TargetOffsetNormal.IsEmpty();
-	smallCircleTargetFlh.X = Data->TargetFLH.X + (targetOffsetWorld ? 0 : _randomTargetOffset.X);
-	smallCircleTargetFlh.Y = Data->TargetFLH.Y + (targetOffsetWorld ? 0 : _randomTargetOffset.Y);
-	smallCircleTargetFlh.Z = Data->TargetFLH.Z + (targetOffsetWorld ? 0 : _randomTargetOffset.Z);
+	CoordStruct smallCircleTargetFlh = Data->TargetFLH;
+	// TargetOffset 坐标系自足（2026-09-05 解耦补完）：不再并入 TargetFLH 摆点系——
+	// TargetOffsetNormalOnOrigin 决定 offset 分量自己的坐标系（yes=Origin 单位系 / no=世界系，
+	// LockFacing 已预转），统一走下方世界化通道直加。此前并入 flh 会让 offset 分量随 TargetFLH
+	// 摆点系旋转：IsOnOrigin=no 打格子时该系 = "格子→弹体"连线、每帧随弹体方位变 → 目标点
+	// 绕格子转 → ReachTarget 追动目标抽搐（用户裁决：无锚 = 停止更新/世界直摆）。
 
 	// TargetFLH → 世界坐标：AutoWeapon 同款管线
 	// 坐标系统一：矩阵偏移（含 IsOnTurret 炮塔/车身）+ NoUpdate 控制的计算点 startPoint
@@ -2484,12 +2482,38 @@ VectorResult VectorEffect::GetVectorResult()
 	}
 	} // 关闭 NoUpdate 缓存的 else 块
 
-	// TargetOffsetNormal 世界固定：偏移（世界坐标）叠加在旋转后的 TargetFLH 上，不随 F 轴转
-	if (targetOffsetWorld)
+	// TargetOffset 世界化直加（坐标系由 TargetOffsetNormalOnOrigin 自足决定，2026-09-05）：
+	//   yes = Origin 单位系分量：有活锚单位 → 单位姿态矩阵转世界（随单位转/斜）；
+	//        无锚（打格子/参照死亡）→ 世界直摆固化（停止更新：世界固定方向，不随弹体方位转——消除抽搐）
+	//   no  = LockFacing 已按世界轴预转（空 Dir 直摆），直接用
+	if (!Data->TargetOffsetNormal.IsEmpty())
 	{
-		smallCircleTarget.X += _randomTargetOffset.X;
-		smallCircleTarget.Y += _randomTargetOffset.Y;
-		smallCircleTarget.Z += _randomTargetOffset.Z;
+		CoordStruct offC{ _randomTargetOffset.X, _randomTargetOffset.Y, _randomTargetOffset.Z };
+		CoordStruct offsetWorld;
+		if (Data->TargetOffsetNormalOnOrigin)
+		{
+			TechnoClass* pOffAnchor = FindOriginTechno();
+			if (pOffAnchor && !IsDeadOrInvisible(pOffAnchor))
+			{
+				PoseParams offPose;
+				offPose.anchor = pOffAnchor;
+				offPose.onTurret = Data->TargetIsOnTurret;
+				if (Data->TargetSameTilt)
+					offPose.useUnitPose = true;
+				else
+					offPose.facing = Data->TargetIsOnTurret
+						? pOffAnchor->TurretFacing().Current()   // 官方API，不得修改
+						: pOffAnchor->PrimaryFacing.Current();   // 官方API，不得修改
+				offsetWorld = ResolveTilting(CoordStruct::Empty, offC, offPose); // = mtx点 − 锚坐标
+			}
+			else
+				offsetWorld = GetFLHAbsoluteCoords(CoordStruct::Empty, offC, DirStruct{}); // 官方API：无锚世界直摆
+		}
+		else
+			offsetWorld = _randomTargetOffset; // no：LockFacing 已预转世界坐标（1123）
+		smallCircleTarget.X += offsetWorld.X;
+		smallCircleTarget.Y += offsetWorld.Y;
+		smallCircleTarget.Z += offsetWorld.Z;
 	}
 
 	// NoUpdate=yes：首帧算完缓存锁定，后续帧走缓存，不再每帧重算
