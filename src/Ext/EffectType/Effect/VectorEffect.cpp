@@ -650,7 +650,8 @@ void VectorEffect::ParseCommon()
 	// _prevBigCircleCenter 不在此初始化：圆心追踪依赖 Origin 移动系统首帧的 skipOriginUpdate 赋值
 
 	_firstFramePos = pObject->GetCoords();
-	_vectorAcquireZ = _firstFramePos.Z;  // Circle 圆心高度基准：获取 Vector 时的 Z
+	// _vectorAcquireZ 设置已删（2026-09-05：圆心 Z 由解算点决定，弹体接管高度基准旧规则废除；
+	// 字段保留仅存档兼容，见 VectorEffect.h 废弃注释）
 	_totalDuration = AE->AEData.GetDuration() / _effectiveTimeStep;
 }
 
@@ -1664,13 +1665,11 @@ VectorResult VectorEffect::GetVectorResult()
 	// 生效——无独立圆心状态，圆心不跳变。此处不再二次摆 CircleOrigin（原独立段已删除，
 	// 其 "AllowOriginTilt=no 世界直加 / 死锚直加" 分支作废：纯直加只归 OriginIsOnWorld，
 	// 死亡=停止计算由 _lastPoint 冻结承载）。
+	// 注（2026-09-05）：原"CircleOrigin 空 + OriginFLH 非空时圆心 Z = _vectorAcquireZ
+	// （弹体接管 Vector 瞬间高度）+ OriginFLH.Z"的旧规则已废除——圆心高度恒由解算点
+	// （Origin 参考点/格子/冻结值）决定，不再依赖弹体历史位置（打目标/打格子的
+	// OriginFLH 竖直偏移直接抬升参考点）。
 	CoordStruct smallCircleCenter = startPoint;
-
-	// 仅 OriginFLH（CircleOrigin 空）的圆心高度基线：以获取 Vector 时的 Z 为基准（原规则）
-	if (Data->CircleOrigin.IsEmpty() && !Data->OriginFLH.IsEmpty())
-	{
-		smallCircleCenter.Z = _vectorAcquireZ + Data->OriginFLH.Z;
-	}
 
 		// 圆心移动：Vector.Origin.* 系统
 		if (!Data->OriginMoveTo.IsEmpty() || Data->OriginReachTarget || Data->OriginLinearSpeed >= 0 || !Data->OriginTargetFLH.IsEmpty()
@@ -2226,8 +2225,19 @@ VectorResult VectorEffect::GetVectorResult()
 			double dH = dx * (-cosF * sinT) + dy * (-sinF * sinT) + dz * cosT;
 			double curDist = std::sqrt(dL * dL + dH * dH);
 			if (curDist < 1.0) curDist = 1.0;
-			double ndL = (dL / curDist * targetRadius);
-			double ndH = (dH / curDist * targetRadius);
+			// 零投影兜底（2026-09-05 bug 修复）：弹体接管时恰在圆心正上/正下（XY 与圆心重合，
+			// 打格子垂直下落常见）→ dL=dH=0，归一化无方向 → 半径退化为 0 → 绕圈钉死。
+			// 此时给默认起始相位（圆面 0° = 沿 L 轴方向，ndH=0），转过一帧后位置离开圆心自续。
+			double ndL = 0.0, ndH = 0.0;
+			if (std::fabs(dL) < 1e-3 && std::fabs(dH) < 1e-3)
+			{
+				ndL = targetRadius;
+			}
+			else
+			{
+				ndL = dL / curDist * targetRadius;
+				ndH = dH / curDist * targetRadius;
+			}
 			double rL = ndL * cosA - ndH * sinA;
 			double rH = ndL * sinA + ndH * cosA;
 			result.MoveDisp.X = smallCircleCenter.X + static_cast<int>(rL * (-sinF) + rH * (-cosF * sinT)) - _circlePos.X;
@@ -2237,8 +2247,18 @@ VectorResult VectorEffect::GetVectorResult()
 		else
 		{
 			// 传统 2D 圆面（XY 平面）
-			double ndx = (dx / currentDist * targetRadius);
-			double ndy = (dy / currentDist * targetRadius);
+			// 零投影兜底（2026-09-05）：弹体 XY 恰与圆心重合 → dx=dy=0 归一化无方向 → 半径退化钉死；
+			// 给默认起始相位（0° 沿 +X 方向），转过一帧后自续
+			double ndx = 0.0, ndy = 0.0;
+			if (dx == 0.0 && dy == 0.0)
+			{
+				ndx = targetRadius;
+			}
+			else
+			{
+				ndx = dx / currentDist * targetRadius;
+				ndy = dy / currentDist * targetRadius;
+			}
 			double rx = ndx * cosA - ndy * sinA;
 			double ry = ndx * sinA + ndy * cosA;
 			result.MoveDisp.X = smallCircleCenter.X + static_cast<int>(rx) - _circlePos.X;

@@ -287,7 +287,8 @@ public:
 										// 刷新链停刷，此值停在死亡帧的完整解算点（死亡=停止计算基线）。
 	CoordStruct _bigCircleStartPoint{};   // 大圆解算起始点最后有效坐标（OriginOriginNoUpdate 冻结用）
 	CoordStruct _lockedSmallCircleTarget{};        // Speed 模式 NoUpdate 锁定的目标点（首帧计算一次，后续帧直接复用，不反复写入新目标点）
-	int _vectorAcquireZ = 0;            // 获取 Vector 时的抛射体 Z（Circle 圆心高度基准）
+	int _vectorAcquireZ = 0;            // 【废弃 2026-09-05】获取 Vector 时的抛射体 Z（圆心高度基准旧规则已废
+										// ——圆心 Z 由解算点决定；字段仅保留存档顺序兼容，勿删勿用）
 	ObjectClass* _pLauncher = nullptr;  // 发射者（OnTechnoDelete 置空防悬垂）
 	ObjectClass* _pSource = nullptr;    // AE 来源（同上）
 
