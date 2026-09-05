@@ -65,7 +65,7 @@ public:
 	void ParseArcParams(bool origin); // 弧参数三件套：origin=false 主，true 大圆
 	void ParseSpeed();               // 初始速度（LinearSpeed/单位 Speed/弹体 Speed/随机）
 	void InitOrigin();               // _pLauncher/_pSource + CacheTargetNow + 按 Origin 锁定基线
-	void LockFacing();               // _fAxisDir/_fAxisRad/_tiltRad + 法向量初始化 + 角速度解析
+	void LockFacing();               // _fAxisDir/_fAxisRad（F 轴基准）+ 法向量 FLH 分量初始化 + 角速度解析
 
 	// ========================================================================
 	// "解算倾斜"管线辅助（OriginFLH 偏移完整化，挂载快照/每帧刷新共用）
@@ -127,15 +127,17 @@ public:
 		double circleSpeed = 0.0;       // Circle 线速度（含加速度累加）
 		double circleAngle = 0.0;       // Circle 角速度（含加速度累加）
 
-		// --- 倾斜圆面法线（NormalVector 系统）---
-		double normalRotF = 0.0;        // 法线绕 F 轴累计旋转（Lissajous 累加用）
-		double normalStepF = 0.0;       // 法线每步角速度（已解析：常数/区间随机）
+		// --- 圆面法线（NormalVector 系统，2026-09-05 归一化）---
+		// 状态 normalX/Y/Z = 法向量 FLH 分量（相对当前坐标系三轴的分量，不是世界坐标）；
+		// 旋转 = 每帧在上一帧状态上转固定 step（定速增量式，系统二）——normalSpin 累计角
+		// 写法已废除（越转越快只属于将来 Normal*Lissajous，本结构暂不存其累计状态）。
+		double normalRotF = 0.0;        // 圆周 Lissajous 相位累加（圆上点相位，与法向量无关）
+		double normalStepF = 0.0;       // 法线每帧固定转角 step（已解析：常数/区间随机，度/帧）
 		double normalStepL = 0.0;
 		double normalStepH = 0.0;
-		double normalSpinF = 0.0;       // 法向量自旋累计角（NormalFAnglePerStep 每帧累加，度；管线末端
-		double normalSpinL = 0.0;       // 用累计总角从当帧基础法向量旋转——持续旋转且不回写锁定基础）
-		double normalSpinH = 0.0;
-		double normalX = 0.0, normalY = 0.0, normalZ = 1.0; // 3D 法向量（世界坐标，增量旋转维护）
+		double normalX = 0.0, normalY = 0.0, normalZ = 1.0; // 法向量 FLH 分量 (F,L,H)；默认 (0,0,1)=竖直（水平圆面）
+		double normalWorldX = 0.0, normalWorldY = 0.0, normalWorldZ = 1.0; // 最后消费换算的世界方向（无锚冻结/倾斜面消费输入）
+		bool normalWorldValid = false;  // 消费缓存是否已建立：false=从未有锚（首帧无锚时直摆固化一次）；true 后无锚一律冻结
 		double lissajousStep = 0.0;     // 圆周 F 偏移角速度（°/step），0=不偏移
 
 		// --- 弧线（ReachTarget/Speed）---
@@ -168,12 +170,13 @@ public:
 				.Process(this->normalStepF)
 				.Process(this->normalStepL)
 				.Process(this->normalStepH)
-				.Process(this->normalSpinF)
-				.Process(this->normalSpinL)
-				.Process(this->normalSpinH)
 				.Process(this->normalX)
 				.Process(this->normalY)
 				.Process(this->normalZ)
+				.Process(this->normalWorldX)
+				.Process(this->normalWorldY)
+				.Process(this->normalWorldZ)
+				.Process(this->normalWorldValid)
 				.Process(this->lissajousStep)
 				.Process(this->arcHeight)
 				.Process(this->arcPeakPercent)
@@ -219,7 +222,9 @@ public:
 	struct ArcDelta3D { double x, y, z; };
 	static ArcDelta3D RotateArcDelta(const CoordStruct& D, double rotDeg, double arcDelta);
 
-	// 3D 法向量增量旋转（绕世界 F=Y / L=X / H=Z 轴，正速度=顺时针；主/大圆共用）
+	// 法向量 FLH 分量增量旋转（分量空间，2026-09-05 归一化；主/大圆共用）：
+	// 绕 F 分量轴 = 保持 F、L/H 在 yz 平面 2D 转；绕 L = 保持 L、F/H 在 xz 转；
+	// 绕 H = 保持 H、F/L 在 xy 转。参数 = 每帧固定 step（度/帧），与坐标系解耦。
 	static void RotateNormal3D(double& nx, double& ny, double& nz,
 		double stepF, double stepL, double stepH);
 
@@ -257,18 +262,8 @@ public:
 	ObjectClass* _pSource = nullptr;    // AE 来源（同上）
 
 	// --- 朝向（主模式参考系）---
-	double _fAxisRad = 0.0;            // OnStart 锁定的朝向弧度（FLH 旋转用）
+	double _fAxisRad = 0.0;            // OnStart 锁定的朝向弧度（F 轴基准，摆放 FLH 用；与法向量解耦）
 	DirStruct _fAxisDir;               // OnStart 锁定的朝向（Point2Dir 结果，Target/Source）
-	double _tiltRad = 0.0;              // F 轴俯仰角（AllowedTilt 用）
-
-	// --- 大圆朝向（独立参考系）---
-	double _originFacing = 0.0;         // 大圆有效 facing
-	double _originTilt = 0.0;           // 大圆有效 tilt
-	// 首帧锁定的基础法向量球坐标（OriginNormalVector/OriginNormalRandom/默认水平）：
-	// OriginIsNormalOnOrigin=yes 时每帧以此为基础随 OriginOrigin 单位转动（保持首帧锁定值，
-	// 不回写 _originFacing/_originTilt，杜绝法向量每帧自反馈累计旋转）
-	double _baseOriginFacing = 0.0;
-	double _baseOriginTilt = M_PI / 2.0;
 
 	// --- 目标偏移 ---
 	CoordStruct _randomTargetOffset{};  // 主 TargetFLH 随机偏移（首帧解析）
@@ -315,11 +310,6 @@ public:
 			.Process(this->_pSource)
 			.Process(this->_fAxisRad)
 			.Process(this->_fAxisDir)
-			.Process(this->_tiltRad)
-			.Process(this->_originFacing)
-			.Process(this->_originTilt)
-			.Process(this->_baseOriginFacing)
-			.Process(this->_baseOriginTilt)
 			.Process(this->_randomTargetOffset)
 			.Process(this->_originTargetOffset)
 			.Process(this->_bigCircleOffset)

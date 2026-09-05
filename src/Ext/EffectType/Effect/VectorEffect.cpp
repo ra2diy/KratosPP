@@ -20,37 +20,6 @@
 #include <Ext/BulletType/BulletStatus.h>
 
 // ============================================================================
-// 法向量随单位姿态旋转（小圆/大圆共享数学——无状态纯函数，严禁在函数内共享任何状态）：
-// 基础法向量（球坐标 facing0/tilt0）先绕世界 Z 轴转 facingU（单位水平朝向角），
-// 再绕单位 L 轴 u=(-sinFU, cosFU, 0) 转 tiltU（单位倾斜角，Rodrigues）。
-// 小圆与大圆各自喂各自的输入（facing0/tilt0 来源不同、状态分别存 _motion/_originMotion），
-// 两套法向量互相孤立——竖小圆+水平大圆等任意组合不产生耦合。
-// ============================================================================
-static void RotateNormalByUnit(double facing0, double tilt0, double facingU, double tiltU,
-	double& nx, double& ny, double& nz)
-{
-	// 基础法向量（球坐标）→ 笛卡尔
-	double bx = std::cos(tilt0) * std::cos(facing0);
-	double by = std::cos(tilt0) * std::sin(facing0);
-	double bz = std::sin(tilt0);
-	// 1. 绕 Z 轴转 facingU（单位水平朝向）
-	double cz = std::cos(facingU), sz = std::sin(facingU);
-	double x1 = bx * cz - by * sz;
-	double y1 = bx * sz + by * cz;
-	double z1 = bz;
-	// 2. 绕单位 L 轴 u=(-sinFU, cosFU, 0) 转 tiltU（Rodrigues：n' = n cosθ + (u×n) sinθ + u(u·n)(1-cosθ)）
-	double ct = std::cos(tiltU), st = std::sin(tiltU);
-	double ux = -sz, uy = cz, uz = 0.0;
-	double dot = ux * x1 + uy * y1;      // u·n
-	double cx = uy * z1 - uz * y1;       // u×n
-	double cy = uz * x1 - ux * z1;
-	double cz2 = ux * y1 - uy * x1;
-	nx = x1 * ct + cx * st + ux * dot * (1.0 - ct);
-	ny = y1 * ct + cy * st + uy * dot * (1.0 - ct);
-	nz = z1 * ct + cz2 * st;
-}
-
-// ============================================================================
 // 连线坐标系（OriginIsOnVectorOrigin=no，Target/Launcher/Source 通吃）——解算起始点管线用：
 // F 轴 = 单位→弹体的连线方向（水平投影角，RA2 坐标系由 Point2Dir 处理）。
 // CoordinateTilt 决定这条线取真实 3D（高低差进 tilt，ResolveTilting 混合出斜向摆放）
@@ -154,12 +123,6 @@ void VectorEffect::Clean()
 
 	_fAxisRad = 0.0;
 	_fAxisDir = DirStruct(0);
-	_tiltRad = 0.0;
-
-	_originFacing = 0.0;
-	_originTilt = 0.0;
-	_baseOriginFacing = 0.0;
-	_baseOriginTilt = M_PI / 2.0;
 
 	_randomTargetOffset = {};
 	_originTargetOffset = {};
@@ -213,30 +176,39 @@ VectorEffect::ArcDelta3D VectorEffect::RotateArcDelta(const CoordStruct& D, doub
 	return out;
 }
 
-// 3D 法向量增量旋转（绕世界 F=Y / L=X / H=Z 轴，正速度=顺时针）
+// 法向量 FLH 分量增量旋转（2026-09-05 归一化：分量空间，轴映射相对旧"世界槽位"版已置换）：
+// 输入 (nx,ny,nz) = 状态分量 (F,L,H)；每帧只转固定 step（度/帧），不做任何累计角。
+//   stepF 绕 F 分量轴：保持 F（nx），L/H（ny/nz）在 yz 平面 2D 转
+//   stepL 绕 L 分量轴：保持 L（ny），F/H（nx/nz）在 xz 平面 2D 转
+//   stepH 绕 H 分量轴：保持 H（nz），F/L（nx/ny）在 xy 平面 2D 转
+// 案例校验：法向量 (1,0,0)，stepL 转 90° → (0,0,1)（文档第三节 Lstep 语义 ✓）；
+// Fstep 时 (1,0,0) 躺 F 轴 → 不动（几何正确非 bug ✓）。
 void VectorEffect::RotateNormal3D(double& nx, double& ny, double& nz,
 	double stepF, double stepL, double stepH)
 {
 	if (stepF != 0.0)
 	{
+		// 绕 F（x 轴）：yz 平面
 		double rad = Math::deg2rad(stepF), c = std::cos(rad), s = std::sin(rad);
+		double y = ny, z = nz;
+		ny = y * c - z * s;
+		nz = y * s + z * c;
+	}
+	if (stepL != 0.0)
+	{
+		// 绕 L（y 轴）：xz 平面。符号按文档第三节案例：Lstep 90° → (1,0,0) 到 (0,0,1)
+		double rad = Math::deg2rad(stepL), c = std::cos(rad), s = std::sin(rad);
 		double x = nx, z = nz;
 		nx = x * c - z * s;
 		nz = x * s + z * c;
 	}
-	if (stepL != 0.0)
-	{
-		double rad = Math::deg2rad(stepL), c = std::cos(rad), s = std::sin(rad);
-		double y = ny, z = nz;
-		ny = y * c + z * s;
-		nz = -y * s + z * c;
-	}
 	if (stepH != 0.0)
 	{
+		// 绕 H（z 轴）：xy 平面
 		double rad = Math::deg2rad(stepH), c = std::cos(rad), s = std::sin(rad);
 		double x = nx, y = ny;
-		nx = x * c + y * s;
-		ny = -x * s + y * c;
+		nx = x * c - y * s;
+		ny = x * s + y * c;
 	}
 }
 
@@ -915,51 +887,28 @@ void VectorEffect::LockFacing()
 		|| Data->NormalRandomL.Y > Data->NormalRandomL.X
 		|| Data->NormalRandomH.Y > Data->NormalRandomH.X;
 
-	// --- 锁定 FLH 旋转朝向（OnStart 时固定） ---
-	// NormalVector 使用 FLH 坐标系：F=南北(X→世界Y)，L=东西(Y→世界X)，H=Z
+	// --- 法向量状态初始化（2026-09-05 归一化：状态存 FLH 分量，无槽位重排/球坐标中转）---
+	// NormalVector 直接按 (F,L,H) 存入 normalX/Y/Z，Random 覆盖同分量；未配保持默认
+	// (0,0,1)（竖直=水平圆面）。消费换算（分量→世界方向）在每帧法向量段统一执行，挂载不预转。
 	if (hasNormal)
 	{
-		double fwY = static_cast<double>(Data->NormalVector.X);  // F → 世界 Y（北）
-		double fwX = static_cast<double>(Data->NormalVector.Y);  // L → 世界 X（东）
-		double fwZ = static_cast<double>(Data->NormalVector.Z);  // H → Z
-
-		// 随机分量
+		_motion.normalX = static_cast<double>(Data->NormalVector.X); // F 分量
+		_motion.normalY = static_cast<double>(Data->NormalVector.Y); // L 分量
+		_motion.normalZ = static_cast<double>(Data->NormalVector.Z); // H 分量
 		if (Data->NormalRandomF.Y > Data->NormalRandomF.X)
-			fwY = Random::RandomRanged(Data->NormalRandomF.X, Data->NormalRandomF.Y);
+			_motion.normalX = Random::RandomRanged(Data->NormalRandomF.X, Data->NormalRandomF.Y);
 		if (Data->NormalRandomL.Y > Data->NormalRandomL.X)
-			fwX = Random::RandomRanged(Data->NormalRandomL.X, Data->NormalRandomL.Y);
+			_motion.normalY = Random::RandomRanged(Data->NormalRandomL.X, Data->NormalRandomL.Y);
 		if (Data->NormalRandomH.Y > Data->NormalRandomH.X)
-			fwZ = Random::RandomRanged(Data->NormalRandomH.X, Data->NormalRandomH.Y);
-
-		double lenXY = std::sqrt(fwX * fwX + fwY * fwY);
-		// 法向量球坐标：facing = 法线在 XY 平面的方位角，tilt = 法线仰角（与水平面的夹角）
-		// 注意：tilt 是"仰角"不是"偏离垂直的角度"——tilt=PI/2 表示法线垂直向上（水平圆面），
-		// tilt=0 表示法线水平（侧立圆面）。与倾斜圆面取点数学（useTiltPlane 分支）的语义配套。
-		_fAxisRad = lenXY > 1e-6 ? std::atan2(fwY, fwX) : 0.0;
-		_tiltRad = lenXY > 1e-6 ? std::atan2(fwZ, lenXY) : (fwZ > 0 ? M_PI / 2.0 : -M_PI / 2.0);
+			_motion.normalZ = Random::RandomRanged(Data->NormalRandomH.X, Data->NormalRandomH.Y);
 	}
-	else
-	{
-		_tiltRad = 0.0;
-	}
-
 	// 法线旋转角速度解析（常数优先，否则随机）
 	_motion.normalStepF = ResolveAngleStep(Data->NormalFAnglePerStep, Data->NormalFAngleRMin, Data->NormalFAngleRMax, Data->NormalFAngleRMin2, Data->NormalFAngleRMax2);
 	_motion.normalStepL = ResolveAngleStep(Data->NormalLAnglePerStep, Data->NormalLAngleRMin, Data->NormalLAngleRMax, Data->NormalLAngleRMin2, Data->NormalLAngleRMax2);
 	_motion.normalStepH = ResolveAngleStep(Data->NormalHAnglePerStep, Data->NormalHAngleRMin, Data->NormalHAngleRMax, Data->NormalHAngleRMin2, Data->NormalHAngleRMax2);
 	_motion.lissajousStep = Data->Lissajous;
-
-	// 初始化 3D 法向量（从球坐标 _fAxisRad/_tiltRad 转换）
-	// 球坐标→笛卡尔：X=cos(tilt)cos(facing), Y=cos(tilt)sin(facing), Z=sin(tilt)
-	// _motion.normalX/Y/Z 是世界单位法向量（圆面法线方向）：
-	//   facing 影响法线在 XY 平面的指向，tilt 影响法线仰角（tilt=PI/2 → (0,0,1) 垂直向上）
-	{
-		double ct = std::cos(_tiltRad), st = std::sin(_tiltRad);
-		double cf = std::cos(_fAxisRad), sf = std::sin(_fAxisRad);
-		_motion.normalX = ct * cf;
-		_motion.normalY = ct * sf;
-		_motion.normalZ = st;
-	}
+	// 重置消费缓存（新挂载丢弃旧世界方向，由每帧消费段重建）
+	_motion.normalWorldValid = false;
 
 	// --- F 轴基准挂载锁定（摆放 FLH 用；与 NormalVector 彻底解耦）---
 	// F 轴参考系来源：IsOnOrigin=yes 用 Origin 单位自身朝向，no 用 Origin→弹体连线
@@ -1249,8 +1198,8 @@ VectorResult VectorEffect::GetVectorResult()
 	_movementFrames++;
 
 	_motion.normalRotF += _motion.lissajousStep;
-	// 法向量自旋（NormalFAnglePerStep 等）不在此执行——此点在 IsNormalOnOrigin 重算之前，
-	// 自旋会被覆盖；统一移到法向量管线末端（effectiveFacing/effectiveTilt 同步段）用累计角应用。
+	// 法向量自旋不在此执行——已并入下方归一化法向量段（系统二分量自旋 + 系统一消费换算），
+	// 2026-09-05 重写后无累计角逻辑。
 
 	CoordStruct currentPos = pObject->GetCoords();
 
@@ -1258,23 +1207,11 @@ VectorResult VectorEffect::GetVectorResult()
 	// 动态 F 轴：非 NoUpdate 时每帧根据当前坐标重新计算 FLH 朝向
 	// ========================================================================
 
-	// originTerrainTilt：Origin 单位倾斜角（AngleRotatedForwards 动态倾斜优先，否则地形采样）。
-	// 供多处使用：AllowOriginTilt 的 OriginFLH/CircleOrigin 旋转（解算起始点）、小圆/大圆法向量随单位
-	// 倾斜转动（IsNormalOnOrigin / OriginIsNormalOnOrigin 的 tiltU）。只计算不注入（法向量跟随由
-	// 对应 IsNormalOnOrigin 段负责）。采样逻辑与挂载快照共用 SampleOriginTilt。
-	// 触发条件 = 谁消费谁触发：解算起始点三维（AllowOriginTilt）、小圆法向量随动（IsNormalOnOrigin）、
-	// 大圆法向量随动（OriginIsNormalOnOrigin）——三者任一需要且配了 Circle 参数才采样。
-	double originTerrainTilt = 0.0;
-	bool hasCircleForTilt = Data->CircleRadius > 0 || Data->CircleAnglePerStep > 0.0
-		|| (Data->CircleRandomRadiusMax > Data->CircleRandomRadiusMin)
-		|| (Data->CircleRandomAngleMax > Data->CircleRandomAngleMin);
-	if ((Data->AllowOriginTilt || Data->OriginIsNormalOnOrigin || Data->IsNormalOnOrigin) && hasCircleForTilt && !Data->OriginIsOnWorld)
-	{
-		originTerrainTilt = SampleOriginTilt(FindOriginTechno());
-	}
+	// 注：originTerrainTilt 地形采样链已随 Rodrigues 随动删除（2026-09-05 归一化后法向量消费
+	// 走 useUnitPose 矩阵，坡面由 Locomotor 矩阵自带；SampleOriginTilt 函数保留供将来地形相关需求）。
 
-	double effectiveFacing = _fAxisRad;    // 倾斜域初始（hasNormal 时 = 法向量球坐标 facing；!hasNormal 时下方同步为 F 轴基准）
-	double effectiveTilt = _tiltRad;        // 倾斜域初始（hasNormal 时 = 法向量 tilt）
+	double effectiveFacing = _fAxisRad;   // 倾斜域初始（!hasNormal 时 = F 轴基准弧度；hasNormal 时每帧法向量段覆写为圆面法向 facing）
+	double effectiveTilt = 0.0;            // 倾斜域初始（hasNormal/随动时每帧法向量段覆写；!hasNormal+no 保持 0 = 传统 2D 平面）
 	// F 轴基准（摆放 FLH 用）初值 = 挂载时按 IsOnOrigin 锁定的 _fAxisDir（与 NormalVector 解耦）。
 	// 不用 Radians2Dir(_fAxisRad)：hasNormal 时 _fAxisRad 是法向量 facing，会污染摆放基准。
 	// （Radians2Dir(GetRadian()) 往返另有 90° 偏置，_fAxisDir 保留 DirStruct 原值不往返）
@@ -1410,80 +1347,112 @@ VectorResult VectorEffect::GetVectorResult()
 		}
 	}
 
-	// IsNormalOnOrigin：圆面法向量随 Origin 单位转动（facing + tilt 全跟随）
-	// 基础法向量 = OnStart 锁定的球坐标（_fAxisRad/_tiltRad，来自 NormalVector/NormalRandom/默认水平），
-	// 每帧按单位朝向（facingU）+ 单位倾斜（originTerrainTilt）转动：
-	//   1. 绕 Z 轴转 facingU（单位水平朝向）
-	//   2. 绕单位 L 轴（(-sinFU, cosFU, 0)，水平左方向）转 tiltU（Rodrigues：n' = n cosθ + (u×n) sinθ + u(u·n)(1-cosθ)）
-	// no（显式）= 世界固定，法向量保持 LockFacing 初始化值，不随单位转。
-	if (Data->IsNormalOnOrigin && !Data->OriginIsOnWorld)
+	// ========================================================================
+	// 圆面法线（NormalVector 体系，2026-09-05 归一化——替换旧 Rodrigues 随动 + 累计角自旋）
+	// 状态 _motion.normalX/Y/Z = FLH 分量（挂载初值；默认 (0,0,1) 竖直=水平圆面），与坐标系解耦。
+	//   系统二（旋转）：每帧在上一帧状态上转固定 step（定速增量式，无累计角——越转越快只属
+	//   将来 Normal*Lissajous）。
+	//   系统一（消费换算）：状态分量按 IsNormalOnOrigin 选坐标系换成世界方向——
+	//     yes = 挂 Origin 单位姿态（useUnitPose 矩阵：Locomotor + TurretOffset 转轴 + 炮塔差角
+	//            + 坡面，抄 Stand IsOnTurret）；锚死/打格子 = 停止计算，复用最后存活帧缓存；
+	//     no  = 世界 FLH 轴直摆（GetFLHAbsoluteCoords(Empty, 分量, 空 Dir)，抄 Stand IsOnWorld）。
+	//   产物写 _motion.normalWorldX/Y/Z（跨帧缓存）；球坐标回读进 effectiveFacing/effectiveTilt
+	//   供倾斜圆面取点；不碰 fAxisDir（法向量与 FLH 摆放基准解耦）。
+	// 注：消费走 int lepton 官方 API，分量 ×1000 放大防截断（矩阵线性，方向 atan2 比例不变）。
+	// ========================================================================
+	// OriginIsOnWorld（世界简化模式）时法向量体系整体停用：effectiveTilt 保持 0 → 传统 2D 水平圆面
+	// （与旧行为一致：OnWorld 强制无倾斜）
+	bool normalActive = !Data->OriginIsOnWorld && (hasNormal
+		|| (Data->IsNormalOnOrigin && !Data->OriginIsOnWorld)
+		|| _motion.normalStepF != 0.0 || _motion.normalStepL != 0.0 || _motion.normalStepH != 0.0);
+	if (normalActive)
 	{
-		double facingU = effectiveFacing;
-		switch (Data->Origin)
-		{
-		case VectorData::VectorOrigin::Launcher:
-			{
-				TechnoClass* pLT = abstract_cast<TechnoClass*>(_pLauncher);
-				if (pLT && !IsDeadOrInvisible(pLT))
-					facingU = (Data->OriginIsOnTurret ? pLT->TurretFacing().Current() : pLT->PrimaryFacing.Current()).GetRadian(); // 官方API，不得修改
-			}
-			break;
-		case VectorData::VectorOrigin::Target:
-			{
-				AbstractClass* pTgt = pBullet ? pBullet->Target : (pTechno ? pTechno->Target : nullptr);
-				TechnoClass* pTT = abstract_cast<TechnoClass*>(pTgt);
-				if (pTT && !IsDeadOrInvisible(pTT))
-					facingU = (Data->OriginIsOnTurret ? pTT->TurretFacing().Current() : pTT->PrimaryFacing.Current()).GetRadian(); // 官方API，不得修改
-				// 目标无朝向（格子）：保持 effectiveFacing（连线）
-			}
-			break;
-		case VectorData::VectorOrigin::Source:
-			{
-				TechnoClass* pST = abstract_cast<TechnoClass*>(_pSource);
-				if (pST && !IsDeadOrInvisible(pST))
-					facingU = (Data->OriginIsOnTurret ? pST->TurretFacing().Current() : pST->PrimaryFacing.Current()).GetRadian(); // 官方API，不得修改
-			}
-			break;
-		default: // Self：自身朝向即 effectiveFacing
-			break;
-		}
-		double tiltU = originTerrainTilt; // 单位倾斜（AngleRotatedForwards 动态/地形采样）
-
-		// 基础法向量（OnStart 锁定）随单位姿态旋转（共享管线 RotateNormalByUnit，无状态）；
-		// 无自定义法线时基础法向量默认竖直（水平圆面），单位倾斜 → 法向量转 → 圆面自然倾斜。
-		double baseTilt = hasNormal ? _tiltRad : M_PI / 2.0;
-		RotateNormalByUnit(_fAxisRad, baseTilt, facingU, tiltU,
-			_motion.normalX, _motion.normalY, _motion.normalZ);
-
-		// 同步倾斜圆面数学输入（最终法向量 → 球坐标）
-		double lenXY = std::sqrt(_motion.normalX * _motion.normalX + _motion.normalY * _motion.normalY);
-		effectiveFacing = lenXY > 1e-6 ? std::atan2(_motion.normalY, _motion.normalX) : 0.0;
-		effectiveTilt = lenXY > 1e-6 ? std::atan2(_motion.normalZ, lenXY) : (_motion.normalZ > 0 ? M_PI / 2.0 : -M_PI / 2.0);
-	}
-
-	// 法向量自旋（NormalVector 管线末端环节）：NormalFAnglePerStep/L/H = 法向量绕
-	// F=世界Y / L=世界X / H=世界Z 轴（NormalVector 分量的轴定义）每帧角速度。
-	// 此处 _motion.normalX/Y/Z 已是当帧终值基础（IsNormalOnOrigin=yes 已随单位姿态重算，
-	// no 保持锁定初值），自旋统一在此应用：每帧累加进 normalSpinF/L/H（累计角），
-	// 用累计总角从当帧基础旋转——持续旋转、随单位姿态正确合成，且每帧仍从锁定基础
-	// 出发重算（不回写基础，杜绝自反馈漂移）。只更新倾斜量（effectiveFacing/effectiveTilt），
-	// 不碰 fAxisDir——法向量与 F 轴基准解耦，自旋不得污染摆放 FLH 的基准。
-	if (_motion.normalStepF != 0.0 || _motion.normalStepL != 0.0 || _motion.normalStepH != 0.0)
-	{
-		// 【临时调试日志】自旋前基础法向量（对比自旋前后差异用，观察后删除）
-		double preX = _motion.normalX, preY = _motion.normalY, preZ = _motion.normalZ;
-		_motion.normalSpinF += _motion.normalStepF;
-		_motion.normalSpinL += _motion.normalStepL;
-		_motion.normalSpinH += _motion.normalStepH;
+		// 系统二：分量空间定速自旋（增量式；轴映射见 RotateNormal3D，文档第三节案例校验）
 		RotateNormal3D(_motion.normalX, _motion.normalY, _motion.normalZ,
-			_motion.normalSpinF, _motion.normalSpinL, _motion.normalSpinH);
-		double lenXY = std::sqrt(_motion.normalX * _motion.normalX + _motion.normalY * _motion.normalY);
-		effectiveFacing = lenXY > 1e-6 ? std::atan2(_motion.normalY, _motion.normalX) : 0.0;
-		effectiveTilt = lenXY > 1e-6 ? std::atan2(_motion.normalZ, lenXY) : (_motion.normalZ > 0 ? M_PI / 2.0 : -M_PI / 2.0);
-		Console::WriteFormat("VecNrm PRE=%.3f,%.3f,%.3f POST=%.3f,%.3f,%.3f spinF=%.1f spinL=%.1f spinH=%.1f effTilt=%.2f\n",
-			preX, preY, preZ,
-			_motion.normalX, _motion.normalY, _motion.normalZ,
-			_motion.normalSpinF, _motion.normalSpinL, _motion.normalSpinH, effectiveTilt);
+			_motion.normalStepF, _motion.normalStepL, _motion.normalStepH);
+
+		// 系统一：消费换算 → 世界方向（放大 int 精度）
+		CoordStruct flhN;
+		flhN.X = static_cast<int>(_motion.normalX * 1000.0);
+		flhN.Y = static_cast<int>(_motion.normalY * 1000.0);
+		flhN.Z = static_cast<int>(_motion.normalZ * 1000.0);
+		if (Data->IsNormalOnOrigin && !Data->OriginIsOnWorld)
+		{
+			// yes：随 Origin 单位姿态（参照单位 = Origin 对应单位；Self=载体/弹体）
+			ObjectClass* pAnchorObj = nullptr;
+			switch (Data->Origin)
+			{
+			case VectorData::VectorOrigin::Launcher:
+				pAnchorObj = _pLauncher;
+				break;
+			case VectorData::VectorOrigin::Target:
+				{
+					// 目标锚只收单位：打格子/地面时 pBullet->Target 是格子对象（非 Techno）→ 无锚
+					AbstractClass* pTgt = pBullet ? pBullet->Target : (pTechno ? pTechno->Target : nullptr);
+					pAnchorObj = abstract_cast<TechnoClass*>(pTgt);
+				}
+				break;
+			case VectorData::VectorOrigin::Source:
+				pAnchorObj = _pSource;
+				break;
+			default: // Self：载体自身（pTechno=矩阵含坡面；pBullet=弹体水平姿态）
+				pAnchorObj = pObject;
+				break;
+			}
+			// 单位锚 → 矩阵姿态消费；Self 载体弹体 → 官方弹体水平姿态消费；其余（格子/非单位/死亡）→ 无锚
+			CoordStruct worldN;
+			bool anchoredConsume = false;
+			TechnoClass* pAnchorT = pAnchorObj ? abstract_cast<TechnoClass*>(pAnchorObj) : nullptr;
+			if (pAnchorT && !IsDeadOrInvisible(pAnchorT))
+			{
+				PoseParams pose;
+				pose.useUnitPose = true;
+				pose.anchor = pAnchorT;
+				pose.onTurret = Data->NormalIsOnTurret; // 法向量随动姿态源独立标签（与 OriginFLH 挂点解耦，2026-09-05）
+				worldN = ResolveTilting(CoordStruct::Empty, flhN, pose); // = mtx点 − 锚坐标（放大方向）
+				anchoredConsume = true;
+			}
+			else if (!pAnchorT && pAnchorObj && pAnchorObj == pObject && pBullet)
+			{
+				// 弹体侧 Self：官方弹体水平姿态摆（无坡面倾斜概念），flipY 默认 1=不镜像
+				CoordStruct mtxPos = GetFLHAbsoluteCoords(pBullet, flhN); // 官方API，不得修改
+				worldN = mtxPos - pBullet->GetCoords();
+				anchoredConsume = true;
+			}
+			if (anchoredConsume)
+			{
+				_motion.normalWorldX = worldN.X;
+				_motion.normalWorldY = worldN.Y;
+				_motion.normalWorldZ = worldN.Z;
+				_motion.normalWorldValid = true; // 消费缓存建立
+			}
+			else if (!_motion.normalWorldValid)
+			{
+				// 从未有锚（首帧打格子/参照从未存在）：按世界直摆固化一次（配了 NormalVector 时
+				// 呈现其世界方向），此后无锚恒冻结——OnOrigin=yes 无单位坐标系可随
+				worldN = GetFLHAbsoluteCoords(CoordStruct::Empty, flhN, DirStruct{}); // 官方API，不得修改
+				_motion.normalWorldX = worldN.X;
+				_motion.normalWorldY = worldN.Y;
+				_motion.normalWorldZ = worldN.Z;
+				_motion.normalWorldValid = true;
+			}
+			// 已有缓存且无锚（参照死亡/目标被清空）：停止计算，normalWorld 保持最后存活帧值
+		}
+		else
+		{
+			// no / OriginIsOnWorld：世界固定，FLH 分量按世界轴直摆（官方 API 消化 90°偏置/Y 镜像）
+			CoordStruct worldN = GetFLHAbsoluteCoords(CoordStruct::Empty, flhN, DirStruct{}); // 官方API，不得修改
+			_motion.normalWorldX = worldN.X;
+			_motion.normalWorldY = worldN.Y;
+			_motion.normalWorldZ = worldN.Z;
+			_motion.normalWorldValid = true;
+		}
+
+		// 世界方向（放大 int，比例与方向无关）→ 球坐标 → 倾斜圆面取点输入
+		double wx = _motion.normalWorldX, wy = _motion.normalWorldY, wz = _motion.normalWorldZ;
+		double lenXY = std::sqrt(wx * wx + wy * wy);
+		effectiveFacing = lenXY > 1e-6 ? std::atan2(wy, wx) : 0.0;
+		effectiveTilt = lenXY > 1e-6 ? std::atan2(wz, lenXY) : (wz > 0 ? M_PI / 2.0 : -M_PI / 2.0);
 	}
 
 	// ========================================================================
@@ -1776,128 +1745,134 @@ VectorResult VectorEffect::GetVectorResult()
 				_originTargetOffset.X = Random::RandomRanged(Data->OriginTargetOffsetFMin, Data->OriginTargetOffsetFMax);
 				_originTargetOffset.Y = Random::RandomRanged(Data->OriginTargetOffsetLMin, Data->OriginTargetOffsetLMax);
 				_originTargetOffset.Z = Random::RandomRanged(Data->OriginTargetOffsetHMin, Data->OriginTargetOffsetHMax);
-				// Normal 初始化
+				// Normal 初始化（2026-09-05 归一化：状态存 FLH 分量 (F,L,H)，无槽位重排/球坐标中转；
+				// 未配 OriginNormalVector 时保持默认 (0,0,1) 竖直=水平圆面——是否随 OriginOrigin
+				// 单位姿态只由 OriginIsNormalOnOrigin 决定，大小圆统一规则）
 				if (!Data->OriginNormalVector.IsEmpty())
 				{
-					double fy = Data->OriginNormalVector.X, fx = Data->OriginNormalVector.Y, fz = Data->OriginNormalVector.Z;
-					if (Data->OriginNormalRandomF.Y > Data->OriginNormalRandomF.X) fy = Random::RandomRanged(Data->OriginNormalRandomF.X, Data->OriginNormalRandomF.Y);
-					if (Data->OriginNormalRandomL.Y > Data->OriginNormalRandomL.X) fx = Random::RandomRanged(Data->OriginNormalRandomL.X, Data->OriginNormalRandomL.Y);
-					if (Data->OriginNormalRandomH.Y > Data->OriginNormalRandomH.X) fz = Random::RandomRanged(Data->OriginNormalRandomH.X, Data->OriginNormalRandomH.Y);
-					double len = std::sqrt(fx*fx+fy*fy);
-					_originFacing = len>1e-6 ? std::atan2(fy,fx) : 0;
-					_originTilt = len>1e-6 ? std::atan2(fz,len) : (fz>0?M_PI/2.0:-M_PI/2.0);
+					_originMotion.normalX = Data->OriginNormalVector.X; // F 分量
+					_originMotion.normalY = Data->OriginNormalVector.Y; // L 分量
+					_originMotion.normalZ = Data->OriginNormalVector.Z; // H 分量
+					if (Data->OriginNormalRandomF.Y > Data->OriginNormalRandomF.X)
+						_originMotion.normalX = Random::RandomRanged(Data->OriginNormalRandomF.X, Data->OriginNormalRandomF.Y);
+					if (Data->OriginNormalRandomL.Y > Data->OriginNormalRandomL.X)
+						_originMotion.normalY = Random::RandomRanged(Data->OriginNormalRandomL.X, Data->OriginNormalRandomL.Y);
+					if (Data->OriginNormalRandomH.Y > Data->OriginNormalRandomH.X)
+						_originMotion.normalZ = Random::RandomRanged(Data->OriginNormalRandomH.X, Data->OriginNormalRandomH.Y);
 				}
 				// Normal 角速度
 				_originMotion.normalStepF = ResolveAngleStep(Data->OriginNormalFAnglePerStep, Data->OriginNormalFAngleRMin, Data->OriginNormalFAngleRMax, Data->OriginNormalFAngleRMin2, Data->OriginNormalFAngleRMax2);
 				_originMotion.normalStepL = ResolveAngleStep(Data->OriginNormalLAnglePerStep, Data->OriginNormalLAngleRMin, Data->OriginNormalLAngleRMax, Data->OriginNormalLAngleRMin2, Data->OriginNormalLAngleRMax2);
 				_originMotion.normalStepH = ResolveAngleStep(Data->OriginNormalHAnglePerStep, Data->OriginNormalHAngleRMin, Data->OriginNormalHAngleRMax, Data->OriginNormalHAngleRMin2, Data->OriginNormalHAngleRMax2);
 				_originMotion.lissajousStep = Data->OriginLissajous;
-				// 无 OriginNormalVector 时：默认水平圆面（法向量朝上）
-				if (Data->OriginNormalVector.IsEmpty())
-				{
-					_originFacing = 0;
-					_originTilt = M_PI / 2.0;
-				}
-				// 有 OriginNormalVector 时：facing/tilt 均取它的 F/L/H 分量（彻底世界固定）。
-				// IsNormalOnOrigin=yes 时的 OriginOrigin 朝向跟随在下方每帧段处理。
-				// 锁定基础法向量球坐标（OriginIsNormalOnOrigin 每帧旋转的基准）
-				_baseOriginFacing = _originFacing;
-				_baseOriginTilt = _originTilt;
-				// 初始化大圆 3D 法向量
-				{
-					double ct = std::cos(_originTilt), st = std::sin(_originTilt);
-					double cf = std::cos(_originFacing), sf = std::sin(_originFacing);
-					_originMotion.normalX = ct * cf;
-					_originMotion.normalY = ct * sf;
-					_originMotion.normalZ = st;
-				}
+				_originMotion.normalWorldValid = false; // 重置消费缓存（对象复用/重新挂载时丢弃旧世界方向）
 			}
-		// OriginIsNormalOnOrigin：大圆法向量随 OriginOrigin 单位转动（facing + tilt 全跟随，同小圆）。
-		// 基础 = 首帧锁定的 _baseOriginFacing/_baseOriginTilt（OriginNormalVector/随机/默认水平），
-		// 每帧按 OriginOrigin 单位朝向（facingU）+ 单位倾斜（originTerrainTilt）转动（Rodrigues）。
-		// 更新 _originMotion.normalX/Y/Z（Circle 运动消费点在段外从法向量现算球坐标）。
-		// 不回写成员 _originFacing/_originTilt（保持首帧锁定值，同小圆 effectiveFacing/effectiveTilt 模式）。
-		// no（显式）= 世界固定，保持首帧值。
-		if (Data->OriginIsNormalOnOrigin && !Data->OriginNormalVector.IsEmpty())
+		// OriginIsNormalOnOrigin：大圆法向量（2026-09-05 归一化，同小圆结构——替换 Rodrigues 随动）：
+		// 状态 _originMotion.normalX/Y/Z = FLH 分量（首帧初始化）；每帧定速自旋（系统二，增量式）；
+		// 消费换算随 OriginOrigin 单位姿态（yes，矩阵含 TurretOffset 转轴/炮塔差角/坡面；onTurret 由
+		// Origin.NormalIsOnTurret 独立决定）或世界 FLH 轴直摆（no）；产物写 normalWorldX/Y/Z
+		// （无锚停止计算复用最后存活帧）。oFacing/oTilt 供 Circle/MoveTo/Speed 运动消费。
 		{
-			double facingU = _originFacing;
-			switch (Data->OriginOrigin)
-			{
-			case VectorData::VectorOrigin::Launcher:
-				{
-					TechnoClass* pLT = abstract_cast<TechnoClass*>(_pLauncher);
-					if (pLT && !IsDeadOrInvisible(pLT))
-						facingU = pLT->TurretFacing().Current().GetRadian(); // 官方API，不得修改
-					else if (pTechno) facingU = pTechno->TurretFacing().Current().GetRadian(); // 官方API，不得修改
-				}
-				break;
-			case VectorData::VectorOrigin::Target:
-				{
-					AbstractClass* pTgt = pBullet ? pBullet->Target : (pTechno ? pTechno->Target : nullptr);
-					TechnoClass* pTT = abstract_cast<TechnoClass*>(pTgt);
-					if (pTT && !IsDeadOrInvisible(pTT))
-						facingU = pTT->TurretFacing().Current().GetRadian(); // 官方API，不得修改
-					// 目标无朝向（格子/地面）：保持 facingU 初值（世界固定），不回退连线（同小圆 IsNormalOnOrigin 处理）
-				}
-				break;
-			case VectorData::VectorOrigin::Source:
-				{
-					TechnoClass* pST = abstract_cast<TechnoClass*>(AE && AE->pSource ? AE->pSource : nullptr);
-					if (pST && !IsDeadOrInvisible(pST))
-						facingU = pST->TurretFacing().Current().GetRadian(); // 官方API，不得修改
-					else if (AE && AE->pSource) { auto sp = AE->pSource->GetCoords(); auto bp = pObject->GetCoords(); facingU = std::atan2(bp.Y-sp.Y, bp.X-sp.X); } // 非单位：回退连线
-				}
-				break;
-			default: // FLH
-				if (!Data->OriginOriginFLH.IsEmpty())
-				{
-					double fy = Data->OriginOriginFLH.X, fx = Data->OriginOriginFLH.Y;
-					facingU = std::atan2(fy, fx);
-				}
-				else if (pBullet) facingU = pBullet->Velocity.Magnitude() > 0 ? Facing(pBullet).GetRadian() : 0.0; // 官方API：弹体速度朝向
-				else if (pTechno) facingU = pTechno->TurretFacing().Current().GetRadian(); // 官方API，不得修改
-				break;
-			}
-			double tiltU = originTerrainTilt; // 单位倾斜
-
-			// 基础法向量（首帧锁定）随单位姿态旋转（共享管线 RotateNormalByUnit，无状态）；
-			// 大圆法向量状态独立于小圆（各自喂输入、各存 _originMotion），两套互不耦合
-			RotateNormalByUnit(_baseOriginFacing, _baseOriginTilt, facingU, tiltU,
-				_originMotion.normalX, _originMotion.normalY, _originMotion.normalZ);
-			// 不回写 _originFacing/_originTilt（同小圆 IsNormalOnOrigin：基础法向量球坐标永远保持首帧锁定值，
-			// 段外消费点从 _originMotion.normalX/Y/Z 现算，杜绝法向量每帧自反馈累计旋转）
-		}
-		// 每帧累加 Lissajous；法向量自旋（OriginNormalFAnglePerStep 等）统一在此管线末端
-		// 用累计角应用（同小圆：此处 normalX/Y/Z 已是当帧终值基础，累计角保证持续旋转，
-		// 不回写 _baseOriginFacing/_baseOriginTilt 锁定基础——杜绝自反馈累计旋转）
-		_originMotion.normalRotF += _originMotion.lissajousStep;
-		if (_originMotion.normalStepF != 0.0 || _originMotion.normalStepL != 0.0 || _originMotion.normalStepH != 0.0)
-		{
-			_originMotion.normalSpinF += _originMotion.normalStepF;
-			_originMotion.normalSpinL += _originMotion.normalStepL;
-			_originMotion.normalSpinH += _originMotion.normalStepH;
-			RotateNormal3D(_originMotion.normalX, _originMotion.normalY, _originMotion.normalZ,
-				_originMotion.normalSpinF, _originMotion.normalSpinL, _originMotion.normalSpinH);
-		}
-
-			// 从法向量现算球坐标（同小圆 effectiveFacing/effectiveTilt 消费模式）：
-			// 段内 OriginIsNormalOnOrigin 每帧旋转结果已在 _originMotion.normalX/Y/Z，
-			// 这里现算 oFacing/oFacingTilt 供 Circle 运动消费；不回读成员 _originFacing/_originTilt（保持首帧锁定值）。
+			bool originNormalActive = !Data->OriginNormalVector.IsEmpty()
+				|| Data->OriginNormalRandomF.Y > Data->OriginNormalRandomF.X
+				|| Data->OriginNormalRandomL.Y > Data->OriginNormalRandomL.X
+				|| Data->OriginNormalRandomH.Y > Data->OriginNormalRandomH.X
+				|| Data->OriginIsNormalOnOrigin
+				|| _originMotion.normalStepF != 0.0 || _originMotion.normalStepL != 0.0 || _originMotion.normalStepH != 0.0;
 			double oFacing = 0.0, oTilt = 0.0;
+			if (originNormalActive)
 			{
-				double lenXY = std::sqrt(_originMotion.normalX * _originMotion.normalX + _originMotion.normalY * _originMotion.normalY);
-				oFacing = lenXY > 1e-6 ? std::atan2(_originMotion.normalY, _originMotion.normalX) : 0.0;
-				oTilt = lenXY > 1e-6 ? std::atan2(_originMotion.normalZ, lenXY) : (_originMotion.normalZ > 0 ? M_PI / 2.0 : -M_PI / 2.0);
+				// 系统二：分量空间定速自旋（增量式）
+				RotateNormal3D(_originMotion.normalX, _originMotion.normalY, _originMotion.normalZ,
+					_originMotion.normalStepF, _originMotion.normalStepL, _originMotion.normalStepH);
+
+				// 系统一：消费换算 → 世界方向（放大 int 精度）
+				CoordStruct flhN;
+				flhN.X = static_cast<int>(_originMotion.normalX * 1000.0);
+				flhN.Y = static_cast<int>(_originMotion.normalY * 1000.0);
+				flhN.Z = static_cast<int>(_originMotion.normalZ * 1000.0);
+				if (Data->OriginIsNormalOnOrigin)
+				{
+					// yes：随 OriginOrigin 单位姿态（参照单位 = OriginOrigin 对应单位；Self=跟小圆 Origin 单位，无则弹体）
+					ObjectClass* pAnchorObj = nullptr;
+					switch (Data->OriginOrigin)
+					{
+					case VectorData::VectorOrigin::Launcher:
+						pAnchorObj = _pLauncher;
+						break;
+				case VectorData::VectorOrigin::Target:
+					{
+						// 目标锚只收单位：打格子/地面时 Target 是格子对象（非 Techno）→ 无锚
+						AbstractClass* pTgt = pBullet ? pBullet->Target : (pTechno ? pTechno->Target : nullptr);
+						pAnchorObj = abstract_cast<TechnoClass*>(pTgt);
+					}
+					break;
+				case VectorData::VectorOrigin::Source:
+					pAnchorObj = _pSource;
+					break;
+				default: // Self：大圆基准跟小圆 → 姿态跟小圆 Origin 单位；无则弹体水平
+					pAnchorObj = FindOriginTechno();
+					if (!pAnchorObj) pAnchorObj = pObject;
+					break;
+				}
+				// 单位锚 → 矩阵姿态消费；Self 载体弹体 → 官方弹体水平姿态消费；其余（格子/非单位/死亡）→ 无锚
+				CoordStruct worldN;
+				bool anchoredConsume = false;
+				TechnoClass* pAnchorT = pAnchorObj ? abstract_cast<TechnoClass*>(pAnchorObj) : nullptr;
+				if (pAnchorT && !IsDeadOrInvisible(pAnchorT))
+				{
+					PoseParams pose;
+					pose.useUnitPose = true;
+					pose.anchor = pAnchorT;
+					pose.onTurret = Data->OriginNormalIsOnTurret; // 大圆法向量随动姿态源独立标签（2026-09-05）
+					worldN = ResolveTilting(CoordStruct::Empty, flhN, pose); // = mtx点 − 锚坐标
+					anchoredConsume = true;
+				}
+				else if (!pAnchorT && pAnchorObj && pAnchorObj == pObject && pBullet)
+				{
+					// 弹体侧 Self：官方弹体水平姿态摆（无坡面倾斜概念），flipY 默认 1=不镜像
+					CoordStruct mtxPos = GetFLHAbsoluteCoords(pBullet, flhN); // 官方API，不得修改
+					worldN = mtxPos - pBullet->GetCoords();
+					anchoredConsume = true;
+				}
+				if (anchoredConsume)
+				{
+					_originMotion.normalWorldX = worldN.X;
+					_originMotion.normalWorldY = worldN.Y;
+					_originMotion.normalWorldZ = worldN.Z;
+					_originMotion.normalWorldValid = true;
+				}
+				else if (!_originMotion.normalWorldValid)
+				{
+					// 从未有锚（首帧打格子/参照从未存在）：世界直摆固化一次，此后恒冻结
+					worldN = GetFLHAbsoluteCoords(CoordStruct::Empty, flhN, DirStruct{}); // 官方API，不得修改
+					_originMotion.normalWorldX = worldN.X;
+					_originMotion.normalWorldY = worldN.Y;
+					_originMotion.normalWorldZ = worldN.Z;
+					_originMotion.normalWorldValid = true;
+				}
+				// 已有缓存且无锚（参照死亡/目标被清空）：停止计算，normalWorld 保持最后存活帧值
+				}
+				else
+				{
+					// no：世界固定，FLH 分量按世界轴直摆
+					CoordStruct worldN = GetFLHAbsoluteCoords(CoordStruct::Empty, flhN, DirStruct{}); // 官方API，不得修改
+					_originMotion.normalWorldX = worldN.X;
+					_originMotion.normalWorldY = worldN.Y;
+					_originMotion.normalWorldZ = worldN.Z;
+					_originMotion.normalWorldValid = true;
+				}
+
+				// 世界方向（放大 int）→ 球坐标 → Circle/MoveTo/Speed 消费
+				double wx = _originMotion.normalWorldX, wy = _originMotion.normalWorldY, wz = _originMotion.normalWorldZ;
+				double lenXY = std::sqrt(wx * wx + wy * wy);
+				oFacing = lenXY > 1e-6 ? std::atan2(wy, wx) : 0.0;
+				oTilt = lenXY > 1e-6 ? std::atan2(wz, lenXY) : (wz > 0 ? M_PI / 2.0 : -M_PI / 2.0);
 			}
 			// 大圆面倾斜唯一来源 = 大圆法向量（OriginNormalVector + OriginIsNormalOnOrigin 随动）：
 			// OriginAllowOriginTilt 不再叠加单位倾斜进 oTilt（它只管大圆解算起始点，见 VectorData.h 注释）。
-			// 3D 法向量旋转覆盖
-			if (_originMotion.normalStepF != 0.0 || _originMotion.normalStepL != 0.0 || _originMotion.normalStepH != 0.0)
-			{
-				double lenXY = std::sqrt(_originMotion.normalX * _originMotion.normalX + _originMotion.normalY * _originMotion.normalY);
-				oFacing = lenXY > 1e-6 ? std::atan2(_originMotion.normalY, _originMotion.normalX) : 0.0;
-				oTilt = lenXY > 1e-6 ? std::atan2(_originMotion.normalZ, lenXY) : (_originMotion.normalZ > 0 ? M_PI / 2.0 : -M_PI / 2.0);
-			}
+			// 圆周 Lissajous 相位累加（圆上点相位，与法向量无关）
+			_originMotion.normalRotF += _originMotion.lissajousStep;
 			DirStruct oFacingDir = Radians2Dir(oFacing); // 官方API，不得修改：弧度→DirStruct
 
 			// 当前圆心绝对位置 = 解算起始点 + 位移
@@ -2061,6 +2036,7 @@ VectorResult VectorEffect::GetVectorResult()
 		_bigCircleOffset += disp;
 		smallCircleCenter = bigCircleStartPoint + _bigCircleOffset;
 		_originMotion.elapsed++;
+		} // 归一化法向量块结束（oFacing/oTilt 作用域覆盖上方 MoveTo/Speed/Circle 消费）
 	}
 
 	// 圆心位移叠加：Circle 模式追踪圆心→调整 currentPos

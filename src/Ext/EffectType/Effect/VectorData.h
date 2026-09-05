@@ -61,6 +61,7 @@ public:
 	// ========================================================================
 
 	CoordStruct NormalVector{};          // 圆面法向量（FLH 坐标系），F/L/H
+	bool NormalIsOnTurret = false;       // 法向量随动（IsNormalOnOrigin=yes）姿态源：yes=随炮塔（TurretFacing 矩阵链，含炮塔差角），no=随车身（PrimaryFacing，默认）。与 OriginIsOnTurret（OriginFLH 挂点）解耦
 	CoordStruct NormalRandomF{};         // F 分量随机范围 .X=Min .Y=Max
 	CoordStruct NormalRandomL{};         // L 分量随机范围
 	CoordStruct NormalRandomH{};         // H 分量随机范围
@@ -159,6 +160,7 @@ public:
 	// 大圆面倾斜唯一来源 = 大圆法向量体系（OriginNormalVector + OriginIsNormalOnOrigin）——
 	// 原 OriginAllowCircleTilt（跟随目标 Z 差）已删除
 	bool OriginIsNormalOnOrigin = true;   // 大圆法向量：yes（默认）=每帧跟随 OriginOrigin 单位自身朝向转动，no=世界固定
+	bool OriginNormalIsOnTurret = false;  // 大圆法向量随动（OriginIsNormalOnOrigin=yes）姿态源：yes=随炮塔，no=随车身（默认）。与 OriginOriginIsOnTurret（OriginOriginFLH 挂点）解耦。INI: Vector.Origin.NormalIsOnTurret
 	CoordStruct OriginCircleOffset{};     // 圆心原点偏移（世界坐标）
 	bool OriginAllowOriginTilt = true;
 	bool OriginOriginNoUpdate = false;   // yes=解算起始点冻结在初始位置，不随目标移动
@@ -275,6 +277,7 @@ public:
 		IsNormalOnOrigin = reader->Get(title + "IsNormalOnOrigin", true); // 默认跟随 Origin 单位，no 才世界固定
 		CoordinateTilt = reader->Get(title + "CoordinateTilt", false);    // 连线坐标系 3D：默认 no=水平，显式 yes 才取真实连线
 		NormalVector = reader->Get(title + "NormalVector", NormalVector);
+		NormalIsOnTurret = reader->Get(title + "NormalIsOnTurret", false); // 默认 no=随车身；相对旧行为（炮塔）翻转
 		NormalRandomF = reader->Get(title + "NormalRandomF", NormalRandomF);
 		NormalRandomL = reader->Get(title + "NormalRandomL", NormalRandomL);
 		NormalRandomH = reader->Get(title + "NormalRandomH", NormalRandomH);
@@ -386,6 +389,7 @@ public:
 		OriginCircleEndOnMaxRadius = reader->Get(title + "Origin.CircleEndOnMaxRadius", false);
 		OriginCircleEndOnMinRadius = reader->Get(title + "Origin.CircleEndOnMinRadius", false);
 		OriginNormalVector = reader->Get(title + "Origin.NormalVector", OriginNormalVector);
+		OriginNormalIsOnTurret = reader->Get(title + "Origin.NormalIsOnTurret", false); // 默认 no=随车身；相对旧行为（恒炮塔）翻转
 		OriginNormalRandomF = reader->Get(title + "Origin.NormalRandomF", OriginNormalRandomF);
 		OriginNormalRandomL = reader->Get(title + "Origin.NormalRandomL", OriginNormalRandomL);
 		OriginNormalRandomH = reader->Get(title + "Origin.NormalRandomH", OriginNormalRandomH);
@@ -521,6 +525,7 @@ private:
 			.Process(this->IsNormalOnOrigin)
 			.Process(this->CoordinateTilt)
 			.Process(this->NormalVector)
+			.Process(this->NormalIsOnTurret)
 			.Process(this->NormalRandomF)
 			.Process(this->NormalRandomL)
 			.Process(this->NormalRandomH)
@@ -583,6 +588,7 @@ private:
 			.Process(this->OriginCircleMinRadius)
 			.Process(this->OriginCircleEndOnMaxRadius).Process(this->OriginCircleEndOnMinRadius)
 			.Process(this->OriginNormalVector)
+			.Process(this->OriginNormalIsOnTurret)
 			.Process(this->OriginNormalRandomF).Process(this->OriginNormalRandomL)
 			.Process(this->OriginNormalRandomH)
 			.Process(this->OriginNormalFAnglePerStep).Process(this->OriginNormalLAnglePerStep)
