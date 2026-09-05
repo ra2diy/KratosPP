@@ -175,7 +175,7 @@ public:
 	double OriginLissajous = 0.0;        // 大圆圆周 F 轴偏移角速度（°/step），0=不偏移
 	VectorOrigin OriginOrigin = VectorOrigin::Self; // 圆心运动参考系
 	CoordStruct OriginOriginFLH{};      // OriginOrigin=FLH 时的 FLH 偏移
-	bool OriginOriginIsOnTurret = false; // OriginOriginFLH 挂点坐标系：yes=挂 OriginOrigin 单位炮塔（TurretFacing），no=挂车身（PrimaryFacing，默认）。INI: Vector.Origin.OriginIsOnTurret（改名自 Origin.Origin.OriginIsOnBody，语义反转）
+	bool OriginOriginIsOnTurret = false; // OriginOriginFLH 挂点坐标系：yes=挂 OriginOrigin 单位炮塔（TurretFacing），no=挂车身（PrimaryFacing，默认）。INI: Vector.Origin.OriginIsOnTurret（改名自 Vector.Origin.OriginIsOnBody，语义反转）
 
 	// ========================================================================
 	// Speed 模式（直线追踪 + 加速度）
@@ -421,7 +421,7 @@ public:
 		else if (originOriginStr == "Source") OriginOrigin = VectorOrigin::Source;
 		else OriginOrigin = VectorOrigin::Self;
 		OriginOriginFLH = reader->Get(title + "Origin.OriginFLH", OriginOriginFLH);
-		OriginOriginIsOnTurret = reader->Get(title + "Origin.OriginIsOnTurret", false); // 默认挂车身（no），行为与"OriginIsOnTurret 反转"一致；旧键 Origin.Origin.OriginIsOnBody 失效
+		OriginOriginIsOnTurret = reader->Get(title + "Origin.OriginIsOnTurret", false); // 默认挂车身（no），行为与"OriginIsOnTurret 反转"一致；旧键 Vector.Origin.OriginIsOnBody 失效
 
 		// --- Speed / ReachTarget ---
 		TargetFLH = reader->Get(title + "TargetFLH", TargetFLH);
