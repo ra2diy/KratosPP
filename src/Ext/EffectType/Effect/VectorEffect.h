@@ -286,7 +286,7 @@ public:
 										// =no 且 OriginFLH 非空：每帧摆完写回完整解算点，参照单位死亡后
 										// 刷新链停刷，此值停在死亡帧的完整解算点（死亡=停止计算基线）。
 	CoordStruct _bigCircleStartPoint{};   // 大圆解算起始点最后有效坐标（OriginOriginNoUpdate 冻结用）
-	CoordStruct _lockedSmallCircleTarget{};        // Speed 模式 NoUpdate 锁定的目标点（首帧计算一次，后续帧直接复用，不反复写入新目标点）
+	CoordStruct _lockedSmallCircleTarget{};        // 目标点停更缓存（2026-09-05 语义扩展）：NoUpdate=yes 首帧锁定 / 无锚（目标死亡、打格子）首帧固化——锚活帧每帧刷新为最后完整目标点，死亡帧起命中直接复用（原定打哪还打哪）；offset 直加只走计算分支，命中路径不重复叠加
 	int _vectorAcquireZ = 0;            // 【废弃 2026-09-05】获取 Vector 时的抛射体 Z（圆心高度基准旧规则已废
 										// ——圆心 Z 由解算点决定；字段仅保留存档顺序兼容，勿删勿用）
 	ObjectClass* _pLauncher = nullptr;  // 发射者（OnTechnoDelete 置空防悬垂）
@@ -298,6 +298,7 @@ public:
 
 	// --- 目标偏移 ---
 	CoordStruct _randomTargetOffset{};  // 主 TargetFLH 随机偏移（首帧解析）
+	bool _targetOffsetActive = false;   // Radius/F-L/H 任一区间有效 = 本次配了偏移（消费/预转门槛，与 Normal 是否填写解耦，2026-09-05 用户拍板）
 	CoordStruct _originTargetOffset{};  // 大圆 TargetFLH 随机偏移
 
 	// --- 大圆圆心运动 ---

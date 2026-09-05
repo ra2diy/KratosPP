@@ -187,11 +187,13 @@ public:
 	CoordStruct TargetFLH{};
 	// TargetFLH 坐标系标签（只作用于 Speed/ReachTarget 直线模式的目标点取值）：
 	// 单位自身坐标系（OriginIsOnVectorOrigin=yes，Target/Source/Launcher 为活单位）时——
-	//   TargetIsOnTurret：yes（默认）=挂点对齐炮塔（炮塔转轴+随炮塔转），no=对齐车身
+	//   TargetIsOnTurret：yes=挂点对齐炮塔（炮塔转轴+随炮塔转），no（默认）=对齐车身
+	//     （2026-09-05 用户裁决：瞄准单位必然瞄准车身，不该管炮塔朝向——默认翻转 no，
+	//      显式写 yes 仍可挂炮塔）
 	//   TargetSameTilt：yes（默认）=挂点随单位倾斜（坡上车身斜则挂点斜），no=抛弃倾斜按水平基准
 	// 连线坐标系（OriginIsOnVectorOrigin=no）下两者不适用（无单位坐标系概念），3D 归 CoordinateTilt
 	// TargetIsOnWorld：yes=TargetFLH 当纯世界偏移（无视单位朝向/姿态）；默认 no
-	bool TargetIsOnTurret = true;
+	bool TargetIsOnTurret = false;
 	bool TargetSameTilt = true;
 	bool TargetIsOnWorld = false;
 	int TargetOffsetFMin = 0;
@@ -213,7 +215,7 @@ public:
 	int TargetOffsetRadiusMin2 = 0;  // 四参数版（TargetOffsetRadiusRanges）区间2，区间1复用 Min/Max
 	int TargetOffsetRadiusMax2 = 0;
 	bool TargetOffsetSphere = false;   // yes=球面全向（含H），no=XY圆环+H用TargetOffsetH
-	CoordStruct TargetOffsetNormal{};  // 圆环法向量（FLH），非空时 TargetOffsetSphere=no 的落点在倾斜圆面上（法向量定义圆面）。仅圆环模式有意义
+	CoordStruct TargetOffsetNormal = CoordStruct{ 0, 0, 1 }; // 圆环法向量（FLH），默认 (0,0,1) 垂直向上（用户规格 2026-09-05：不写即垂直，消费门槛靠非空恒过）；非空时 TargetOffsetSphere=no 的落点在倾斜圆面上（法向量定义圆面）。仅圆环模式有意义
 	bool TargetOffsetNormalOnOrigin = true; // TargetOffsetNormal 分量坐标系（OnOrigin 统一语义）：yes=在 Origin 单位自身 FLH 轴系解释（圆环随单位转/斜），no=世界坐标系（圆环面朝世界，落点直摆世界坐标）
 	// 角度限制（TargetOffsetAngles，仅圆环模式）：双区间，0度=目标点指向抛射体（近交点）
 	int TargetOffsetAngleMin = 0;
@@ -428,7 +430,7 @@ public:
 
 		// --- Speed / ReachTarget ---
 		TargetFLH = reader->Get(title + "TargetFLH", TargetFLH);
-		TargetIsOnTurret = reader->Get(title + "TargetIsOnTurret", true); // 单位坐标系下默认对齐炮塔
+		TargetIsOnTurret = reader->Get(title + "TargetIsOnTurret", false); // 默认对齐车身（2026-09-05 用户裁决：瞄准单位必然车身，不管炮塔朝向）
 		TargetSameTilt = reader->Get(title + "TargetSameTilt", true);    // 默认随单位倾斜（成熟算法）
 		TargetIsOnWorld = reader->Get(title + "TargetIsOnWorld", false); // 纯世界偏移需显式
 		std::string targetOffsetFStr = reader->Get(title + "TargetOffsetF", std::string{ "" });

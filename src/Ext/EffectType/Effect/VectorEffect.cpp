@@ -658,6 +658,13 @@ void VectorEffect::ParseCommon()
 // TargetOffset 随机偏移（Radius / F/L/H 两套 + Angles）——照搬旧版
 void VectorEffect::ParseTargetOffset()
 {
+	// 偏移激活 = Radius 或 F/L/H 任一区间有效（与 TargetOffsetNormal 是否填写解耦：不写 Normal
+	// 的 Radius/Sphere/F-L-H 配置同样生效，2026-09-05 用户拍板"不应该有门槛"）。Normal 只在此
+	// 函数内决定圆面朝向（非空=倾斜圆面 / 空=水平环），不参与消费/预转门槛。
+	_targetOffsetActive = Data->TargetOffsetRadiusMin < Data->TargetOffsetRadiusMax
+		|| Data->TargetOffsetFMin < Data->TargetOffsetFMax || Data->TargetOffsetFMin2 < Data->TargetOffsetFMax2
+		|| Data->TargetOffsetLMin < Data->TargetOffsetLMax || Data->TargetOffsetLMin2 < Data->TargetOffsetLMax2
+		|| Data->TargetOffsetHMin < Data->TargetOffsetHMax || Data->TargetOffsetHMin2 < Data->TargetOffsetHMax2;
 	if (Data->TargetOffsetRadiusMin < Data->TargetOffsetRadiusMax)
 	{
 		// 半径模式：全向随机落点（与 F/L/H 互斥）
@@ -1115,10 +1122,11 @@ void VectorEffect::LockFacing()
 		_lastPoint = ResolveOriginTilting(_lastPoint, _fAxisDir, pObject->GetCoords());
 	}
 
-	// TargetOffsetNormal 世界固定（TargetOffsetNormalOnOrigin=no）：把分量落点按世界 FLH 轴（空 Dir=朝北）
-	// 直摆成世界坐标偏移（官方 API 消化 90° 偏置/Y 镜像），消费端把偏移叠加在旋转后的 TargetFLH 上，
-	// 不随任何单位转动（C1：不再读 IsNormalOnOrigin，坐标系由 TargetOffsetNormalOnOrigin 自足决定）。
-	if (!Data->TargetOffsetNormalOnOrigin && !Data->TargetOffsetNormal.IsEmpty())
+	// TargetOffsetNormalOnOrigin=no：把偏移分量按世界 FLH 轴（空 Dir=朝北）直摆成世界坐标偏移
+	// （官方 API 消化 90° 偏置/Y 镜像），消费端叠加在旋转后的 TargetFLH 上，不随任何单位转动。
+	// 条件只看 no + 配了偏移（_targetOffsetActive），与 TargetOffsetNormal 是否填写解耦
+	// （不写 Normal 的 Radius/Sphere/F-L-H 的 no 模式同样预转，2026-09-05 用户拍板）。
+	if (!Data->TargetOffsetNormalOnOrigin && _targetOffsetActive)
 	{
 		_randomTargetOffset = GetFLHAbsoluteCoords(CoordStruct::Empty, _randomTargetOffset, DirStruct{}); // 官方API
 	}
@@ -2391,15 +2399,8 @@ VectorResult VectorEffect::GetVectorResult()
 	// NoUpdate=yes：目标点锁定。首帧正常计算一次缓存，后续每帧直接复用 _lockedSmallCircleTarget，
 	// 不再执行"读发射者实时坐标/朝向 → 算新目标点"的每帧刷新（Origin=Launcher 时
 	// mtxPos = 发射者实时坐标+实时朝向旋转 FLH，NoUpdate 若不隔离这里，目标点每帧被重写）
-	if (Data->OriginNoUpdate && !_lockedSmallCircleTarget.IsEmpty())
-	{
-		smallCircleTarget = _lockedSmallCircleTarget;
-	}
-	else
-	{
-	// 单位自身坐标系（TargetFLH 挂单位）——统一找"坐标系所属单位"：
+	// 坐标系所属单位查找提前（停更判定需要锚活状态）——单位自身坐标系（TargetFLH 挂单位）：
 	//   IsOnOrigin=yes 且对应对象是活单位才挂（Target 打格子/单位死 → 无锚回退 2D）。
-	//   连线坐标系（IsOnOrigin=no）不锚定，走下方 C→P 连线分支（含 Launcher——管线第 3 步补齐）。
 	TechnoClass* pAnchorUnit = nullptr;
 	switch (Data->Origin)
 	{
@@ -2423,13 +2424,25 @@ VectorResult VectorEffect::GetVectorResult()
 			pAnchorUnit = abstract_cast<TechnoClass*>(_pSource);
 		break;
 	}
+	const bool anchorAlive = pAnchorUnit && !IsDeadOrInvisible(pAnchorUnit);
+	// 停更 = NoUpdate=yes（永久锁定）|| 无锚（死亡/打格子——2026-09-05 用户拍板：
+	// 目标死亡瞬间弹体目标 = 死亡前最后锁定坐标，原定打哪里还打哪里，永不变化）。
+	// 缓存 _lockedSmallCircleTarget 每帧在 else 尾写（锚活帧 = 最后完整目标点；
+	// NoUpdate 首帧 / 无锚首帧 = 固化值）；命中路径（NoUpdate 或 无锚）直接复用不再重摆。
+	if ((Data->OriginNoUpdate || !anchorAlive) && !_lockedSmallCircleTarget.IsEmpty())
+	{
+		smallCircleTarget = _lockedSmallCircleTarget;
+	}
+	else
+	{
 	if (pAnchorUnit && !IsDeadOrInvisible(pAnchorUnit))
 	{
 		// 单位自身坐标系（模式①/②，填 PoseParams 一次调用）：
 		//   TargetSameTilt=yes（默认）= ① 引擎单位完整姿态（Locomotor 矩阵 + TurretOffset +
 		//     炮塔旋转角），含车体倾斜——成熟算法保默认；
 		//   no = ② 抛弃倾斜（水平基准）：FLH 只按单位水平朝向旋转，不随单位坡面俯仰。
-		//   TargetIsOnTurret=yes（默认）= 挂炮塔（onTurret：矩阵落转轴+叠炮塔差角），no=挂车身。
+		//   TargetIsOnTurret：yes=挂炮塔（onTurret：矩阵落转轴+叠炮塔差角），no（默认）=挂车身
+		//     （2026-09-05 用户裁决：瞄准单位必然瞄准车身，不该管炮塔朝向——默认 no，写 yes 才挂炮塔）。
 		//   基准点 startPoint（NoUpdate 控制的计算点）取代单位位置，剥掉单位位移只留姿态偏移。
 		PoseParams pose;
 		pose.anchor = pAnchorUnit;
@@ -2480,47 +2493,50 @@ VectorResult VectorEffect::GetVectorResult()
 		}
 		smallCircleTarget = ResolveTilting(startPoint, smallCircleTargetFlh, pose);
 	}
-	} // 关闭 NoUpdate 缓存的 else 块
-
-	// TargetOffset 世界化直加（坐标系由 TargetOffsetNormalOnOrigin 自足决定，2026-09-05）：
-	//   yes = Origin 单位系分量：有活锚单位 → 单位姿态矩阵转世界（随单位转/斜）；
-	//        无锚（打格子/参照死亡）→ 世界直摆固化（停止更新：世界固定方向，不随弹体方位转——消除抽搐）
-	//   no  = LockFacing 已按世界轴预转（空 Dir 直摆），直接用
-	if (!Data->TargetOffsetNormal.IsEmpty())
-	{
-		CoordStruct offC{ _randomTargetOffset.X, _randomTargetOffset.Y, _randomTargetOffset.Z };
-		CoordStruct offsetWorld;
-		if (Data->TargetOffsetNormalOnOrigin)
+		// TargetOffset 世界化直加 —— 在 else（计算）分支内统一执行一次：
+		//   （2026-09-05 修复：原块位于 if(缓存)/else(计算) 结构之外，NoUpdate=yes 时
+		//    缓存命中路径每帧重复 += offsetWorld → 目标点每帧外推乱飞（日志实测 Δ 恒定 =
+		//    同一随机偏移向量逐帧叠加）。现只走计算分支加一次，缓存分支直接用已含
+		//    offset 的缓存终值。）
+		// 消费与否只看 _targetOffsetActive = 配了 Radius/F-L-H，与 TargetOffsetNormal
+		// 是否填写解耦；Normal 只决定圆面朝向。坐标系由 TargetOffsetNormalOnOrigin 自足决定：
+		//   yes = Origin 单位系分量：有活锚单位（FindOriginTechno 非空）→ 单位姿态矩阵转世界
+		//         （随单位转/斜，每帧重算 = 落点随姿态走）；无锚（打格子/参照死亡/目标 null）
+		//         → 世界直摆固化（停止更新，不随弹体方位转——消除抽搐）
+		//   no  = LockFacing 已按世界轴预转（no + 偏移激活），直接用
+		if (_targetOffsetActive)
 		{
-			TechnoClass* pOffAnchor = FindOriginTechno();
-			if (pOffAnchor && !IsDeadOrInvisible(pOffAnchor))
+			CoordStruct offC{ _randomTargetOffset.X, _randomTargetOffset.Y, _randomTargetOffset.Z };
+			CoordStruct offsetWorld;
+			if (Data->TargetOffsetNormalOnOrigin)
 			{
-				PoseParams offPose;
-				offPose.anchor = pOffAnchor;
-				offPose.onTurret = Data->TargetIsOnTurret;
-				if (Data->TargetSameTilt)
-					offPose.useUnitPose = true;
+				TechnoClass* pOffAnchor = FindOriginTechno();
+				if (pOffAnchor && !IsDeadOrInvisible(pOffAnchor))
+				{
+					PoseParams offPose;
+					offPose.anchor = pOffAnchor;
+					offPose.onTurret = Data->TargetIsOnTurret;
+					if (Data->TargetSameTilt)
+						offPose.useUnitPose = true;
+					else
+						offPose.facing = Data->TargetIsOnTurret
+							? pOffAnchor->TurretFacing().Current()   // 官方API，不得修改
+							: pOffAnchor->PrimaryFacing.Current();   // 官方API，不得修改
+					offsetWorld = ResolveTilting(CoordStruct::Empty, offC, offPose); // = mtx点 − 锚坐标
+				}
 				else
-					offPose.facing = Data->TargetIsOnTurret
-						? pOffAnchor->TurretFacing().Current()   // 官方API，不得修改
-						: pOffAnchor->PrimaryFacing.Current();   // 官方API，不得修改
-				offsetWorld = ResolveTilting(CoordStruct::Empty, offC, offPose); // = mtx点 − 锚坐标
+					offsetWorld = GetFLHAbsoluteCoords(CoordStruct::Empty, offC, DirStruct{}); // 官方API：无锚世界直摆
 			}
 			else
-				offsetWorld = GetFLHAbsoluteCoords(CoordStruct::Empty, offC, DirStruct{}); // 官方API：无锚世界直摆
+				offsetWorld = _randomTargetOffset; // no：LockFacing 已预转世界坐标（1123）
+			smallCircleTarget.X += offsetWorld.X;
+			smallCircleTarget.Y += offsetWorld.Y;
+			smallCircleTarget.Z += offsetWorld.Z;
 		}
-		else
-			offsetWorld = _randomTargetOffset; // no：LockFacing 已预转世界坐标（1123）
-		smallCircleTarget.X += offsetWorld.X;
-		smallCircleTarget.Y += offsetWorld.Y;
-		smallCircleTarget.Z += offsetWorld.Z;
-	}
-
-	// NoUpdate=yes：首帧算完缓存锁定，后续帧走缓存，不再每帧重算
-	if (Data->OriginNoUpdate)
-	{
+		// 每帧写目标缓存（2026-09-05 死亡冻结语义）：锚活帧每帧刷新 = 最后完整目标点
+		// （死亡瞬间命中路径复用的正是此值）；NoUpdate 首帧 / 无锚首帧 = 固化值
 		_lockedSmallCircleTarget = smallCircleTarget;
-	}
+	} // 关闭 停更缓存 的 else 块
 
 	CoordStruct dirVec;
 	dirVec.X = smallCircleTarget.X - currentPos.X;
