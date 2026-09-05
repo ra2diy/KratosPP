@@ -50,11 +50,14 @@ public:
 	bool Freeze = false;
 	// 圆面倾斜唯一来源 = 法向量体系（NormalVector + IsNormalOnOrigin 随单位转）——
 	// 原 AllowCircleTilt 已删除（语义被 IsNormalOnOrigin=no 世界固定取代，连线高低角倾斜作废）
-	bool IsOnOrigin = false;             // （INI: Vector.OriginIsOnVectorOrigin）FLH 参考系（F 轴）来源：yes=Origin 单位自身朝向，no=Origin→弹体连线
-										 // 默认按 Origin 类型推导（Launcher/Self→yes，Target/Source→no），与旧版行为一致
+	bool IsOnOrigin = false;             // （INI: Vector.OriginIsOnVectorOrigin）只决定 TARGETFLH 坐标系（F 轴来源）：
+										 //   yes=Origin 单位自身朝向，no=Origin→弹体连线。默认按 Origin 类型推导（Launcher/Self→yes，
+										 //   Target/Source→no）。【2026-09-05 定案：与 Origin 解算点（OriginFLH/CircleOrigin 圆心）
+										 //   无关——OriginFLH 恒从 Origin 单位自身出发，代码不得在此处读取本标签】
 	bool IsNormalOnOrigin = true;        // 圆面法向量：yes（默认）=每帧跟随 Origin 单位自身朝向转动，no=世界固定
-	bool CoordinateTilt = false;         // 连线坐标系（IsOnVectorOrigin=no 的 Target/Launcher/Source 通吃）F 轴是否取真实 3D 连线
-										 // （含 Origin→抛射体 高低差）；no（默认）=F 轴水平投影，与地面平行。只影响坐标系摆放，不碰圆面法向量。
+	bool CoordinateTilt = false;         // 只作用于 TARGETFLH 的连线坐标系（OriginIsOnVectorOrigin=no 的 Target/Launcher/Source）：
+										 //   yes=连线 F 轴取真实 3D（含 Origin→抛射体 高低差），no=水平投影。
+										 //   【2026-09-05 定案：OriginFLH 解算点不使用本标签（其无锚兜底连线恒水平投影）】
 
 	// ========================================================================
 	// NormalVector 圆面法线

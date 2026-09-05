@@ -25,19 +25,6 @@
 // CoordinateTilt 决定这条线取真实 3D（高低差进 tilt，ResolveTilting 混合出斜向摆放）
 // 还是水平投影（tilt=0，与地面平行）。
 // ============================================================================
-static DirStruct ResolveLinePose(TechnoClass* pUnit, const CoordStruct& bulletPos, bool use3D, double& tiltOut)
-{
-	tiltOut = 0.0;
-	CoordStruct uPos = pUnit->GetCoords();
-	double ddx = static_cast<double>(bulletPos.X - uPos.X);
-	double ddy = static_cast<double>(bulletPos.Y - uPos.Y);
-	double ddz = static_cast<double>(bulletPos.Z - uPos.Z);
-	double lenXY = std::sqrt(ddx * ddx + ddy * ddy);
-	if (use3D && lenXY > 1e-6)
-		tiltOut = std::atan2(ddz, lenXY); // 连线高低角（弹体高于单位为正，F 朝上斜）
-	return Point2Dir(uPos, bulletPos); // 官方API，不得修改
-}
-
 // ============================================================================
 // 目标有效性辅助（SpawnMissile 场景专用）——照搬旧版
 // ============================================================================
@@ -420,27 +407,29 @@ CoordStruct VectorEffect::ResolveTilting(const CoordStruct& base, const CoordStr
 // 解算偏移 = OriginFLH + CircleOrigin（主圆圆心偏移，同姿态线性合并一次摆——
 // 小圆圆心 ≡ 完整解算起始点；两偏移组件不再各自现算，CircleOrigin 原"AllowOriginTilt=no
 // 世界直加"尾巴删除：纯直加只归 OriginIsOnWorld）。读 Origin 系标签填 PoseParams → ResolveTilting。
-// base = Origin 单位坐标（挂载/补读期）或本帧已刷新的单位坐标（每帧）；
-// fallbackFacing = 水平兜底朝向（挂载期 _fAxisDir，每帧 fAxisDir = 主朝向段按 IsOnOrigin 实时刷新）；
-// currentPos = 弹体现在位置（连线终点）。
-// 死亡 = 停止计算（基线）：参照单位死亡后不再刷新/回退/重算，本函数直接返回传入的
-// base（此时 base 已是死亡帧写回的完整解算起始点 = 死亡帧小圆圆心，见每帧调用点注释），
-// 与 NoUpdate=yes 同构；AllowOriginTilt 只决定活时的深度（是否随姿态），不参与死后判定。
+// base = Origin 参考坐标（单位坐标/格子坐标；无锚停更帧 = 快照完整值，调用点不调本函数）；
+// fallbackFacing = 水平兜底朝向（仅 Self 弹体侧用：挂载 _fAxisDir / 每帧按载体刷新）；
+// currentPos = 弹体现在位置（无锚兜底连线的终点）。
+// 坐标系（2026-09-05 修正）：Origin 解算点恒从 Origin 单位自身出发——锚活 = 单位矩阵姿态
+// （AllowOriginTilt=yes，OriginIsOnTurret 定炮塔/车身）或单位自身水平朝向（no）；不再读
+// IsOnOrigin/fAxisDir（那是 TargetFLH 语义）。无锚（打格子/参照被清空）= 兜底连线或纯竖直
+// 直加，不再 return base 丢偏移。无锚停更（死亡后复用最后完整解算点）由调用点快照承载。
 CoordStruct VectorEffect::ResolveOriginTilting(const CoordStruct& base, const DirStruct& fallbackFacing,
 	const CoordStruct& currentPos)
 {
 	PoseParams pose;
 
-	// 解算偏移组合：OriginFLH + CircleOrigin（adjusted Z 覆写规则：CircleOrigin.Z 以
-	// OriginFLH.Z 为基线；线性旋转等价于旧"先摆 OriginFLH 再摆 CircleOrigin"两段）
+	// 解算偏移组合：OriginFLH + CircleOrigin 直加合并（线性旋转等价于旧"先摆 OriginFLH
+	// 再摆 CircleOrigin"两段；不再有 adjusted Z 覆写——见下方 2026-09-05 修正注）
 	CoordStruct resolveFlh = Data->OriginFLH;
 	if (!Data->CircleOrigin.IsEmpty())
 	{
-		CoordStruct adj = Data->CircleOrigin;
-		adj.Z = Data->OriginFLH.Z + adj.Z;   // 原 adjustedCircleOrigin Z 覆写
-		resolveFlh.X += adj.X;
-		resolveFlh.Y += adj.Y;
-		resolveFlh.Z += adj.Z;
+		// CircleOrigin 链式直加（2026-09-05 用户确认：合计 = OriginFLH + CircleOrigin，
+		// 两偏移同姿态一次线性合并——原 adj.Z = OriginFLH.Z + adj.Z 覆写把 OriginFLH.Z 双计：
+		// 800+800 得 2400 是错的，正确 = 1600）
+		resolveFlh.X += Data->CircleOrigin.X;
+		resolveFlh.Y += Data->CircleOrigin.Y;
+		resolveFlh.Z += Data->CircleOrigin.Z;
 	}
 
 	// 世界直加（OriginIsOnWorld=yes，唯一直加来源——不由 AllowOriginTilt 决定）
@@ -470,36 +459,37 @@ CoordStruct VectorEffect::ResolveOriginTilting(const CoordStruct& base, const Di
 		return ResolveTilting(base, resolveFlh, pose);
 	}
 
-	// 非 Self：参照单位死亡 → 停止计算（无论 AllowOriginTilt）
+	// 非 Self：Origin 解算点坐标系自足（2026-09-05 修正——不再读 IsOnOrigin / fallbackFacing，
+	// 那是 TargetFLH 侧语义：OriginIsOnVectorOrigin 只决定 TargetFLH 取谁的坐标系；OriginFLH
+	// 恒从 Origin 单位自身出发。原 ③"单位→弹体连线"分支是把 TargetFLH 标签套到 Origin 上的
+	// 错误耦合，删除）。
 	TechnoClass* pOriginTechno = FindOriginTechno();
-	if (!pOriginTechno || IsDeadOrInvisible(pOriginTechno))
+	if (pOriginTechno && !IsDeadOrInvisible(pOriginTechno))
 	{
-		return base;
-	}
-
-	if (Data->AllowOriginTilt)
-	{
-		if (Data->IsOnOrigin)
+		if (Data->AllowOriginTilt)
 		{
-			// ① 单位自身坐标系：引擎完整姿态（退役"水平朝向+地形采样倾斜"，7a 决议）
+			// ① 引擎完整姿态（Locomotor 矩阵 + TurretOffset 转轴 + 炮塔差角；onTurret 由 OriginIsOnTurret 分）
 			pose.useUnitPose = true;
 			pose.anchor = pOriginTechno;
 			pose.onTurret = Data->OriginIsOnTurret;
 		}
 		else
 		{
-			// ③ 连线坐标系：F 轴 = Origin 本体中心 → 弹体现在位置
-			// （CoordinateTilt=yes 高低差进 tilt，no=水平投影）
-			double lineTilt = 0.0;
-			pose.facing = ResolveLinePose(pOriginTechno, currentPos, Data->CoordinateTilt, lineTilt);
-			pose.tilt = lineTilt;
+			// ② 水平：单位自身朝向（OriginIsOnTurret 选炮塔/车身；不再用 fallbackFacing——
+			// fAxisDir 由主朝向段按 IsOnOrigin 维护、属 TargetFLH 语义，会引入连线污染）
+			pose.facing = Data->OriginIsOnTurret
+				? pOriginTechno->TurretFacing().Current()     // 官方API，不得修改：挂炮塔
+				: pOriginTechno->PrimaryFacing.Current();     // 官方API，不得修改：挂车身
 		}
 	}
 	else
 	{
-		// ② 水平（AllowOriginTilt=no，活锚）：fallbackFacing = fAxisDir
-		//（每帧已按 IsOnOrigin 实时刷新单位/连线水平朝向）
-		pose.facing = fallbackFacing;
+		// 无锚（打格子 / 参照被清空）：调用点仅在"首帧兜底"进入本函数（此后由快照停更承载），
+		// 不可 return base 丢偏移——原实现把裸坐标当解算点返回是打格子圆心钉地面的根因。
+		// resolveFlh 带 FL 分量 → 借"base→弹体"连线定水平朝向；tilt=0 水平投影——
+		// CoordinateTilt 是 TargetFLH 连线高低差语义，OriginFLH 解算不读（2026-09-05 确认）。
+		// 纯竖直（仅 H）→ 任意水平 facing 结果不变（等效世界直加）。
+		pose.facing = Point2Dir(base, currentPos); // 官方API，不得修改：无锚兜底水平朝向
 	}
 	return ResolveTilting(base, resolveFlh, pose);
 }
@@ -1554,21 +1544,27 @@ VectorResult VectorEffect::GetVectorResult()
 			startPoint = _lastPoint.IsEmpty() ? currentPos : _lastPoint; // 锁定初始目标
 		else
 		{
-			// 允许更新（NoUpdate=no）：缓存优先（只跟随锁定单位，防引擎集结目标点污染），
-			// 缓存空才回退引擎链；目标死亡后缓存冻结，回退锁定坐标
-			CoordStruct updated{};
-			bool gotUpdate = false;
-			if (!gotUpdate)
+			// 允许更新（NoUpdate=no）：只跟随活 Techno 目标——死亡/打格子（Target 非单位）
+			// 不刷新裸坐标，_lastPoint 保持上一帧完整解算点，由下方出口停更读取
+			// （快照语义统一 2026-09-05：死亡 = 复用最后存活帧完整值，打格子 = 挂载已固化）。
+			AbstractClass* pTgt = pBullet ? pBullet->Target : (pTechno ? pTechno->Target : nullptr);
+			TechnoClass* pTgtT = abstract_cast<TechnoClass*>(pTgt);
+			if (pTgtT && !IsDeadOrInvisible(pTgtT))
 			{
-				gotUpdate = GetTargetPosFromChain(updated, true);
-			}
-			if (gotUpdate)
-			{
-				_lastPoint = updated; // 跟随：更新锁定值
+				_lastPoint = pTgtT->GetCoords(); // 跟随：活目标坐标（出口会覆写为完整解算点）
 				startPoint = _lastPoint;
 			}
+			else if (_lastPoint.IsEmpty())
+			{
+				// 首帧未就绪（挂载没拿到目标）：坐标链裸取一次，供下方出口首次兜底算完整快照
+				CoordStruct updated{};
+				if (GetTargetPosFromChain(updated, true))
+					startPoint = updated;
+				else
+					startPoint = currentPos;
+			}
 			else
-				startPoint = _lastPoint.IsEmpty() ? currentPos : _lastPoint; // 抛弃 update → 回退锁定坐标
+				startPoint = _lastPoint; // 死亡/打格子停更：复用最后完整解算点（含偏移）
 		}
 		break;
 	case VectorData::VectorOrigin::Launcher:
@@ -1594,28 +1590,29 @@ VectorResult VectorEffect::GetVectorResult()
 		break;
 	}
 
-	// OriginFLH 完整解算：解算点的定义 = Origin 单位坐标 + OriginFLH 经
-	// OriginIsOnTurret/AllowOriginTilt/CoordinateTilt 等复合计算的最终偏移（设计目标，偏移是
-	// 解算点的组成部分）。统一"坐标点取值管线" ResolveOriginTilting（与挂载复合/补读同一入口）：
+	// OriginFLH 完整解算：解算点的定义 = Origin 参考坐标 + OriginFLH/CircleOrigin 经
+	// OriginIsOnTurret/AllowOriginTilt 复合计算的最终偏移。统一"坐标点取值管线"
+	// ResolveOriginTilting（与挂载复合/补读同一入口）：
 	//   NoUpdate=yes 不在此算——挂载复合已算入偏移冻结，直接用（冻结）。
-	//   NoUpdate=no 才执行：本帧单位坐标已刷新，按实时姿态复合计算偏移。分派：
-	//   ④ OriginIsOnWorld=yes → 纯世界轴；
-	//   ① AllowOriginTilt=yes+IsOnOrigin=yes → AutoWeapon 矩阵深度（onTurret 由
-	//      OriginIsOnTurret 分；退役"水平朝向+地形倾斜近似"，7a 决议——tilt 由矩阵姿态接管）；
-	//   ③ AllowOriginTilt=yes+IsOnOrigin=no → 连线坐标系（CoordinateTilt=yes 取真实 3D 连线）；
-	//   ② AllowOriginTilt=no → 水平 2D（facing=fAxisDir，主朝向段已按 IsOnOrigin 实时刷新）；
-	//   Self 不再特例排除（7b bug 修复：pTechno 载体 → ①；弹体无锚 → 弹体朝向水平摆）。
-	// 算完把完整解算点写回最后有效坐标 _lastPoint。
+	//   NoUpdate=no：锚活（或 Self 载体/快照空首算）→ 每帧重算完整解算点写回 _lastPoint；
+	//                 无锚且快照已建立（死亡/打格子）→ 停更——startPoint 已是 _lastPoint
+	//                 （最后完整解算点，含偏移），不调函数（防偏移双计/防死亡后连线重算）。
+	// 快照语义统一（2026-09-05）：_lastPoint 在帧末恒 = 完整解算点；死亡/打格子停更复用，
+	// 与 OriginNoUpdate=yes 的"算一次后不重算"同构，只是停点由无锚触发。
 	if (!Data->OriginNoUpdate && (!Data->OriginFLH.IsEmpty() || !Data->CircleOrigin.IsEmpty()))
 	{
-		startPoint = ResolveOriginTilting(startPoint, fAxisDir, currentPos);
-		// 死亡维持（基线：参照单位死亡后不再计算，解算点停在死亡前最后一刻的完整值）：
-		// 每帧把复合计算完的完整解算点写回最后有效坐标。参照单位活着时下一帧的
-		// 坐标刷新（TrackOriginCoord/目标链）会先覆盖它再重算；一旦死亡，刷新链停刷
-		// 不再覆盖 → 该值自然停在死亡帧的完整解算点（含 OriginFLH 偏移），后续帧
-		// 恒等返回，不回退不重算。与 OriginNoUpdate=yes 的"算一次后不重算"同构，
-		// 只是停点由死亡触发。
-		_lastPoint = startPoint;
+		bool originRecalc = Data->Origin == VectorData::VectorOrigin::Self; // Self：载体活 = Vector 活，无死锚
+		if (!originRecalc)
+		{
+			TechnoClass* pOriginTechno = FindOriginTechno();
+			originRecalc = pOriginTechno && !IsDeadOrInvisible(pOriginTechno);
+		}
+		if (originRecalc || _lastPoint.IsEmpty())
+		{
+			startPoint = ResolveOriginTilting(startPoint, fAxisDir, currentPos);
+			_lastPoint = startPoint; // 完整解算点快照（锚活每帧刷新 / 无锚首帧兜底固化）
+		}
+		// 无锚 + 快照已建立：停更，startPoint 保持 _lastPoint（完整解算点），不覆写
 	}
 
 // GetVectorResult：每帧计算位移（主体内联，段落化）
