@@ -74,6 +74,11 @@ public:
 	// ========================================================================
 	TechnoClass* FindOriginTechno();               // Origin=Target/Source/Launcher/Self 对应的单位（无单位返回 nullptr）
 	double SampleOriginTilt(TechnoClass* pUnit);   // 单位倾斜角：动态倾斜(AngleRotatedForwards)优先，为 0 时地形采样
+	// 消费坐标三轴（法向量系统一）：取锚单位姿态矩阵 / 弹体水平姿态的 F/L/H 轴世界方向（×1000 int）。
+	// pAnchor=Techno → onTurret 矩阵链（含炮塔差角/坡面）；pAnchor=载体弹体（Self）→ 官方弹体水平姿态。
+	// 返回 false = 无可用锚（此时调用方用世界轴固化）。
+	bool GetNormalFrameAxes(ObjectClass* pAnchor, bool onTurret,
+		CoordStruct& axisF, CoordStruct& axisL, CoordStruct& axisH);
 		// ========================================================================
 	// 解算倾斜（局部偏移 FLH → 世界坐标点）—— 归一化单一实现
 	// 姿态参数包 = 一个请求的全部姿态输入；ResolveTilting 按固定优先级消费：
@@ -135,9 +140,15 @@ public:
 		double normalStepF = 0.0;       // 法线每帧固定转角 step（已解析：常数/区间随机，度/帧）
 		double normalStepL = 0.0;
 		double normalStepH = 0.0;
+		double normalLissajousF = 0.0;  // 法向量自旋 Lissajous 累计角（每帧 += NormalFLissajous，度；文档六节）
+		double normalLissajousL = 0.0;
+		double normalLissajousH = 0.0;
 		double normalX = 0.0, normalY = 0.0, normalZ = 1.0; // 法向量 FLH 分量 (F,L,H)；默认 (0,0,1)=竖直（水平圆面）
-		double normalWorldX = 0.0, normalWorldY = 0.0, normalWorldZ = 1.0; // 最后消费换算的世界方向（无锚冻结/倾斜面消费输入）
-		bool normalWorldValid = false;  // 消费缓存是否已建立：false=从未有锚（首帧无锚时直摆固化一次）；true 后无锚一律冻结
+		double normalWorldX = 0.0, normalWorldY = 0.0, normalWorldZ = 1.0; // 每帧消费合成结果（世界方向；倾斜面消费输入）
+		bool normalWorldValid = false;  // 坐标系轴是否已建立：false=从未有锚（首帧以世界轴固化）；true 后锚死不再刷新轴（冻结）
+		CoordStruct normalAxisF{};      // 坐标系 F 轴世界方向（×1000 int；锚活=单位姿态矩阵轴，锚死冻结/世界轴固化）
+		CoordStruct normalAxisL{};      // 坐标系 L 轴
+		CoordStruct normalAxisH{};      // 坐标系 H 轴
 		double lissajousStep = 0.0;     // 圆周 F 偏移角速度（°/step），0=不偏移
 
 		// --- 弧线（ReachTarget/Speed）---
@@ -153,8 +164,10 @@ public:
 		double prevArcOffset = 0.0;     // 上一帧弧高绝对值（增量叠加用）
 
 		// --- 大圆 Speed 弧高专用（主模式不用）---
-		double arcTotalDist = -1.0;     // 首帧初始总距离（<0=未初始化）
-		CoordStruct arcStartCenter{};   // 弧线起始圆心位置
+		double arcTotalDist = -1.0;     // 【已废弃 2026-09-05】首帧初始总距离。原 t = 1-dist/arcTotalDist 读圆心实时
+		                                // 3D 距离，被弧抬升污染（同主直线旧病灶）；已改为影子推进算 t，本字段仅保留
+		                                // 占位与存档兼容，逻辑不再使用（勿删，Serial Process 顺序依赖）
+		CoordStruct arcStartCenter{};   // 弧线起始圆心位置（影子起点同源）
 
 		template <typename T>
 		bool Process(T& stream)
@@ -170,6 +183,9 @@ public:
 				.Process(this->normalStepF)
 				.Process(this->normalStepL)
 				.Process(this->normalStepH)
+				.Process(this->normalLissajousF)
+				.Process(this->normalLissajousL)
+				.Process(this->normalLissajousH)
 				.Process(this->normalX)
 				.Process(this->normalY)
 				.Process(this->normalZ)
@@ -177,6 +193,9 @@ public:
 				.Process(this->normalWorldY)
 				.Process(this->normalWorldZ)
 				.Process(this->normalWorldValid)
+				.Process(this->normalAxisF)
+				.Process(this->normalAxisL)
+				.Process(this->normalAxisH)
 				.Process(this->lissajousStep)
 				.Process(this->arcHeight)
 				.Process(this->arcPeakPercent)
@@ -221,6 +240,17 @@ public:
 	// 返回 double 分量：取整时机由调用点决定（绝对位置用法先加后取整，增量用法先取整后加）
 	struct ArcDelta3D { double x, y, z; };
 	static ArcDelta3D RotateArcDelta(const CoordStruct& D, double rotDeg, double arcDelta);
+
+	// 弧影子推进（主直线 Speed / ReachTarget / 大圆 OriginSpeed 三处共用，2026-09-05 归一化）：
+	// 影子 = 不受弧抬升污染的直线进度基准：沿"影子自己→target"方向推进 step（clamp 不越过），
+	// 同步 shadowTraveled，更新 prevArcOffset。调用方弹体/圆心位移 = 本帧影子位移 + 弧面旋转后的弧增量。
+	// 统一保证"直线位移走影子（纯直线）、弧只叠影子之上"——直线不会被弹体被弧抬高的实时位置带偏
+	// （旧 ReachTarget/OriginSpeed 直位移用"弹体当前位置→目标"方向，弧把弹体抬高后直线每帧向下拽、吃掉弧）。
+	// 参数：m = 影子状态（shadowX/Y/Z、shadowTraveled、prevArcOffset、arcHeight/arcPeakPercent）；
+	//       target = 目标点；step = 本帧影子步长（各模式自定：Speed=速度，ReachTarget=剩余距离/剩余帧）。
+	// 返回：推进后剩余影子距离；影子本帧位移三分量（double，int 化交给调用方）；进度 t；弧高增量 arcDelta。
+	static double AdvanceArcShadow(MotionState& m, const CoordStruct& target, double step,
+		double& dispX, double& dispY, double& dispZ, double& outT, double& arcDelta);
 
 	// 法向量 FLH 分量增量旋转（分量空间，2026-09-05 归一化；主/大圆共用）：
 	// 绕 F 分量轴 = 保持 F、L/H 在 yz 平面 2D 转；绕 L = 保持 L、F/H 在 xz 转；

@@ -74,6 +74,12 @@ public:
 	double NormalLAngleRMin2 = 0.0, NormalLAngleRMax2 = 0.0;
 	double NormalHAngleRMin = 0.0, NormalHAngleRMax = 0.0;
 	double NormalHAngleRMin2 = 0.0, NormalHAngleRMax2 = 0.0;
+	// 法向量自旋 Lissajous（设计文档第六节，作用对象=法向量自身，与圆周 Lissajous 区分）：
+	// 值 = 每帧累加的角速度（°/step）。按轴独立：该轴配了 Lissajous（>0）→ 累计角驱动
+	// （每帧实际旋转角 = 不断增大的累计角，越转越快）；没配 → 该轴走 AnglePerStep 定速增量。
+	double NormalFLissajous = 0.0;      // 绕 F 轴 Lissajous 角速度
+	double NormalLLissajous = 0.0;      // 绕 L 轴
+	double NormalHLissajous = 0.0;      // 绕 H 轴
 	double Lissajous = 0.0;            // 小圆圆周 F 轴偏移角速度（°/step），0=不偏移
 
 	// ========================================================================
@@ -156,6 +162,8 @@ public:
 	double OriginNormalFAngleRMin = 0, OriginNormalFAngleRMax = 0, OriginNormalFAngleRMin2 = 0, OriginNormalFAngleRMax2 = 0;
 	double OriginNormalLAngleRMin = 0, OriginNormalLAngleRMax = 0, OriginNormalLAngleRMin2 = 0, OriginNormalLAngleRMax2 = 0;
 	double OriginNormalHAngleRMin = 0, OriginNormalHAngleRMax = 0, OriginNormalHAngleRMin2 = 0, OriginNormalHAngleRMax2 = 0;
+	// 大圆法向量自旋 Lissajous（同小圆语义，作用对象=大圆法向量自身）
+	double OriginNormalFLissajous = 0.0, OriginNormalLLissajous = 0.0, OriginNormalHLissajous = 0.0;
 	// 圆心通用
 	// 大圆面倾斜唯一来源 = 大圆法向量体系（OriginNormalVector + OriginIsNormalOnOrigin）——
 	// 原 OriginAllowCircleTilt（跟随目标 Z 差）已删除
@@ -299,6 +307,9 @@ public:
 			parse4("NormalHAngleRanges", NormalHAngleRMin, NormalHAngleRMax, NormalHAngleRMin2, NormalHAngleRMax2);
 		}
 		Lissajous = reader->Get(title + "Lissajous", 0.0);
+		NormalFLissajous = reader->Get(title + "NormalFLissajous", 0.0); // 法向量自旋 Lissajous（文档六节）
+		NormalLLissajous = reader->Get(title + "NormalLLissajous", 0.0);
+		NormalHLissajous = reader->Get(title + "NormalHLissajous", 0.0);
 
 		// --- MoveTo ---
 		MoveTo = reader->Get(title + "MoveTo", MoveTo);
@@ -401,6 +412,9 @@ public:
 		OriginAllowOriginTilt = reader->Get(title + "Origin.AllowOriginTilt", OriginAllowOriginTilt);
 		OriginOriginNoUpdate = reader->Get(title + "Origin.OriginNoUpdate", false);
 		OriginLissajous = reader->Get(title + "Origin.Lissajous", 0.0);
+		OriginNormalFLissajous = reader->Get(title + "Origin.NormalFLissajous", 0.0);
+		OriginNormalLLissajous = reader->Get(title + "Origin.NormalLLissajous", 0.0);
+		OriginNormalHLissajous = reader->Get(title + "Origin.NormalHLissajous", 0.0);
 		std::string originOriginStr = reader->Get(title + "Origin.Origin", std::string{ "Self" });
 		if (originOriginStr == "Launcher") OriginOrigin = VectorOrigin::Launcher;
 		else if (originOriginStr == "Target") OriginOrigin = VectorOrigin::Target;
@@ -538,6 +552,7 @@ private:
 			.Process(this->NormalLAngleRMin2).Process(this->NormalLAngleRMax2)
 			.Process(this->NormalHAngleRMin).Process(this->NormalHAngleRMax)
 			.Process(this->NormalHAngleRMin2).Process(this->NormalHAngleRMax2)
+			.Process(this->NormalFLissajous).Process(this->NormalLLissajous).Process(this->NormalHLissajous)
 			.Process(this->Lissajous)
 
 			.Process(this->MoveTo)
@@ -599,6 +614,7 @@ private:
 			.Process(this->OriginNormalLAngleRMin2).Process(this->OriginNormalLAngleRMax2)
 			.Process(this->OriginNormalHAngleRMin).Process(this->OriginNormalHAngleRMax)
 			.Process(this->OriginNormalHAngleRMin2).Process(this->OriginNormalHAngleRMax2)
+			.Process(this->OriginNormalFLissajous).Process(this->OriginNormalLLissajous).Process(this->OriginNormalHLissajous)
 			.Process(this->OriginIsNormalOnOrigin).Process(this->OriginCircleOffset)
 			.Process(this->OriginAllowOriginTilt).Process(this->OriginOriginNoUpdate)
 			.Process(this->OriginLissajous)

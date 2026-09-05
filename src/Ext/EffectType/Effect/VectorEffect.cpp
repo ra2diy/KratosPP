@@ -170,10 +170,58 @@ VectorEffect::ArcDelta3D VectorEffect::RotateArcDelta(const CoordStruct& D, doub
 	double pnx = px / pLen, pny = py / pLen, pnz = pz / pLen;
 	double rad = Math::deg2rad(rotDeg);
 	double c = std::cos(rad), s = std::sin(rad);
-	out.x = (pnx * c + (dny * pnz - dnz * pny) * s) * arcDelta;
-	out.y = (pny * c + (dnz * pnx - dnx * pnz) * s) * arcDelta;
-	out.z = (pnz * c + (dnx * pny - dny * pnx) * s) * arcDelta;
+		out.x = (pnx * c + (dny * pnz - dnz * pny) * s) * arcDelta;
+		out.y = (pny * c + (dnz * pnx - dnx * pnz) * s) * arcDelta;
+		out.z = (pnz * c + (dnx * pny - dny * pnx) * s) * arcDelta;
 	return out;
+}
+
+// 弧影子推进（主直线 Speed / ReachTarget / 大圆 OriginSpeed 三处共用，2026-09-05 归一化）：
+// 影子 = 不受弧抬升污染的直线进度基准：沿"影子自己→target"方向推进 step（clamp 不越过），
+// 同步 shadowTraveled / prevArcOffset。弹体/圆心位移 = 影子本帧位移 + 弧增量（弧面旋转由调用方做）。
+// 统一保证"直线位移走影子（纯直线）、弧只叠影子之上"——直线不会被弹体被弧抬高的实时位置带偏。
+// 参数：m = 影子状态（shadowX/Y/Z、shadowTraveled、prevArcOffset、arcHeight/arcPeakPercent）；
+//       target = 目标点；step = 本帧影子步长（Speed=速度；ReachTarget=剩余影子距离/剩余帧）。
+// 返回：推进后剩余影子距离；影子本帧位移三分量（double）；进度 t；本帧弧高增量 arcDelta。
+double VectorEffect::AdvanceArcShadow(MotionState& m, const CoordStruct& target, double step,
+	double& dispX, double& dispY, double& dispZ, double& outT, double& arcDelta)
+{
+	dispX = dispY = dispZ = 0.0;
+	outT = 0.0;
+	arcDelta = 0.0;
+
+	// 影子方向 = 影子自己→目标（不读弹体/圆心实时位置——那是弧污染的来源）
+	double sdx = target.X - m.shadowX;
+	double sdy = target.Y - m.shadowY;
+	double sdz = target.Z - m.shadowZ;
+	double shadowDist = std::sqrt(sdx * sdx + sdy * sdy + sdz * sdz);
+	if (shadowDist > 1e-6)
+	{
+		double s = (step < shadowDist) ? step : shadowDist; // clamp 不越过
+		dispX = sdx / shadowDist * s;
+		dispY = sdy / shadowDist * s;
+		dispZ = sdz / shadowDist * s;
+		m.shadowX += dispX;
+		m.shadowY += dispY;
+		m.shadowZ += dispZ;
+		m.shadowTraveled += s;
+		// 推进后重算剩余影子距离（t 的分母用最新值，目标移动实时反映）
+		sdx = target.X - m.shadowX;
+		sdy = target.Y - m.shadowY;
+		sdz = target.Z - m.shadowZ;
+		shadowDist = std::sqrt(sdx * sdx + sdy * sdy + sdz * sdz);
+	}
+
+	// t = 已走路程 / 总路程（动态更新，目标移动时自动调整）
+	double total = m.shadowTraveled + shadowDist;
+	outT = (total > 1e-6) ? m.shadowTraveled / total : 0.0;
+	if (outT < 0.0) outT = 0.0; else if (outT > 1.0) outT = 1.0;
+
+	// 弧高增量（相对上一帧，不覆盖直线位移）
+	double arcOffset = CalcArcOffsetAt(static_cast<int>(m.arcHeight), m.arcPeakPercent, outT);
+	arcDelta = arcOffset - m.prevArcOffset;
+	m.prevArcOffset = arcOffset;
+	return shadowDist;
 }
 
 // 法向量 FLH 分量增量旋转（2026-09-05 归一化：分量空间，轴映射相对旧"世界槽位"版已置换）：
@@ -210,6 +258,52 @@ void VectorEffect::RotateNormal3D(double& nx, double& ny, double& nz,
 		nx = x * c - y * s;
 		ny = x * s + y * c;
 	}
+}
+
+// 世界三轴直摆（法向量消费的固定坐标系，抄 Stand IsOnWorld：空 Dir 世界 FLH 轴直摆，
+// 官方 API 消化 90° 偏置/Y 镜像）。返回值 = ×1000 的世界轴方向（int）。
+static void FillWorldAxes(CoordStruct& axisF, CoordStruct& axisL, CoordStruct& axisH)
+{
+	axisF = GetFLHAbsoluteCoords(CoordStruct::Empty, CoordStruct{ 1000, 0, 0 }, DirStruct{}); // 官方API，不得修改
+	axisL = GetFLHAbsoluteCoords(CoordStruct::Empty, CoordStruct{ 0, 1000, 0 }, DirStruct{});
+	axisH = GetFLHAbsoluteCoords(CoordStruct::Empty, CoordStruct{ 0, 0, 1000 }, DirStruct{});
+}
+
+// 消费坐标三轴（法向量系统一）：锚单位姿态矩阵 / 载体弹体水平姿态的 F/L/H 轴世界方向（×1000 int）。
+// 数学依据：GetFLHAbsoluteCoords 是线性变换 mtx·flh（单位矩阵链），单次消费 mtx·(1000·n) ≡
+// Σ nᵢ·mtx·(1000·eᵢ)（三轴合成），因此缓存三轴后可随时对任意状态分量做线性合成消费——
+// 锚单位死亡 = 坐标系轴冻结，但法向量自旋（系统二）在冻结坐标系中继续。
+// 返回 false = 无可用锚（调用方用世界轴固化）。
+bool VectorEffect::GetNormalFrameAxes(ObjectClass* pAnchor, bool onTurret,
+	CoordStruct& axisF, CoordStruct& axisL, CoordStruct& axisH)
+{
+	if (!pAnchor)
+		return false;
+	TechnoClass* pAnchorT = abstract_cast<TechnoClass*>(pAnchor);
+	if (pAnchorT)
+	{
+		if (IsDeadOrInvisible(pAnchorT))
+			return false;
+		PoseParams pose;
+		pose.useUnitPose = true;
+		pose.anchor = pAnchorT;
+		pose.onTurret = onTurret;
+		axisF = ResolveTilting(CoordStruct::Empty, CoordStruct{ 1000, 0, 0 }, pose); // = mtx点 − 锚坐标
+		axisL = ResolveTilting(CoordStruct::Empty, CoordStruct{ 0, 1000, 0 }, pose);
+		axisH = ResolveTilting(CoordStruct::Empty, CoordStruct{ 0, 0, 1000 }, pose);
+		return true;
+	}
+	BulletClass* pBulletAnchor = abstract_cast<BulletClass*>(pAnchor);
+	if (pBulletAnchor)
+	{
+		// 弹体水平姿态（无坡面/炮塔概念）；flipY 默认 1=不镜像
+		CoordStruct c0 = pBulletAnchor->GetCoords();
+		axisF = GetFLHAbsoluteCoords(pBulletAnchor, CoordStruct{ 1000, 0, 0 }) - c0; // 官方API，不得修改
+		axisL = GetFLHAbsoluteCoords(pBulletAnchor, CoordStruct{ 0, 1000, 0 }) - c0;
+		axisH = GetFLHAbsoluteCoords(pBulletAnchor, CoordStruct{ 0, 0, 1000 }) - c0;
+		return true;
+	}
+	return false;
 }
 
 // 法线角速度解析：常数优先 → 区间2 50% 随机 → 区间1 随机 → 0
@@ -909,6 +1003,9 @@ void VectorEffect::LockFacing()
 	_motion.lissajousStep = Data->Lissajous;
 	// 重置消费缓存（新挂载丢弃旧世界方向，由每帧消费段重建）
 	_motion.normalWorldValid = false;
+	_motion.normalLissajousF = 0.0; // 法向量 Lissajous 累计角从 0 开始（挂载清零）
+	_motion.normalLissajousL = 0.0;
+	_motion.normalLissajousH = 0.0;
 
 	// --- F 轴基准挂载锁定（摆放 FLH 用；与 NormalVector 彻底解耦）---
 	// F 轴参考系来源：IsOnOrigin=yes 用 Origin 单位自身朝向，no 用 Origin→弹体连线
@@ -1364,18 +1461,20 @@ VectorResult VectorEffect::GetVectorResult()
 	// （与旧行为一致：OnWorld 强制无倾斜）
 	bool normalActive = !Data->OriginIsOnWorld && (hasNormal
 		|| (Data->IsNormalOnOrigin && !Data->OriginIsOnWorld)
-		|| _motion.normalStepF != 0.0 || _motion.normalStepL != 0.0 || _motion.normalStepH != 0.0);
+		|| _motion.normalStepF != 0.0 || _motion.normalStepL != 0.0 || _motion.normalStepH != 0.0
+		|| Data->NormalFLissajous > 0.0 || Data->NormalLLissajous > 0.0 || Data->NormalHLissajous > 0.0);
 	if (normalActive)
 	{
-		// 系统二：分量空间定速自旋（增量式；轴映射见 RotateNormal3D，文档第三节案例校验）
-		RotateNormal3D(_motion.normalX, _motion.normalY, _motion.normalZ,
-			_motion.normalStepF, _motion.normalStepL, _motion.normalStepH);
+		// 系统二：分量空间旋转，每帧按轴独立合成转角（文档第六节）——
+		//   轴配了 Lissajous（>0）：累计角驱动（normalLissajousX += 角速度；实际旋转角 = 不断增大的
+		//   累计角 → 越转越快，球面缠绕）；轴没配：走 AnglePerStep 定速增量（normalStepX 固定）。
+		//   RotateNormal3D 轴映射见其注释（文档第三节案例校验）。
+		double rotF = Data->NormalFLissajous > 0.0 ? (_motion.normalLissajousF += Data->NormalFLissajous) : _motion.normalStepF;
+		double rotL = Data->NormalLLissajous > 0.0 ? (_motion.normalLissajousL += Data->NormalLLissajous) : _motion.normalStepL;
+		double rotH = Data->NormalHLissajous > 0.0 ? (_motion.normalLissajousH += Data->NormalHLissajous) : _motion.normalStepH;
+		RotateNormal3D(_motion.normalX, _motion.normalY, _motion.normalZ, rotF, rotL, rotH);
 
-		// 系统一：消费换算 → 世界方向（放大 int 精度）
-		CoordStruct flhN;
-		flhN.X = static_cast<int>(_motion.normalX * 1000.0);
-		flhN.Y = static_cast<int>(_motion.normalY * 1000.0);
-		flhN.Z = static_cast<int>(_motion.normalZ * 1000.0);
+		// 系统一：消费换算（坐标系轴 → 三轴合成，见下方）
 		if (Data->IsNormalOnOrigin && !Data->OriginIsOnWorld)
 		{
 			// yes：随 Origin 单位姿态（参照单位 = Origin 对应单位；Self=载体/弹体）
@@ -1399,53 +1498,41 @@ VectorResult VectorEffect::GetVectorResult()
 				pAnchorObj = pObject;
 				break;
 			}
-			// 单位锚 → 矩阵姿态消费；Self 载体弹体 → 官方弹体水平姿态消费；其余（格子/非单位/死亡）→ 无锚
-			CoordStruct worldN;
-			bool anchoredConsume = false;
-			TechnoClass* pAnchorT = pAnchorObj ? abstract_cast<TechnoClass*>(pAnchorObj) : nullptr;
-			if (pAnchorT && !IsDeadOrInvisible(pAnchorT))
+			// 坐标系轴（2026-09-05 用户修正：锚死亡 = 停坐标轴更新，转动保持）：
+			//   锚活 → 单位姿态三轴每帧刷新（随单位转/斜）；
+			//   无锚且从未有轴（打格子/参照从未存在）→ 世界三轴固化；
+			//   无锚且已有轴（参照死亡/目标被清空）→ 轴冻结在此帧最后姿态，不再刷新——
+			//   法向量自旋（系统二）继续，消费合成在冻结坐标系中持续输出（圆面继续翻滚）。
+			if (GetNormalFrameAxes(pAnchorObj, Data->NormalIsOnTurret,
+				_motion.normalAxisF, _motion.normalAxisL, _motion.normalAxisH))
 			{
-				PoseParams pose;
-				pose.useUnitPose = true;
-				pose.anchor = pAnchorT;
-				pose.onTurret = Data->NormalIsOnTurret; // 法向量随动姿态源独立标签（与 OriginFLH 挂点解耦，2026-09-05）
-				worldN = ResolveTilting(CoordStruct::Empty, flhN, pose); // = mtx点 − 锚坐标（放大方向）
-				anchoredConsume = true;
-			}
-			else if (!pAnchorT && pAnchorObj && pAnchorObj == pObject && pBullet)
-			{
-				// 弹体侧 Self：官方弹体水平姿态摆（无坡面倾斜概念），flipY 默认 1=不镜像
-				CoordStruct mtxPos = GetFLHAbsoluteCoords(pBullet, flhN); // 官方API，不得修改
-				worldN = mtxPos - pBullet->GetCoords();
-				anchoredConsume = true;
-			}
-			if (anchoredConsume)
-			{
-				_motion.normalWorldX = worldN.X;
-				_motion.normalWorldY = worldN.Y;
-				_motion.normalWorldZ = worldN.Z;
-				_motion.normalWorldValid = true; // 消费缓存建立
+				_motion.normalWorldValid = true; // 坐标系轴建立
 			}
 			else if (!_motion.normalWorldValid)
 			{
-				// 从未有锚（首帧打格子/参照从未存在）：按世界直摆固化一次（配了 NormalVector 时
-				// 呈现其世界方向），此后无锚恒冻结——OnOrigin=yes 无单位坐标系可随
-				worldN = GetFLHAbsoluteCoords(CoordStruct::Empty, flhN, DirStruct{}); // 官方API，不得修改
-				_motion.normalWorldX = worldN.X;
-				_motion.normalWorldY = worldN.Y;
-				_motion.normalWorldZ = worldN.Z;
+				// 从未有锚：世界三轴固化（配了 NormalVector 时呈现其世界方向）
+				FillWorldAxes(_motion.normalAxisF, _motion.normalAxisL, _motion.normalAxisH);
 				_motion.normalWorldValid = true;
 			}
-			// 已有缓存且无锚（参照死亡/目标被清空）：停止计算，normalWorld 保持最后存活帧值
+			// 已有轴且无锚：轴冻结（死亡帧最后姿态）
 		}
 		else
 		{
-			// no / OriginIsOnWorld：世界固定，FLH 分量按世界轴直摆（官方 API 消化 90°偏置/Y 镜像）
-			CoordStruct worldN = GetFLHAbsoluteCoords(CoordStruct::Empty, flhN, DirStruct{}); // 官方API，不得修改
-			_motion.normalWorldX = worldN.X;
-			_motion.normalWorldY = worldN.Y;
-			_motion.normalWorldZ = worldN.Z;
-			_motion.normalWorldValid = true;
+			// no / OriginIsOnWorld：世界固定三轴（只固化一次，其后每帧合成）
+			if (!_motion.normalWorldValid)
+			{
+				FillWorldAxes(_motion.normalAxisF, _motion.normalAxisL, _motion.normalAxisH);
+				_motion.normalWorldValid = true;
+			}
+		}
+
+		// 消费合成（每帧无条件执行——转动保持，坐标系轴可能冻结）：
+		// worldN = nF·axisF + nL·axisL + nH·axisH（等价 mtx·(1000n)，见 GetNormalFrameAxes 注释）
+		{
+			double nF = _motion.normalX, nL = _motion.normalY, nH = _motion.normalZ;
+			_motion.normalWorldX = nF * _motion.normalAxisF.X + nL * _motion.normalAxisL.X + nH * _motion.normalAxisH.X;
+			_motion.normalWorldY = nF * _motion.normalAxisF.Y + nL * _motion.normalAxisL.Y + nH * _motion.normalAxisH.Y;
+			_motion.normalWorldZ = nF * _motion.normalAxisF.Z + nL * _motion.normalAxisL.Z + nH * _motion.normalAxisH.Z;
 		}
 
 		// 世界方向（放大 int，比例与方向无关）→ 球坐标 → 倾斜圆面取点输入
@@ -1766,6 +1853,9 @@ VectorResult VectorEffect::GetVectorResult()
 				_originMotion.normalStepH = ResolveAngleStep(Data->OriginNormalHAnglePerStep, Data->OriginNormalHAngleRMin, Data->OriginNormalHAngleRMax, Data->OriginNormalHAngleRMin2, Data->OriginNormalHAngleRMax2);
 				_originMotion.lissajousStep = Data->OriginLissajous;
 				_originMotion.normalWorldValid = false; // 重置消费缓存（对象复用/重新挂载时丢弃旧世界方向）
+				_originMotion.normalLissajousF = 0.0;   // 法向量 Lissajous 累计角从 0 开始
+				_originMotion.normalLissajousL = 0.0;
+				_originMotion.normalLissajousH = 0.0;
 			}
 		// OriginIsNormalOnOrigin：大圆法向量（2026-09-05 归一化，同小圆结构——替换 Rodrigues 随动）：
 		// 状态 _originMotion.normalX/Y/Z = FLH 分量（首帧初始化）；每帧定速自旋（系统二，增量式）；
@@ -1778,19 +1868,19 @@ VectorResult VectorEffect::GetVectorResult()
 				|| Data->OriginNormalRandomL.Y > Data->OriginNormalRandomL.X
 				|| Data->OriginNormalRandomH.Y > Data->OriginNormalRandomH.X
 				|| Data->OriginIsNormalOnOrigin
-				|| _originMotion.normalStepF != 0.0 || _originMotion.normalStepL != 0.0 || _originMotion.normalStepH != 0.0;
+				|| _originMotion.normalStepF != 0.0 || _originMotion.normalStepL != 0.0 || _originMotion.normalStepH != 0.0
+				|| Data->OriginNormalFLissajous > 0.0 || Data->OriginNormalLLissajous > 0.0 || Data->OriginNormalHLissajous > 0.0;
 			double oFacing = 0.0, oTilt = 0.0;
 			if (originNormalActive)
 			{
-				// 系统二：分量空间定速自旋（增量式）
-				RotateNormal3D(_originMotion.normalX, _originMotion.normalY, _originMotion.normalZ,
-					_originMotion.normalStepF, _originMotion.normalStepL, _originMotion.normalStepH);
+				// 系统二：分量空间旋转，每帧按轴独立合成转角（文档第六节，同小圆）——
+				//   轴配 Lissajous（>0）= 累计角驱动（越转越快）；没配 = AnglePerStep 定速
+				double rotF = Data->OriginNormalFLissajous > 0.0 ? (_originMotion.normalLissajousF += Data->OriginNormalFLissajous) : _originMotion.normalStepF;
+				double rotL = Data->OriginNormalLLissajous > 0.0 ? (_originMotion.normalLissajousL += Data->OriginNormalLLissajous) : _originMotion.normalStepL;
+				double rotH = Data->OriginNormalHLissajous > 0.0 ? (_originMotion.normalLissajousH += Data->OriginNormalHLissajous) : _originMotion.normalStepH;
+				RotateNormal3D(_originMotion.normalX, _originMotion.normalY, _originMotion.normalZ, rotF, rotL, rotH);
 
-				// 系统一：消费换算 → 世界方向（放大 int 精度）
-				CoordStruct flhN;
-				flhN.X = static_cast<int>(_originMotion.normalX * 1000.0);
-				flhN.Y = static_cast<int>(_originMotion.normalY * 1000.0);
-				flhN.Z = static_cast<int>(_originMotion.normalZ * 1000.0);
+				// 系统一：消费换算（坐标系轴 → 三轴合成，见下方）
 				if (Data->OriginIsNormalOnOrigin)
 				{
 					// yes：随 OriginOrigin 单位姿态（参照单位 = OriginOrigin 对应单位；Self=跟小圆 Origin 单位，无则弹体）
@@ -1815,52 +1905,38 @@ VectorResult VectorEffect::GetVectorResult()
 					if (!pAnchorObj) pAnchorObj = pObject;
 					break;
 				}
-				// 单位锚 → 矩阵姿态消费；Self 载体弹体 → 官方弹体水平姿态消费；其余（格子/非单位/死亡）→ 无锚
-				CoordStruct worldN;
-				bool anchoredConsume = false;
-				TechnoClass* pAnchorT = pAnchorObj ? abstract_cast<TechnoClass*>(pAnchorObj) : nullptr;
-				if (pAnchorT && !IsDeadOrInvisible(pAnchorT))
+				// 坐标系轴（2026-09-05 用户修正：锚死亡 = 停坐标轴更新，转动保持，同小圆）：
+				//   锚活 → 单位姿态三轴每帧刷新；无锚且从未有轴 → 世界三轴固化；
+				//   无锚且已有轴 → 轴冻结在此帧最后姿态，法向量自旋在冻结坐标系继续。
+				if (GetNormalFrameAxes(pAnchorObj, Data->OriginNormalIsOnTurret,
+					_originMotion.normalAxisF, _originMotion.normalAxisL, _originMotion.normalAxisH))
 				{
-					PoseParams pose;
-					pose.useUnitPose = true;
-					pose.anchor = pAnchorT;
-					pose.onTurret = Data->OriginNormalIsOnTurret; // 大圆法向量随动姿态源独立标签（2026-09-05）
-					worldN = ResolveTilting(CoordStruct::Empty, flhN, pose); // = mtx点 − 锚坐标
-					anchoredConsume = true;
-				}
-				else if (!pAnchorT && pAnchorObj && pAnchorObj == pObject && pBullet)
-				{
-					// 弹体侧 Self：官方弹体水平姿态摆（无坡面倾斜概念），flipY 默认 1=不镜像
-					CoordStruct mtxPos = GetFLHAbsoluteCoords(pBullet, flhN); // 官方API，不得修改
-					worldN = mtxPos - pBullet->GetCoords();
-					anchoredConsume = true;
-				}
-				if (anchoredConsume)
-				{
-					_originMotion.normalWorldX = worldN.X;
-					_originMotion.normalWorldY = worldN.Y;
-					_originMotion.normalWorldZ = worldN.Z;
 					_originMotion.normalWorldValid = true;
 				}
 				else if (!_originMotion.normalWorldValid)
 				{
-					// 从未有锚（首帧打格子/参照从未存在）：世界直摆固化一次，此后恒冻结
-					worldN = GetFLHAbsoluteCoords(CoordStruct::Empty, flhN, DirStruct{}); // 官方API，不得修改
-					_originMotion.normalWorldX = worldN.X;
-					_originMotion.normalWorldY = worldN.Y;
-					_originMotion.normalWorldZ = worldN.Z;
+					// 从未有锚：世界三轴固化
+					FillWorldAxes(_originMotion.normalAxisF, _originMotion.normalAxisL, _originMotion.normalAxisH);
 					_originMotion.normalWorldValid = true;
 				}
-				// 已有缓存且无锚（参照死亡/目标被清空）：停止计算，normalWorld 保持最后存活帧值
+				// 已有轴且无锚：轴冻结（死亡帧最后姿态）
 				}
 				else
 				{
-					// no：世界固定，FLH 分量按世界轴直摆
-					CoordStruct worldN = GetFLHAbsoluteCoords(CoordStruct::Empty, flhN, DirStruct{}); // 官方API，不得修改
-					_originMotion.normalWorldX = worldN.X;
-					_originMotion.normalWorldY = worldN.Y;
-					_originMotion.normalWorldZ = worldN.Z;
-					_originMotion.normalWorldValid = true;
+					// no：世界固定三轴（只固化一次，其后每帧合成）
+					if (!_originMotion.normalWorldValid)
+					{
+						FillWorldAxes(_originMotion.normalAxisF, _originMotion.normalAxisL, _originMotion.normalAxisH);
+						_originMotion.normalWorldValid = true;
+					}
+				}
+
+				// 消费合成（每帧无条件执行——转动保持，坐标系轴可能冻结）
+				{
+					double nF = _originMotion.normalX, nL = _originMotion.normalY, nH = _originMotion.normalZ;
+					_originMotion.normalWorldX = nF * _originMotion.normalAxisF.X + nL * _originMotion.normalAxisL.X + nH * _originMotion.normalAxisH.X;
+					_originMotion.normalWorldY = nF * _originMotion.normalAxisF.Y + nL * _originMotion.normalAxisL.Y + nH * _originMotion.normalAxisH.Y;
+					_originMotion.normalWorldZ = nF * _originMotion.normalAxisF.Z + nL * _originMotion.normalAxisL.Z + nH * _originMotion.normalAxisH.Z;
 				}
 
 				// 世界方向（放大 int）→ 球坐标 → Circle/MoveTo/Speed 消费
@@ -1894,6 +1970,12 @@ VectorResult VectorEffect::GetVectorResult()
 				{
 					_originMotion.speed = Data->OriginLinearSpeed >= 0 ? Data->OriginLinearSpeed : (pTechno ? pTechno->GetTechnoType()->Speed : 40.0);
 					_originMotion.arcStartCenter = bigCircleCenter;
+					// 弧影子起点（Speed 弧高进度基准）：影子从弧起始圆心出发走干净直线，
+					// 不读圆心实际位置——圆心被弧抬升后圆心→目标 3D 距离失真会污染 t
+					_originMotion.shadowX = bigCircleCenter.X;
+					_originMotion.shadowY = bigCircleCenter.Y;
+					_originMotion.shadowZ = bigCircleCenter.Z;
+					_originMotion.shadowTraveled = 0.0;
 				}
 
 				// OriginOrigin 的 F 轴基准（摆放 OriginTargetFLH 用；与法向量彻底解耦）：
@@ -1967,32 +2049,57 @@ VectorResult VectorEffect::GetVectorResult()
 					if (Data->OriginMinSpeed >= 0 && _originMotion.speed < Data->OriginMinSpeed) _originMotion.speed = Data->OriginMinSpeed;
 					int dx = bigCircleTarget.X - bigCircleCenter.X, dy = bigCircleTarget.Y - bigCircleCenter.Y, dz = bigCircleTarget.Z - bigCircleCenter.Z;
 					double dist = std::sqrt((double)dx*dx + dy*dy + dz*dz);
-					if (dist < 1.0) disp = {};
-					else if (Data->OriginSpeedEndOnReach && _originMotion.speed >= dist)
-					{
-						disp.X = dx; disp.Y = dy; disp.Z = dz;
-						Deactivate();
-					}
-					else { double s = _originMotion.speed / dist; disp.X = (int)(dx*s); disp.Y = (int)(dy*s); disp.Z = (int)(dz*s); }
 
-					// 弧高增量叠加（与 OriginReachTarget 一致，支持 ArcPeakPercent / ArcRotation）
-					if (_originMotion.arcHeight != 0 && dist >= 1.0)
+					if (_originMotion.arcHeight != 0)
 					{
-						if (_originMotion.arcTotalDist < 0.0)
-							_originMotion.arcTotalDist = dist;
-						double t = (_originMotion.arcTotalDist > 1e-6) ? 1.0 - dist / _originMotion.arcTotalDist : 0.0;
-						if (t < 0.0) t = 0.0; else if (t > 1.0) t = 1.0;
-						double arcThis = CalcArcOffsetAt(static_cast<int>(_originMotion.arcHeight), _originMotion.arcPeakPercent, t);
-						double arcDelta = arcThis - _originMotion.prevArcOffset;
-						_originMotion.prevArcOffset = arcThis;
-						CoordStruct arcD{
-							bigCircleTarget.X - _originMotion.arcStartCenter.X,
-							bigCircleTarget.Y - _originMotion.arcStartCenter.Y,
-							bigCircleTarget.Z - _originMotion.arcStartCenter.Z };
-						ArcDelta3D ad = RotateArcDelta(arcD, _originMotion.arcRotation, arcDelta);
-						disp.X += static_cast<int>(ad.x);
-						disp.Y += static_cast<int>(ad.y);
-						disp.Z += static_cast<int>(ad.z);
+						// 弧存在：直线位移走公共影子（AdvanceArcShadow，主直线 Speed/ReachTarget 同款）——
+						// 影子沿"影子自己→bigCircleTarget"推进（首帧起点=arcStartCenter，不受弧抬升污染），
+						// 圆心位移 = 影子步长 + 弧增量；圆心被弧抬不会反过来把直线拽向目标吃掉弧。
+						// 到达判定并入影子距离（同主直线 Speed 670f402）：弧线时圆心走弧、影子先到直线目标，
+						// 只判圆心实时 dist 永不满足 → 影子停推圆心僵直。影子到位 = 理论飞行完成，立即收尾。
+						double sdx = bigCircleTarget.X - _originMotion.shadowX;
+						double sdy = bigCircleTarget.Y - _originMotion.shadowY;
+						double sdz = bigCircleTarget.Z - _originMotion.shadowZ;
+						double shadowDist = std::sqrt(sdx * sdx + sdy * sdy + sdz * sdz);
+						if (dist < 1.0)
+						{
+							disp = {}; // 圆心已贴脸：停住等 AE 自然结束（原无弧行为）
+						}
+						else if (Data->OriginSpeedEndOnReach && (_originMotion.speed >= dist || shadowDist <= _originMotion.speed))
+						{
+							disp.X = dx; disp.Y = dy; disp.Z = dz;
+							Deactivate();
+						}
+						else
+						{
+							double dispX = 0.0, dispY = 0.0, dispZ = 0.0;
+							double t = 0.0, arcDelta = 0.0;
+							AdvanceArcShadow(_originMotion, bigCircleTarget, _originMotion.speed,
+								dispX, dispY, dispZ, t, arcDelta);
+							disp.X = static_cast<int>(dispX);
+							disp.Y = static_cast<int>(dispY);
+							disp.Z = static_cast<int>(dispZ);
+							// 弧面旋转增量叠加
+							CoordStruct arcD{
+								bigCircleTarget.X - _originMotion.arcStartCenter.X,
+								bigCircleTarget.Y - _originMotion.arcStartCenter.Y,
+								bigCircleTarget.Z - _originMotion.arcStartCenter.Z };
+							ArcDelta3D ad = RotateArcDelta(arcD, _originMotion.arcRotation, arcDelta);
+							disp.X += static_cast<int>(ad.x);
+							disp.Y += static_cast<int>(ad.y);
+							disp.Z += static_cast<int>(ad.z);
+						}
+					}
+					else
+					{
+						// 无弧：圆心实时方向追踪（原逻辑）
+						if (dist < 1.0) disp = {};
+						else if (Data->OriginSpeedEndOnReach && _originMotion.speed >= dist)
+						{
+							disp.X = dx; disp.Y = dy; disp.Z = dz;
+							Deactivate();
+						}
+						else { double s = _originMotion.speed / dist; disp.X = (int)(dx*s); disp.Y = (int)(dy*s); disp.Z = (int)(dz*s); }
 					}
 				}
 			}
@@ -2005,8 +2112,7 @@ VectorResult VectorEffect::GetVectorResult()
 				// 角步长：优先线速度/半径推算，否则用固定角速度
 				double originAngleStep = Data->OriginCircleAnglePerStep;
 				if (Data->OriginCircleSpeed != 0 && tr > 0)
-					originAngleStep = Math::rad2deg(Data->OriginCircleSpeed / tr);
-			// Lissajous>0: 累积大角旋转（增减边震荡），==0: 每帧仅增量旋转（平滑行星）
+					originAngleStep = Math::rad2deg(Data->OriginCircleSpeed / tr);			// Lissajous>0: 累积大角旋转（增减边震荡），==0: 每帧仅增量旋转（平滑行星）
 			_originMotion.angle += originAngleStep;
 			double r = Data->OriginLissajous > 0.0 ? Math::deg2rad(_originMotion.angle + _originMotion.normalRotF) : Math::deg2rad(originAngleStep + _originMotion.normalRotF);
 				double ca = std::cos(r), sa = std::sin(r);
@@ -2444,37 +2550,28 @@ VectorResult VectorEffect::GetVectorResult()
 		{
 			// AE 根基缺陷：Duration=N 实际只执行 N-1 个运动帧（末帧 AE 已移除）
 			// 轨迹按"实际帧数 = 总帧数 - 1"均分，保证 AE 实际删除的那一帧恰好到位
-			double adjustedSpeed = dirLen / (remainingFrames > 1 ? remainingFrames - 1 : 1);
-			resultDisp.X = static_cast<int>(dirVec.X / dirLen * adjustedSpeed);
-			resultDisp.Y = static_cast<int>(dirVec.Y / dirLen * adjustedSpeed);
-			resultDisp.Z = static_cast<int>(dirVec.Z / dirLen * adjustedSpeed);
-
-			// 抛物线弧高（Speed 模式影子算法：增量叠加，t 跟随实际路程，目标移动自动校准）
 			if (_motion.arcHeight != 0)
 			{
-				// 影子沿 smallCircleTarget 方向推进 adjustedSpeed（与直线均分同步）
-				double ux = dirVec.X / dirLen, uy = dirVec.Y / dirLen, uz = dirVec.Z / dirLen;
-				_motion.shadowX += ux * adjustedSpeed;
-				_motion.shadowY += uy * adjustedSpeed;
-				_motion.shadowZ += uz * adjustedSpeed;
-				_motion.shadowTraveled += adjustedSpeed;
+				// 弧存在：直线位移走影子（公共 AdvanceArcShadow，Speed/大圆同款）——
+				// 影子沿"影子自己→目标"直线推进（不读弹体实时位置），弹体位移 = 影子步长 + 弧增量。
+				// 旧实现直线位移用 dirVec（弹体→目标）均分：弹体被弧抬升后 dirLen 失真且直线每帧
+				// 向下拽目标方向、抵消弧（日志实证：峰被压到 1112、下降段砸穿到 Z=-822）。
+				// 步长 = 影子剩余距离 / 剩余帧（保证 Duration 末恰好到位；目标移动自动校准）
+				double preDist = std::sqrt(
+					(double)(smallCircleTarget.X - _motion.shadowX) * (smallCircleTarget.X - _motion.shadowX)
+					+ (double)(smallCircleTarget.Y - _motion.shadowY) * (smallCircleTarget.Y - _motion.shadowY)
+					+ (double)(smallCircleTarget.Z - _motion.shadowZ) * (smallCircleTarget.Z - _motion.shadowZ));
+				double step = preDist / (remainingFrames > 1 ? remainingFrames - 1 : 1);
 
-				// 剩余影子距离（3D）
-				double sdx = smallCircleTarget.X - _motion.shadowX;
-				double sdy = smallCircleTarget.Y - _motion.shadowY;
-				double sdz = smallCircleTarget.Z - _motion.shadowZ;
-				double shadowDist = std::sqrt(sdx * sdx + sdy * sdy + sdz * sdz);
+				double shadowDX = 0.0, shadowDY = 0.0, shadowDZ = 0.0;
+				double t = 0.0, arcDelta = 0.0;
+				AdvanceArcShadow(_motion, smallCircleTarget, step,
+					shadowDX, shadowDY, shadowDZ, t, arcDelta);
+				resultDisp.X = static_cast<int>(shadowDX);
+				resultDisp.Y = static_cast<int>(shadowDY);
+				resultDisp.Z = static_cast<int>(shadowDZ);
 
-				// t = 已走路程 / 总路程（动态更新，目标移动时自动调整）
-				double total = _motion.shadowTraveled + shadowDist;
-				double t = (total > 1e-6) ? _motion.shadowTraveled / total : 0.0;
-				if (t < 0.0) t = 0.0; else if (t > 1.0) t = 1.0;
-
-				// 弧高增量叠加（不覆盖直线位移）
-				double arcOffset = CalcArcOffsetAt(t);
-				double arcDelta = arcOffset - _motion.prevArcOffset;
-				_motion.prevArcOffset = arcOffset;
-
+				// 弧面旋转增量叠加
 				CoordStruct arcD{
 					smallCircleTarget.X - _firstFramePos.X,
 					smallCircleTarget.Y - _firstFramePos.Y,
@@ -2483,6 +2580,14 @@ VectorResult VectorEffect::GetVectorResult()
 				resultDisp.X += static_cast<int>(ad.x);
 				resultDisp.Y += static_cast<int>(ad.y);
 				resultDisp.Z += static_cast<int>(ad.z);
+			}
+			else
+			{
+				// 无弧：纯直线均分（不经过影子）
+				double adjustedSpeed = dirLen / (remainingFrames > 1 ? remainingFrames - 1 : 1);
+				resultDisp.X = static_cast<int>(dirVec.X / dirLen * adjustedSpeed);
+				resultDisp.Y = static_cast<int>(dirVec.Y / dirLen * adjustedSpeed);
+				resultDisp.Z = static_cast<int>(dirVec.Z / dirLen * adjustedSpeed);
 			}
 		}
 		result.MoveDisp = resultDisp;
@@ -2580,63 +2685,16 @@ VectorResult VectorEffect::GetVectorResult()
 
 		if (shadowDist > 1e-6)
 		{
-			// 影子沿 shadow→target 方向推进，步长钳位到剩余距离：
-			// 末段 speed > 剩余距离时若仍推进满 speed 会越过目标，sdx 变号导致来回振荡（原地抽搐）
-			double step = (speed < shadowDist) ? speed : shadowDist;
-			double sInv = 1.0 / shadowDist;
-			double shadowStepX = sdx * sInv * step;
-			double shadowStepY = sdy * sInv * step;
-			double shadowStepZ = 0.0;
-			_motion.shadowX += shadowStepX;
-			_motion.shadowY += shadowStepY;
 			if (_motion.arcHeight != 0)
 			{
-				shadowStepZ = sdz * sInv * step;
-				_motion.shadowZ += shadowStepZ;
-			}
-			// 无弧线：_shadowPosZ 不变（始终 = _firstFramePos.Z），Z 由 t 插值
-			_motion.shadowTraveled += step;
-
-			// 重新计算影子距离（影子已移动）
-			sdx = smallCircleTarget.X - _motion.shadowX;
-			sdy = smallCircleTarget.Y - _motion.shadowY;
-			if (_motion.arcHeight != 0)
-			{
-				sdz = smallCircleTarget.Z - _motion.shadowZ;
-				shadowDist = std::sqrt(sdx * sdx + sdy * sdy + sdz * sdz);
-			}
-			else
-			{
-				shadowDist = std::sqrt(sdx * sdx + sdy * sdy);
-			}
-
-			// t = 已走路程 / 总路程（动态更新，目标移动时自动调整）
-			double total = _motion.shadowTraveled + shadowDist;
-			double t = (total > 1e-6) ? _motion.shadowTraveled / total : 0.0;
-			if (t < 0.0) t = 0.0; else if (t > 1.0) t = 1.0;
-
-			// 实际位移：影子步长（XY）
-			resultDisp.X = static_cast<int>(shadowStepX);
-			resultDisp.Y = static_cast<int>(shadowStepY);
-
-			if (_motion.arcHeight != 0)
-			{
-				// 有弧线：Z 用影子增量 + 弧高增量叠加
-				resultDisp.Z = static_cast<int>(shadowStepZ);
-			}
-			else
-			{
-				// 无弧线：Z 从抛射体起始高度 lerp 到目标高度
-				// _shadowPosZ 在无弧线时冻结为抛射体起始 Z，_firstFramePos.Z 可能是目标 Z（Origin=Target 时不同）
-				double targetZ = _motion.shadowZ + (smallCircleTarget.Z - _motion.shadowZ) * t;
-				resultDisp.Z = static_cast<int>(targetZ - currentPos.Z);
-			}
-
-			if (_motion.arcHeight != 0)
-			{
-				double arcOffset = CalcArcOffsetAt(t);
-				double arcDelta = arcOffset - _motion.prevArcOffset;
-				_motion.prevArcOffset = arcOffset;
+				// 有弧线：直线位移走公共影子（AdvanceArcShadow，ReachTarget/大圆同款）——
+				// 影子沿"影子自己→目标"3D 推进 step=min(speed,剩余)，位移=影子步长+弧增量
+				double dispX = 0.0, dispY = 0.0, dispZ = 0.0;
+				double t = 0.0, arcDelta = 0.0;
+				AdvanceArcShadow(_motion, smallCircleTarget, speed, dispX, dispY, dispZ, t, arcDelta);
+				resultDisp.X = static_cast<int>(dispX);
+				resultDisp.Y = static_cast<int>(dispY);
+				resultDisp.Z = static_cast<int>(dispZ);
 
 				CoordStruct arcD{
 					smallCircleTarget.X - _firstFramePos.X,
@@ -2646,6 +2704,37 @@ VectorResult VectorEffect::GetVectorResult()
 				resultDisp.X += static_cast<int>(ad.x);
 				resultDisp.Y += static_cast<int>(ad.y);
 				resultDisp.Z += static_cast<int>(ad.z);
+			}
+			else
+			{
+				// 无弧线：影子仅 XY 推进（shadowZ 冻结），步长钳位到剩余距离：
+				// 末段 speed > 剩余距离时若仍推进满 speed 会越过目标，sdx 变号导致来回振荡（原地抽搐）
+				double step = (speed < shadowDist) ? speed : shadowDist;
+				double sInv = 1.0 / shadowDist;
+				double shadowStepX = sdx * sInv * step;
+				double shadowStepY = sdy * sInv * step;
+				_motion.shadowX += shadowStepX;
+				_motion.shadowY += shadowStepY;
+				_motion.shadowTraveled += step;
+
+				// 重新计算影子距离（影子已移动）
+				sdx = smallCircleTarget.X - _motion.shadowX;
+				sdy = smallCircleTarget.Y - _motion.shadowY;
+				shadowDist = std::sqrt(sdx * sdx + sdy * sdy);
+
+				// t = 已走路程 / 总路程（动态更新，目标移动时自动调整）
+				double total = _motion.shadowTraveled + shadowDist;
+				double t = (total > 1e-6) ? _motion.shadowTraveled / total : 0.0;
+				if (t < 0.0) t = 0.0; else if (t > 1.0) t = 1.0;
+
+				// 实际位移：影子步长（XY）
+				resultDisp.X = static_cast<int>(shadowStepX);
+				resultDisp.Y = static_cast<int>(shadowStepY);
+
+				// Z 从抛射体起始高度 lerp 到目标高度
+				// shadowZ 冻结为抛射体起始 Z，_firstFramePos.Z 可能是目标 Z（Origin=Target 时不同）
+				double targetZ = _motion.shadowZ + (smallCircleTarget.Z - _motion.shadowZ) * t;
+				resultDisp.Z = static_cast<int>(targetZ - currentPos.Z);
 			}
 		}
 		result.MoveDisp = resultDisp;
