@@ -1666,8 +1666,10 @@ VectorResult VectorEffect::GetVectorResult()
 		double speed = _motion.circleSpeed;
 		double angleStep = _motion.circleAngle;
 
-		// 三选二：半径 + 角速度优先，两者都有时速率由角速度推算（忽略显式 CircleSpeed）
-		if (angleStep > 0.0)
+		// 三选二：半径 + 角速度优先，两者都有时速率由角速度推算（忽略显式 CircleSpeed）。
+		// 角速度"已配置"判定 = 非零（2026-09-06 修复：CircleRandomAngle/CircleAnglePerStep 可为负，
+		// 负=反向绕圈；原 angleStep > 0.0 把负值误当"未配"，落进线速反推分支被覆盖成正向角速度）
+		if (angleStep != 0.0)
 			speed = calcRadius * Math::deg2rad(angleStep);
 		else if (speed > 0.0)
 			angleStep = Math::rad2deg(speed / calcRadius);
