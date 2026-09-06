@@ -1,4 +1,4 @@
-#include "ECMState.h"
+﻿#include "ECMState.h"
 
 #include <Ext/Helper/Finder.h>
 #include <Ext/Helper/FLH.h>
@@ -78,51 +78,51 @@ void ECMState::OnUpdate()
 			if (Bingo(Data.Chance))
 			{
 				BulletStatus* status = GetBulletStatus();
-			if (Data.Feedback)
-			{
-				// 忽悠炮，艹他
-				TechnoClass* pOwner = status->pSource;
-				if (Data.FeedbackToSourceTarget && pOwner)
+				if (Data.Feedback)
 				{
-					AbstractClass* pOwnerTarget = pOwner->Target;
-					TechnoClass* pOwnerTargetTechno = nullptr;
-					CastToTechno(pOwnerTarget, pOwnerTargetTechno);
-					if (pOwnerTargetTechno && !IsDeadOrInvisible(pOwnerTargetTechno))
+					// 忽悠炮，艹他
+					TechnoClass* pOwner = status->pSource;
+					if (Data.FeedbackToSourceTarget && pOwner)
 					{
-						pBullet->SetTarget(pOwnerTargetTechno);
-						pBullet->TargetCoords = pOwnerTargetTechno->GetCoords();
-					}
-					else if (pOwnerTarget)
-					{
-						pBullet->SetTarget(pOwnerTarget);
-						pBullet->TargetCoords = pOwnerTarget->GetCoords();
+						AbstractClass* pOwnerTarget = pOwner->Target;
+						TechnoClass* pOwnerTargetTechno = nullptr;
+						CastToTechno(pOwnerTarget, pOwnerTargetTechno);
+						if (pOwnerTargetTechno && !IsDeadOrInvisible(pOwnerTargetTechno))
+						{
+							pBullet->SetTarget(pOwnerTargetTechno);
+							pBullet->TargetCoords = pOwnerTargetTechno->GetCoords();
+						}
+						else if (pOwnerTarget)
+						{
+							pBullet->SetTarget(pOwnerTarget);
+							pBullet->TargetCoords = pOwnerTarget->GetCoords();
+						}
+						else
+						{
+							pBullet->TargetCoords = pBullet->SourceCoords;
+						}
 					}
 					else
 					{
-						pBullet->TargetCoords = pBullet->SourceCoords;
+						pBullet->SetTarget(pOwner);
+						if (pOwner)
+						{
+							pBullet->TargetCoords = pOwner->GetCoords();
+						}
+						else
+						{
+							pBullet->TargetCoords = pBullet->SourceCoords;
+						}
 					}
-				}
-				else
-				{
-					pBullet->SetTarget(pOwner);
-					if (pOwner)
+					// FeedbackToSourceTarget=yes：弹体改为打发射者的目标，仍在为发射者效力——
+					// 保留 Owner（Vector Origin=Launcher 锚依赖 pBullet->Owner，2026-09-06 修复：
+					// 无条件清空导致链式 Vector 二次附加时大圆锚点丢失，圆心钉死在错误快照）；
+					// no：弹体被打回发射者自己，剥夺主从关系才清空。
+					if (!Data.FeedbackToSourceTarget)
 					{
-						pBullet->TargetCoords = pOwner->GetCoords();
-					}
-					else
-					{
-						pBullet->TargetCoords = pBullet->SourceCoords;
+						pBullet->Owner = nullptr;
 					}
 				}
-				// FeedbackToSourceTarget=yes：弹体改为打发射者的目标，仍在为发射者效力——
-				// 保留 Owner（Vector Origin=Launcher 锚依赖 pBullet->Owner，2026-09-06 修复：
-				// 无条件清空导致链式 Vector 二次附加时大圆锚点丢失，圆心钉死在错误快照）；
-				// no：弹体被打回发射者自己，剥夺主从关系才清空。
-				if (!Data.FeedbackToSourceTarget)
-				{
-					pBullet->Owner = nullptr;
-				}
-			}
 				else
 				{
 					AbstractClass* pTarget = pBullet->Target;
