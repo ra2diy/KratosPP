@@ -310,6 +310,10 @@ public:
 	MotionState _motion{};              // 主运动状态
 	MotionState _originMotion{};        // 大圆圆心运动状态
 
+	// --- 进入帧动态采样（Vector.CircleDynamic / Vector.Origin.CircleDynamic）---
+	bool _circleDynamicSampled = false;   // 小圆已采样（冻结期后首运动帧现算半径/圆心Z，只一次）
+	bool _originDynamicSampled = false;   // 大圆已采样（同上）
+
 	// ========================================================================
 	// 帧工具
 	// ========================================================================
@@ -348,7 +352,9 @@ public:
 			.Process(this->_prevBigCircleCenter)
 			.Process(this->_circlePos)
 			.Process(this->_motion)
-			.Process(this->_originMotion);
+			.Process(this->_originMotion)
+			.Process(this->_circleDynamicSampled)
+			.Process(this->_originDynamicSampled);
 		return stream.Success();
 	};
 

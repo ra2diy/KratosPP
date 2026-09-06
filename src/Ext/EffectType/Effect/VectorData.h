@@ -121,6 +121,10 @@ public:
 	int CircleMinRadius = 0;           // 半径下限，0=不限
 	bool CircleEndOnMaxRadius = false; // 半径达到上限时结束 AE
 	bool CircleEndOnMinRadius = false; // 半径达到下限时结束 AE
+	bool CircleDynamic = false;        // （INI: Vector.CircleDynamic）yes=进入圆瞬间现算初始值：
+									   //   半径=弹体到管线圆心水平距（0→回退 CircleRadius→648）
+									   //   圆心高度=弹体进入高度（覆写 CircleOrigin.Z，INI 的 Z 作废）。
+									   //   只改初始值一次，后续消费管线零改动
 
 	// ========================================================================
 	// 圆心运动（Vector.Origin.* 系列，Circle 模式专用）
@@ -158,6 +162,10 @@ public:
 	int OriginCircleRadiusGrow = 0;
 	int OriginCircleMaxRadius = 0, OriginCircleMinRadius = 0;
 	bool OriginCircleEndOnMaxRadius = false, OriginCircleEndOnMinRadius = false;
+	bool OriginCircleDynamic = false;  // （INI: Vector.Origin.CircleDynamic）yes=进入大圆瞬间现算初始值：
+									   //   Origin.CircleRadius=弹体到基准点水平距（0→回退配置→648）
+									   //   基准点高度=弹体进入高度（覆写 Origin.CircleOrigin 的 Z，INI 的 Z 作废）
+									   //   只改初始值一次，后续消费管线零改动。大圆必须配小圆才成立
 	// 法线
 	CoordStruct OriginNormalVector{};
 	CoordStruct OriginNormalRandomF{}, OriginNormalRandomL{}, OriginNormalRandomH{};
@@ -366,6 +374,7 @@ public:
 		CircleMinRadius = reader->Get(title + "CircleMinRadius", 0);
 		CircleEndOnMaxRadius = reader->Get(title + "CircleEndOnMaxRadius", false);
 		CircleEndOnMinRadius = reader->Get(title + "CircleEndOnMinRadius", false);
+		CircleDynamic = reader->Get(title + "CircleDynamic", false);
 
 		// --- Origin ---
 		OriginMoveTo = reader->Get(title + "Origin.MoveTo", OriginMoveTo);
@@ -404,6 +413,7 @@ public:
 		OriginCircleMinRadius = reader->Get(title + "Origin.CircleMinRadius", 0);
 		OriginCircleEndOnMaxRadius = reader->Get(title + "Origin.CircleEndOnMaxRadius", false);
 		OriginCircleEndOnMinRadius = reader->Get(title + "Origin.CircleEndOnMinRadius", false);
+		OriginCircleDynamic = reader->Get(title + "Origin.CircleDynamic", false);
 		OriginNormalVector = reader->Get(title + "Origin.NormalVector", OriginNormalVector);
 		OriginNormalIsOnTurret = reader->Get(title + "Origin.NormalIsOnTurret", false); // 默认 no=随车身；相对旧行为（恒炮塔）翻转
 		OriginNormalRandomF = reader->Get(title + "Origin.NormalRandomF", OriginNormalRandomF);
