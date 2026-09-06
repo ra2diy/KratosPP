@@ -30,6 +30,15 @@ DeployToAttachData* TechnoStatus::GetDeployAttachData()
 	return _deployAttachData;
 }
 
+DeploysIntoData* TechnoStatus::GetDeploysIntoData()
+{
+	if (!_deploysIntoData)
+	{
+		_deploysIntoData = INI::GetConfig<DeploysIntoData>(INI::Rules, pTechno->GetTechnoType()->ID)->Data;
+	}
+	return _deploysIntoData;
+}
+
 void TechnoStatus::OnUpdate_DeployTo()
 {
 	bool transform = GetTransformData()->Enable;
@@ -162,5 +171,76 @@ void TechnoStatus::OnUpdate_DeployTo()
 				aeManager->Attach(GetDeployAttachData()->UndeployToAttachEffects, GetDeployAttachData()->UndeployToAttachChances, false);
 			}
 		}
+	}
+}
+
+void TechnoStatus::DeploysInto(TechnoClass* pGift, bool isDeploying)
+{
+	if (!pGift)
+	{
+		return;
+	}
+
+	DeploysIntoData* config = GetDeploysIntoData();
+	DeployToTransformEntity* data = nullptr;
+
+	bool inherit = false;
+
+	if (isDeploying)
+	{
+		// 部署变形，载具部署成建筑时触发
+		data = &config->DeploysInto;
+		inherit = config->DeployTo;
+	}
+	else
+	{
+		// 卸载变形，建筑收起为载具时触发
+		data = &config->UndeploysInto;
+		inherit = config->UndeployTo;
+	}
+
+	if (inherit)
+	{
+		TechnoTypeClass* pGiftType = pGift->GetTechnoType();
+		// 继承等级
+		if (data->InheritExperience && pGiftType->Trainable)
+		{
+			pGift->Veterancy = pTechno->Veterancy;
+		}
+
+		// 继承ROF
+		if (data->InheritROF && pTechno->ROFTimer.InProgress())
+		{
+			pGift->ROFTimer.Start(pTechno->ROFTimer.GetTimeLeft());
+		}
+
+		// 继承弹药
+		if (data->InheritAmmo && pGiftType->Ammo > 1 && pTechno->GetTechnoType()->Ammo > 1)
+		{
+			int ammo = pTechno->Ammo;
+			if (ammo >= 0)
+			{
+				pGift->Ammo = ammo;
+			}
+		}
+
+		AttachEffect* giftAEM = GetAEManager<TechnoExt>(pGift);
+		// 继承AE管理器
+		if (data->InheritAE)
+		{
+			TechnoStatus* pGiftStatus = GetStatus<TechnoExt, TechnoStatus>(pGift);
+			// 继承AE并修改变量
+			giftAEM = InheritAE(this, pGiftStatus);
+		}
+
+		// 调整AE
+		if (giftAEM)
+		{
+			// 移除失效的AE
+			giftAEM->DetachByName(data->RemoveEffects, false);
+			// 附加新的AE
+			giftAEM->Attach(data->AttachEffects, data->AttachChances);
+		}
+
 	}
 }

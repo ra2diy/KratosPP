@@ -230,6 +230,7 @@ public:
 
 	// 设置扩展数据
 	void SetExtData(IExtData* extData);
+	IExtData* GetExtData() const { return _extData; }
 
 	virtual void OnUpdate() override;
 
@@ -565,6 +566,19 @@ public:
 	void AttachToComponent(Component* component);
 
 	void DetachFromParent(bool disable = true);
+
+	/// <summary>
+	/// 原子地将本组件移动到 newParent 下：
+	/// 脱离旧父组件 -> 绑定新父组件 -> 用新父的 _extData 递归重绑整棵子树。
+	/// index 为目标插入位置；传 -1 时保持本组件在旧父中的位置（无父或越界时追加到末尾）。
+	/// 失败或异常时自动回滚并返回 false；禁止移动到自身或自己的后代下。
+	/// </summary>
+	bool MoveTo(Component* newParent, int index = -1);
+
+	/// <summary>
+	/// 返回本组件在父组件 children 中的下标；无父或不在列表中时返回 -1
+	/// </summary>
+	int GetIndexInParent() const;
 
 #pragma endregion
 

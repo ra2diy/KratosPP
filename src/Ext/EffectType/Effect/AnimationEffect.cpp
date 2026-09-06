@@ -20,6 +20,26 @@ void AnimationEffect::UpdateLocationOffset(CoordStruct offset)
 
 }
 
+void AnimationEffect::Awake()
+{
+	// 监听IdleAnim自身的销毁，避免pIdleAnim悬挂
+	EventSystems::General.AddHandler(Events::ObjectUnInitEvent, this, &AnimationEffect::OnAnimUnInit);
+}
+
+void AnimationEffect::Destroy()
+{
+	EventSystems::General.RemoveHandler(Events::ObjectUnInitEvent, this, &AnimationEffect::OnAnimUnInit);
+	KillIdleAnim();
+}
+
+void AnimationEffect::OnAnimUnInit(EventSystem* sender, Event e, void* args)
+{
+	if (args == pIdleAnim)
+	{
+		pIdleAnim = nullptr;
+	}
+}
+
 void AnimationEffect::CreateIdleAnim(bool force, CoordStruct location)
 {
 	if (pIdleAnim)
@@ -150,11 +170,18 @@ void AnimationEffect::OnPut(CoordStruct* pCoords, DirType faceDir)
 
 void AnimationEffect::ExtChanged()
 {
-	if (pIdleAnim)
+	if (Data->IdleAnim.Enable)
 	{
-		// 重新设置动画的附着对象，由动画自身去位移
-		AnimStatus* status = GetStatus<AnimExt, AnimStatus>(pIdleAnim);
-		status->AttachToObject(pObject, Data->IdleAnim.Offset);
+		if (!pIdleAnim)
+		{
+			// 挂载对象已换且旧动画已不存在，直接按新单位重建
+			CreateIdleAnim();
+		}
+		else if (AnimStatus* status = GetStatus<AnimExt, AnimStatus>(pIdleAnim))
+		{
+			// 重新设置动画的附着对象，由动画自身去位移
+			status->AttachToObject(pObject, Data->IdleAnim.Offset);
+		}
 	}
 }
 

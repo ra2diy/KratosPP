@@ -421,3 +421,65 @@ std::vector<std::string> GetGiftList(GiftBoxEntity data)
 	return gifts;
 }
 
+AttachEffect* InheritAE(TechnoStatus* pBoxStatus, TechnoStatus*& pGiftStatus)
+{
+	// 复制除了giftBox之外的状态机
+	pBoxStatus->InheritedStatsTo(pGiftStatus);
+	// 获取根组件
+	Component* giftGO = pGiftStatus->GetParent();
+	Component* boxGO = pBoxStatus->GetParent();
+	// 交换AE管理器
+	AttachEffect* boxAEM = boxGO->GetComponent<AttachEffect>();
+	AttachEffect* giftAEM = giftGO->GetComponent<AttachEffect>();
+	// 第一遍：标记变形/替换时不保留的AE（DiscardOnTransform=true）、GiftBox/Transform型AE、
+	// 以及目标类型不适用的AE（CanAffectType），统一等待清理
+	boxAEM->ForeachChild([&](Component* c) {
+		if (auto ae = dynamic_cast<AttachEffectScript*>(c))
+		{
+			if (ae->AEData.DiscardOnTransform || ae->AEData.GiftBox.Enable || ae->AEData.Transform.Enable
+				|| !ae->AEData.CanAffectType(pGiftStatus->pTechno))
+			{
+				ae->TimeToDie();
+			}
+		}
+		});
+	boxAEM->CheckDurationAndDisable(true);
+	boxAEM->ClearDisableComponent();
+	// 第二遍：幸存者重绑到新单位。来源为源单位的AE，pSource和新单位的所属一起修正；
+	// DeploysInto 源与目标必然同属，GiftBox 可能由异所属的AE附加，因此统一采用新单位的实际Owner
+	boxAEM->ForeachChild([&](Component* c) {
+		if (auto ae = dynamic_cast<AttachEffectScript*>(c))
+		{
+			if (ae->pSource == pBoxStatus->pTechno)
+			{
+				ae->InheritedTo(pGiftStatus->pTechno, pGiftStatus->pTechno->Owner);
+			}
+		}
+		});
+	// 移动AE管理器（组件级原子操作，内部自动脱离旧父并递归重绑新父的_extData）
+	// 先记录两个管理器在原GO中的位置，交换时保持各自的顺序位置
+	int boxIndex = boxAEM->GetIndexInParent();
+	int giftIndex = giftAEM->GetIndexInParent();
+	if (!boxAEM->MoveTo(giftGO, boxIndex))
+	{
+		Debug::Log("Error: InheritAE failed to move box AE manager [%s]%p to gift GO.\n", boxAEM->thisName.c_str(), boxAEM);
+		return nullptr;
+	}
+	if (!giftAEM->MoveTo(boxGO, giftIndex))
+	{
+		Debug::Log("Error: InheritAE failed to move gift AE manager [%s]%p to box GO, rollback box AE manager.\n", giftAEM->thisName.c_str(), giftAEM);
+		// 回滚第一个移动，保证两个管理器都留在原父下
+		boxAEM->MoveTo(boxGO, boxIndex);
+		return nullptr;
+	}
+	// 通知被搬移的AE子树：管理器清TypeData缓存并触发DetachWhenTransform，
+	// 子Effect（Animation/Stand等）据此把自身资源重绑到新单位。
+	// 不再向整个GO广播ExtChanged，避免TechnoStatus等无关组件被重复InitExt
+	boxAEM->Foreach([](Component* c)
+	{
+		c->ExtChanged();
+	});
+
+	return boxAEM;
+}
+

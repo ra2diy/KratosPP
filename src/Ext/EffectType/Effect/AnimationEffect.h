@@ -26,6 +26,10 @@ public:
 	EFFECT_SCRIPT(Animation);
 
 	void UpdateLocationOffset(CoordStruct offset);
+	void OnAnimUnInit(EventSystem* sender, Event e, void* args);
+
+	virtual void Awake() override;
+	virtual void Destroy() override;
 
 	virtual void Clean() override
 	{
@@ -62,6 +66,7 @@ public:
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
 		EffectScript::Load(stream, registerForChange);
+		EventSystems::General.AddHandler(Events::ObjectUnInitEvent, this, &AnimationEffect::OnAnimUnInit);
 		return this->Serialize(stream);
 	}
 	virtual bool Save(ExStreamWriter& stream) const override

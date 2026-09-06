@@ -132,7 +132,7 @@ public:
 	Point2D InitialRandomDelay{ 0, 0 }; // 随机初始延迟
 
 	bool DiscardOnEntry = false; // 离开地图则失效
-	bool DiscardOnTransform = true; // 发生类型改变时失效
+	bool DiscardOnTransform = true; // 变形/替换时失效：同一单位类型改变、礼盒继承、(Un)DeploysInto 统一开关
 	bool DiscardOnUndeploying = false; // 是否在建筑反部署时直接结束
 	bool DiscardOnSelling = false; // 是否在建筑出售时直接结束
 	bool PenetratesIronCurtain = false; // 弹头附加，影响铁幕
@@ -153,7 +153,6 @@ public:
 	bool AttachOnceInTechnoType = false; // 写在TechnoType上只在创建时赋予一次
 	int AttachNeedMoney = 0; // 来源需要够钱才可以赋予
 	int ReceiverNeedMoney = 0; // 接受者需要够钱才可以赋予
-	bool Inheritable = true; // 是否可以被礼盒礼物继承
 
 	// TODO Add new Effects
 	EFFECT_VAR_DEFINE(Animation);
@@ -401,7 +400,7 @@ public:
 			AttachOnceInTechnoType = reader->Get("AttachOnceInTechnoType", AttachOnceInTechnoType);
 			AttachNeedMoney = reader->Get("AttachNeedMoney", AttachNeedMoney);
 			ReceiverNeedMoney = reader->Get("ReceiverNeedMoney", ReceiverNeedMoney);
-			Inheritable = reader->Get("Inheritable", Inheritable);
+			DiscardOnTransform = !reader->Get("Inheritable", !DiscardOnTransform);
 		}
 	}
 
@@ -450,8 +449,7 @@ public:
 			.Process(this->AttachWithOutTypes)
 			.Process(this->AttachOnceInTechnoType)
 			.Process(this->AttachNeedMoney)
-			.Process(this->ReceiverNeedMoney)
-			.Process(this->Inheritable);
+			.Process(this->ReceiverNeedMoney);
 		ProcessEffects(stream);
 		return stream.Success();
 	};

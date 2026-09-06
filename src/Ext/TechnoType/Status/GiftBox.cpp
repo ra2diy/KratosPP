@@ -1,4 +1,4 @@
-#include "../TechnoStatus.h"
+﻿#include "../TechnoStatus.h"
 
 #include <FootClass.h>
 #include <JumpjetLocomotionClass.h>
@@ -187,37 +187,6 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 	boxState.pOwner = pTechno;
 	boxState.pHouse = pHouse;
 
-	// 收集可继承AE列表（修复：所有礼物都需要继承，而非仅第一份）
-	struct InheritableAEInfo
-	{
-		std::string Name;
-		ObjectClass* pSource;
-		HouseClass* pSourceHouse;
-	};
-	std::vector<InheritableAEInfo> inheritableAEs;
-	if (inheritAE)
-	{
-		Component* boxGO = this->GetParent();
-		AttachEffect* boxAEM = boxGO->GetComponent<AttachEffect>();
-		if (boxAEM)
-		{
-			boxAEM->ForeachChild([&](Component* c) {
-				if (auto ae = dynamic_cast<AttachEffectScript*>(c))
-				{
-					if (!ae->AEData.Inheritable || ae->AEData.GiftBox.Enable || ae->AEData.Transform.Enable)
-					{
-						ae->TimeToDie();
-					}
-					else
-					{
-						inheritableAEs.push_back({ ae->AEData.Name, ae->pSource, ae->pSourceHouse });
-					}
-				}
-			});
-			boxAEM->CheckDurationAndDisable(true);
-			boxAEM->ClearDisableComponent();
-		}
-	}
 	// 开刷
 	ReleaseGifts(gifts, GiftBox->GetGiftData(), boxState,
 		[&](TechnoClass* pGift, TechnoStatus*& pGiftStatus, AttachEffect*& pGiftAEM)
@@ -275,23 +244,12 @@ void TechnoStatus::ReleaseGift(std::vector<std::string> gifts, GiftBoxData data)
 				}
 			}
 
-			// 继承AE
-			if (inheritAE && !inheritableAEs.empty())
+			// 继承AE管理器
+			if (inheritAE)
 			{
-				// 复制除了giftBox之外的状态机
-				InheritedStatsTo(pGiftStatus);
-				// 给每个礼物附上可继承AE，保留来源信息
-				for (auto& aeInfo : inheritableAEs)
-				{
-					ObjectClass* pSource = aeInfo.pSource;
-					HouseClass* pSourceHouse = aeInfo.pSourceHouse;
-					if (aeInfo.pSource == pTechno)
-					{
-						pSource = pGift;
-						pSourceHouse = boxState.pHouse;
-					}
-					pGiftAEM->Attach(aeInfo.Name, false, pSource, pSourceHouse);
-				}
+				inheritAE = false;
+				// 继承AE并修改变量
+				pGiftAEM = InheritAE(this, pGiftStatus);
 			}
 		});
 }

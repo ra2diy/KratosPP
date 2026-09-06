@@ -115,8 +115,6 @@ public:
 		AEMode = -1;
 		FromPassenger = false;
 
-		NonInheritable = false; // 不允许继承
-
 		_duration = -1; // 寿命
 		_immortal = true; // 永生
 		_lifeTimer = {};
@@ -180,8 +178,6 @@ public:
 	int AEMode = -1;
 	bool FromPassenger = false;
 
-	bool NonInheritable = false; // 不允许继承
-
 	bool SkipNext = false; // 跳过下一个
 
 #pragma region Save/Load
@@ -196,7 +192,6 @@ public:
 			.Process(this->WarheadLocation)
 			.Process(this->AEMode)
 			.Process(this->FromPassenger)
-			.Process(this->NonInheritable)
 			.Process(this->SkipNext)
 
 			.Process(this->_duration)

@@ -155,3 +155,51 @@ public:
 #pragma endregion
 private:
 };
+
+
+class DeploysIntoData : public INIConfig
+{
+public:
+	bool DeployTo = false;
+	DeployToTransformEntity DeploysInto{};
+
+	bool UndeployTo = false;
+	DeployToTransformEntity UndeploysInto{};
+
+	virtual void Read(INIBufferReader* reader) override
+	{
+		DeploysInto.Read(reader, "DeploysInto");
+		DeployTo = DeploysInto.Enable;
+
+		UndeploysInto.Read(reader, "UndeploysInto");
+		UndeployTo = UndeploysInto.Enable;
+
+		Enable = DeployTo || UndeployTo;
+	}
+
+#pragma region save/load
+	template <typename T>
+	bool Serialize(T& stream)
+	{
+		return stream
+			.Process(DeploysInto)
+			.Process(DeployTo)
+			.Process(UndeploysInto)
+			.Process(UndeployTo)
+			.Success();
+	};
+
+	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
+	{
+		INIConfig::Load(stream, registerForChange);
+		return this->Serialize(stream);
+	}
+	virtual bool Save(ExStreamWriter& stream) const override
+	{
+		INIConfig::Save(stream);
+		return const_cast<DeploysIntoData*>(this)->Serialize(stream);
+	}
+#pragma endregion
+private:
+};
+

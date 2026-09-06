@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <algorithm>
 #include <string>
@@ -142,6 +142,9 @@ public:
 	// 向量位移
 	void VectorCancel();
 
+	// 原版部署变形
+	void DeploysInto(TechnoClass* pTarget, bool isDeploying);
+
 	virtual void Clean() override
 	{
 		TechnoScript::Clean();
@@ -227,6 +230,8 @@ public:
 		_transformData = nullptr;
 		// 部署附加AE
 		_deployAttachData = nullptr;
+		// 原版部署变形
+		_deploysIntoData = nullptr;
 
 		// 我有一只激光笔
 		_targetLasers.clear();
@@ -603,9 +608,6 @@ private:
 	// 变形
 	bool ChangeTechnoTypeTo(TechnoTypeClass* pNewType);
 
-	// 激光笔
-	void LostTargetLaser();
-
 	void OnPut_Stand(CoordStruct* pCoord, DirType dirType);
 
 	void OnRemove_Stand();
@@ -685,6 +687,10 @@ private:
 	// 部署附加AE
 	DeployToAttachData* _deployAttachData = nullptr;
 	DeployToAttachData* GetDeployAttachData();
+
+	// 原版部署变形
+	DeploysIntoData* _deploysIntoData = nullptr;
+	DeploysIntoData* GetDeploysIntoData();
 
 	// 我有一只激光笔
 	std::vector<TargetLaser> _targetLasers{};

@@ -443,6 +443,101 @@ void Component::AttachToComponent(Component* component)
 	component->AddComponent(this);
 }
 
+int Component::GetIndexInParent() const
+{
+	if (!_parent)
+	{
+		return -1;
+	}
+	for (size_t i = 0; i < _parent->_children.size(); ++i)
+	{
+		if (_parent->_children[i] == this)
+		{
+			return static_cast<int>(i);
+		}
+	}
+	return -1;
+}
+
+bool Component::MoveTo(Component* newParent, int index)
+{
+	if (!newParent)
+	{
+		Debug::Log("Error: Component [%s]%p MoveTo a null parent.\n", thisName.c_str(), this);
+		return false;
+	}
+	if (newParent == this)
+	{
+		Debug::Log("Error: Component [%s]%p MoveTo itself.\n", thisName.c_str(), this);
+		return false;
+	}
+	if (IsDisabling())
+	{
+		Debug::Log("Error: Component [%s]%p is disabling, refuse to MoveTo.\n", thisName.c_str(), this);
+		return false;
+	}
+	// 禁止把祖先移动到自己的后代下，避免形成环
+	for (Component* p = newParent; p; p = p->_parent)
+	{
+		if (p == this)
+		{
+			Debug::Log("Error: Component [%s]%p MoveTo its descendant [%s]%p.\n", thisName.c_str(), this, p->thisName.c_str(), p);
+			return false;
+		}
+	}
+	if (_parent == newParent)
+	{
+		return true;
+	}
+
+	Component* oldParent = _parent;
+	int targetIndex = index;
+	if (targetIndex < 0)
+	{
+		// 未指定位置时，保持本组件在旧父中的位置
+		targetIndex = GetIndexInParent();
+	}
+	if (oldParent)
+	{
+		// 不 disable，只是换父
+		oldParent->RemoveComponent(this, false);
+	}
+
+	try
+	{
+		newParent->AddComponent(this, targetIndex);
+		return true;
+	}
+	catch (...)
+	{
+		Debug::Log("Error: Component [%s]%p MoveTo [%s]%p failed, rollback to [%s]%p.\n",
+			thisName.c_str(), this, newParent->thisName.c_str(), newParent,
+			oldParent ? oldParent->thisName.c_str() : "(null)", oldParent);
+		// AddComponent 可能已设置 _parent 后才抛异常，先彻底摘除，避免留下悬空父子关系
+		if (_parent)
+		{
+			Component* current = _parent;
+			current->RemoveComponent(this, false);
+			if (_parent == current)
+			{
+				_parent = nullptr;
+			}
+		}
+		if (oldParent)
+		{
+			try
+			{
+				oldParent->AddComponent(this, targetIndex);
+			}
+			catch (...)
+			{
+				Debug::Log("Error: Component [%s]%p MoveTo rollback failed!\n", thisName.c_str(), this);
+			}
+		}
+		return false;
+	}
+}
+
 void Component::DetachFromParent(bool disable)
 {
 	if (_parent)

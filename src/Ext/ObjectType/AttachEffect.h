@@ -210,8 +210,6 @@ public:
 
 	void OnGScreenRender(EventSystem* sender, Event e, void* args);
 
-	static void TransferAttachedEffects(TechnoClass* pSourceTechno, TechnoClass* pTargetTechno);
-
 	virtual void ExtChanged() override
 	{
 		_typeData = nullptr;

@@ -73,3 +73,4 @@ void ReleaseGifts(std::vector<std::string> gifts, GiftBoxEntity data, BoxStateCa
 
 std::vector<std::string> GetGiftList(GiftBoxEntity data);
 
+AttachEffect* InheritAE(TechnoStatus* pBoxStatus, TechnoStatus*& pGiftStatus);
