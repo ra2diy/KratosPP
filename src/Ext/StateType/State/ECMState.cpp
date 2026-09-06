@@ -114,7 +114,14 @@ void ECMState::OnUpdate()
 						pBullet->TargetCoords = pBullet->SourceCoords;
 					}
 				}
-				pBullet->Owner = nullptr;
+				// FeedbackToSourceTarget=yes：弹体改为打发射者的目标，仍在为发射者效力——
+				// 保留 Owner（Vector Origin=Launcher 锚依赖 pBullet->Owner，2026-09-06 修复：
+				// 无条件清空导致链式 Vector 二次附加时大圆锚点丢失，圆心钉死在错误快照）；
+				// no：弹体被打回发射者自己，剥夺主从关系才清空。
+				if (!Data.FeedbackToSourceTarget)
+				{
+					pBullet->Owner = nullptr;
+				}
 			}
 				else
 				{

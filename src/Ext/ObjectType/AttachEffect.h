@@ -39,6 +39,7 @@ struct VectorResult
 	int FallingDestroyHeight = 2 * Unsorted::LevelHeight; // 掉落摧毁高度，仅当AllowFallingDestroy为true时有效
 	bool AllowCrawl = false; // 是否播放爬行帧
 	bool AllowRotateUnit = false; // 是否调整朝向
+	bool SubjectToCliffs = false; // Vector 接管期是否受悬崖/撞地影响（Vector.SubjectToCliffs=no 默认=免疫）
 };
 
 /// @brief AEManager, sub-component is AttachEffectScript, and AttachEffectScript 's sub-component is EffectScript

@@ -256,7 +256,8 @@ VectorResult AttachEffect::MarginVectorOffset()
 					result.Freeze |= tempResult.Freeze;
 					result.Force |= tempResult.Force;
 					result.AllowFallingDestroy |= tempResult.AllowFallingDestroy;
-				result.AllowRotateUnit |= tempResult.AllowRotateUnit;
+					result.AllowRotateUnit |= tempResult.AllowRotateUnit;
+					result.SubjectToCliffs |= tempResult.SubjectToCliffs;
 					if (tempResult.FallingDestroyHeight > result.FallingDestroyHeight)
 						result.FallingDestroyHeight = tempResult.FallingDestroyHeight;
 					if (tempResult.Freeze && !tempResult.FrozenPos.IsEmpty())

@@ -177,6 +177,13 @@ public:
 		return VectorForced || !_vectorResult.MoveDisp.IsEmpty() || _vectorResult.Freeze;
 	}
 
+	// Vector 接管 + SubjectToCliffs=no（默认）：接管期无视悬崖/撞地（免疫地下引爆）；
+	// SubjectToCliffs=yes 显式配置 → 受悬崖影响照常爆炸。Vector 结束判据变假后恢复原逻辑。
+	bool VectorIgnoresCliffs()
+	{
+		return HasActiveVector() && !_vectorResult.SubjectToCliffs;
+	}
+
 	bool SpeedChanged = false; // 改变抛射体的速度
 	bool LocationLocked = false; // 锁定抛射体的位置
 

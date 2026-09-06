@@ -1,6 +1,9 @@
-﻿#pragma once
+#pragma once
 // ============================================================================
-// Vector — 数据层（从零重写版）
+// VectorData — 数据层（从零重写版）
+//
+// 已取消 ReVibed 后缀，重写版直接以标准文件名 VectorData.h 存在；
+// 类名保持 VectorData，注册键/INI 前缀完全一致（Vector.*）。
 //
 // 行为等价铁律：本文件所有 INI 标签名、默认值、解析语义与旧版逐字一致，
 // 不得借重写之机改动任何标签行为。Vector.xlsx 作为标签核对清单。
@@ -33,7 +36,8 @@ public:
 	int DisabledFrames = 0;              // 首帧快照后冻结 N 帧，不计入运动时间
 	bool SyncFacing = false;             // yes=抛射体朝运动方向/单位转动，no=抛射体朝目标
 	bool OriginIsOnWorld = false;        // yes=OriginFLH用世界FLH(朝北)，不使用单位/弹体朝向
-	bool OriginIsOnBody = false;         // yes=单位取车身PrimaryFacing，无视炮塔TurretFacing
+	bool OriginIsOnTurret = false;       // yes=挂炮塔（TurretFacing，炮塔差角跟随），no=挂车身（PrimaryFacing，默认）。INI: Vector.OriginIsOnTurret（改名自 OriginIsOnBody，语义反转）
+	bool SubjectToCliffs = false;        // Vector 接管期是否受悬崖/撞地影响（与原版弹体标签同义；默认 no=接管期无视，免疫引爆）
 
 	enum class VectorOrigin : int
 	{
@@ -44,16 +48,23 @@ public:
 	bool OriginNoUpdate = false;
 	bool Force = true;                  // yes=SetLocation 硬控，默认所有 Vector 模式 Force
 	bool Freeze = false;
-	bool AllowCircleTilt = true;         // yes=允许圆面使用 NormalVector 或地形倾斜
-	bool IsOnOrigin = false;             // （INI: Vector.OriginIsOnVectorOrigin）FLH 参考系（F 轴）来源：yes=Origin 单位自身朝向，no=Origin→弹体连线
-										 // 默认按 Origin 类型推导（Launcher/Self→yes，Target/Source→no），与旧版行为一致
+	// 圆面倾斜唯一来源 = 法向量体系（NormalVector + IsNormalOnOrigin 随单位转）——
+	// 原 AllowCircleTilt 已删除（语义被 IsNormalOnOrigin=no 世界固定取代，连线高低角倾斜作废）
+	bool IsOnOrigin = false;             // （INI: Vector.OriginIsOnVectorOrigin）只决定 TARGETFLH 坐标系（F 轴来源）：
+										 //   yes=Origin 单位自身朝向，no=Origin→弹体连线。默认按 Origin 类型推导（Launcher/Self→yes，
+										 //   Target/Source→no）。【2026-09-05 定案：与 Origin 解算点（OriginFLH/CircleOrigin 圆心）
+										 //   无关——OriginFLH 恒从 Origin 单位自身出发，代码不得在此处读取本标签】
 	bool IsNormalOnOrigin = true;        // 圆面法向量：yes（默认）=每帧跟随 Origin 单位自身朝向转动，no=世界固定
+	bool CoordinateTilt = false;         // 只作用于 TARGETFLH 的连线坐标系（OriginIsOnVectorOrigin=no 的 Target/Launcher/Source）：
+										 //   yes=连线 F 轴取真实 3D（含 Origin→抛射体 高低差），no=水平投影。
+										 //   【2026-09-05 定案：OriginFLH 解算点不使用本标签（其无锚兜底连线恒水平投影）】
 
 	// ========================================================================
 	// NormalVector 圆面法线
 	// ========================================================================
 
 	CoordStruct NormalVector{};          // 圆面法向量（FLH 坐标系），F/L/H
+	bool NormalIsOnTurret = false;       // 法向量随动（IsNormalOnOrigin=yes）姿态源：yes=随炮塔（TurretFacing 矩阵链，含炮塔差角），no=随车身（PrimaryFacing，默认）。与 OriginIsOnTurret（OriginFLH 挂点）解耦
 	CoordStruct NormalRandomF{};         // F 分量随机范围 .X=Min .Y=Max
 	CoordStruct NormalRandomL{};         // L 分量随机范围
 	CoordStruct NormalRandomH{};         // H 分量随机范围
@@ -66,6 +77,12 @@ public:
 	double NormalLAngleRMin2 = 0.0, NormalLAngleRMax2 = 0.0;
 	double NormalHAngleRMin = 0.0, NormalHAngleRMax = 0.0;
 	double NormalHAngleRMin2 = 0.0, NormalHAngleRMax2 = 0.0;
+	// 法向量自旋 Lissajous（设计文档第六节，作用对象=法向量自身，与圆周 Lissajous 区分）：
+	// 值 = 每帧累加的角速度（°/step）。按轴独立：该轴配了 Lissajous（>0）→ 累计角驱动
+	// （每帧实际旋转角 = 不断增大的累计角，越转越快）；没配 → 该轴走 AnglePerStep 定速增量。
+	double NormalFLissajous = 0.0;      // 绕 F 轴 Lissajous 角速度
+	double NormalLLissajous = 0.0;      // 绕 L 轴
+	double NormalHLissajous = 0.0;      // 绕 H 轴
 	double Lissajous = 0.0;            // 小圆圆周 F 轴偏移角速度（°/step），0=不偏移
 
 	// ========================================================================
@@ -104,6 +121,10 @@ public:
 	int CircleMinRadius = 0;           // 半径下限，0=不限
 	bool CircleEndOnMaxRadius = false; // 半径达到上限时结束 AE
 	bool CircleEndOnMinRadius = false; // 半径达到下限时结束 AE
+	bool CircleDynamic = false;        // （INI: Vector.CircleDynamic）yes=进入圆瞬间现算初始值：
+									   //   半径=弹体到管线圆心水平距（0→回退 CircleRadius→648）
+									   //   圆心高度=弹体进入高度（覆写 CircleOrigin.Z，INI 的 Z 作废）。
+									   //   只改初始值一次，后续消费管线零改动
 
 	// ========================================================================
 	// 圆心运动（Vector.Origin.* 系列，Circle 模式专用）
@@ -141,6 +162,10 @@ public:
 	int OriginCircleRadiusGrow = 0;
 	int OriginCircleMaxRadius = 0, OriginCircleMinRadius = 0;
 	bool OriginCircleEndOnMaxRadius = false, OriginCircleEndOnMinRadius = false;
+	bool OriginCircleDynamic = false;  // （INI: Vector.Origin.CircleDynamic）yes=进入大圆瞬间现算初始值：
+									   //   Origin.CircleRadius=弹体到基准点水平距（0→回退配置→648）
+									   //   基准点高度=弹体进入高度（覆写 Origin.CircleOrigin 的 Z，INI 的 Z 作废）
+									   //   只改初始值一次，后续消费管线零改动。大圆必须配小圆才成立
 	// 法线
 	CoordStruct OriginNormalVector{};
 	CoordStruct OriginNormalRandomF{}, OriginNormalRandomL{}, OriginNormalRandomH{};
@@ -148,21 +173,37 @@ public:
 	double OriginNormalFAngleRMin = 0, OriginNormalFAngleRMax = 0, OriginNormalFAngleRMin2 = 0, OriginNormalFAngleRMax2 = 0;
 	double OriginNormalLAngleRMin = 0, OriginNormalLAngleRMax = 0, OriginNormalLAngleRMin2 = 0, OriginNormalLAngleRMax2 = 0;
 	double OriginNormalHAngleRMin = 0, OriginNormalHAngleRMax = 0, OriginNormalHAngleRMin2 = 0, OriginNormalHAngleRMax2 = 0;
+	// 大圆法向量自旋 Lissajous（同小圆语义，作用对象=大圆法向量自身）
+	double OriginNormalFLissajous = 0.0, OriginNormalLLissajous = 0.0, OriginNormalHLissajous = 0.0;
 	// 圆心通用
-	bool OriginAllowCircleTilt = true;    // yes=大圆面跟随目标倾斜（Origin=Target 时有效）
+	// 大圆面倾斜唯一来源 = 大圆法向量体系（OriginNormalVector + OriginIsNormalOnOrigin）——
+	// 原 OriginAllowCircleTilt（跟随目标 Z 差）已删除
 	bool OriginIsNormalOnOrigin = true;   // 大圆法向量：yes（默认）=每帧跟随 OriginOrigin 单位自身朝向转动，no=世界固定
+	bool OriginNormalIsOnTurret = false;  // 大圆法向量随动（OriginIsNormalOnOrigin=yes）姿态源：yes=随炮塔，no=随车身（默认）。与 OriginOriginIsOnTurret（OriginOriginFLH 挂点）解耦。INI: Vector.Origin.NormalIsOnTurret
 	CoordStruct OriginCircleOffset{};     // 圆心原点偏移（世界坐标）
 	bool OriginAllowOriginTilt = true;
-	bool OriginOriginNoUpdate = false;   // yes=圆心基座冻结在初始位置，不随目标移动
+	bool OriginOriginNoUpdate = false;   // yes=解算起始点冻结在初始位置，不随目标移动
 	double OriginLissajous = 0.0;        // 大圆圆周 F 轴偏移角速度（°/step），0=不偏移
 	VectorOrigin OriginOrigin = VectorOrigin::Self; // 圆心运动参考系
 	CoordStruct OriginOriginFLH{};      // OriginOrigin=FLH 时的 FLH 偏移
+	bool OriginOriginIsOnTurret = false; // OriginOriginFLH 挂点坐标系：yes=挂 OriginOrigin 单位炮塔（TurretFacing），no=挂车身（PrimaryFacing，默认）。INI: Vector.Origin.OriginIsOnTurret（改名自 Vector.Origin.OriginIsOnBody，语义反转）
 
 	// ========================================================================
 	// Speed 模式（直线追踪 + 加速度）
 	// ========================================================================
 
 	CoordStruct TargetFLH{};
+	// TargetFLH 坐标系标签（只作用于 Speed/ReachTarget 直线模式的目标点取值）：
+	// 单位自身坐标系（OriginIsOnVectorOrigin=yes，Target/Source/Launcher 为活单位）时——
+	//   TargetIsOnTurret：yes=挂点对齐炮塔（炮塔转轴+随炮塔转），no（默认）=对齐车身
+	//     （2026-09-05 用户裁决：瞄准单位必然瞄准车身，不该管炮塔朝向——默认翻转 no，
+	//      显式写 yes 仍可挂炮塔）
+	//   TargetSameTilt：yes（默认）=挂点随单位倾斜（坡上车身斜则挂点斜），no=抛弃倾斜按水平基准
+	// 连线坐标系（OriginIsOnVectorOrigin=no）下两者不适用（无单位坐标系概念），3D 归 CoordinateTilt
+	// TargetIsOnWorld：yes=TargetFLH 当纯世界偏移（无视单位朝向/姿态）；默认 no
+	bool TargetIsOnTurret = false;
+	bool TargetSameTilt = true;
+	bool TargetIsOnWorld = false;
 	int TargetOffsetFMin = 0;
 	int TargetOffsetFMax = 0;
 	int TargetOffsetLMin = 0;
@@ -182,7 +223,8 @@ public:
 	int TargetOffsetRadiusMin2 = 0;  // 四参数版（TargetOffsetRadiusRanges）区间2，区间1复用 Min/Max
 	int TargetOffsetRadiusMax2 = 0;
 	bool TargetOffsetSphere = false;   // yes=球面全向（含H），no=XY圆环+H用TargetOffsetH
-	CoordStruct TargetOffsetNormal{};  // 圆环法向量（FLH），非空时 TargetOffsetSphere=no 的落点在倾斜圆面上（法向量定义圆面）
+	CoordStruct TargetOffsetNormal = CoordStruct{ 0, 0, 1 }; // 圆环法向量（FLH），默认 (0,0,1) 垂直向上（用户规格 2026-09-05：不写即垂直，消费门槛靠非空恒过）；非空时 TargetOffsetSphere=no 的落点在倾斜圆面上（法向量定义圆面）。仅圆环模式有意义
+	bool TargetOffsetNormalOnOrigin = true; // TargetOffsetNormal 分量坐标系（OnOrigin 统一语义）：yes=在 Origin 单位自身 FLH 轴系解释（圆环随单位转/斜），no=世界坐标系（圆环面朝世界，落点直摆世界坐标）
 	// 角度限制（TargetOffsetAngles，仅圆环模式）：双区间，0度=目标点指向抛射体（近交点）
 	int TargetOffsetAngleMin = 0;
 	int TargetOffsetAngleMax = 0;
@@ -238,7 +280,8 @@ public:
 		DisabledFrames = reader->Get(title + "DisabledFrames", 0);
 		SyncFacing = reader->Get(title + "SyncFacing", SyncFacing);
 		OriginIsOnWorld = reader->Get(title + "OriginIsOnWorld", OriginIsOnWorld);
-		OriginIsOnBody = reader->Get(title + "OriginIsOnBody", OriginIsOnBody);
+		OriginIsOnTurret = reader->Get(title + "OriginIsOnTurret", false); // 默认挂车身（no）；旧键 OriginIsOnBody 失效
+		SubjectToCliffs = reader->Get(title + "SubjectToCliffs", SubjectToCliffs);
 
 		std::string originStr = reader->Get(title + "Origin", std::string{ "Self" });
 		if (originStr == "Launcher") Origin = VectorOrigin::Launcher;
@@ -250,11 +293,12 @@ public:
 		OriginNoUpdate = reader->Get(title + "OriginNoUpdate", OriginNoUpdate);
 		Force = reader->Get(title + "Force", Force);
 		Freeze = reader->Get(title + "Freeze", Freeze);
-		AllowCircleTilt = reader->Get(title + "AllowCircleTilt", AllowCircleTilt);
 		// 默认按 Origin 类型推导旧版行为：Launcher/Self=单位自身朝向(yes)，Target/Source=连线(no)
 		IsOnOrigin = reader->Get(title + "OriginIsOnVectorOrigin", Origin == VectorOrigin::Launcher || Origin == VectorOrigin::Self);
 		IsNormalOnOrigin = reader->Get(title + "IsNormalOnOrigin", true); // 默认跟随 Origin 单位，no 才世界固定
+		CoordinateTilt = reader->Get(title + "CoordinateTilt", false);    // 连线坐标系 3D：默认 no=水平，显式 yes 才取真实连线
 		NormalVector = reader->Get(title + "NormalVector", NormalVector);
+		NormalIsOnTurret = reader->Get(title + "NormalIsOnTurret", false); // 默认 no=随车身；相对旧行为（炮塔）翻转
 		NormalRandomF = reader->Get(title + "NormalRandomF", NormalRandomF);
 		NormalRandomL = reader->Get(title + "NormalRandomL", NormalRandomL);
 		NormalRandomH = reader->Get(title + "NormalRandomH", NormalRandomH);
@@ -276,6 +320,9 @@ public:
 			parse4("NormalHAngleRanges", NormalHAngleRMin, NormalHAngleRMax, NormalHAngleRMin2, NormalHAngleRMax2);
 		}
 		Lissajous = reader->Get(title + "Lissajous", 0.0);
+		NormalFLissajous = reader->Get(title + "NormalFLissajous", 0.0); // 法向量自旋 Lissajous（文档六节）
+		NormalLLissajous = reader->Get(title + "NormalLLissajous", 0.0);
+		NormalHLissajous = reader->Get(title + "NormalHLissajous", 0.0);
 
 		// --- MoveTo ---
 		MoveTo = reader->Get(title + "MoveTo", MoveTo);
@@ -327,6 +374,7 @@ public:
 		CircleMinRadius = reader->Get(title + "CircleMinRadius", 0);
 		CircleEndOnMaxRadius = reader->Get(title + "CircleEndOnMaxRadius", false);
 		CircleEndOnMinRadius = reader->Get(title + "CircleEndOnMinRadius", false);
+		CircleDynamic = reader->Get(title + "CircleDynamic", false);
 
 		// --- Origin ---
 		OriginMoveTo = reader->Get(title + "Origin.MoveTo", OriginMoveTo);
@@ -365,28 +413,36 @@ public:
 		OriginCircleMinRadius = reader->Get(title + "Origin.CircleMinRadius", 0);
 		OriginCircleEndOnMaxRadius = reader->Get(title + "Origin.CircleEndOnMaxRadius", false);
 		OriginCircleEndOnMinRadius = reader->Get(title + "Origin.CircleEndOnMinRadius", false);
+		OriginCircleDynamic = reader->Get(title + "Origin.CircleDynamic", false);
 		OriginNormalVector = reader->Get(title + "Origin.NormalVector", OriginNormalVector);
+		OriginNormalIsOnTurret = reader->Get(title + "Origin.NormalIsOnTurret", false); // 默认 no=随车身；相对旧行为（恒炮塔）翻转
 		OriginNormalRandomF = reader->Get(title + "Origin.NormalRandomF", OriginNormalRandomF);
 		OriginNormalRandomL = reader->Get(title + "Origin.NormalRandomL", OriginNormalRandomL);
 		OriginNormalRandomH = reader->Get(title + "Origin.NormalRandomH", OriginNormalRandomH);
 		OriginNormalFAnglePerStep = reader->Get(title + "Origin.NormalFAnglePerStep", 0.0);
 		OriginNormalLAnglePerStep = reader->Get(title + "Origin.NormalLAnglePerStep", 0.0);
 		OriginNormalHAnglePerStep = reader->Get(title + "Origin.NormalHAnglePerStep", 0.0);
-		OriginAllowCircleTilt = reader->Get(title + "Origin.AllowCircleTilt", OriginAllowCircleTilt);
 		OriginIsNormalOnOrigin = reader->Get(title + "Origin.IsNormalOnOrigin", true); // 默认跟随 OriginOrigin 单位，no 才世界固定
 		OriginCircleOffset = reader->Get(title + "Origin.CircleOrigin", OriginCircleOffset);
 		OriginAllowOriginTilt = reader->Get(title + "Origin.AllowOriginTilt", OriginAllowOriginTilt);
 		OriginOriginNoUpdate = reader->Get(title + "Origin.OriginNoUpdate", false);
 		OriginLissajous = reader->Get(title + "Origin.Lissajous", 0.0);
+		OriginNormalFLissajous = reader->Get(title + "Origin.NormalFLissajous", 0.0);
+		OriginNormalLLissajous = reader->Get(title + "Origin.NormalLLissajous", 0.0);
+		OriginNormalHLissajous = reader->Get(title + "Origin.NormalHLissajous", 0.0);
 		std::string originOriginStr = reader->Get(title + "Origin.Origin", std::string{ "Self" });
 		if (originOriginStr == "Launcher") OriginOrigin = VectorOrigin::Launcher;
 		else if (originOriginStr == "Target") OriginOrigin = VectorOrigin::Target;
 		else if (originOriginStr == "Source") OriginOrigin = VectorOrigin::Source;
 		else OriginOrigin = VectorOrigin::Self;
 		OriginOriginFLH = reader->Get(title + "Origin.OriginFLH", OriginOriginFLH);
+		OriginOriginIsOnTurret = reader->Get(title + "Origin.OriginIsOnTurret", false); // 默认挂车身（no），行为与"OriginIsOnTurret 反转"一致；旧键 Vector.Origin.OriginIsOnBody 失效
 
 		// --- Speed / ReachTarget ---
 		TargetFLH = reader->Get(title + "TargetFLH", TargetFLH);
+		TargetIsOnTurret = reader->Get(title + "TargetIsOnTurret", false); // 默认对齐车身（2026-09-05 用户裁决：瞄准单位必然车身，不管炮塔朝向）
+		TargetSameTilt = reader->Get(title + "TargetSameTilt", true);    // 默认随单位倾斜（成熟算法）
+		TargetIsOnWorld = reader->Get(title + "TargetIsOnWorld", false); // 纯世界偏移需显式
 		std::string targetOffsetFStr = reader->Get(title + "TargetOffsetF", std::string{ "" });
 		std::string targetOffsetLStr = reader->Get(title + "TargetOffsetL", std::string{ "" });
 		std::string targetOffsetHStr = reader->Get(title + "TargetOffsetH", std::string{ "" });
@@ -419,6 +475,7 @@ public:
 		ParseMinMax(targetOffsetRadiusStr, TargetOffsetRadiusMin, TargetOffsetRadiusMax);
 		TargetOffsetSphere = reader->Get(title + "TargetOffsetSphere", TargetOffsetSphere);
 		TargetOffsetNormal = reader->Get(title + "TargetOffsetNormal", TargetOffsetNormal);
+		TargetOffsetNormalOnOrigin = reader->Get(title + "TargetOffsetNormalOnOrigin", true); // 默认 yes=单位自身坐标系（OnOrigin 统一语义）
 		ReachTarget = reader->Get(title + "ReachTarget", ReachTarget);
 		ReachTargetEarlyEnd = reader->Get(title + "ReachTargetEarlyEnd", ReachTargetEarlyEnd);
 		ArcHeight = reader->Get(title + "ArcHeight", 0);
@@ -487,16 +544,17 @@ private:
 	bool Serialize(T& stream)
 	{
 		stream
-			.Process(this->TimeStep).Process(this->DisabledFrames).Process(this->SyncFacing).Process(this->OriginIsOnWorld).Process(this->OriginIsOnBody)
+			.Process(this->TimeStep).Process(this->DisabledFrames).Process(this->SyncFacing).Process(this->OriginIsOnWorld).Process(this->OriginIsOnTurret).Process(this->SubjectToCliffs)
 			.Process(this->Origin)
 			.Process(this->OriginFLH)
 			.Process(this->OriginNoUpdate)
 			.Process(this->Force)
 			.Process(this->Freeze)
-			.Process(this->AllowCircleTilt)
 			.Process(this->IsOnOrigin)
 			.Process(this->IsNormalOnOrigin)
+			.Process(this->CoordinateTilt)
 			.Process(this->NormalVector)
+			.Process(this->NormalIsOnTurret)
 			.Process(this->NormalRandomF)
 			.Process(this->NormalRandomL)
 			.Process(this->NormalRandomH)
@@ -509,6 +567,7 @@ private:
 			.Process(this->NormalLAngleRMin2).Process(this->NormalLAngleRMax2)
 			.Process(this->NormalHAngleRMin).Process(this->NormalHAngleRMax)
 			.Process(this->NormalHAngleRMin2).Process(this->NormalHAngleRMax2)
+			.Process(this->NormalFLissajous).Process(this->NormalLLissajous).Process(this->NormalHLissajous)
 			.Process(this->Lissajous)
 
 			.Process(this->MoveTo)
@@ -559,6 +618,7 @@ private:
 			.Process(this->OriginCircleMinRadius)
 			.Process(this->OriginCircleEndOnMaxRadius).Process(this->OriginCircleEndOnMinRadius)
 			.Process(this->OriginNormalVector)
+			.Process(this->OriginNormalIsOnTurret)
 			.Process(this->OriginNormalRandomF).Process(this->OriginNormalRandomL)
 			.Process(this->OriginNormalRandomH)
 			.Process(this->OriginNormalFAnglePerStep).Process(this->OriginNormalLAnglePerStep)
@@ -569,13 +629,15 @@ private:
 			.Process(this->OriginNormalLAngleRMin2).Process(this->OriginNormalLAngleRMax2)
 			.Process(this->OriginNormalHAngleRMin).Process(this->OriginNormalHAngleRMax)
 			.Process(this->OriginNormalHAngleRMin2).Process(this->OriginNormalHAngleRMax2)
-			.Process(this->OriginAllowCircleTilt).Process(this->OriginIsNormalOnOrigin).Process(this->OriginCircleOffset)
+			.Process(this->OriginNormalFLissajous).Process(this->OriginNormalLLissajous).Process(this->OriginNormalHLissajous)
+			.Process(this->OriginIsNormalOnOrigin).Process(this->OriginCircleOffset)
 			.Process(this->OriginAllowOriginTilt).Process(this->OriginOriginNoUpdate)
 			.Process(this->OriginLissajous)
 			.Process(this->OriginOrigin)
 			.Process(this->OriginOriginFLH)
 
 			.Process(this->TargetFLH)
+			.Process(this->TargetIsOnTurret).Process(this->TargetSameTilt).Process(this->TargetIsOnWorld)
 			.Process(this->TargetOffsetFMin)
 			.Process(this->TargetOffsetFMax)
 			.Process(this->TargetOffsetLMin)
@@ -594,6 +656,7 @@ private:
 			.Process(this->TargetOffsetRadiusMax2)
 			.Process(this->TargetOffsetSphere)
 			.Process(this->TargetOffsetNormal)
+			.Process(this->TargetOffsetNormalOnOrigin)
 			.Process(this->TargetOffsetAngleMin)
 			.Process(this->TargetOffsetAngleMax)
 			.Process(this->TargetOffsetAngleMin2)
@@ -617,7 +680,8 @@ private:
 			.Process(this->MaxSpeed)
 			.Process(this->MinSpeed)
 			.Process(this->Acceleration)
-			.Process(this->SpeedEndOnReach);
+			.Process(this->SpeedEndOnReach)
+			.Process(this->OriginOriginIsOnTurret); // 2026-09-05 改名（原 OriginOriginIsOnBody，语义反转）
 		return stream.Success();
 	};
 
