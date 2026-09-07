@@ -81,6 +81,7 @@
     <ClCompile Include="src\Ext\EffectType\Effect\StackEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\StandEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\VampireEffect.cpp" />
+    <ClCompile Include="src\Ext\EffectType\Effect\CopyEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\VectorEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\TurretSpinEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\BodySpinEffect.cpp" />
