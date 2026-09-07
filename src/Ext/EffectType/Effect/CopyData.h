@@ -6,7 +6,7 @@
 // 实际效果约等于被带 AttachEffectTypes 的弹头击中 / 被 Broadcast 广播而附加 AE，
 // 只调用原有 Attach 基建，附加是否成功完全由原机制判定，Copy 不做干扰。
 //
-// 标签前缀 Copy.。完整设计与拍板记录见 src/Ext/EffectType/Effect/Copy.md。
+// 标签前缀 Copy.；各字段语义见字段注释与下方 Read() 的读取键。
 //
 // 机制解耦（永久铁律）：
 //   Copy.AttachTo   只管"贴给谁"（含贴对象死活 -> 是否贴）
@@ -31,7 +31,7 @@
 #include <Ext/Helper/StringEx.h> // ClearIfGetNone / CheckOnMarks
 
 // 粘贴对象选择（Copy.AttachTo 的取值）
-// 基线案例（Copy.md §3）：A=给宿主挂 CopyAE 的单位，B=宿主，C=被复制 AE 自己的来源
+// 角色约定：A=给宿主挂 CopyAE 的单位（CopyAE 来源），B=宿主，C=被复制 AE 自己的来源
 enum class CopyAttachTo : int
 {
 	Source = 0,        // 整份清单 -> CopyAE 的来源单位（基线 A，默认）
@@ -151,7 +151,7 @@ inline bool Parser<CopyFrom>::TryParse(const char* pValue, CopyFrom* outValue)
 	}
 }
 
-// 额外名单贴给谁（Copy.AdditionalAttachTo 的取值；无 Return，见 Copy.md §15）
+// 额外名单贴给谁（Copy.AdditionalAttachTo 的取值；无 Return）
 enum class CopyAdditionalAttachTo : int
 {
 	Source = 0,        // CopyAE 的来源（A）
@@ -206,13 +206,13 @@ public:
 	std::vector<std::string> DisallowMarks{};                       // INI: Copy.DisallowMarks 黑名单（AE 自带标记，优先）
 	bool Cut = false;                                               // INI: Copy.Cut（贴前移除宿主源 AE）
 	int Delay = 0;                                                  // INI: Copy.Delay（周期拷贝间隔帧，<=0 按 1 帧）
-	// Additional 附加通道（Copy.md §15；空名单=通道关闭）
+	// Additional 附加通道（空名单=通道关闭）
 	std::vector<std::string> AdditionalAttachEffects{};             // INI: Copy.AdditionalAttachEffects（额外按名附加的 AE 名单）
 	CopyAdditionalAttachTo AdditionalAttachTo = CopyAdditionalAttachTo::Source; // INI: Copy.AdditionalAttachTo（额外名单贴给谁）
 	CopyAttachFrom AdditionalAttachFrom = CopyAttachFrom::InitialSource;        // INI: Copy.AdditionalAttachFrom（额外名单来源记谁，复用 CopyAttachFrom 值集）
 
 	/// @brief Additional 涉及 InitialSource（需要来源名单）时必须显式给出白名单，
-	/// 不允许"空=读复制源身上全部 AE"（Copy.md §15.2/§12-24 拍板）
+	/// 不允许"空=读复制源身上全部 AE"（用户拍板）
 	bool NeedAdditionalSourceList() const
 	{
 		return !AllowTypes.empty() || !AllowMarks.empty();

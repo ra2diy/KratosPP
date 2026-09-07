@@ -6,7 +6,7 @@
 // 之后每 Copy.Delay 帧执行 1 次（Delay<=0 按 1 帧）；累计 Copy.TriggeredTimes
 // 次成功后整条 CopyAE 移除（Deactivate + AE->TimeToDie）。
 //
-// 单次执行主体 ExecuteOnce 对应 Copy.md §14 伪代码：
+// 单次执行主体 ExecuteOnce 的执行顺序：
 //   收集宿主全部生效 AE -> 过滤 -> 来源死活判定 -> (Cut) -> AttachTo 解析发放 -> 逐条 Attach
 // 每个动作都直接调用现有函数，无一处复制式重写（复用铁律）。
 // ============================================================================
@@ -19,7 +19,7 @@
 #include "../EffectScript.h"
 #include "CopyData.h"
 
-/// @brief 效果器：克隆宿主身上正在生效的 AE 的配置到指定对象（Copy.md §14）
+/// @brief 效果器：克隆宿主身上正在生效的 AE 的配置到指定对象
 class CopyEffect : public EffectScript
 {
 public:
@@ -58,17 +58,17 @@ public:
 #pragma endregion
 private:
 
-	/// @brief 单次拷贝执行主体（Copy.md §14 ExecuteOnce + §15 Additional 通道编排）
+	/// @brief 单次拷贝执行主体（主清单通道 + Additional 通道编排）
 	/// 成功 = 主清单或 Additional 至少一个通道有实际附加，计入 _count
 	void ExecuteOnce();
 
-	/// @brief Additional 附加通道（Copy.md §15）：把 AdditionalAttachEffects 名单按
+	/// @brief Additional 附加通道：把 AdditionalAttachEffects 名单按
 	/// AdditionalAttachTo/AdditionalAttachFrom 的迭代表逐轮按名附加
 	/// @return 是否有实际附加（用于成功计数）
 	/// @param fromAEM 复制源（Copy.From 对象）的 AE 管理器（收集来源名单用）
 	bool ExecuteAdditional(TechnoClass* host, TechnoClass* copySource, AttachEffect* fromAEM);
 
-	/// @brief AttachFrom 来源解析 + 死亡回退链（Copy.md §8；只决定"来源记谁"，与贴判定无关）
+	/// @brief AttachFrom 来源解析 + 死亡回退链（只决定"来源记谁"，与贴判定无关）
 	/// @param initialSource 被复制 AE 自己的来源（InitialSource 位）
 	/// @param copySource CopyAE 的来源（Source 位）
 	/// @param host 宿主（Target 位，恒活）

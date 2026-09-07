@@ -5,7 +5,7 @@
 #include <Ext/Helper/Scripts.h> // TryGetAEManager
 #include <Ext/Helper/Status.h>  // IsDeadOrInvisible
 
-// 候选 AE 快照：配置原值 + 来源 + 名字 + 自带标记（Copy.md §14 第 1 步）
+// 候选 AE 快照：配置原值 + 来源 + 名字 + 自带标记
 struct CopyAEInfo
 {
 	AttachEffectData data;
@@ -31,7 +31,7 @@ static bool CopyIsDead(TechnoClass* p)
 	return !p || IsDeadOrInvisible(p);
 }
 
-// 名单语义（Copy.md §7-A 与 §15 来源名单共用，只判"这条 AE 能否当线索/进清单"）：
+// 名单语义（主通道过滤与 Additional 来源名单共用，只判"这条 AE 能否当线索/进清单"）：
 // 剔除 Copy 类（含 CopyAE 自己）→ Disallow 黑名单优先 → Allow 白名单（空=放行）
 static bool CopyClueAllowed(const CopyData* data, const CopyAEInfo& info)
 {
@@ -89,7 +89,7 @@ void CopyEffect::ExecuteOnce()
 	TechnoClass* host = pTechno;          // 宿主（EffectScript::pTechno，宿主非 Techno 时为 null）
 	if (!host)
 	{
-		return; // 宿主须是 Techno（Copy.md §10-1）
+		return; // 宿主须是 Techno
 	}
 	TechnoClass* copySource = myAE->pSource; // CopyAE 的来源（Source 位 / 回退链 Source 位）
 
@@ -119,9 +119,9 @@ void CopyEffect::ExecuteOnce()
 		ae->GetMarks(marks); // 直接调用 AttachEffectScript::GetMarks（单条 AE 自带标记）
 		infos.push_back({ ae->AEData, ae->pSource, ae->AEData.Name, marks });
 	});
-	// 快照收集完成后才做后续操作（Copy.md §10-5，防遍历中增删）
+	// 快照收集完成后才做后续操作（防遍历中增删）
 
-	// ---- 2. 过滤 -> 候选清单（Copy.md §7-A）----
+	// ---- 2. 过滤 -> 候选清单----
 	std::vector<CopyAEInfo> list;
 	for (const CopyAEInfo& info : infos)
 	{
@@ -131,7 +131,7 @@ void CopyEffect::ExecuteOnce()
 		}
 	}
 
-	// ---- 3. 判定来源死活（Copy.md §8.1）----
+	// ---- 3. 判定来源死活----
 	if (Data->DiscardOnInitialSourceDead)
 	{
 		// yes：清单级移除——来源单位已死的，所有来自它的 AE 一律移除
@@ -146,7 +146,7 @@ void CopyEffect::ExecuteOnce()
 	bool hasMain = false;
 	if (!list.empty())
 	{
-		// 4.1 Cut（Copy.md §9）：最终清单确定后立即移除复制源身上的源 AE
+		// 4.1 Cut：最终清单确定后立即移除复制源身上的源 AE
 		if (Data->Cut)
 		{
 			std::vector<std::string> names;
@@ -160,7 +160,7 @@ void CopyEffect::ExecuteOnce()
 			fromAEM->DetachByName(names, true); // 现有基建：名字级移除，skipNext=true 跳过 Next 链
 		}
 
-		// 4.2 按 AttachTo 解析发放对象（Copy.md §6-6；死亡只影响是否贴）
+		// 4.2 按 AttachTo 解析发放对象（死亡只影响是否贴）
 		std::vector<CopyDispatch> dispatches;
 		bool targetOk = true;
 		switch (Data->AttachTo)
@@ -251,7 +251,7 @@ void CopyEffect::ExecuteOnce()
 			break;
 		}
 
-		// 4.3 逐对象逐条标准附加（Copy.md §6-7；AttachFrom 独立解析来源）
+		// 4.3 逐对象逐条标准附加（AttachFrom 独立解析来源）
 		if (targetOk)
 		{
 			for (const CopyDispatch& d : dispatches)
@@ -286,7 +286,7 @@ void CopyEffect::ExecuteOnce()
 		}
 	}
 
-	// ---- 5. Additional 附加通道（Copy.md §15；与主清单并行）----
+	// ---- 5. Additional 附加通道（与主清单并行）----
 	bool hasAdditional = false;
 	if (!Data->AdditionalAttachEffects.empty())
 	{
@@ -308,12 +308,12 @@ void CopyEffect::ExecuteOnce()
 
 bool CopyEffect::ExecuteAdditional(TechnoClass* host, TechnoClass* copySource, AttachEffect* fromAEM)
 {
-	// "贴给"或"来源"任一侧写了 InitialSource 才需要来源名单（Copy.md §15.2/15.3）
+	// "贴给"或"来源"任一侧写了 InitialSource 才需要来源名单
 	bool needList = Data->AdditionalAttachTo == CopyAdditionalAttachTo::InitialSource
 		|| Data->AdditionalAttachFrom == CopyAttachFrom::InitialSource;
 
 	// 用户拍板：涉及来源名单时必须显式给出 AllowTypes 或 AllowMarks（至少一个非空），
-	// 不允许"白名单空 = 把复制源身上全部 AE 都当线索"（Copy.md §12-24）
+	// 不允许"白名单空 = 把复制源身上全部 AE 都当线索"（用户拍板）
 	if (needList && !Data->NeedAdditionalSourceList())
 	{
 		return false; // 无显式白名单：不读全部 AE，该通道本次不执行
@@ -347,7 +347,7 @@ bool CopyEffect::ExecuteAdditional(TechnoClass* host, TechnoClass* copySource, A
 		});
 	}
 
-	// 附加轮数：涉及 InitialSource = 来源名单人数；否则只附加 1 次（Copy.md §15.3 规则）
+	// 附加轮数：涉及 InitialSource = 来源名单人数；否则只附加 1 次
 	int rounds = needList ? static_cast<int>(sources.size()) : 1;
 	bool hasAttached = false;
 	for (int i = 0; i < rounds; i++)
@@ -388,7 +388,7 @@ bool CopyEffect::ExecuteAdditional(TechnoClass* host, TechnoClass* copySource, A
 		{
 			continue;
 		}
-		// 发放对象过滤（与主通道同套，Copy.md §7-B）
+		// 发放对象过滤（与主通道同套）
 		if (!Data->CanAffectType(obj))
 		{
 			continue;
@@ -411,7 +411,7 @@ bool CopyEffect::ExecuteAdditional(TechnoClass* host, TechnoClass* copySource, A
 
 TechnoClass* CopyEffect::ResolveSource(TechnoClass* initialSource, TechnoClass* copySource, TechnoClass* host)
 {
-	// AttachFrom + 死亡回退链（Copy.md §8；只决定"来源记谁"，与 AttachTo/贴判定无关）
+	// AttachFrom + 死亡回退链（只决定"来源记谁"，与 AttachTo/贴判定无关）
 	TechnoClass* s = nullptr;
 	switch (Data->AttachFrom)
 	{
