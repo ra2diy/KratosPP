@@ -8,7 +8,7 @@
 //
 // 单次执行主体 ExecuteOnce 的执行顺序：
 //   收集宿主全部生效 AE -> 过滤 -> 来源死活判定 -> (Cut) -> AttachTo 解析发放 -> 逐条 Attach
-// 每个动作都直接调用现有函数，无一处复制式重写（复用铁律）。
+// 每个动作都直接调用现有函数，无一处复制式重写。
 // ============================================================================
 
 #include <string>
@@ -69,12 +69,14 @@ private:
 	bool ExecuteAdditional(TechnoClass* host, TechnoClass* copySource, AttachEffect* fromAEM);
 
 	/// @brief AttachFrom 来源解析 + 死亡回退链（只决定"来源记谁"，与贴判定无关）
-	/// @param initialSource 被复制 AE 自己的来源（InitialSource 位）
-	/// @param copySource CopyAE 的来源（Source 位）
-	/// @param host 宿主（Target 位，恒活）
-	TechnoClass* ResolveSource(TechnoClass* initialSource, TechnoClass* copySource, TechnoClass* host);
+	/// 回退规则：Source 死 -> Target 直退；InitialSource 死 -> Source -> 再死 -> Target
+	/// @param initialSource InitialSource 位（主通道=被复制 AE 的原来源；Additional=本轮分发对象）
+	/// @param copySource Source 位（CopyAE 的来源）
+	/// @param host Target 位（宿主，恒活）
+	/// @param mode 来源模式：主通道传 Data->AttachFrom，Additional 传 Data->AdditionalAttachFrom
+	TechnoClass* ResolveSource(TechnoClass* initialSource, TechnoClass* copySource, TechnoClass* host, CopyAttachFrom mode);
 
-	/// @brief 周期帧数：Delay>0 取 Delay，否则按 1 帧（拍板）
+	/// @brief 周期帧数：Delay>0 取 Delay，否则按 1 帧
 	/// 不能声明 const：Data getter（EFFECT_SCRIPT 生成）是非 const 方法
 	int GetDelayFrame()
 	{

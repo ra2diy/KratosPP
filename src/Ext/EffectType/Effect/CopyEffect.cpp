@@ -60,7 +60,7 @@ static bool CopyClueAllowed(const CopyData* data, const CopyAEInfo& info)
 
 void CopyEffect::OnStart()
 {
-	// AE 激活当帧立刻执行第 1 次拷贝（拍板：激活帧 t=0 执行第一次）
+	// AE 激活当帧立刻执行第 1 次拷贝（t=0 即第一次执行）
 	ExecuteOnce();
 	// 若还没到次数上限（或组件已被自己移除），启动周期等待下一轮
 	if (IsActive())
@@ -276,7 +276,7 @@ void CopyEffect::ExecuteOnce()
 				for (size_t i : d.items)
 				{
 					const CopyAEInfo& info = list[i];
-					TechnoClass* pSource = ResolveSource(info.source, copySource, host);
+					TechnoClass* pSource = ResolveSource(info.source, copySource, host, Data->AttachFrom);
 					// 直接调用现有基建 AttachEffect::Attach：Enable/铁幕/CanAffectType/排斥/金钱/
 					// 叠加/分组/Delay/Stack 等全套校验都在内部，Copy 不做任何预检、不干预结果
 					targetAEM->Attach(info.data, pSource, nullptr, CoordStruct::Empty, -1, false);
@@ -312,8 +312,8 @@ bool CopyEffect::ExecuteAdditional(TechnoClass* host, TechnoClass* copySource, A
 	bool needList = Data->AdditionalAttachTo == CopyAdditionalAttachTo::InitialSource
 		|| Data->AdditionalAttachFrom == CopyAttachFrom::InitialSource;
 
-	// 用户拍板：涉及来源名单时必须显式给出 AllowTypes 或 AllowMarks（至少一个非空），
-	// 不允许"白名单空 = 把复制源身上全部 AE 都当线索"（用户拍板）
+	// 涉及来源名单时必须显式给出 AllowTypes 或 AllowMarks（至少一个非空）：
+	// 不允许"白名单空 = 把复制源身上全部 AE 都当线索"
 	if (needList && !Data->NeedAdditionalSourceList())
 	{
 		return false; // 无显式白名单：不读全部 AE，该通道本次不执行
@@ -367,27 +367,20 @@ bool CopyEffect::ExecuteAdditional(TechnoClass* host, TechnoClass* copySource, A
 			obj = sources[i];
 			break;
 		}
-		// 本轮来源记谁（AdditionalAttachFrom）
-		TechnoClass* attachFrom = nullptr;
-		switch (Data->AdditionalAttachFrom)
-		{
-		case CopyAttachFrom::Source:
-			attachFrom = copySource;
-			break;
-		case CopyAttachFrom::Target:
-			attachFrom = host;
-			break;
-		case CopyAttachFrom::InitialSource:
-		default:
-			attachFrom = sources[i]; // needList 为 true 时必可达
-			break;
-		}
-
-		// 死亡只影响"贴不贴"与"来源可不可用"：对象死/来源死 -> 本轮跳过
-		if (CopyIsDead(obj) || CopyIsDead(attachFrom))
+		// 本轮目标死亡：不贴（目标死只影响贴不贴，与来源解析无关）
+		if (CopyIsDead(obj))
 		{
 			continue;
 		}
+		// 本轮来源记谁（AdditionalAttachFrom）：与主通道共用同一套回退链——
+		// Source 死 -> Target 直退；InitialSource（=本轮分发对象自己）死 -> Source -> 再死 -> Target；
+		// 直接调用 ResolveSource（模式参数传 Data->AdditionalAttachFrom），返回恒为存活单位。
+		// 仅当来源模式为 InitialSource 时才取 sources[i]，否则传 nullptr（该参数不会被使用）
+		TechnoClass* attachFrom = ResolveSource(
+			Data->AdditionalAttachFrom == CopyAttachFrom::InitialSource ? sources[i] : nullptr,
+			copySource,
+			host,
+			Data->AdditionalAttachFrom);
 		// 发放对象过滤（与主通道同套）
 		if (!Data->CanAffectType(obj))
 		{
@@ -409,11 +402,16 @@ bool CopyEffect::ExecuteAdditional(TechnoClass* host, TechnoClass* copySource, A
 	return hasAttached;
 }
 
-TechnoClass* CopyEffect::ResolveSource(TechnoClass* initialSource, TechnoClass* copySource, TechnoClass* host)
+TechnoClass* CopyEffect::ResolveSource(TechnoClass* initialSource, TechnoClass* copySource, TechnoClass* host, CopyAttachFrom mode)
 {
-	// AttachFrom + 死亡回退链（只决定"来源记谁"，与 AttachTo/贴判定无关）
+	// 来源解析 + 死亡回退（只决定"来源记谁"，与贴判定无关）：
+	//   Source      死 -> Target 直退（不回退到 InitialSource）
+	//   InitialSource 死 -> Source -> 再死 -> Target
+	//   Target     宿主恒活，无回退
+	// mode 由调用方传入：主通道用 Data->AttachFrom，Additional 通道用 Data->AdditionalAttachFrom，
+	// 两通道共用这一份实现，回退规则一致
 	TechnoClass* s = nullptr;
-	switch (Data->AttachFrom)
+	switch (mode)
 	{
 	case CopyAttachFrom::Source:
 		s = copySource;

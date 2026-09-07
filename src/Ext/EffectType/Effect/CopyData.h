@@ -8,7 +8,7 @@
 //
 // 标签前缀 Copy.；各字段语义见字段注释与下方 Read() 的读取键。
 //
-// 机制解耦（永久铁律）：
+// 机制解耦（每个标签只管自己定义的那件事）：
 //   Copy.AttachTo   只管"贴给谁"（含贴对象死活 -> 是否贴）
 //   Copy.AttachFrom 只管"副本来源记谁"（含死亡回退链，所有 AttachTo 模式下恒常工作）
 //   Copy.DiscardOnInitialSourceDead 只管"来源死亡 -> 清单级移除"
@@ -212,7 +212,7 @@ public:
 	CopyAttachFrom AdditionalAttachFrom = CopyAttachFrom::InitialSource;        // INI: Copy.AdditionalAttachFrom（额外名单来源记谁，复用 CopyAttachFrom 值集）
 
 	/// @brief Additional 涉及 InitialSource（需要来源名单）时必须显式给出白名单，
-	/// 不允许"空=读复制源身上全部 AE"（用户拍板）
+	/// 不允许"空=读复制源身上全部 AE"
 	bool NeedAdditionalSourceList() const
 	{
 		return !AllowTypes.empty() || !AllowMarks.empty();
@@ -223,7 +223,7 @@ public:
 		// 基类 FilterData 的 AffectTypes/NotAffectTypes/OnlyAffectMarks/NotAffectMarks
 		// 参与行为（发放对象类型/标记检查，见 CopyEffect::ExecuteOnce 第 7 步）；
 		// 其余对象级过滤字段（类别开关默认全开、Affects* 阵营等）读入但 Copy 不查。
-		// 拍板：TriggeredTimes 默认 1（不写 = 激活帧拷 1 次即移除），基类默认 -1 需覆盖
+		// TriggeredTimes 默认 1（不写 = 激活帧拷 1 次即移除）；基类默认 -1，需覆盖
 		this->TriggeredTimes = 1;
 	}
 
