@@ -210,12 +210,16 @@ public:
 	std::vector<std::string> AdditionalAttachEffects{};             // INI: Copy.AdditionalAttachEffects（额外按名附加的 AE 名单）
 	CopyAdditionalAttachTo AdditionalAttachTo = CopyAdditionalAttachTo::Source; // INI: Copy.AdditionalAttachTo（额外名单贴给谁）
 	CopyAttachFrom AdditionalAttachFrom = CopyAttachFrom::InitialSource;        // INI: Copy.AdditionalAttachFrom（额外名单来源记谁，复用 CopyAttachFrom 值集）
+	bool CollectAllForAdditional = false;                                       // INI: Copy.CollectAllForAdditional（见 NeedAdditionalSourceList 注释）
 
-	/// @brief Additional 涉及 InitialSource（需要来源名单）时必须显式给出白名单，
-	/// 不允许"空=读复制源身上全部 AE"
+	/// @brief Additional 涉及 InitialSource（需要来源名单）时的名单来源条件。
+	/// 默认要求 AllowTypes 或 AllowMarks 至少一个非空，否则来源名单无从界定；
+	/// Copy.CollectAllForAdditional=yes 时豁免该要求：名单空也按全量检索
+	/// （来源名单 = 复制源身上全部非 Copy 类生效 AE 的来源去重，与主通道名单空时的行为一致）。
+	/// 已显式写名单时本标签无效（名单语义优先）。
 	bool NeedAdditionalSourceList() const
 	{
-		return !AllowTypes.empty() || !AllowMarks.empty();
+		return !AllowTypes.empty() || !AllowMarks.empty() || CollectAllForAdditional;
 	}
 
 	CopyData() : EffectData()
@@ -259,6 +263,7 @@ public:
 		ClearIfGetNone(AdditionalAttachEffects);
 		AdditionalAttachTo = reader->Get(title + "AdditionalAttachTo", AdditionalAttachTo);
 		AdditionalAttachFrom = reader->Get(title + "AdditionalAttachFrom", AdditionalAttachFrom);
+		CollectAllForAdditional = reader->Get(title + "CollectAllForAdditional", CollectAllForAdditional);
 	}
 
 #pragma region save/load
@@ -279,6 +284,7 @@ public:
 			.Process(this->AdditionalAttachEffects)
 			.Process(this->AdditionalAttachTo)
 			.Process(this->AdditionalAttachFrom)
+			.Process(this->CollectAllForAdditional)
 			.Success();
 	};
 

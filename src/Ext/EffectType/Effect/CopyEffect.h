@@ -62,11 +62,12 @@ private:
 	/// 成功 = 主清单或 Additional 至少一个通道有实际附加，计入 _count
 	void ExecuteOnce();
 
-	/// @brief Additional 附加通道：把 AdditionalAttachEffects 名单按
-	/// AdditionalAttachTo/AdditionalAttachFrom 的迭代表逐轮按名附加
+	/// @brief Additional 附加：按 AdditionalAttachTo/AdditionalAttachFrom 逐轮把额外名单
+	/// 整串按名附加。是否执行与来源名单已由 ExecuteOnce 第 3.5 步（基于 Cut 前的快照）决策
 	/// @return 是否有实际附加（用于成功计数）
-	/// @param fromAEM 复制源（Copy.From 对象）的 AE 管理器（收集来源名单用）
-	bool ExecuteAdditional(TechnoClass* host, TechnoClass* copySource, AttachEffect* fromAEM);
+	/// @param needList 是否涉及来源名单（AdditionalAttachTo/From 含 InitialSource）
+	/// @param sources 来源名单（needList 时为去重后的存活来源列表；否则为空）
+	bool ExecuteAdditional(TechnoClass* host, TechnoClass* copySource, bool needList, const std::vector<TechnoClass*>& sources);
 
 	/// @brief AttachFrom 来源解析 + 死亡回退链（只决定"来源记谁"，与贴判定无关）
 	/// 回退规则：Source 死 -> Target 直退；InitialSource 死 -> Source -> 再死 -> Target

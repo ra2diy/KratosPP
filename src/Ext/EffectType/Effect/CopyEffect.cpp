@@ -31,6 +31,24 @@ static bool CopyIsDead(TechnoClass* p)
 	return !p || IsDeadOrInvisible(p);
 }
 
+// 从一份 AE 清单收集各 AE 初始来源的去重存活列表。
+// 主通道 AttachTo=InitialSource 的广播目标与 Additional 的来源名单共用（同一名单过滤
+// 结果 list 的两种投影）；死源剔除——死人当不了目标也当不了来源
+static void CollectSources(const std::vector<CopyAEInfo>& items, std::vector<TechnoClass*>& out)
+{
+	for (const CopyAEInfo& info : items)
+	{
+		if (CopyIsDead(info.source))
+		{
+			continue;
+		}
+		if (std::find(out.begin(), out.end(), info.source) == out.end())
+		{
+			out.push_back(info.source);
+		}
+	}
+}
+
 // 名单语义（主通道过滤与 Additional 来源名单共用，只判"这条 AE 能否当线索/进清单"）：
 // 剔除 Copy 类（含 CopyAE 自己）→ Disallow 黑名单优先 → Allow 白名单（空=放行）
 static bool CopyClueAllowed(const CopyData* data, const CopyAEInfo& info)
@@ -142,6 +160,30 @@ void CopyEffect::ExecuteOnce()
 	}
 	// no：保留（是否贴由 AttachTo 判定；来源解析走 ResolveSource 回退链）
 
+	// ---- 3.5 Additional 决策（先于 Cut）----
+	// 与主通道共用同一份快照与同一套名单：主清单 list 就是名单命中的 AE，
+	// Additional 来源名单 = list 各 AE 的存活去重来源（CollectSources），不单独重复过滤。
+	// 名单在 Cut 前已定，Cut 移除主清单源 AE 不影响这里
+	bool addNeedList = Data->AdditionalAttachTo == CopyAdditionalAttachTo::InitialSource
+		|| Data->AdditionalAttachFrom == CopyAttachFrom::InitialSource;
+	bool addReady = !Data->AdditionalAttachEffects.empty();
+	std::vector<TechnoClass*> addSources; // 仅 addNeedList 为 true 时使用
+	if (addReady && addNeedList)
+	{
+		// 涉及来源名单时的名单来源条件：默认要求 AllowTypes/AllowMarks 至少一个非空，
+		// 避免"空 = 把复制源身上全部 AE 都当线索"；Copy.CollectAllForAdditional=yes
+		// 豁免该要求——名单空也放行全量检索（此时主清单 list 本就是全量，CollectSources 照常收集）。
+		// 已写名单时本标签无效（名单语义优先）
+		if (!Data->NeedAdditionalSourceList())
+		{
+			addReady = false; // 该通道本次不执行
+		}
+		else
+		{
+			CollectSources(list, addSources); // 主清单命中 AE 的来源去重（剔死源）
+		}
+	}
+
 	// ---- 4. 主清单通道（清单为空则该通道跳过，不影响 Additional）----
 	bool hasMain = false;
 	if (!list.empty())
@@ -192,17 +234,7 @@ void CopyEffect::ExecuteOnce()
 		{
 			// 广播：先出清单内各 AE 初始来源的去重清单（死源不发），每个来源都收整份清单
 			std::vector<TechnoClass*> sources;
-			for (const CopyAEInfo& info : list)
-			{
-				if (CopyIsDead(info.source))
-				{
-					continue;
-				}
-				if (std::find(sources.begin(), sources.end(), info.source) == sources.end())
-				{
-					sources.push_back(info.source);
-				}
-			}
+			CollectSources(list, sources); // 共享收集（与 Additional 来源名单同一逻辑）
 			if (sources.empty())
 			{
 				targetOk = false;
@@ -286,11 +318,12 @@ void CopyEffect::ExecuteOnce()
 		}
 	}
 
-	// ---- 5. Additional 附加通道（与主清单并行）----
+	// ---- 5. Additional 附加（决策在 3.5 已完成：来源名单基于 Cut 前的快照；
+	// 附加动作在 Cut 之后执行，Cut 不可能波及本通道刚附加的 AE）----
 	bool hasAdditional = false;
-	if (!Data->AdditionalAttachEffects.empty())
+	if (addReady)
 	{
-		hasAdditional = ExecuteAdditional(host, copySource, fromAEM);
+		hasAdditional = ExecuteAdditional(host, copySource, addNeedList, addSources);
 	}
 
 	// ---- 6. 成功判定与次数管理：任一通道有实际附加即算本次成功 ----
@@ -306,47 +339,10 @@ void CopyEffect::ExecuteOnce()
 	}
 }
 
-bool CopyEffect::ExecuteAdditional(TechnoClass* host, TechnoClass* copySource, AttachEffect* fromAEM)
+bool CopyEffect::ExecuteAdditional(TechnoClass* host, TechnoClass* copySource, bool needList, const std::vector<TechnoClass*>& sources)
 {
-	// "贴给"或"来源"任一侧写了 InitialSource 才需要来源名单
-	bool needList = Data->AdditionalAttachTo == CopyAdditionalAttachTo::InitialSource
-		|| Data->AdditionalAttachFrom == CopyAttachFrom::InitialSource;
-
-	// 涉及来源名单时必须显式给出 AllowTypes 或 AllowMarks（至少一个非空）：
-	// 不允许"白名单空 = 把复制源身上全部 AE 都当线索"
-	if (needList && !Data->NeedAdditionalSourceList())
-	{
-		return false; // 无显式白名单：不读全部 AE，该通道本次不执行
-	}
-
-	// 来源名单：从复制源身上生效 AE 中筛线索（名单语义同主通道），收来源去重、死源剔除
-	std::vector<TechnoClass*> sources;
-	if (needList)
-	{
-		fromAEM->ForeachChild([&](Component* c) {
-			AttachEffectScript* ae = dynamic_cast<AttachEffectScript*>(c);
-			if (!ae || !ae->IsAlive())
-			{
-				return;
-			}
-			std::vector<std::string> marks;
-			ae->GetMarks(marks);
-			CopyAEInfo info{ ae->AEData, ae->pSource, ae->AEData.Name, marks };
-			if (!CopyClueAllowed(Data, info))
-			{
-				return; // 不在名单（或带 Copy 类）：其来源直接丢弃
-			}
-			if (CopyIsDead(info.source))
-			{
-				return; // 来源已死：当不了目标也当不了来源
-			}
-			if (std::find(sources.begin(), sources.end(), info.source) == sources.end())
-			{
-				sources.push_back(info.source);
-			}
-		});
-	}
-
+	// 本函数只做迭代附加：是否执行与来源名单（needList + sources）已由 ExecuteOnce 第 3.5 步
+	// 基于 Cut 前的快照决策完毕，这里不再读取复制源身上的 AE
 	// 附加轮数：涉及 InitialSource = 来源名单人数；否则只附加 1 次
 	int rounds = needList ? static_cast<int>(sources.size()) : 1;
 	bool hasAttached = false;
