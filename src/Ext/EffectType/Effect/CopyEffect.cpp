@@ -171,7 +171,7 @@ void CopyEffect::ExecuteOnce()
 	if (addReady && addNeedList)
 	{
 		// 涉及来源名单时的名单来源条件：默认要求 AllowTypes/AllowMarks 至少一个非空，
-		// 避免"空 = 把复制源身上全部 AE 都当线索"；Copy.CollectAllForAdditional=yes
+		// 避免"空 = 把复制源身上全部 AE 都当线索"；Copy.AdditionalIgnoreAllow=yes
 		// 豁免该要求——名单空也放行全量检索（此时主清单 list 本就是全量，CollectSources 照常收集）。
 		// 已写名单时本标签无效（名单语义优先）
 		if (!Data->NeedAdditionalSourceList())
