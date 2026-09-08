@@ -1,12 +1,12 @@
 ﻿#pragma once
 // ============================================================================
-// CopyEffect — 效果器脚本层（纯主线程）
+// AddByExistingEffect — 效果器脚本层（Copy 同源族）
 //
-// 生命周期：AE 激活（_started=true）当帧 OnStart 立刻执行第 1 次；
-// 之后每 Copy.Delay 帧执行 1 次（Delay<=0 按 1 帧）；累计 Copy.TriggeredTimes
-// 次成功后整条 CopyAE 移除（Deactivate + AE->TimeToDie）。
-// 单次执行主体 ExecuteOnce：收集观察源快照 -> Watch 过滤 -> Discard -> (Cut)
-// -> AttachTo 解析发放 -> 逐条标准附加。附加动作直接调用现有 Attach 基建。
+// 生命周期与 Copy 一致：AE 激活当帧 OnStart 执行第 1 次 -> 每 AddByExisting.Delay
+// 帧一次（<=0 按 1 帧）-> 累计 AddByExisting.TriggeredTimes 次成功后整条 AE 移除。
+// 单次执行主体 ExecuteOnce：收集观察源快照 -> Watch 过滤得线索 -> 需要来源名单时
+// 收线索来源去重 -> 逐轮（目标 + 来源 + 发放过滤）整串按名附加 AttachEffects。
+// 观察只提供"分发给谁 / 来源记谁"的角色，附加内容始终是 INI 固定名单。
 // ============================================================================
 
 #include <string>
@@ -15,13 +15,13 @@
 #include <GeneralDefinitions.h> // CDTimerClass（YRpp/Timer.h）
 
 #include "../EffectScript.h"
-#include "CopyData.h"
+#include "AddByExistingData.h"
 
-/// @brief 效果器：观察指定单位身上的 AE，把命中观察名单的 AE 贴到选定目标
-class CopyEffect : public EffectScript
+/// @brief 效果器：观察指定单位身上的 AE，把固定名单按名附加到选定目标
+class AddByExistingEffect : public EffectScript
 {
 public:
-	EFFECT_SCRIPT(Copy);
+	EFFECT_SCRIPT(AddByExisting);
 
 	virtual void Clean() override
 	{
@@ -51,7 +51,7 @@ public:
 	virtual bool Save(ExStreamWriter& stream) const override
 	{
 		EffectScript::Save(stream);
-		return const_cast<CopyEffect*>(this)->Serialize(stream);
+		return const_cast<AddByExistingEffect*>(this)->Serialize(stream);
 	}
 #pragma endregion
 private:
@@ -66,6 +66,6 @@ private:
 		return Data->Delay > 0 ? Data->Delay : 1;
 	}
 
-	int _count = 0;          // 已成功执行次数（成功=清单非空且至少一个有效发放对象）
+	int _count = 0;          // 已成功执行次数（成功=至少一个有效轮次完成附加）
 	CDTimerClass _cycleTimer{}; // 周期计时（第一次由 OnStart 启动）
 };
