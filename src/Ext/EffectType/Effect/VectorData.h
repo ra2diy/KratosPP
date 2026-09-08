@@ -108,8 +108,7 @@ public:
 	double CircleAngleAcceleration = 0.0; // 角速度每步加速度
 	double CircleMaxAngle = 0.0;     // 角速度上限，0=不限
 	double CircleMinAngle = 0.0;     // 角速度下限，0=不限
-	CoordStruct CircleOrigin{};       // 圆心偏移（默认世界坐标，AllowOriginTilt=yes 时 FLH 旋转）
-	bool AllowOriginTilt = true;      // yes=圆心偏移跟随转轴倾斜
+	bool AllowOriginTilt = true;      // yes=OriginFLH 偏移跟随转轴倾斜（完整姿态摆放），no=仅水平朝向
 	int CircleRandomRadiusMin = 0;    // 初始半径随机下限
 	int CircleRandomRadiusMax = 0;    // 初始半径随机上限
 	double CircleRandomAngleMin = 0.0; // 初始角速度随机下限
@@ -121,10 +120,20 @@ public:
 	int CircleMinRadius = 0;           // 半径下限，0=不限
 	bool CircleEndOnMaxRadius = false; // 半径达到上限时结束 AE
 	bool CircleEndOnMinRadius = false; // 半径达到下限时结束 AE
-	bool CircleDynamic = false;        // （INI: Vector.CircleDynamic）yes=进入圆瞬间现算初始值：
-									   //   半径=弹体到管线圆心水平距（0→回退 CircleRadius→648）
-									   //   圆心高度=弹体进入高度（覆写 CircleOrigin.Z，INI 的 Z 作废）。
-									   //   只改初始值一次，后续消费管线零改动
+	bool CircleDynamic = false;        // （INI: Vector.CircleDynamic）总开关：yes=进入圆瞬间现算初始值（默认
+									   //   圆心高度+半径都动态）。分开关 CircleHeightDynamic/CircleRadiusDynamic
+									   //   显式写 no 可关闭对应子项（未写=跟随总开关；总开关 no 时全不生效）
+	bool CircleHeightDynamic = true;   // （INI: Vector.CircleHeightDynamic）圆心高度动态：进入帧圆心 Z = 弹体
+									   //   进入高度（覆写 OriginFLH.Z 一次，INI 的 Z 作废）。仅在 CircleDynamic=yes 时有意义
+	bool CircleRadiusDynamic = true;   // （INI: Vector.CircleRadiusDynamic）半径动态：进入帧半径 = 弹体到圆心
+									   //   水平距（0 → 回退 CircleRadius → 648）。仅在 CircleDynamic=yes 时有意义
+
+	// 圆心偏移随机（Vector.OriginOffsetF/L/H=min,max，两参区间，同 TargetOffset 风格）：
+	// 进入瞬间随机一次定格，结果按世界 FLH 轴直摆（不随 Origin 姿态旋转），在圆心定值后
+	// 并入圆心本身（圆心 = 解算值 + 偏移；圆周消费读取合成后圆心）
+	int OriginOffsetFMin = 0, OriginOffsetFMax = 0;   // F 轴（世界北向）
+	int OriginOffsetLMin = 0, OriginOffsetLMax = 0;   // L 轴（世界左向）
+	int OriginOffsetHMin = 0, OriginOffsetHMax = 0;   // H 轴（竖直向上）
 
 	// ========================================================================
 	// 圆心运动（Vector.Origin.* 系列，Circle 模式专用）
@@ -162,10 +171,23 @@ public:
 	int OriginCircleRadiusGrow = 0;
 	int OriginCircleMaxRadius = 0, OriginCircleMinRadius = 0;
 	bool OriginCircleEndOnMaxRadius = false, OriginCircleEndOnMinRadius = false;
-	bool OriginCircleDynamic = false;  // （INI: Vector.Origin.CircleDynamic）yes=进入大圆瞬间现算初始值：
-									   //   Origin.CircleRadius=弹体到基准点水平距（0→回退配置→648）
-									   //   基准点高度=弹体进入高度（覆写 Origin.CircleOrigin 的 Z，INI 的 Z 作废）
-									   //   只改初始值一次，后续消费管线零改动。大圆必须配小圆才成立
+	bool OriginCircleDynamic = false;  // （INI: Vector.Origin.CircleDynamic）总开关：yes=进入大圆瞬间现算初始值
+									   //   （默认基准点高度+大圆半径都动态）。分开关 OriginCircleHeightDynamic/
+									   //   OriginCircleRadiusDynamic 显式写 no 可关闭对应子项（未写=跟随总开关；
+									   //   总开关 no 时全不生效）。大圆必须配小圆才成立
+	bool OriginCircleHeightDynamic = true;  // （INI: Vector.Origin.CircleHeightDynamic）基准点高度动态：进入帧
+										    //   基准点 Z = 弹体进入高度（覆写 Origin.OriginFLH 的 Z 一次，INI 的 Z 作废）。
+										    //   仅在 OriginCircleDynamic=yes 时有意义
+	bool OriginCircleRadiusDynamic = true;  // （INI: Vector.Origin.CircleRadiusDynamic）大圆半径动态：进入帧
+										    //   Origin.CircleRadius = 弹体到基准点水平距（0 → 回退配置 → 648）。
+										    //   仅在 OriginCircleDynamic=yes 时有意义
+
+	// 大圆基准点偏移随机（Vector.Origin.OriginOffsetF/L/H=min,max，两参区间，同小圆 OriginOffset 风格）：
+	// 进入瞬间随机一次定格，结果按世界 FLH 轴直摆（不随 OriginOrigin 姿态旋转），在基准点解算后
+	// 并入基准点本身（基准点 = 解算值 + 偏移）
+	int OriginOriginOffsetFMin = 0, OriginOriginOffsetFMax = 0;   // F 轴（世界北向）
+	int OriginOriginOffsetLMin = 0, OriginOriginOffsetLMax = 0;   // L 轴（世界左向）
+	int OriginOriginOffsetHMin = 0, OriginOriginOffsetHMax = 0;   // H 轴（竖直向上）
 	// 法线
 	CoordStruct OriginNormalVector{};
 	CoordStruct OriginNormalRandomF{}, OriginNormalRandomL{}, OriginNormalRandomH{};
@@ -180,7 +202,6 @@ public:
 	// 原 OriginAllowCircleTilt（跟随目标 Z 差）已删除
 	bool OriginIsNormalOnOrigin = true;   // 大圆法向量：yes（默认）=每帧跟随 OriginOrigin 单位自身朝向转动，no=世界固定
 	bool OriginNormalIsOnTurret = false;  // 大圆法向量随动（OriginIsNormalOnOrigin=yes）姿态源：yes=随炮塔，no=随车身（默认）。与 OriginOriginIsOnTurret（OriginOriginFLH 挂点）解耦。INI: Vector.Origin.NormalIsOnTurret
-	CoordStruct OriginCircleOffset{};     // 圆心原点偏移（世界坐标）
 	bool OriginAllowOriginTilt = true;
 	bool OriginOriginNoUpdate = false;   // yes=解算起始点冻结在初始位置，不随目标移动
 	double OriginLissajous = 0.0;        // 大圆圆周 F 轴偏移角速度（°/step），0=不偏移
@@ -367,7 +388,6 @@ public:
 		}
 		CircleMaxAngle = reader->Get(title + "CircleMaxAngle", 0.0);
 		CircleMinAngle = reader->Get(title + "CircleMinAngle", 0.0);
-		CircleOrigin = reader->Get(title + "CircleOrigin", CircleOrigin);
 		AllowOriginTilt = reader->Get(title + "AllowOriginTilt", AllowOriginTilt);
 		CircleRadiusGrow = reader->Get(title + "CircleRadiusGrow", 0);
 		CircleMaxRadius = reader->Get(title + "CircleMaxRadius", 0);
@@ -375,6 +395,14 @@ public:
 		CircleEndOnMaxRadius = reader->Get(title + "CircleEndOnMaxRadius", false);
 		CircleEndOnMinRadius = reader->Get(title + "CircleEndOnMinRadius", false);
 		CircleDynamic = reader->Get(title + "CircleDynamic", false);
+		CircleHeightDynamic = reader->Get(title + "CircleHeightDynamic", true);
+		CircleRadiusDynamic = reader->Get(title + "CircleRadiusDynamic", true);
+		std::string originOffsetFStr = reader->Get(title + "OriginOffsetF", std::string{ "" });
+		ParseMinMax(originOffsetFStr, OriginOffsetFMin, OriginOffsetFMax);
+		std::string originOffsetLStr = reader->Get(title + "OriginOffsetL", std::string{ "" });
+		ParseMinMax(originOffsetLStr, OriginOffsetLMin, OriginOffsetLMax);
+		std::string originOffsetHStr = reader->Get(title + "OriginOffsetH", std::string{ "" });
+		ParseMinMax(originOffsetHStr, OriginOffsetHMin, OriginOffsetHMax);
 
 		// --- Origin ---
 		OriginMoveTo = reader->Get(title + "Origin.MoveTo", OriginMoveTo);
@@ -414,6 +442,14 @@ public:
 		OriginCircleEndOnMaxRadius = reader->Get(title + "Origin.CircleEndOnMaxRadius", false);
 		OriginCircleEndOnMinRadius = reader->Get(title + "Origin.CircleEndOnMinRadius", false);
 		OriginCircleDynamic = reader->Get(title + "Origin.CircleDynamic", false);
+		OriginCircleHeightDynamic = reader->Get(title + "Origin.CircleHeightDynamic", true);
+		OriginCircleRadiusDynamic = reader->Get(title + "Origin.CircleRadiusDynamic", true);
+		std::string originOriginOffsetFStr = reader->Get(title + "Origin.OriginOffsetF", std::string{ "" });
+		ParseMinMax(originOriginOffsetFStr, OriginOriginOffsetFMin, OriginOriginOffsetFMax);
+		std::string originOriginOffsetLStr = reader->Get(title + "Origin.OriginOffsetL", std::string{ "" });
+		ParseMinMax(originOriginOffsetLStr, OriginOriginOffsetLMin, OriginOriginOffsetLMax);
+		std::string originOriginOffsetHStr = reader->Get(title + "Origin.OriginOffsetH", std::string{ "" });
+		ParseMinMax(originOriginOffsetHStr, OriginOriginOffsetHMin, OriginOriginOffsetHMax);
 		OriginNormalVector = reader->Get(title + "Origin.NormalVector", OriginNormalVector);
 		OriginNormalIsOnTurret = reader->Get(title + "Origin.NormalIsOnTurret", false); // 默认 no=随车身；相对旧行为（恒炮塔）翻转
 		OriginNormalRandomF = reader->Get(title + "Origin.NormalRandomF", OriginNormalRandomF);
@@ -423,7 +459,6 @@ public:
 		OriginNormalLAnglePerStep = reader->Get(title + "Origin.NormalLAnglePerStep", 0.0);
 		OriginNormalHAnglePerStep = reader->Get(title + "Origin.NormalHAnglePerStep", 0.0);
 		OriginIsNormalOnOrigin = reader->Get(title + "Origin.IsNormalOnOrigin", true); // 默认跟随 OriginOrigin 单位，no 才世界固定
-		OriginCircleOffset = reader->Get(title + "Origin.CircleOrigin", OriginCircleOffset);
 		OriginAllowOriginTilt = reader->Get(title + "Origin.AllowOriginTilt", OriginAllowOriginTilt);
 		OriginOriginNoUpdate = reader->Get(title + "Origin.OriginNoUpdate", false);
 		OriginLissajous = reader->Get(title + "Origin.Lissajous", 0.0);
@@ -582,7 +617,6 @@ private:
 			.Process(this->CircleAngleAcceleration)
 			.Process(this->CircleMaxAngle)
 			.Process(this->CircleMinAngle)
-			.Process(this->CircleOrigin)
 			.Process(this->AllowOriginTilt)
 			.Process(this->CircleRandomRadiusMin)
 			.Process(this->CircleRandomRadiusMax)
@@ -595,6 +629,12 @@ private:
 			.Process(this->CircleMinRadius)
 			.Process(this->CircleEndOnMaxRadius)
 			.Process(this->CircleEndOnMinRadius)
+			.Process(this->CircleDynamic)
+			.Process(this->CircleHeightDynamic)
+			.Process(this->CircleRadiusDynamic)
+			.Process(this->OriginOffsetFMin).Process(this->OriginOffsetFMax)
+			.Process(this->OriginOffsetLMin).Process(this->OriginOffsetLMax)
+			.Process(this->OriginOffsetHMin).Process(this->OriginOffsetHMax)
 			.Process(this->OriginMoveTo).Process(this->OriginGrowRate)
 			.Process(this->OriginAnglePerStep).Process(this->OriginTargetFLH)
 			.Process(this->OriginLinearSpeed).Process(this->OriginReachTarget)
@@ -617,6 +657,12 @@ private:
 			.Process(this->OriginCircleRadiusGrow).Process(this->OriginCircleMaxRadius)
 			.Process(this->OriginCircleMinRadius)
 			.Process(this->OriginCircleEndOnMaxRadius).Process(this->OriginCircleEndOnMinRadius)
+			.Process(this->OriginCircleDynamic)
+			.Process(this->OriginCircleHeightDynamic)
+			.Process(this->OriginCircleRadiusDynamic)
+			.Process(this->OriginOriginOffsetFMin).Process(this->OriginOriginOffsetFMax)
+			.Process(this->OriginOriginOffsetLMin).Process(this->OriginOriginOffsetLMax)
+			.Process(this->OriginOriginOffsetHMin).Process(this->OriginOriginOffsetHMax)
 			.Process(this->OriginNormalVector)
 			.Process(this->OriginNormalIsOnTurret)
 			.Process(this->OriginNormalRandomF).Process(this->OriginNormalRandomL)
@@ -630,7 +676,7 @@ private:
 			.Process(this->OriginNormalHAngleRMin).Process(this->OriginNormalHAngleRMax)
 			.Process(this->OriginNormalHAngleRMin2).Process(this->OriginNormalHAngleRMax2)
 			.Process(this->OriginNormalFLissajous).Process(this->OriginNormalLLissajous).Process(this->OriginNormalHLissajous)
-			.Process(this->OriginIsNormalOnOrigin).Process(this->OriginCircleOffset)
+			.Process(this->OriginIsNormalOnOrigin)
 			.Process(this->OriginAllowOriginTilt).Process(this->OriginOriginNoUpdate)
 			.Process(this->OriginLissajous)
 			.Process(this->OriginOrigin)

@@ -113,6 +113,8 @@ void VectorEffect::Clean()
 
 	_randomTargetOffset = {};
 	_originTargetOffset = {};
+	_randomSmallCircleOriginOffset = {};
+	_randomBigCircleOriginOffset = {};
 
 	_bigCircleOffset = {};
 	_prevBigCircleCenter = {};
@@ -407,9 +409,10 @@ CoordStruct VectorEffect::ResolveTilting(const CoordStruct& base, const CoordStr
 }
 
 // Origin 解算流程（挂载复合/补读/每帧共用，消灭三处手写拷贝）：
-// 解算偏移 = OriginFLH + CircleOrigin（主圆圆心偏移，同姿态线性合并一次摆——
-// 小圆圆心 ≡ 完整解算起始点；两偏移组件不再各自现算，CircleOrigin 原"AllowOriginTilt=no
-// 世界直加"尾巴删除：纯直加只归 OriginIsOnWorld）。读 Origin 系标签填 PoseParams → ResolveTilting。
+// 解算偏移 = OriginFLH（圆心偏移唯一输入）。OriginIsOnWorld=yes 时本函数整体世界直加；
+// OriginOffsetF/L/H 随机偏移不进本函数——它在圆心最终定值后并入圆心本身
+// （圆心 = 本函数解算值 + 偏移，见 _randomSmallCircleOriginOffset 叠加点）。
+// 读 Origin 系标签填 PoseParams → ResolveTilting。
 // base = Origin 参考坐标（单位坐标/格子坐标；无锚停更帧 = 快照完整值，调用点不调本函数）；
 // fallbackFacing = 水平兜底朝向（仅 Self 弹体侧用：挂载 _fAxisDir / 每帧按载体刷新）；
 // currentPos = 弹体现在位置（无锚兜底连线的终点）。
@@ -422,18 +425,9 @@ CoordStruct VectorEffect::ResolveOriginTilting(const CoordStruct& base, const Di
 {
 	PoseParams pose;
 
-	// 解算偏移组合：OriginFLH + CircleOrigin 直加合并（线性旋转等价于旧"先摆 OriginFLH
-	// 再摆 CircleOrigin"两段；不再有 adjusted Z 覆写——见下方 2026-09-05 修正注）
+	// 解算偏移 = OriginFLH 单输入（CircleOrigin 冗余输入已删：它与 OriginFLH 同姿态线性
+	// 合并、无独立语义；圆心随机世界偏移改由 OriginOffsetF/L/H 在圆心定值后并入）
 	CoordStruct resolveFlh = Data->OriginFLH;
-	if (!Data->CircleOrigin.IsEmpty())
-	{
-		// CircleOrigin 链式直加（2026-09-05 用户确认：合计 = OriginFLH + CircleOrigin，
-		// 两偏移同姿态一次线性合并——原 adj.Z = OriginFLH.Z + adj.Z 覆写把 OriginFLH.Z 双计：
-		// 800+800 得 2400 是错的，正确 = 1600）
-		resolveFlh.X += Data->CircleOrigin.X;
-		resolveFlh.Y += Data->CircleOrigin.Y;
-		resolveFlh.Z += Data->CircleOrigin.Z;
-	}
 
 	// 世界直加（OriginIsOnWorld=yes，唯一直加来源——不由 AllowOriginTilt 决定）
 	if (Data->OriginIsOnWorld)
@@ -797,6 +791,31 @@ void VectorEffect::ParseTargetOffset()
 	}
 }
 
+// OriginOffsetF/L/H 圆心偏移随机（OnStart 随机一次定格）：区间有效（Min<Max）才取值，
+// 无效轴 = 0。随机出的 (F,L,H) 分量按世界 FLH 轴（朝北）直摆成世界坐标偏移（官方 API
+// 消化 90° 偏置/Y 镜像）。该偏移在圆心/基准点定值后并入其本身（圆心 = 解算值 + 偏移），
+// 圆周消费读取合成后圆心；偏移不随 Origin 姿态旋转。
+void VectorEffect::ParseOriginOffset()
+{
+	CoordStruct offset{};
+	if (Data->OriginOffsetFMin < Data->OriginOffsetFMax)
+		offset.X = Random::RandomRanged(Data->OriginOffsetFMin, Data->OriginOffsetFMax);
+	if (Data->OriginOffsetLMin < Data->OriginOffsetLMax)
+		offset.Y = Random::RandomRanged(Data->OriginOffsetLMin, Data->OriginOffsetLMax);
+	if (Data->OriginOffsetHMin < Data->OriginOffsetHMax)
+		offset.Z = Random::RandomRanged(Data->OriginOffsetHMin, Data->OriginOffsetHMax);
+	_randomSmallCircleOriginOffset = GetFLHAbsoluteCoords(CoordStruct::Empty, offset, DirStruct{}); // 官方API
+
+	CoordStruct bigOffset{};
+	if (Data->OriginOriginOffsetFMin < Data->OriginOriginOffsetFMax)
+		bigOffset.X = Random::RandomRanged(Data->OriginOriginOffsetFMin, Data->OriginOriginOffsetFMax);
+	if (Data->OriginOriginOffsetLMin < Data->OriginOriginOffsetLMax)
+		bigOffset.Y = Random::RandomRanged(Data->OriginOriginOffsetLMin, Data->OriginOriginOffsetLMax);
+	if (Data->OriginOriginOffsetHMin < Data->OriginOriginOffsetHMax)
+		bigOffset.Z = Random::RandomRanged(Data->OriginOriginOffsetHMin, Data->OriginOriginOffsetHMax);
+	_randomBigCircleOriginOffset = GetFLHAbsoluteCoords(CoordStruct::Empty, bigOffset, DirStruct{}); // 官方API
+}
+
 // 弧参数三件套（rotation/height/peakPercent 随机解析）——照搬旧版
 // origin=false 主，true 大圆
 void VectorEffect::ParseArcParams(bool origin)
@@ -1120,7 +1139,7 @@ void VectorEffect::LockFacing()
 	// 可走①矩阵深度（原只按水平朝向摆），弹体侧按自身朝向水平摆；姿态随快照定死。
 	// 存档点为空（techno 侧 Origin=Target 挂载瞬间目标未就绪，留待首帧补读）时不在此算，
 	// 等补读段补一次同款计算。
-	if ((!Data->OriginFLH.IsEmpty() || !Data->CircleOrigin.IsEmpty()) && !_lastPoint.IsEmpty())
+	if (!Data->OriginFLH.IsEmpty() && !_lastPoint.IsEmpty())
 	{
 		_lastPoint = ResolveOriginTilting(_lastPoint, _fAxisDir, pObject->GetCoords());
 	}
@@ -1155,6 +1174,7 @@ void VectorEffect::OnStart()
 	_motion.shadowTraveled = 0.0;
 
 	ParseTargetOffset();
+	ParseOriginOffset();
 	ParseArcParams(false); // 主弧
 	ParseArcParams(true);  // 大圆弧
 	ParseSpeed();
@@ -1210,7 +1230,7 @@ VectorResult VectorEffect::GetVectorResult()
 			// （techno 侧 SpawnManager/Aircraft 挂载瞬间目标未就绪，挂载复合被空存档守卫拦住，
 			//  目标到手后补上这次"位置 + 朝向 + 偏移"计算，与 LockFacing 末尾挂载复合同语义，
 			//  统一走 ResolveOriginTilting——三维（AllowOriginTilt=yes）+ 补读组合缺口随归一化补齐）。
-			if (Data->OriginNoUpdate && (!Data->OriginFLH.IsEmpty() || !Data->CircleOrigin.IsEmpty()))
+			if (Data->OriginNoUpdate && !Data->OriginFLH.IsEmpty())
 			{
 				// fallbackFacing（② 水平/兜底出口）按 IsOnOrigin 现算（fAxisDir 段在本段之后才跑）：
 				// yes=目标单位自身朝向，无朝向（格子/死亡）回退 目标点→弹体 连线；no=连线。
@@ -1602,16 +1622,16 @@ VectorResult VectorEffect::GetVectorResult()
 		break;
 	}
 
-	// OriginFLH 完整解算：解算点的定义 = Origin 参考坐标 + OriginFLH/CircleOrigin 经
+	// OriginFLH 完整解算：解算点的定义 = Origin 参考坐标 + OriginFLH 经
 	// OriginIsOnTurret/AllowOriginTilt 复合计算的最终偏移。统一"坐标点取值管线"
 	// ResolveOriginTilting（与挂载复合/补读同一入口）：
 	//   NoUpdate=yes 不在此算——挂载复合已算入偏移冻结，直接用（冻结）。
 	//   NoUpdate=no：锚活（或 Self 载体/快照空首算）→ 每帧重算完整解算点写回 _lastPoint；
 	//                 无锚且快照已建立（死亡/打格子）→ 停更——startPoint 已是 _lastPoint
 	//                 （最后完整解算点，含偏移），不调函数（防偏移双计/防死亡后连线重算）。
-	// 快照语义统一（2026-09-05）：_lastPoint 在帧末恒 = 完整解算点；死亡/打格子停更复用，
+	// 快照语义统一：_lastPoint 在帧末恒 = 完整解算点；死亡/打格子停更复用，
 	// 与 OriginNoUpdate=yes 的"算一次后不重算"同构，只是停点由无锚触发。
-	if (!Data->OriginNoUpdate && (!Data->OriginFLH.IsEmpty() || !Data->CircleOrigin.IsEmpty()))
+	if (!Data->OriginNoUpdate && !Data->OriginFLH.IsEmpty())
 	{
 		bool originRecalc = Data->Origin == VectorData::VectorOrigin::Self; // Self：载体活 = Vector 活，无死锚
 		if (!originRecalc)
@@ -1674,12 +1694,11 @@ VectorResult VectorEffect::GetVectorResult()
 		else if (speed > 0.0)
 			angleStep = Math::rad2deg(speed / calcRadius);
 
-	// 小圆圆心 = 完整解算起始点 startPoint：OriginFLH + CircleOrigin 已并入上方
-	// ResolveOriginTilting 一次姿态解算（同姿态线性合并），死亡停刷/NoUpdate 冻结随之
-	// 生效——无独立圆心状态，圆心不跳变。此处不再二次摆 CircleOrigin（原独立段已删除，
-	// 其 "AllowOriginTilt=no 世界直加 / 死锚直加" 分支作废：纯直加只归 OriginIsOnWorld，
-	// 死亡=停止计算由 _lastPoint 冻结承载）。
-	// 注（2026-09-05）：原"CircleOrigin 空 + OriginFLH 非空时圆心 Z = _vectorAcquireZ
+	// 小圆圆心 = 完整解算起始点 startPoint：OriginFLH 已并入上方
+	// ResolveOriginTilting 一次姿态解算，死亡停刷/NoUpdate 冻结随之
+	// 生效——无独立圆心状态，圆心不跳变（圆心随机世界偏移 OriginOffsetF/L/H
+	// 在圆心最终定值后并入圆心本身，见 _randomSmallCircleOriginOffset 叠加点）。
+	// 注：原"CircleOrigin 空 + OriginFLH 非空时圆心 Z = _vectorAcquireZ
 	// （弹体接管 Vector 瞬间高度）+ OriginFLH.Z"的旧规则已废除——圆心高度恒由解算点
 	// （Origin 参考点/格子/冻结值）决定，不再依赖弹体历史位置（打目标/打格子的
 	// OriginFLH 竖直偏移直接抬升参考点）。
@@ -1695,7 +1714,8 @@ VectorResult VectorEffect::GetVectorResult()
 
 			// ====================================================================
 			// 大圆基准点快照机制（_bigCircleStartPoint 只存"完整最终结果"）：
-			//   完整结果 = OriginOrigin 参考坐标 + OriginOriginFLH 挂点 + OriginCircleOffset，全部算完后的值。
+			//   完整结果 = OriginOrigin 参考坐标 + OriginOriginFLH 挂点 + Origin.OriginOffsetF/L/H
+			//   随机世界偏移，全部算完后的值。
 			//   首次（快照未建立）：无条件完整算一次写入快照——打格子/目标未就绪在此固化初始结果。
 			//   后续帧：读到活锚单位（OriginOriginNoUpdate=no）→ 完整重算并刷新快照；
 			//           读不到锚单位（目标死亡被清空 / 打格子从无单位 / NoUpdate 冻结）
@@ -1784,14 +1804,12 @@ VectorResult VectorEffect::GetVectorResult()
 					}
 				}
 
-				// OriginOriginFLH + OriginCircleOffset 合并偏移（C7：OriginCircleOffset 跟随
-				// Origin.AllowOriginTilt，两偏移相加后整体只做一次姿态摆放——与小圆 OriginFLH+
-				// CircleOrigin 线性合并同构，避免双重旋转误差）：
+				// OriginOriginFLH 挂点偏移：
 				//   Origin.AllowOriginTilt=yes 且 OriginOrigin 有存活单位 → 按单位完整姿态矩阵摆放
 				//     （useUnitPose：GetFLHAbsoluteCoords 含车身矩阵 + TurretOffset 转轴 + 炮塔差角；
 				//       onTurret 由 Origin.OriginIsOnTurret 决定：yes=挂炮塔，no=挂车身（默认））；
 				//   no / 单位死 / 无单位（打格子）→ 纯世界坐标加法（无姿态可跟随，配置语义）
-				CoordStruct originOffsetSum = Data->OriginOriginFLH + Data->OriginCircleOffset;
+				CoordStruct originOffsetSum = Data->OriginOriginFLH;
 				if (!originOffsetSum.IsEmpty())
 				{
 					if (Data->OriginAllowOriginTilt && anchorAlive)
@@ -1809,6 +1827,12 @@ VectorResult VectorEffect::GetVectorResult()
 						bigCircleStartPoint.Z += originOffsetSum.Z;
 					}
 				}
+				// Origin.OriginOffsetF/L/H 随机世界偏移（进入瞬间随机一次定格）：在基准点解算后
+				// 并入基准点本身（基准点 = 解算值 + 偏移），不随姿态旋转；此后绕行偏移与大圆
+				// 圆心消费读取的都是含偏移的合成基准点
+				bigCircleStartPoint.X += _randomBigCircleOriginOffset.X;
+				bigCircleStartPoint.Y += _randomBigCircleOriginOffset.Y;
+				bigCircleStartPoint.Z += _randomBigCircleOriginOffset.Z;
 
 				// 快照 = 完整最终结果（首帧或锚单位活时每帧刷新；NoUpdate=yes 只有首帧走这里）
 				_bigCircleStartPoint = bigCircleStartPoint;
@@ -1821,8 +1845,9 @@ VectorResult VectorEffect::GetVectorResult()
 
 			if (_elapsedFrames == 0)
 			{
-				// 初始偏移 = 0：大圆圆心直接用大圆解算起始点（bigCircleStartPoint，已含 Origin.CircleOrigin 偏移），
-				// 不绑定小圆圆心（smallCircleCenter）。小圆围绕大圆转，小圆圆心坐标对大圆无意义。
+				// 初始偏移 = 0：大圆圆心直接用大圆解算起始点（bigCircleStartPoint，已含挂点与
+				// Origin.OriginOffsetF/L/H 随机偏移），不绑定小圆圆心（smallCircleCenter）。
+				// 小圆围绕大圆转，小圆圆心坐标对大圆无意义。
 				_bigCircleOffset = {};
 				// Circle 初始化
 				_originMotion.circleRadius = Data->OriginCircleRadius;
@@ -2116,21 +2141,22 @@ VectorResult VectorEffect::GetVectorResult()
 			}
 			else // Circle 模式
 			{
-				// Vector.Origin.CircleDynamic=yes：进入大圆定格帧（大圆 Circle 首次消费 = 冻结期后首运动帧）现算初始值，只此一次。
-				// 语义（2026-09-06 用户拍板，与小圆同构）：Origin.CircleRadius = 弹体到大圆基准点水平距（丢弃高度差，
-				// 0 → 回退配置 OriginCircleRadius → 648）；基准点 = 管线解算 XY 不变，Z 丢弃改为弹体进入帧高度——
-				// 活摆（每帧重摆基准点）覆写 Origin.CircleOrigin（OriginCircleOffset）Z 一次；冻结（NoUpdate/死锚/打格子，
-				// 快照停更）直接改基准点快照 Z 一次。后续消费管线零改动。
+				// Vector.Origin.CircleDynamic=yes（总开关）：进入大圆定格帧（大圆 Circle 首次消费 = 冻结期后
+				// 首运动帧）现算初始值，只此一次。子项由分开关控制：OriginCircleHeightDynamic = 基准点 Z 抬到
+				// 弹体进入帧高度；OriginCircleRadiusDynamic = 半径取弹体到基准点水平距（0 → 回退配置 → 648）。
+				// 活摆（每帧重摆基准点）覆写 Origin.OriginFLH 的 Z 一次；冻结（NoUpdate/死锚/打格子，
+				// 快照停更）直接改基准点快照 Z 一次。高度覆写后基准点 Z 恒 = 弹体进入帧高度
+				//（Origin.OriginOffsetF/L/H 随机偏移的 Z 也一并被覆盖——高度动态语义优先）。
 				if (Data->OriginCircleDynamic && !_originDynamicSampled)
 				{
 					_originDynamicSampled = true;
-					// 基准点高度：仅当存在摆点偏移才需覆写（全空时基准点=参考点本身，Z 由参考点决定，无偏移可改）
-					if (!Data->OriginOriginFLH.IsEmpty() || !Data->OriginCircleOffset.IsEmpty())
+					// 基准点高度动态：仅当存在挂点偏移才需覆写（全空时基准点=参考点本身，Z 由参考点决定，无偏移可改）
+					if (Data->OriginCircleHeightDynamic && !Data->OriginOriginFLH.IsEmpty())
 					{
 						if (!Data->OriginOriginNoUpdate && anchorAlive)
 						{
-							// 活摆：覆写 OriginCircleOffset.Z（偏移输入一次，INI 的 Z 作废），下帧解算自然抬基准点
-							Data->OriginCircleOffset.Z += currentPos.Z - bigCircleStartPoint.Z;
+							// 活摆：覆写 Origin.OriginFLH 的 Z（偏移输入一次，INI 的 Z 作废），下帧解算自然抬基准点
+							Data->OriginOriginFLH.Z += currentPos.Z - bigCircleStartPoint.Z;
 							bigCircleStartPoint.Z = currentPos.Z; // 本帧消费同步（自愈式）
 						}
 						else
@@ -2140,13 +2166,16 @@ VectorResult VectorEffect::GetVectorResult()
 							bigCircleStartPoint.Z = currentPos.Z;
 						}
 					}
-					// Origin.CircleRadius = 弹体到大圆基准点水平距（丢弃高度差）
-					double rdx = currentPos.X - bigCircleStartPoint.X;
-					double rdy = currentPos.Y - bigCircleStartPoint.Y;
-					double dynBigRadius = std::sqrt(rdx * rdx + rdy * rdy);
-					if (dynBigRadius < 1.0) // 弹体恰在基准点正上/下方：回退已配置 OriginCircleRadius，未配置硬编码 648（用户拍板）
-						dynBigRadius = Data->OriginCircleRadius > 0 ? static_cast<double>(Data->OriginCircleRadius) : 648.0;
-					_originMotion.circleRadius = dynBigRadius;
+					// 大圆半径动态：Origin.CircleRadius = 弹体到大圆基准点水平距（丢弃高度差）
+					if (Data->OriginCircleRadiusDynamic)
+					{
+						double rdx = currentPos.X - bigCircleStartPoint.X;
+						double rdy = currentPos.Y - bigCircleStartPoint.Y;
+						double dynBigRadius = std::sqrt(rdx * rdx + rdy * rdy);
+						if (dynBigRadius < 1.0) // 弹体恰在基准点正上/下方：回退已配置 OriginCircleRadius，未配置硬编码 648
+							dynBigRadius = Data->OriginCircleRadius > 0 ? static_cast<double>(Data->OriginCircleRadius) : 648.0;
+						_originMotion.circleRadius = dynBigRadius;
+					}
 				}
 				_originMotion.circleRadius += Data->OriginCircleRadiusGrow;
 				double tr = _originMotion.circleRadius;
@@ -2199,6 +2228,15 @@ VectorResult VectorEffect::GetVectorResult()
 	}
 	_prevBigCircleCenter = smallCircleCenter;
 
+	// 圆心偏移随机（Vector.OriginOffsetF/L/H，进入瞬间随机一次定格，世界坐标）。
+	// 合成语义：圆心最终值 = 管线解算圆心 + 本偏移——偏移并入圆心对象本身（不是附加到
+	// 位移输出），此后圆周消费（dx/dy/currentDist/圆周点/半径）读取的都是含偏移的合成圆心。
+	// 偏移不随 Origin 姿态旋转。centerDelta/_prevBigCircleCenter 在并入前记录：偏移是定格
+	// 常量，两帧差值自然抵消，圆心移动跟踪不受其污染（数值与"并入后记录"等价）。
+	smallCircleCenter.X += _randomSmallCircleOriginOffset.X;
+	smallCircleCenter.Y += _randomSmallCircleOriginOffset.Y;
+	smallCircleCenter.Z += _randomSmallCircleOriginOffset.Z;
+
 	// 圆上目标基于内部跟踪位置（非 currentPos），避免与 MoveTo 等 AE 的位移打架
 	if (_circlePos.IsEmpty())
 		_circlePos = currentPos;
@@ -2239,7 +2277,9 @@ VectorResult VectorEffect::GetVectorResult()
 		if (currentDist < 1.0) currentDist = 1.0;
 
 		// 动态半径：首帧初始化，每帧叠加增长率
-		if (!Data->CircleDynamic && _elapsedFrames == 0)
+		// 半径非动态（CircleDynamic=no，或分开关 CircleRadiusDynamic=no）时走静态初始化：
+		// 配置值 → 当前水平距 → 随机区间
+		if (!(Data->CircleDynamic && Data->CircleRadiusDynamic) && _elapsedFrames == 0)
 		{
 			_motion.circleRadius = static_cast<double>(Data->CircleRadius);
 			if (_motion.circleRadius <= 0.0)
@@ -2247,17 +2287,16 @@ VectorResult VectorEffect::GetVectorResult()
 			if (Data->CircleRandomRadiusMax > Data->CircleRandomRadiusMin)
 				_motion.circleRadius = Random::RandomRanged(Data->CircleRandomRadiusMin, Data->CircleRandomRadiusMax);
 		}
-		// Vector.CircleDynamic=yes：进入圆定格帧（冻结期后首个实际运动帧 = 消费段首次到达）现算初始值，只此一次。
-		// 语义（2026-09-06 用户拍板）：半径 = 弹体到管线圆心水平距（丢弃高度差，0 → 回退 CircleRadius → 648）；
-		// 圆心 = 管线解算 XY 不变，Z 丢弃改为弹体进入帧高度——活摆（每帧重摆）覆写 CircleOrigin.Z 一次，
-		// 冻结（NoUpdate=yes/死锚/打格子，不再重摆）直接改圆心坐标 Z 一次。后续消费管线零改动。
+		// Vector.CircleDynamic=yes（总开关）：进入圆定格帧（冻结期后首个实际运动帧 = 消费段首次到达）
+		// 现算初始值，只此一次。子项由分开关控制：CircleHeightDynamic = 圆心 Z 抬到弹体进入帧高度；
+		// CircleRadiusDynamic = 半径取弹体到圆心水平距（0 → 回退 CircleRadius → 648）。后续消费管线零改动。
 		if (Data->CircleDynamic && !_circleDynamicSampled)
 		{
 			_circleDynamicSampled = true;
-			// 圆心高度：仅当存在偏移摆点才需覆写（无偏移时圆心 Z 不参与消费，弹体天然保持自身高度）
-			if (!Data->OriginFLH.IsEmpty() || !Data->CircleOrigin.IsEmpty())
+			// 圆心高度动态：仅当存在挂点偏移才需覆写（无偏移时圆心 Z 不参与消费，弹体天然保持自身高度）
+			if (Data->CircleHeightDynamic && !Data->OriginFLH.IsEmpty())
 			{
-				// 活摆判定（同 ResolveOriginTilting 每帧重摆条件 1611）：NoUpdate=no 且锚单位活（Self 恒活）
+				// 活摆判定（同 ResolveOriginTilting 每帧重摆条件）：NoUpdate=no 且锚单位活（Self 恒活）
 				bool originAlive = Data->Origin == VectorData::VectorOrigin::Self;
 				if (!originAlive)
 				{
@@ -2266,8 +2305,8 @@ VectorResult VectorEffect::GetVectorResult()
 				}
 				if (!Data->OriginNoUpdate && originAlive)
 				{
-					// 活摆：覆写 CircleOrigin.Z（偏移输入一次，INI 的 Z 作废），后续帧解算自然抬圆心到弹体进入高度
-					Data->CircleOrigin.Z += currentPos.Z - smallCircleCenter.Z;
+					// 活摆：覆写 OriginFLH 的 Z（偏移输入一次，INI 的 Z 作废），后续帧解算自然抬圆心到弹体进入高度
+					Data->OriginFLH.Z += currentPos.Z - smallCircleCenter.Z;
 					smallCircleCenter.Z = currentPos.Z; // 本帧消费同步（自愈式，下帧起解算自带）
 				}
 				else
@@ -2277,11 +2316,14 @@ VectorResult VectorEffect::GetVectorResult()
 					smallCircleCenter.Z = currentPos.Z;
 				}
 			}
-			// 半径 = 弹体到圆心水平距（丢弃高度差；dx/dy 为上方 2173 现成的 首帧弹体→圆心 向量）
-			double dynRadius = std::sqrt(dx * dx + dy * dy);
-			if (dynRadius < 1.0) // 弹体恰在圆心正上/下方：回退已设置 CircleRadius，未设置硬编码 648（用户拍板）
-				dynRadius = Data->CircleRadius > 0 ? static_cast<double>(Data->CircleRadius) : 648.0;
-			_motion.circleRadius = dynRadius;
+			// 半径动态：半径 = 弹体到圆心水平距（丢弃高度差；dx/dy 为上方现成的首帧弹体→圆心向量）
+			if (Data->CircleRadiusDynamic)
+			{
+				double dynRadius = std::sqrt(dx * dx + dy * dy);
+				if (dynRadius < 1.0) // 弹体恰在圆心正上/下方：回退已设置 CircleRadius，未设置硬编码 648
+					dynRadius = Data->CircleRadius > 0 ? static_cast<double>(Data->CircleRadius) : 648.0;
+				_motion.circleRadius = dynRadius;
+			}
 		}
 		_motion.circleRadius += Data->CircleRadiusGrow;
 
@@ -2351,7 +2393,7 @@ VectorResult VectorEffect::GetVectorResult()
 			// 位移基准 = 弹体实际位置 currentPos（2026-09-06 自愈式，同倾斜分支注释）
 			result.MoveDisp.X = smallCircleCenter.X + static_cast<int>(rx) - currentPos.X;
 			result.MoveDisp.Y = smallCircleCenter.Y + static_cast<int>(ry) - currentPos.Y;
-			result.MoveDisp.Z = Data->CircleOrigin.IsEmpty() && Data->OriginFLH.IsEmpty()
+			result.MoveDisp.Z = Data->OriginFLH.IsEmpty()
 				? 0 : smallCircleCenter.Z - currentPos.Z;  // 有显式高度指定时拉 Z（自愈），否则维持抛射体自身高度
 		}
 		// _circlePos 更新 = 本帧目标圆周点（绝对，2026-09-06）：MoveDisp 基准已改为 currentPos
