@@ -10,7 +10,7 @@
 void CounterEffect::Watch()
 {
 	// 计数器归零时移除
-	for (CounterEntity& entity : Data->RemoveWhenNums)
+	for (auto& [idx, entity] : Data->RemoveWhenNums)
 	{
 		if (entity.RemoveWhenNum.Y >= entity.RemoveWhenNum.X)
 		{

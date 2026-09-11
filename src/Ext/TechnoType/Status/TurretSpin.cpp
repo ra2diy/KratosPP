@@ -6,11 +6,17 @@
 void TechnoStatus::OnUpdate_TurretSpin()
 {
 	if (!pTechno || IsDeadOrInvisible(pTechno))
+	{
+		_turretSpinActive = false;
 		return;
+	}
 
 	AttachEffect* aem = AEManager();
 	if (!aem)
+	{
+		_turretSpinActive = false;
 		return;
+	}
 
 	TurretSpinData* pData = nullptr;
 	aem->ForeachChild([&pData](Component* c) {
@@ -21,7 +27,12 @@ void TechnoStatus::OnUpdate_TurretSpin()
 		}
 	});
 	if (!pData)
+	{
+		_turretSpinActive = false;
 		return;
+	}
+	// 激活标志供 Rotation_AI 的 hook 读取：跳过引擎对炮塔朝向的瞄准/回正覆写
+	_turretSpinActive = true;
 
 	int speed = pData->Speed;
 	int period = pData->SweepPeriod;

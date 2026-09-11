@@ -5,8 +5,6 @@
 #include <Ext/Helper/Scripts.h>
 #include <Ext/Helper/Status.h>
 
-#include "AmmoEffect.h"
-
 bool AmmoTriggerEffect::CanActive(double num, Point2D range)
 {
 	if (range.Y >= range.X)
@@ -23,34 +21,13 @@ void AmmoTriggerEffect::Watch()
 
 	double ammoValue = static_cast<double>(pTechno->Ammo);
 
-	// 查找 AmmoAE 用于引用
-	AmmoEffect* ammoEffect = nullptr;
-	if (AE && AE->AEManager)
+	// key：0 = 无序号触发器（与 AmmoTrigger0 同槽），i = AmmoTrigger<i>；map 升序遍历
+	for (auto& [actionIdx, entity] : Data->Actions)
 	{
-		AE->AEManager->ForeachChild([&](Component* c)
-		{
-			if (auto* aes = dynamic_cast<AttachEffectScript*>(c))
-			{
-				aes->ForeachChild([&](Component* c2)
-				{
-					if (auto* ae = dynamic_cast<AmmoEffect*>(c2))
-					{
-						if (ae->IsActive() && !ammoEffect)
-						{
-							ammoEffect = ae;
-						}
-					}
-				});
-			}
-		});
-	}
-
-	int action_idx = 0;
-	for (AmmoTriggerEntity& entity : Data->Actions)
-	{
-		action_idx++;
 		if (CanActive(ammoValue, entity.Range))
 		{
+			// 命中时，按当前弹药数值缓存本次动作执行次数，后续修改弹药不影响本次执行
+			int times = entity.TriggerNumTimes ? (int)ammoValue : 1;
 			// 操作弹药
 			if (entity.Num != 0)
 			{
@@ -147,7 +124,11 @@ void AmmoTriggerEffect::Watch()
 						pSourceHouse = nullptr;
 						break;
 					}
-					aeManager->Attach(entity.AttachEffects, entity.AttachChances, false, pSource, pSourceHouse);
+					// 附加AE，按当前弹药数值执行N次，能否附加由AE自身判断
+					for (int i = 0; i < times; i++)
+					{
+						aeManager->Attach(entity.AttachEffects, entity.AttachChances, false, pSource, pSourceHouse);
+					}
 				}
 			}
 
@@ -164,38 +145,42 @@ void AmmoTriggerEffect::Watch()
 
 				if (aeManager)
 				{
-					if (!entity.RemoveEffects.empty())
+					// 移除AE，按当前弹药数值执行N次，能否移除由AE自身判断
+					for (int i = 0; i < times; i++)
 					{
-						if (!entity.RemoveEffectsLevel.empty())
+						if (!entity.RemoveEffects.empty())
 						{
-							std::map<std::string, int> aeTypes;
-							int idx = 0;
-							int count = entity.RemoveEffects.size();
-							for (std::string removeAE : entity.RemoveEffects)
+							if (!entity.RemoveEffectsLevel.empty())
 							{
-								int level = -1;
-								if (idx < count)
+								std::map<std::string, int> aeTypes;
+								int idx = 0;
+								int count = entity.RemoveEffects.size();
+								for (std::string removeAE : entity.RemoveEffects)
 								{
-									level = entity.RemoveEffectsLevel[idx];
+									int level = -1;
+									if (idx < count)
+									{
+										level = entity.RemoveEffectsLevel[idx];
+									}
+									if (level > 0)
+									{
+										aeTypes[removeAE] = level;
+									}
 								}
-								if (level > 0)
+								if (!aeTypes.empty())
 								{
-									aeTypes[removeAE] = level;
+									aeManager->DetachByName(aeTypes, entity.RemoveEffectsSkipNext);
 								}
 							}
-							if (!aeTypes.empty())
+							else
 							{
-								aeManager->DetachByName(aeTypes, entity.RemoveEffectsSkipNext);
+								aeManager->DetachByName(entity.RemoveEffects, entity.RemoveEffectsSkipNext);
 							}
 						}
-						else
+						if (!entity.RemoveEffectsWithMarks.empty())
 						{
-							aeManager->DetachByName(entity.RemoveEffects, entity.RemoveEffectsSkipNext);
+							aeManager->DetachByMarks(entity.RemoveEffectsWithMarks, entity.RemoveEffectsSkipNext);
 						}
-					}
-					if (!entity.RemoveEffectsWithMarks.empty())
-					{
-						aeManager->DetachByMarks(entity.RemoveEffectsWithMarks, entity.RemoveEffectsSkipNext);
 					}
 				}
 			}
@@ -203,8 +188,8 @@ void AmmoTriggerEffect::Watch()
 			// 触发次数限制
 			if (entity.TriggeredTimes > 0)
 			{
-				_count[action_idx]++;
-				if (_count[action_idx] >= entity.TriggeredTimes)
+				_count[actionIdx]++;
+				if (_count[actionIdx] >= entity.TriggeredTimes)
 				{
 					Deactivate();
 					AE->TimeToDie();

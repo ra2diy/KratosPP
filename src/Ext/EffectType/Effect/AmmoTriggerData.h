@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 #include <GeneralStructures.h>
 
@@ -64,6 +65,9 @@ public:
 	std::vector<std::string> RemoveEffectsWithMarks{};
 	bool RemoveEffectsSkipNext = false;
 	AmmoTriggerWho RemoveWho = AmmoTriggerWho::ME;
+
+	// 触发时，将附加/移除动作按当前弹药数值执行N次
+	bool TriggerNumTimes = false;
 
 	virtual void Read(INIBufferReader* reader, std::string title)
 	{
@@ -129,6 +133,7 @@ public:
 		Remove = !RemoveEffects.empty() || !RemoveEffectsWithMarks.empty();
 		RemoveEffectsSkipNext = reader->Get(title + "RemoveEffectsSkipNext", RemoveEffectsSkipNext);
 		RemoveWho = reader->Get(title + "RemoveWho", RemoveWho);
+		TriggerNumTimes = reader->Get(title + "TriggerNumTimes", TriggerNumTimes);
 
 		Enable = Num != 0 || NumType != AmmoType::Number || ResetNum || Attach || Remove;
 	}
@@ -159,6 +164,7 @@ public:
 			.Process(this->RemoveEffectsWithMarks)
 			.Process(this->RemoveEffectsSkipNext)
 			.Process(this->RemoveWho)
+			.Process(this->TriggerNumTimes)
 
 			.Success();
 	};
@@ -179,7 +185,10 @@ class AmmoTriggerData : public EffectData
 public:
 	EFFECT_DATA(AmmoTrigger);
 
-	std::vector<AmmoTriggerEntity> Actions{};
+	// 触发效果列表，key：0 = 无序号触发器（与 AmmoTrigger0 同槽，后写覆盖），i = AmmoTrigger<i> 序号触发器。
+	// 用 map 按键覆写（FeedbackAttach 同款机制）：INI 依赖链多文件重复 Read 同一配置时，
+	// 同 key 后写覆盖先写，天然去重；不同 key 并存。
+	std::map<int, AmmoTriggerEntity> Actions{};
 
 	virtual void Read(INIBufferReader* reader) override
 	{
@@ -190,19 +199,21 @@ public:
 	{
 		EffectData::Read(reader, title);
 
+		// 读取无序号的，挂在 key 0
 		AmmoTriggerEntity defaultEntity;
 		defaultEntity.Read(reader, title);
 		if (defaultEntity.Enable)
 		{
-			Actions.push_back(defaultEntity);
+			Actions[0] = defaultEntity;
 		}
+		// 读取有序号的，序号即 key
 		for (int i = 0; i < 128; i++)
 		{
 			AmmoTriggerEntity entity{};
 			entity.Read(reader, "AmmoTrigger" + std::to_string(i) + ".");
 			if (entity.Enable)
 			{
-				Actions.push_back(entity);
+				Actions[i] = entity;
 			}
 		}
 

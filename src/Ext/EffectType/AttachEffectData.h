@@ -31,6 +31,8 @@
 #include "Effect/TurretSpinData.h"
 #include "Effect/BodySpinData.h"
 #include "Effect/VampireData.h"
+#include "Effect/CopyData.h"
+#include "Effect/TraceData.h"
 // State Effects
 #include <Ext/StateType/State/AntiBulletData.h>
 #include <Ext/StateType/State/BlackHoleData.h>
@@ -179,6 +181,8 @@ public:
 	EFFECT_VAR_DEFINE(TurretSpin);
 	EFFECT_VAR_DEFINE(BodySpin);
 	EFFECT_VAR_DEFINE(Vampire);
+	EFFECT_VAR_DEFINE(Copy);
+	EFFECT_VAR_DEFINE(Trace);
 	// State Effects
 	EFFECT_VAR_DEFINE(AntiBullet);
 	EFFECT_VAR_DEFINE(BlackHole);
@@ -224,6 +228,8 @@ public:
 		EFFECT_VAR_READ(TurretSpin);
 		EFFECT_VAR_READ(BodySpin);
 		EFFECT_VAR_READ(Vampire);
+		EFFECT_VAR_READ(Copy);
+		EFFECT_VAR_READ(Trace);
 		// State Effects
 		EFFECT_VAR_READ(AntiBullet);
 		EFFECT_VAR_READ(BlackHole);
@@ -252,6 +258,8 @@ public:
 		EFFECT_VAR_SCRIPT_NAME(Vector);
 		EFFECT_VAR_SCRIPT_NAME(TurretSpin);
 		EFFECT_VAR_SCRIPT_NAME(BodySpin);
+		EFFECT_VAR_SCRIPT_NAME(Copy);
+		EFFECT_VAR_SCRIPT_NAME(Trace);
 
 		EFFECT_VAR_SCRIPT_NAME(Animation);
 		EFFECT_VAR_SCRIPT_NAME(AttackBeacon);
@@ -322,6 +330,8 @@ public:
 			EFFECT_VAR_PROCESS(TurretSpin)
 			EFFECT_VAR_PROCESS(BodySpin)
 			EFFECT_VAR_PROCESS(Vampire)
+			EFFECT_VAR_PROCESS(Copy)
+			EFFECT_VAR_PROCESS(Trace)
 			// State Effects
 			EFFECT_VAR_PROCESS(AntiBullet)
 			EFFECT_VAR_PROCESS(BlackHole)

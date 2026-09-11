@@ -63,6 +63,8 @@
     <ClCompile Include="src\Ext\EBoltType\EBoltStatus.cpp" />
     <ClCompile Include="src\Ext\EffectType\AttachEffectScript.cpp" />
     <ClCompile Include="src\Ext\EffectType\EffectScript.cpp" />
+    <ClCompile Include="src\Ext\EffectType\Effect\AmmoEffect.cpp" />
+    <ClCompile Include="src\Ext\EffectType\Effect\AmmoTriggerEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\AnimationEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\AttackBeaconEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\AutoWeaponEffect.cpp" />
@@ -81,6 +83,8 @@
     <ClCompile Include="src\Ext\EffectType\Effect\StackEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\StandEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\VampireEffect.cpp" />
+    <ClCompile Include="src\Ext\EffectType\Effect\CopyEffect.cpp" />
+    <ClCompile Include="src\Ext\EffectType\Effect\TraceEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\VectorEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\TurretSpinEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\BodySpinEffect.cpp" />
@@ -271,6 +275,10 @@
     <ClInclude Include="src\Ext\EffectType\AttachEffectScript.h" />
     <ClInclude Include="src\Ext\EffectType\AttachEffectTypeData.h" />
     <ClInclude Include="src\Ext\EffectType\EffectScript.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\AmmoData.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\AmmoEffect.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\AmmoTriggerData.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\AmmoTriggerEffect.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\AnimationData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\AnimationEffect.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\AttackBeaconData.h" />

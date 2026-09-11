@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 #include <GeneralStructures.h>
 
@@ -230,7 +231,10 @@ public:
 	CounterAction Action = CounterAction::ADD;
 	bool AttachIfNotFound = true;
 
-	std::vector<CounterEntity> RemoveWhenNums{}; // 触发效果列表
+	// 计数器归零自动移除列表，key：0 = 无序号（与 Counter0 同槽，后写覆盖），i = Counter<i> 序号。
+	// 用 map 按键覆写（FeedbackAttach 同款机制）：INI 依赖链多文件重复 Read 同一配置时，
+	// 同 key 后写覆盖先写，天然去重；不同 key 并存。
+	std::map<int, CounterEntity> RemoveWhenNums{};
 
 	CounterReaction ReactionMode = CounterReaction::NORMAL;
 
@@ -285,21 +289,21 @@ public:
 		Action = reader->Get(title + "Action", Action);
 		AttachIfNotFound = reader->Get(title + "AttachIfNotFound", AttachIfNotFound);
 
-		// 读取无序号的
+		// 读取无序号的，挂在 key 0
 		CounterEntity defaultEntity;
 		defaultEntity.Read(reader, title);
 		if (defaultEntity.Enable)
 		{
-			RemoveWhenNums.push_back(defaultEntity);
+			RemoveWhenNums[0] = defaultEntity;
 		}
-		// 读取有序号的
+		// 读取有序号的，序号即 key
 		for (int i = 0; i < 128; i++)
 		{
 			CounterEntity entity{};
 			entity.Read(reader, "Counter" + std::to_string(i) + ".");
 			if (entity.Enable)
 			{
-				RemoveWhenNums.push_back(entity);
+				RemoveWhenNums[i] = entity;
 			}
 		}
 

@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 #include <GeneralStructures.h>
 
@@ -75,6 +76,9 @@ public:
 	bool RemoveEffectsSkipNext = false;
 	CountTriggerWho RemoveWho = CountTriggerWho::ME;
 
+	// 触发时，将附加/移除动作按计数器当前数值执行N次
+	bool TriggerNumTimes = false;
+
 	virtual void Read(INIBufferReader* reader, std::string title)
 	{
 		Range = reader->Get(title + "Range", Range);
@@ -132,6 +136,7 @@ public:
 		Remove = !RemoveEffects.empty() || !RemoveEffectsWithMarks.empty();
 		RemoveEffectsSkipNext = reader->Get(title + "RemoveEffectsSkipNext", RemoveEffectsSkipNext);
 		RemoveWho = reader->Get(title + "RemoveWho", RemoveWho);
+		TriggerNumTimes = reader->Get(title + "TriggerNumTimes", TriggerNumTimes);
 
 		Enable = Num != 0 || NumType != CounterType::Number || ResetNum || RemoveCounter || Attach || Remove;
 	}
@@ -163,6 +168,7 @@ public:
 			.Process(this->RemoveEffectsWithMarks)
 			.Process(this->RemoveEffectsSkipNext)
 			.Process(this->RemoveWho)
+			.Process(this->TriggerNumTimes)
 
 			.Success();
 	};
@@ -185,7 +191,10 @@ public:
 
 	std::string Watch{};
 
-	std::vector<CountTriggerEntity> Actions{}; // 触发效果列表
+	// 触发效果列表，key：0 = 无序号触发器（与 CountTrigger0 同槽，后写覆盖），i = CountTrigger<i> 序号触发器。
+	// 用 map 按键覆写（FeedbackAttach 同款机制）：INI 依赖链多文件重复 Read 同一配置时，
+	// 同 key 后写覆盖先写，天然去重；不同 key 并存。
+	std::map<int, CountTriggerEntity> Actions{};
 
 	virtual void Read(INIBufferReader* reader) override
 	{
@@ -199,21 +208,21 @@ public:
 		Watch = reader->Get(title + "Mark", Watch);
 		Watch = reader->Get(title + "Watch", Watch);
 
-		// 读取无序号的
+		// 读取无序号的，挂在 key 0
 		CountTriggerEntity defaultEntity;
 		defaultEntity.Read(reader, title);
 		if (defaultEntity.Enable)
 		{
-			Actions.push_back(defaultEntity);
+			Actions[0] = defaultEntity;
 		}
-		// 读取有序号的
+		// 读取有序号的，序号即 key
 		for (int i = 0; i < 128; i++)
 		{
 			CountTriggerEntity entity{};
 			entity.Read(reader, "CountTrigger" + std::to_string(i) + ".");
 			if (entity.Enable)
 			{
-				Actions.push_back(entity);
+				Actions[i] = entity;
 			}
 		}
 

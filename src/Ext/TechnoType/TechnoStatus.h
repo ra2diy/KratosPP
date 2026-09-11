@@ -455,6 +455,9 @@ public:
 	double _turretRad = 0;
 	int _turretTime = 0;
 	bool _turretFlip = true;
+	// TurretSpin AE 激活中：Rotation_AI 每帧读到该标志即跳过引擎对炮塔朝向的自动覆写，
+	// 使炮塔朝向完全由 OnUpdate_TurretSpin 每帧写入（运行期瞬时标志，不参与序列化）
+	bool _turretSpinActive = false;
 	bool Jumping = false;
 
 	// 冻结

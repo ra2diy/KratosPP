@@ -261,6 +261,13 @@ DEFINE_HOOK(0x736A26, UnitClass_Rotation_SetTurretFacingToTarget_Skip, 0x6)
 {
 	GET(TechnoClass*, pTechno, ESI);
 
+	// TurretSpin AE 激活时炮塔始终自旋，跳过引擎朝目标的瞄准写入（有目标也覆盖瞄准）
+	TechnoStatus* tStatus = nullptr;
+	if (TryGetStatus<TechnoExt, TechnoStatus>(pTechno, tStatus) && tStatus->_turretSpinActive)
+	{
+		return 0x736A8E;
+	}
+
 	TurretAngle* status = nullptr;
 	if (TryGetScript<TechnoExt, TurretAngle>(pTechno, status) && status->LockTurret)
 	{
@@ -273,6 +280,13 @@ DEFINE_HOOK(0x736A26, UnitClass_Rotation_SetTurretFacingToTarget_Skip, 0x6)
 DEFINE_HOOK(0x736BCA, UnitClass_Rotation_SetTurretFacing_NoTargetAndStanding, 0x5)
 {
 	GET(TechnoClass*, pTechno, ESI);
+
+	// TurretSpin AE 激活时炮塔始终自旋，跳过引擎无目标时的回正写入
+	TechnoStatus* tStatus = nullptr;
+	if (TryGetStatus<TechnoExt, TechnoStatus>(pTechno, tStatus) && tStatus->_turretSpinActive)
+	{
+		return 0x736BE2;
+	}
 
 	TurretAngle* status = nullptr;
 	if (TryGetScript<TechnoExt, TurretAngle>(pTechno, status) && status->ChangeDefaultDir)
@@ -287,6 +301,13 @@ DEFINE_HOOK(0x736BCA, UnitClass_Rotation_SetTurretFacing_NoTargetAndStanding, 0x
 DEFINE_HOOK(0x736BBB, UnitClass_Rotation_SetTurretFacing_NoTargetAndMoving, 0x5)
 {
 	GET(TechnoClass*, pTechno, ESI);
+
+	// TurretSpin AE 激活时炮塔始终自旋，跳过引擎无目标时的回正写入
+	TechnoStatus* tStatus = nullptr;
+	if (TryGetStatus<TechnoExt, TechnoStatus>(pTechno, tStatus) && tStatus->_turretSpinActive)
+	{
+		return 0x736BE2;
+	}
 
 	TurretAngle* status = nullptr;
 	if (TryGetScript<TechnoExt, TurretAngle>(pTechno, status) && status->LockTurret)

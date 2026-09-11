@@ -36,7 +36,7 @@ void AmmoEffect::Watch()
 	TechnoClass* pTechno = abstract_cast<TechnoClass*, true>(pObject);
 	if (!pTechno) return;
 
-	for (AmmoEntity& entity : Data->RemoveWhenNums)
+	for (auto& [idx, entity] : Data->RemoveWhenNums)
 	{
 		if (entity.RemoveWhenNum.Y >= entity.RemoveWhenNum.X)
 		{
@@ -87,14 +87,15 @@ int AmmoEffect::CalculateRemainingDamage(int Damage)
 
 void AmmoEffect::OnStart()
 {
-	// 无限弹药时不允许附着
+	// 无弹药单位不允许附着
 	int maxAmmo = GetMaxAmmo();
 	if (maxAmmo <= 0)
 	{
 		Deactivate();
 		return;
 	}
-	ResetAmmo();
+	// 附着时按 Action 直接操作当前弹药，再钳位到 [0, 单位最大弹药]
+	ModifyAmmo(Data->Action, GetModifyNum());
 }
 
 void AmmoEffect::OnPause()
@@ -173,14 +174,9 @@ void AmmoEffect::ModifyAmmo(AmmoAction action, double num)
 	ClampAmmo();
 }
 
-void AmmoEffect::ResetAmmo()
+double AmmoEffect::GetModifyNum()
 {
-	TechnoClass* pTechno = abstract_cast<TechnoClass*, true>(pObject);
-	if (!pTechno) return;
-
-	int maxAmmo = pTechno->GetTechnoType()->Ammo;
-	if (maxAmmo <= 0) return;
-
+	// 解析本次操作的弹药量：普通数字直接使用，特殊值从指定来源（默认自身）读取
 	double num = Data->Num;
 	if (Data->NumType != AmmoType::Number)
 	{
@@ -217,6 +213,5 @@ void AmmoEffect::ResetAmmo()
 			}
 		}
 	}
-	pTechno->Ammo = static_cast<int>(num);
-	ClampAmmo();
+	return num;
 }

@@ -29,7 +29,7 @@ public:
 	virtual void OnReceiveDamageReal(int* pRealDamage, WarheadTypeClass* pWH, TechnoClass* pAttacker, HouseClass* pAttackingHouse) override;
 
 	void ModifyAmmo(AmmoAction action, double num);
-	void ResetAmmo();
+	double GetModifyNum();
 	void ClampAmmo();
 
 #pragma region Save/Load

@@ -204,8 +204,10 @@ void TechnoStatus::OnUpdate()
 		OnUpdate_Paintball();
 		OnUpdate_Passenger();
 		OnUpdate_TargetLaser();
+		// TurretSpin AE 激活时，引擎 Rotation_AI 的瞄准/回正写入已被 UnitExtHook 的
+		// 0x736A26/0x736BBB/0x736BCA 拦截跳过，此处只做每帧累加写入炮塔朝向
+		OnUpdate_TurretSpin();
 		OnUpdate_GiftBox(); // 礼盒会删除对象，所以放最后
-		OnUpdate_TurretSpin(); // 炮塔旋转最后执行，避免引擎瞄准覆盖
 	}
 }
 
