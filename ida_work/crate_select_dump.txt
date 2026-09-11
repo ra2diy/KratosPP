@@ -1,0 +1,1374 @@
+FUNC W?Goodie_Check$:CellClass$n(pn$FootClass$$)i [0x481A00-0x483394]
+00481A00: push    ebp
+00481A01: mov     ebp, esp
+00481A03: and     esp, 0FFFFFFF8h
+00481A06: sub     esp, 17Ch
+00481A0C: push    ebx
+00481A0D: push    esi
+00481A0E: push    edi
+00481A0F: mov     edi, [ebp+Collector]
+00481A12: test    edi, edi
+00481A14: mov     esi, ecx
+00481A16: jz      loc_483389
+00481A1C: mov     eax, [esi+44h]
+00481A1F: cmp     eax, 0FFFFFFFFh
+00481A22: jz      loc_483389
+00481A28: mov     ecx, OverlayTypeClass
+00481A2E: mov     edx, [ecx+eax*4]
+00481A31: mov     bl, [edx+OverlayTypeClass.Crate]
+00481A37: test    bl, bl
+00481A39: jz      loc_483389
+00481A3F: mov     edx, Session
+00481A45: mov     [esp+188h+NeedsBase], 0
+00481A4A: test    edx, edx
+00481A4C: mov     [esp+188h+coords2], 0
+00481A54: jz      short loc_481A6D
+00481A56: mov     edx, [edi+TechnoClass.CloakState]
+00481A5C: mov     edx, [edx+HouseClass_old.IHouse._.Country]
+00481A5F: mov     bl, [edx+CountryClass.humanControlled]
+00481A65: test    bl, bl
+00481A67: jnz     loc_483389
+00481A6D: mov     eax, [ecx+eax*4]
+00481A70: mov     cl, [eax+OverlayTypeClass.CrateTrigger]
+00481A76: test    cl, cl
+00481A78: jz      short loc_481AC8
+00481A7A: mov     eax, [edi+34h]
+00481A7D: test    eax, eax
+00481A7F: jz      short loc_481ABB
+00481A81: movsx   ecx, word ptr [esi+26h]; this
+00481A85: movsx   edx, word ptr [esi+24h]
+00481A89: push    ecx
+00481A8A: push    edx
+00481A8B: push    offset aSpringingTriggerOnCrateAtDD; "Springing trigger on crate at %d,%d\n"
+00481A90: call    WWDebugString; Springing trigger on crate at %d,%d
+00481A95: mov     eax, dword ptr CellClass_Default_Coords.X
+00481A9A: mov     ecx, [edi+34h]; this
+00481A9D: add     esp, 0Ch
+00481AA0: push    0; source
+00481AA2: push    0; isRepeating
+00481AA4: push    eax; loc
+00481AA5: push    edi; TagObject
+00481AA6: push    49; eventKind
+00481AA8: call    TagClass_RaiseEvent; eventKind = 49
+00481AAD: mov     al, [edi+90h]
+00481AB3: test    al, al
+00481AB5: jz      loc_482449
+00481ABB: mov     ecx, Scenario
+00481AC1: mov     byte ptr [ecx+34BEh], 1
+00481AC8: mov     bl, [esi+11Eh]
+00481ACE: cmp     bl, 13h
+00481AD1: jb      short loc_481B1C
+00481AD3: xor     eax, eax
+00481AD5: mov     ecx, offset powerup_Weights
+00481ADA: mov     ebx, [ecx]
+00481ADC: add     ecx, 4
+00481ADF: add     eax, ebx
+00481AE1: cmp     ecx, offset powerup_Anims
+00481AE7: jl      short loc_481ADA
+00481AE9: mov     edx, Scenario
+00481AEF: push    eax; max
+00481AF0: push    1; min
+00481AF2: lea     ecx, [edx+218h]; this
+00481AF8: call    Random2Class::operator(); (1 : ?)
+00481AFD: xor     edx, edx
+00481AFF: xor     edi, edi
+00481B01: mov     ecx, offset powerup_Weights
+00481B06: add     edx, [ecx]
+00481B08: cmp     eax, edx
+00481B0A: jle     short loc_481B18
+00481B0C: add     ecx, 4
+00481B0F: inc     edi
+00481B10: cmp     ecx, offset powerup_Anims
+00481B16: jl      short loc_481B06
+00481B18: mov     ebx, edi
+00481B1A: jmp     short loc_481B22
+00481B1C: and     ebx, 0FFh
+00481B22: mov     eax, Session
+00481B27: mov     [esp+188h+powerupPostRandomResult], ebx
+00481B2B: test    eax, eax
+00481B2D: jnz     short loc_481B99
+00481B2F: mov     al, [esi+11Eh]
+00481B35: test    al, al
+00481B37: jnz     loc_481D86
+00481B3D: mov     eax, RulesData
+00481B42: mov     edx, [esi+44h]
+00481B45: mov     ecx, [eax+(RulesClass+1140h)]
+00481B4B: mov     [esp+188h+coords2], ecx
+00481B4F: mov     ecx, OverlayTypeClass
+00481B55: mov     ecx, [ecx+edx*4]
+00481B58: mov     edx, [eax+0FCh]
+00481B5E: cmp     ecx, edx
+00481B60: jnz     short loc_481B6C
+00481B62: mov     ebx, [eax+1464h]
+00481B68: mov     [esp+188h+powerupPostRandomResult], ebx
+00481B6C: cmp     ecx, [eax+0F8h]
+00481B72: jnz     short loc_481B7E
+00481B74: mov     ebx, [eax+1468h]
+00481B7A: mov     [esp+188h+powerupPostRandomResult], ebx
+00481B7E: cmp     ecx, [eax+100h]
+00481B84: jnz     loc_481D86
+00481B8A: mov     ebx, [eax+146Ch]
+00481B90: mov     [esp+188h+powerupPostRandomResult], ebx
+00481B94: jmp     loc_481D86
+00481B99: mov     edx, [ebp+Collector]
+00481B9C: mov     eax, RulesData
+00481BA1: add     eax, RulesClass._BaseUnit
+00481BA6: mov     edi, [edx+_TechnoClass.t.OwningPlayer]
+00481BAC: push    eax; list
+00481BAD: mov     ecx, edi; House
+00481BAF: call    HouseClass_FindFirstAccessibleTechnoTypeFromArray
+00481BB4: mov     [esp+188h+BaseUnit], eax
+00481BB8: mov     eax, [edi+2F0h]
+00481BBE: test    eax, eax
+00481BC0: jnz     short loc_481C03
+00481BC2: mov     ecx, [edi+24h]
+00481BC5: lea     eax, [edi+24h]
+00481BC8: push    eax
+00481BC9: call    dword ptr [ecx+18h]
+00481BCC: cmp     eax, 5DCh
+00481BD1: jle     short loc_481C03
+00481BD3: mov     edx, [esp+188h+BaseUnit]
+00481BD7: lea     ecx, [edi+HouseClass_old.IHouse._.OwnedVehicleTypes]; this
+00481BDD: mov     eax, [edx+_TechnoTypeClass.t.NumberInArray]
+00481BE3: push    eax; idx
+00481BE4: call    CounterClass_GetItemCount
+00481BE9: test    eax, eax
+00481BEB: jnz     short loc_481C03
+00481BED: mov     al, gBases
+00481BF2: test    al, al
+00481BF4: jz      short loc_481C03
+00481BF6: mov     ebx, 1
+00481BFB: mov     [esp+188h+powerupPostRandomResult], ebx
+00481BFF: mov     [esp+188h+NeedsBase], bl
+00481C03: lea     eax, [ebx-1]; switch 14 cases
+00481C06: cmp     eax, 0Dh
+00481C09: ja      def_481C17; default
+00481C0F: xor     ecx, ecx
+00481C11: mov     cl, ds:byte_4833B4[eax]
+00481C17: jmp     ds:jpt_481C17[ecx*4]; switch jump
+00481C1E: mov     edi, [ebp+Collector]; jumptable 00481C17 case 1
+00481C21: mov     edx, [edi+TechnoClass.CloakState]
+00481C27: cmp     [edx+HouseClass_old.IHouse._.OwnedUnits], 32h ; '2'
+00481C2E: jle     short loc_481C4A
+00481C30: jmp     short loc_481C44
+00481C32: mov     edi, [ebp+Collector]; jumptable 00481C17 case 6
+00481C35: mov     eax, [edi+TechnoClass.CloakState]
+00481C3B: cmp     [eax+HouseClass_old.IHouse._.OwnedInfantry], 64h ; 'd'
+00481C42: jle     short loc_481C4A
+00481C44: xor     ebx, ebx
+00481C46: mov     [esp+188h+powerupPostRandomResult], ebx
+00481C4A: mov     eax, [esi+CellClass.LandType]
+00481C50: cmp     eax, 2
+00481C53: jz      short loc_481C5E
+00481C55: cmp     eax, 6
+00481C58: jnz     loc_481D52
+00481C5E: xor     ebx, ebx
+00481C60: mov     [esp+188h+powerupPostRandomResult], ebx
+00481C64: jmp     loc_481D52
+00481C69: mov     edi, [ebp+Collector]; jumptable 00481C17 case 9
+00481C6C: mov     eax, [edi+158h]
+00481C72: test    eax, eax
+00481C74: jnz     short loc_481C86
+00481C76: cmp     dword ptr [edi+15Ch], 3FF00000h
+00481C80: jz      loc_481D52
+00481C86: xor     ebx, ebx
+00481C88: mov     [esp+188h+powerupPostRandomResult], ebx
+00481C8C: jmp     loc_481D52
+00481C91: mov     edi, [ebp+Collector]; jumptable 00481C17 case 14
+00481C94: test    byte ptr [edi+14h], 1
+00481C98: jz      loc_481D52
+00481C9E: mov     edx, [edi]
+00481CA0: mov     ecx, edi
+00481CA2: call    dword ptr [edx+84h]
+00481CA8: mov     cl, [eax+_TechnoTypeClass.t.Trainable]
+00481CAE: test    cl, cl
+00481CB0: jnz     short loc_481CBD
+00481CB2: xor     ebx, ebx
+00481CB4: mov     [esp+188h+powerupPostRandomResult], ebx
+00481CB8: jmp     loc_481D52
+00481CBD: test    byte ptr [edi+14h], 1
+00481CC1: jz      loc_481D52
+00481CC7: lea     ecx, [edi+150h]; this
+00481CCD: call    Veterancy_IsElite
+00481CD2: test    al, al
+00481CD4: jz      short loc_481D52
+00481CD6: xor     ebx, ebx
+00481CD8: mov     [esp+188h+powerupPostRandomResult], ebx
+00481CDC: jmp     short loc_481D52
+00481CDE: mov     edi, [ebp+Collector]; jumptable 00481C17 case 10
+00481CE1: mov     eax, [edi+580h]
+00481CE7: test    eax, eax
+00481CE9: jnz     short loc_481D03
+00481CEB: cmp     dword ptr [edi+584h], 3FF00000h
+00481CF5: jnz     short loc_481D03
+00481CF7: mov     eax, [edi]
+00481CF9: mov     ecx, edi
+00481CFB: call    dword ptr [eax+2Ch]
+00481CFE: cmp     eax, 2
+00481D01: jnz     short loc_481D52
+00481D03: xor     ebx, ebx
+00481D05: mov     [esp+188h+powerupPostRandomResult], ebx
+00481D09: jmp     short loc_481D52
+00481D0B: mov     edi, [ebp+Collector]; jumptable 00481C17 case 11
+00481D0E: mov     eax, [edi+160h]
+00481D14: test    eax, eax
+00481D16: jnz     short loc_481D32
+00481D18: cmp     dword ptr [edi+164h], 3FF00000h
+00481D22: jnz     short loc_481D32
+00481D24: mov     edx, [edi]
+00481D26: mov     ecx, edi
+00481D28: call    dword ptr [edx+2ACh]
+00481D2E: test    al, al
+00481D30: jnz     short loc_481D52
+00481D32: xor     ebx, ebx
+00481D34: mov     [esp+188h+powerupPostRandomResult], ebx
+00481D38: jmp     short loc_481D52
+00481D3A: mov     edi, [ebp+Collector]; jumptable 00481C17 case 3
+00481D3D: mov     al, [edi+3D2h]
+00481D43: test    al, al
+00481D45: jz      short loc_481D52
+00481D47: xor     ebx, ebx
+00481D49: mov     [esp+188h+powerupPostRandomResult], ebx
+00481D4D: jmp     short loc_481D52
+00481D4F: mov     edi, [ebp+Collector]; default
+00481D52: cmp     dword ptr [esi+0ECh], 2
+00481D59: jnz     short loc_481D6B
+00481D5B: mov     al, powerupNaval[ebx]
+00481D61: test    al, al
+00481D63: jnz     short loc_481D6B
+00481D65: xor     ebx, ebx
+00481D67: mov     [esp+188h+powerupPostRandomResult], ebx
+00481D6B: cmp     Session, 4
+00481D72: jnz     short loc_481D86
+00481D74: mov     ecx, [edi+21Ch]
+00481D7A: push    ebx; value
+00481D7B: add     ecx, HouseClass_old.IHouse._.CollectedPowerups; this
+00481D81: call    Count_IncValue
+00481D86: mov     eax, [esi+24h]
+00481D89: lea     ecx, [esp+188h+BaseUnit]
+00481D8D: push    ecx
+00481D8E: mov     ecx, offset Map
+==== pseudo (full) ====
+void __thiscall CellClass::Goodie_Check(CellClass *this, _FootClass *Collector)
+{
+  size_t OverlayTypeIndex; // eax
+  int totalShares; // eax
+  int *powerupShare; // ecx
+  int share; // ebx
+  int v7; // eax
+  int weightSumSoFar; // edx
+  int *v9; // ecx
+  ePowerup idxPowerupKind; // edi
+  ePowerup powerupRandomResult; // ebx
+  OverlayTypeClass *v12; // ecx
+  size_t v13; // edx
+  HouseClass_old *OwningPlayer; // edi
+  _FootClass *Collector2; // edi
+  int CellLandType; // eax
+  _BOOL1 v17; // cf
+  WarheadTypeClass *v18; // ebx
+  int v19; // edi
+  signed int v20; // eax
+  vt_AbstractClass *v21; // edx
+  signed int v22; // edi
+  dwXYZ *v23; // eax
+  CellClass *v24; // eax
+  wXY *v25; // eax
+  dwXYZ *v26; // eax
+  int v27; // edi
+  int v28; // ecx
+  int v29; // ebx
+  int *v30; // eax
+  dwXYZ *v31; // eax
+  CellClass *Target_Cell; // eax
+  UnitTypeClass *pUnitType; // edi
+  _FootClass *Collector3; // ebx
+  int v35; // eax
+  int length; // ecx
+  PtrUnitTypeClass *data; // edx
+  char FoundBase; // bl
+  char Is_Human; // al
+  UnitClass *createdUnit__; // edi
+  int FloorHeight; // eax
+  int v42; // eax
+  int v43; // eax
+  int v44; // edi
+  int v45; // ebx
+  int v46; // eax
+  int updatedAmount; // edi
+  int v48; // eax
+  HouseClass_old *recipient; // ecx
+  AnimTypeClass *v50; // ebx
+  AnimClass *v51; // edi
+  int v52; // edi
+  int v53; // ebx
+  int v54; // eax
+  dwXYZ *v55; // eax
+  int v56; // eax
+  AnimClass *v57; // eax
+  wXY v58; // eax
+  int v59; // edi
+  int v60; // ebx
+  int *v61; // eax
+  int v62; // edi
+  int v63; // ecx
+  int v64; // eax
+  int v65; // edi
+  vt_FootClass *v66; // edx
+  int v67; // edi
+  int v68; // ebx
+  _DWORD *v69; // eax
+  int v70; // edx
+  _DWORD *v71; // eax
+  int v72; // edx
+  int v73; // ebx
+  float *v75; // edi
+  int v77; // edi
+  int v78; // ebx
+  int v79; // edi
+  int v80; // ebx
+  int i; // ebx
+  _ObjectClass *v82; // edi
+  int v83; // eax
+  vt_ObjectClass *vt; // edx
+  int v85; // eax
+  HouseClass *House; // edx
+  int cntSW; // ecx
+  SuperWeaponTypeClass *FirstOfAction; // ebx
+  SuperClass **X; // edi
+  char v90; // al
+  _DWORD *v91; // eax
+  int v92; // edx
+  vt_FootClass *v94; // edx
+  HouseClass *v96; // eax
+  int v97; // edi
+  int v98; // ebx
+  _DWORD *v99; // eax
+  int v100; // edx
+  int v102; // eax
+  int v104; // edi
+  int v105; // ebx
+  _DWORD *v106; // eax
+  int v107; // edx
+  vt_FootClass *v109; // edx
+  HouseClass *v111; // eax
+  int v112; // edi
+  int v113; // ebx
+  AnimClass *v114; // eax
+  int v115; // edi
+  int v116; // ebx
+  int v117; // eax
+  WarheadTypeClass *C4Warhead; // [esp-4h] [ebp-19Ch]
+  int v119; // [esp+8h] [ebp-190h]
+  __int64 Z; // [esp+8h] [ebp-190h]
+  double v121; // [esp+8h] [ebp-190h]
+  double v122; // [esp+8h] [ebp-190h]
+  double v123; // [esp+8h] [ebp-190h]
+  double v124; // [esp+8h] [ebp-190h]
+  double v125; // [esp+8h] [ebp-190h]
+  int v126; // [esp+Ch] [ebp-18Ch]
+  char NeedsBase; // [esp+23h] [ebp-175h]
+  int coords2; // [esp+24h] [ebp-174h] BYREF
+  signed int damage[2]; // [esp+28h] [ebp-170h]
+  Point2D powerupData; // [esp+30h] [ebp-168h] BYREF
+  ePowerup powerupPostRandomResult; // [esp+3Ch] [ebp-15Ch]
+  dwXYZ a3; // [esp+40h] [ebp-158h] BYREF
+  Point2D SWs_; // [esp+4Ch] [ebp-14Ch] BYREF
+  wXY coords; // [esp+54h] [ebp-144h] BYREF
+  int v135; // [esp+58h] [ebp-140h]
+  int v136; // [esp+5Ch] [ebp-13Ch]
+  UnitTypeClass *BaseUnit; // [esp+60h] [ebp-138h] BYREF
+  dwXYZ v138; // [esp+64h] [ebp-134h] BYREF
+  int v139; // [esp+78h] [ebp-120h]
+  int position; // [esp+7Ch] [ebp-11Ch] BYREF
+  dwXYZ a1; // [esp+80h] [ebp-118h] BYREF
+  dwXYZ v142; // [esp+8Ch] [ebp-10Ch] BYREF
+  int v143[3]; // [esp+98h] [ebp-100h] BYREF
+  int v144[3]; // [esp+A4h] [ebp-F4h] BYREF
+  int pos[3]; // [esp+B0h] [ebp-E8h] BYREF
+  int v146[3]; // [esp+BCh] [ebp-DCh] BYREF
+  int v147[3]; // [esp+C8h] [ebp-D0h] BYREF
+  int v148[3]; // [esp+D4h] [ebp-C4h] BYREF
+  int v149[3]; // [esp+E0h] [ebp-B8h] BYREF
+  int v150[3]; // [esp+ECh] [ebp-ACh] BYREF
+  int v151[3]; // [esp+F8h] [ebp-A0h] BYREF
+  dwXYZ v152; // [esp+104h] [ebp-94h] BYREF
+  int a2; // [esp+110h] [ebp-88h] BYREF
+  dwXYZ v154; // [esp+114h] [ebp-84h] BYREF
+  char v155[12]; // [esp+120h] [ebp-78h] BYREF
+  char v156[12]; // [esp+12Ch] [ebp-6Ch] BYREF
+  Point3D v157; // [esp+138h] [ebp-60h] BYREF
+  char v158[12]; // [esp+144h] [ebp-54h] BYREF
+  int v159[3]; // [esp+150h] [ebp-48h] BYREF
+  char v160[12]; // [esp+15Ch] [ebp-3Ch] BYREF
+  int v161[3]; // [esp+168h] [ebp-30h] BYREF
+  char v162[12]; // [esp+174h] [ebp-24h] BYREF
+  int v163; // [esp+180h] [ebp-18h] BYREF
+  char v164[12]; // [esp+18Ch] [ebp-Ch] BYREF
+
+  if ( Collector )
+  {
+    OverlayTypeIndex = this->OverlayTypeIndex;
+    if ( OverlayTypeIndex != -1 )
+    {
+      if ( OverlayTypeClass[OverlayTypeIndex]->Crate )
+      {
+        NeedsBase = 0;
+        coords2 = 0;
+        if ( !Session.idxGameMode || !Collector->f.t.OwningPlayer->Country->MultiplayPassive )
+        {
+          if ( OverlayTypeClass[OverlayTypeIndex]->CrateTrigger )
+          {
+            if ( Collector->f.t.r.m.o.Tag )
+            {
+              WWDebugString("Springing trigger on crate at %d,%d\n", this->pos.X, this->pos.Y);
+              TagClass_RaiseEvent(Collector->f.t.r.m.o.Tag, ekPickupCrate, Collector, CellClass_Default_Coords, 0, 0);
+              if ( !Collector->f.t.r.m.o.Alive )
+                return;
+            }
+            Scenario->gap_34be[0] = 1;
+          }
+          if ( this->Powerup < 0x13u )
+          {
+            powerupRandomResult = this->Powerup;
+          }
+          else
+          {
+            totalShares = 0;
+            powerupShare = powerup_Weights;
+            do
+            {
+              share = *powerupShare++;
+              totalShares += share;
+            }
+            while ( powerupShare < powerup_Anims );
+            v7 = Random2Class::operator()(&Scenario->Randomizer, 1, totalShares);
+            weightSumSoFar = 0;
+            idxPowerupKind = pMoney;
+            v9 = powerup_Weights;
+            do
+            {
+              weightSumSoFar += *v9;
+              if ( v7 <= weightSumSoFar )
+                break;
+              ++v9;
+              ++idxPowerupKind;
+            }
+            while ( v9 < powerup_Anims );
+            powerupRandomResult = idxPowerupKind;
+          }
+          powerupPostRandomResult = powerupRandomResult;
+          if ( Session.idxGameMode )
+          {
+            OwningPlayer = Collector->f.t.OwningPlayer;
+            BaseUnit = HouseClass_FindFirstAccessibleTechnoTypeFromArray(OwningPlayer, &RulesData->BaseUnit);
+            if ( !OwningPlayer->IHouse._.OwnedBuildings
+              && OwningPlayer->IHouse.IHouse->AvailableMoney(&OwningPlayer->IHouse) > 1500
+              && !CounterClass_GetItemCount(
+                    &OwningPlayer->IHouse._.OwnedVehicleTypes,
+                    BaseUnit->field_E60[offsetof(_TechnoTypeClass, VTable)].X)
+              && gBases )
+            {
+              powerupRandomResult = pUnit;
+              powerupPostRandomResult = pUnit;
+              NeedsBase = pUnit;
+            }
+            switch ( powerupRandomResult )
+            {
+              case pUnit:
+                Collector2 = Collector;
+                if ( Collector->f.t.OwningPlayer->OwnedUnits <= 50 )
+                  goto LABEL_36;
+                goto LABEL_35;
+              case pCloak:
+                Collector2 = Collector;
+                if ( Collector->f.t.Cloakable )
+                {
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+                break;
+              case pSquad:
+                Collector2 = Collector;
+                if ( Collector->f.t.OwningPlayer->OwnedInfantry > 100 )
+                {
+LABEL_35:
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+LABEL_36:
+                CellLandType = this->LandType;
+                if ( CellLandType == 2 || CellLandType == 6 )
+                {
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+                break;
+              case pArmor:
+                Collector2 = Collector;
+                if ( LODWORD(Collector->f.t.ArmorMultiplier) || HIDWORD(Collector->f.t.ArmorMultiplier) != 1072693248 )
+                {
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+                break;
+              case pSpeed:
+                Collector2 = Collector;
+                if ( LODWORD(Collector->f.SpeedMult)
+                  || HIDWORD(Collector->f.SpeedMult) != 1072693248
+                  || Collector->vt->vt.r.m.o.a.What_Am_I(Collector) == eAircraft )
+                {
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+                break;
+              case pFirepower:
+                Collector2 = Collector;
+                if ( LODWORD(Collector->f.t.FirepowerMultiplier)
+                  || HIDWORD(Collector->f.t.FirepowerMultiplier) != 1072693248
+                  || !Collector->vt->vt.IsArmed(Collector) )
+                {
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+                break;
+              case pVeteran:
+                Collector2 = Collector;
+                if ( (Collector->f.t.r.m.o.a.derivationFlags & 1) != 0 )
+                {
+                  if ( BYTE2(Collector->vt->vt.r.m.o.GetTechnoType(Collector)->t.EliteWeaponStages[1]) )
+                  {
+                    if ( (Collector->f.t.r.m.o.a.derivationFlags & 1) != 0
+                      && Veterancy_IsElite(&Collector->f.t.Veterancy) )
+                    {
+                      powerupRandomResult = pMoney;
+                      powerupPostRandomResult = pMoney;
+                    }
+                  }
+                  else
+                  {
+                    powerupRandomResult = pMoney;
+                    powerupPostRandomResult = pMoney;
+                  }
+                }
+                break;
+              default:
+                Collector2 = Collector;
+                break;
+            }
+            if ( this->LandType == 2 && !powerupNaval[powerupRandomResult] )
+            {
+              powerupRandomResult = pMoney;
+              powerupPostRandomResult = pMoney;
+            }
+            if ( Session.idxGameMode == gmInternet )
+              Count_IncValue(&Collector2->f.t.OwningPlayer->CollectedPowerups, powerupRandomResult);
+          }
+          else if ( !this->Powerup )
+          {
+            v13 = this->OverlayTypeIndex;
+            coords2 = RulesData->SoloCrateMoney;
+            v12 = OverlayTypeClass[v13];
+            if ( v12 == RulesData->CrateImg )
+            {
+              powerupRandomResult = RulesData->SilverCrate;
+              powerupPostRandomResult = powerupRandomResult;
+            }
+            if ( v12 == RulesData->WoodCrateImg )
+            {
+              powerupRandomResult = RulesData->WoodCrate;
+              powerupPostRandomResult = powerupRandomResult;
+            }
+            if ( v12 == RulesData->WaterCrateImg )
+            {
+              powerupRandomResult = RulesData->WaterCrate;
+              powerupPostRandomResult = powerupRandomResult;
+            }
+          }
+          BaseUnit = this->pos;
+          MapClass::Remove_Crate(&BaseUnit);
+          if ( Session.idxGameMode && gCrates )
+            MapClass::Place_Random_Crate(&Map);
+          if ( powerupRandomResult == pSquad )
+          {
+            powerupRandomResult = pMoney;
+            powerupPostRandomResult = pMoney;
+          }
+          __asm { fld     powerupData[ebx*8] }
+          HIBYTE(damage[0]) = 0;
+          __asm { fstp    qword ptr [esp+188h+powerupData.X] }
+          switch ( powerupRandomResult )
+          {
+            case pMoney:
+              goto LABEL_121;
+            case pUnit:
+              WWDebugString("Crate at %d,%d contains a unit\n", this->pos.X, this->pos.Y);
+              pUnitType = 0;
+              if ( NeedsBase )
+              {
+                Collector3 = Collector;
+                pUnitType = HouseClass_FindFirstAccessibleTechnoTypeFromArray(
+                              Collector->f.t.OwningPlayer,
+                              &RulesData->BaseUnit);
+                if ( pUnitType )
+                  goto LABEL_93;
+              }
+              else
+              {
+                Collector3 = Collector;
+              }
+              if ( (CounterClass_GetItemCount(
+                      &Collector3->f.t.OwningPlayer->OwnedBuildingTypes,
+                      *&RulesData->BuildRefinery.Vector->_->BuildupFile[offsetof(BuildingTypeClass, t)]) > 0
+                 || CounterClass_GetItemCount(
+                      &Collector3->f.t.OwningPlayer->OwnedBuildingTypes,
+                      *&RulesData->BuildRefinery.Vector[1]._->BuildupFile[offsetof(_TechnoTypeClass, t)]) > 0)
+                && !CounterClass_GetItemCount(
+                      &Collector3->f.t.OwningPlayer->OwnedVehicleTypes,
+                      RulesData->HarvesterUnit.data->_->field_E60[offsetof(UnitTypeClass, vt)].X)
+                && !CounterClass_GetItemCount(
+                      &Collector3->f.t.OwningPlayer->OwnedVehicleTypes,
+                      RulesData->HarvesterUnit.data[1]._->field_E60[0].X) )
+              {
+                pUnitType = HouseClass_FindFirstAccessibleTechnoTypeFromArray(
+                              Collector3->f.t.OwningPlayer,
+                              &RulesData->HarvesterUnit);
+              }
+LABEL_93:
+              if ( RulesData->UnitCrateType )
+                pUnitType = RulesData->UnitCrateType;
+              if ( pUnitType )
+                goto LABEL_111;
+              do
+              {
+                while ( 1 )
+                {
+                  do
+                  {
+                    pUnitType = vec_UnitTypes.data[Random2Class::operator()(
+                                                     &Scenario->Randomizer,
+                                                     0,
+                                                     vec_UnitTypes.length - 1)]._;
+                    v35 = 0;
+                    length = RulesData->BaseUnit.length;
+                    if ( length <= 0 )
+                    {
+not_baseunit:
+                      FoundBase = 0;
+                    }
+                    else
+                    {
+                      data = RulesData->BaseUnit.data;
+                      while ( data->_ != pUnitType )
+                      {
+                        ++v35;
+                        ++data;
+                        if ( v35 >= length )
+                          goto not_baseunit;
+                      }
+                      FoundBase = 1;
+                    }
+                    Is_Human = HouseClass::Is_Human(Collector->f.t.OwningPlayer);
+                  }
+                  while ( !BYTE1(pUnitType->field_E60[1].Z) );
+                  if ( gBases )
+                    break;
+                  if ( !FoundBase )
+                    goto not_base_unit;
+                }
+              }
+              while ( FoundBase && !Is_Human && !NeedsBase );
+not_base_unit:
+              if ( !pUnitType )
+                goto pwNop;
+              Collector3 = Collector;
+LABEL_111:
+              createdUnit__ = pUnitType->vt->t.o.CreateInstance(pUnitType, Collector3->f.t.OwningPlayer);
+              if ( !createdUnit__ )
+                goto pwNop;
+              coords = this->pos;
+              Coord_Move(&a3, (coords.X << 8) + 128, (coords.Y << 8) + 128, 0);
+              SWs_.X = 128;
+              SWs_.Y = 128;
+              FloorHeight = CellClass_GetFloorHeight(this, &SWs_);
+              v143[0] = a3.X;
+              a3.Z = FloorHeight;
+              v143[1] = a3.Y;
+              v143[2] = FloorHeight;
+              if ( createdUnit__->vt->vt.vt.r.m.o.Put(createdUnit__, v143, 0) )
+              {
+                if ( HouseClass::Is_Player(Collector->f.t.OwningPlayer) )
+                {
+                  coords = this->pos;
+                  Coord_Move(&a3, (coords.X << 8) + 128, (coords.Y << 8) + 128, 0);
+                  powerupData = 0x8000000080i64;
+                  v42 = CellClass_GetFloorHeight(this, &powerupData);
+                  v151[1] = a3.Y;
+                  a3.Z = v42;
+                  v151[0] = a3.X;
+                  v151[2] = v42;
+                  Sound_Effect(RulesData->CrateUnitSound, v151, 0);
+                }
+                return;
+              }
+              position = this->pos;
+              BaseUnit = 0;
+              v43 = *MapClass::Nearby_Location(
+                       &Map,
+                       &a2,
+                       &position,
+                       *&createdUnit__->UnitType->t.charA[14],
+                       -1,
+                       0,
+                       0,
+                       1,
+                       1,
+                       0,
+                       0,
+                       0,
+                       1,
+                       &BaseUnit,
+                       0,
+                       0);
+              coords = v43;
+              if ( v43 != CellClass_Default_Coords )
+              {
+                v150[1] = (SHIWORD(v43) << 8) + 128;
+                v150[0] = (v43 << 8) + 128;
+                v150[2] = 0;
+                if ( createdUnit__->vt->vt.vt.r.m.o.Put(createdUnit__, v150, 0) )
+                {
+                  if ( HouseClass::Is_Player(Collector->f.t.OwningPlayer) )
+                  {
+                    coords = this->pos;
+                    v44 = (coords.X << 8) + 128;
+                    v45 = (coords.Y << 8) + 128;
+                    powerupData = 0x8000000080i64;
+                    v46 = CellClass_GetFloorHeight(this, &powerupData);
+                    v146[0] = v44;
+                    v146[1] = v45;
+                    v146[2] = v46;
+                    Sound_Effect(RulesData->CrateUnitSound, v146, 0);
+                  }
+                  return;
+                }
+              }
+              (createdUnit__->vt->vt.vt.r.m.o.a.SDDTOR)(createdUnit__, 1);
+              powerupPostRandomResult = pMoney;
+LABEL_121:
+              WWDebugString("Crate at %d,%d contains money\n", this->pos.X, this->pos.Y);
+              updatedAmount = coords2;
+              if ( !coords2 )
+              {
+                __asm { fld     qword ptr [esp+188h+powerupData.X] }
+                v48 = Float_To_Int_Floor();
+                updatedAmount = Random2Class::operator()(&Scenario->Randomizer, v48, v48 + 900);
+              }
+              if ( !HouseClass::Is_Player(Collector->f.t.OwningPlayer) || Session.idxGameMode )
+              {
+                v126 = updatedAmount;
+                recipient = Collector->f.t.OwningPlayer;
+              }
+              else
+              {
+                recipient = HouseClass_PlayerPtr;
+                v126 = updatedAmount;
+              }
+              HouseClass_GiveMoney(recipient, v126);
+              if ( HouseClass::Is_Player(Collector->f.t.OwningPlayer) )
+              {
+                coords = this->pos;
+                Coord_Move(&a3, (coords.X << 8) + 128, (coords.Y << 8) + 128, 0);
+                powerupData = 0x8000000080i64;
+                a3.Z = CellClass_GetFloorHeight(this, &powerupData);
+                v142 = a3;
+                Sound_Effect(RulesData->CrateMoneySound, &v142.X, 0);
+              }
+              goto pwNop;
+            case pHealBase:
+              WWDebugString("Crate at %d,%d contains base healing\n", this->pos.X, this->pos.Y);
+              if ( HouseClass::Is_Player(Collector->f.t.OwningPlayer) )
+              {
+                SWs_.X = this->pos;
+                v79 = (SLOWORD(SWs_.X) << 8) + 128;
+                v80 = (SHIWORD(SWs_.X) << 8) + 128;
+                powerupData = 0x8000000080i64;
+                pos[2] = CellClass_GetFloorHeight(this, &powerupData);
+                pos[0] = v79;
+                pos[1] = v80;
+                Sound_Effect(RulesData->HealCrateSound, pos, 0);
+              }
+              for ( i = 0; i < vec_Logics.length; ++i )
+              {
+                v82 = vec_Logics.data[i]._;
+                if ( v82
+                  && (Collector->f.t.r.m.o.a.derivationFlags & 1) != 0
+                  && Collector->f.t.OwningPlayer == v82->vt->a.GetOwningHouse(v82) )
+                {
+                  v83 = v82->vt->GetType(v82);
+                  vt = v82->vt;
+                  SWs_.X = v82->o.Health - *(v83 + 160);
+                  vt->ReceiveDamage(v82, &SWs_.X, 0, RulesData->C4Warhead, 0, 1, 1, 0);
+                }
+              }
+              goto pwNop;
+            case pCloak:
+              WWDebugString("Crate at %d,%d contains cloaking device\n", this->pos.X, this->pos.Y);
+              for ( coords2 = 0; coords2 < dword_8A03A0; ++coords2 )
+              {
+                damage[1] = *(dword_8A0394 + 4 * coords2);
+                if ( damage[1] )
+                {
+                  if ( *(damage[1] + 116) )
+                  {
+                    if ( (*(damage[1] + 20) & 1) != 0 )
+                    {
+                      SWs_.X = this->pos;
+                      v67 = (SLOWORD(SWs_.X) << 8) + 128;
+                      v68 = (SHIWORD(SWs_.X) << 8) + 128;
+                      powerupData = 0x8000000080i64;
+                      v136 = CellClass_GetFloorHeight(this, &powerupData);
+                      v69 = (*(*damage[1] + 72))(damage[1], v156);
+                      v70 = v69[2];
+                      a3.X = v67 - *v69;
+                      __asm { fild    [esp+188h+a3] }
+                      a3.Y = v68 - v69[1];
+                      a3.Z = v136 - v70;
+                      __asm
+                      {
+                        fild    [esp+188h+var_154]
+                        fild    [esp+188h+var_150]
+                        fld     st
+                        fmul    st, st(1)
+                        fld     st(2)
+                        fmul    st, st(3)
+                        faddp   st(1), st
+                        fld     st(3)
+                        fmul    st, st(4)
+                        faddp   st(1), st
+                        fstp    [esp+190h+var_190]
+                        fstp    st
+                        fstp    st
+                        fstp    st
+                      }
+                      float_sqrt(v121);
+                      if ( Float_To_Int_Floor() < RulesData->CrateRadius )
+                        *(damage[1] + 0x3D2) = 1;
+                    }
+                  }
+                }
+              }
+              goto pwNop;
+            case pExplosion:
+              WWDebugString("Crate at %d,%d contains explosives\n", this->pos.X, this->pos.Y);
+              __asm { fld     qword ptr [esp+194h+powerupData.X] }
+              coords = Float_To_Int_Floor();
+              C4Warhead = RulesData->C4Warhead;
+              damage[1] = coords;
+              Collector->vt->vt.r.m.o.ReceiveDamage(Collector, &coords, 0, C4Warhead, 0, 1, 0, 0);
+              coords2 = 5;
+              do
+              {
+                SWs_.X = Random2Class::operator()(&Scenario->Randomizer, 0, 512);
+                coords = this->pos;
+                v52 = (coords.X << 8) + 128;
+                v53 = (coords.Y << 8) + 128;
+                powerupData = 0x8000000080i64;
+                v54 = CellClass_GetFloorHeight(this, &powerupData);
+                v148[0] = v52;
+                v148[1] = v53;
+                v148[2] = v54;
+                sub_49F420(v159, v148, SWs_.X, 0);
+                a3 = *v55;
+                Damage_At_Cell_Update_489280(&a3, damage[1], 0, RulesData->C4Warhead, 1, 0);
+                v50 = SelectDamageAnimation(damage[1], RulesData->C4Warhead, 0, &a3);
+                v51 = new(sizeof(AnimClass));
+                if ( v51 )
+                {
+                  Z = a3.Z;
+                  v56 = sub_48ACE0(a3.X, a3.Y, a3.Z);
+                  AnimClass::AnimClass(v51, v50, &a3, 0, 1, 0x2600u, v56, SBYTE4(Z));
+                }
+                FlashbangWarheadAt(damage[1], RulesData->C4Warhead, a3.X, a3.Y, a3.Z, 0, 0);
+                --coords2;
+              }
+              while ( coords2 );
+              goto pwNop;
+            case pNapalm:
+              WWDebugString("Crate at %d,%d contains napalm\n", this->pos.X, this->pos.Y);
+              v58 = this->pos;
+              v59 = (v58.X << 8) + 128;
+              v60 = (v58.Y << 8) + 128;
+              SWs_.X = 128;
+              SWs_.Y = 128;
+              a3.Z = CellClass_GetFloorHeight(this, &SWs_);
+              v61 = Collector->vt->vt.r.m.o.a.GetCoords(Collector, v155);
+              v62 = *v61 + v59;
+              v63 = v60 + v61[1];
+              v64 = (a3.Z + v61[2]) / 2;
+              a1.X = v62 / 2;
+              a1.Y = v63 / 2;
+              a1.Z = v64;
+              v57 = new(sizeof(AnimClass));
+              if ( v57 )
+                AnimClass::AnimClass(v57, vec_AnimTypes.data->_, &a1, 0, 1, 0x600u, 0, 0);
+              __asm { fld     qword ptr [esp+188h+powerupData.X] }
+              v65 = Float_To_Int_Floor();
+              v66 = Collector->vt;
+              SWs_.X = v65;
+              v66->vt.r.m.o.ReceiveDamage(Collector, &SWs_.X, 0, RulesData->FlameDamage, 0, 1, 0, 0);
+              Damage_At_Cell_Update_489280(&a1, v65, 0, RulesData->FlameDamage, 1, 0);
+              goto pwNop;
+            case pDarkness:
+              WWDebugString("Crate at %d,%d contains 'shroud'\n", this->pos.X, this->pos.Y);
+              MapClass::Shroud_The_Map(&Map, Collector->f.t.OwningPlayer);
+              goto pwNop;
+            case pReveal:
+              WWDebugString("Crate at %d,%d contains 'reveal'\n", this->pos.X, this->pos.Y);
+              MapClass::Reveal_The_Map(&Map, Collector->f.t.OwningPlayer);
+              coords = this->pos;
+              Coord_Move(&a3, (coords.X << 8) + 128, (coords.Y << 8) + 128, 0);
+              powerupData = 0x8000000080i64;
+              a3.Z = CellClass_GetFloorHeight(this, &powerupData);
+              v152 = a3;
+              Sound_Effect(RulesData->CrateRevealSound, &v152.X, 0);
+              goto pwNop;
+            case pArmor:
+              WWDebugString("Crate at %d,%d contains armor\n", this->pos.X, this->pos.Y);
+              damage[1] = 0;
+              if ( dword_8A03A0 > 0 )
+              {
+                do
+                {
+                  coords2 = *(dword_8A0394 + 4 * damage[1]);
+                  if ( coords2 )
+                  {
+                    if ( (*(coords2 + 20) & 1) != 0 )
+                    {
+                      SWs_.X = this->pos;
+                      coords = 128;
+                      v135 = 128;
+                      v139 = CellClass_GetFloorHeight(this, &coords);
+                      v91 = (*(*coords2 + 72))(coords2, v160);
+                      v92 = v91[2];
+                      a3.X = (SLOWORD(SWs_.X) << 8) + 128 - *v91;
+                      __asm { fild    [esp+188h+a3] }
+                      a3.Y = (SHIWORD(SWs_.X) << 8) + 128 - v91[1];
+                      a3.Z = v139 - v92;
+                      __asm
+                      {
+                        fild    [esp+188h+var_154]
+                        fild    [esp+188h+var_150]
+                        fld     st
+                        fmul    st, st(1)
+                        fld     st(2)
+                        fmul    st, st(3)
+                        faddp   st(1), st
+                        fld     st(3)
+                        fmul    st, st(4)
+                        faddp   st(1), st
+                        fstp    [esp+190h+var_190]
+                        fstp    st
+                        fstp    st
+                        fstp    st
+                      }
+                      float_sqrt(v123);
+                      if ( Float_To_Int_Floor() < RulesData->CrateRadius )
+                      {
+                        _ECX = coords2;
+                        if ( !*(coords2 + 0x158) && *(coords2 + 348) == 1072693248 )
+                        {
+                          __asm
+                          {
+                            fld     qword ptr [esp+188h+powerupData.X]
+                            fmul    qword ptr [ecx+158h]
+                          }
+                          v94 = *coords2;
+                          __asm { fstp    qword ptr [ecx+158h] }
+                          *(coords2 + 344) = _RT1;
+                          v96 = (v94->vt.r.m.o.a.GetOwningHouse)();
+                          if ( HouseClass::Is_Player(v96) )
+                            HIBYTE(damage[0]) = 1;
+                        }
+                      }
+                    }
+                  }
+                  ++damage[1];
+                }
+                while ( damage[1] < dword_8A03A0 );
+                if ( HIBYTE(damage[0]) )
+                  VoxClass_PlayFromName("EVA_UnitArmorUpgraded", -1, -1);
+              }
+              if ( HouseClass::Is_Player(Collector->f.t.OwningPlayer) )
+              {
+                SWs_.X = this->pos;
+                v97 = (SLOWORD(SWs_.X) << 8) + 128;
+                v98 = (SHIWORD(SWs_.X) << 8) + 128;
+                powerupData = 0x8000000080i64;
+                v147[2] = CellClass_GetFloorHeight(this, &powerupData);
+                v147[0] = v97;
+                v147[1] = v98;
+                Sound_Effect(RulesData->CrateArmourSound, v147, 0);
+              }
+              goto pwNop;
+            case pSpeed:
+              WWDebugString("Crate at %d,%d contains speed\n", this->pos.X, this->pos.Y);
+              damage[1] = 0;
+              if ( dword_8A03A0 > 0 )
+              {
+                do
+                {
+                  coords2 = *(dword_8A0394 + 4 * damage[1]);
+                  if ( coords2 )
+                  {
+                    if ( (*(coords2 + 20) & 4) != 0 )
+                    {
+                      SWs_.X = this->pos;
+                      coords = 128;
+                      v135 = 128;
+                      v139 = CellClass_GetFloorHeight(this, &coords);
+                      v99 = (*(*coords2 + 72))(coords2, v162);
+                      v100 = v99[2];
+                      a3.X = (SLOWORD(SWs_.X) << 8) + 128 - *v99;
+                      __asm { fild    [esp+188h+a3] }
+                      a3.Y = (SHIWORD(SWs_.X) << 8) + 128 - v99[1];
+                      a3.Z = v139 - v100;
+                      __asm
+                      {
+                        fild    [esp+188h+var_154]
+                        fild    [esp+188h+var_150]
+                        fld     st
+                        fmul    st, st(1)
+                        fld     st(2)
+                        fmul    st, st(3)
+                        faddp   st(1), st
+                        fld     st(3)
+                        fmul    st, st(4)
+                        faddp   st(1), st
+                        fstp    [esp+190h+var_190]
+                        fstp    st
+                        fstp    st
+                        fstp    st
+                      }
+                      float_sqrt(v124);
+                      if ( Float_To_Int_Floor() < RulesData->CrateRadius )
+                      {
+                        _EDI = coords2;
+                        if ( !*(coords2 + 0x580) && *(coords2 + 1412) == 1072693248 && (*(*coords2 + 44))(coords2) != 2 )
+                        {
+                          __asm
+                          {
+                            fld     qword ptr [esp+188h+powerupData.X]
+                            fmul    qword ptr [edi+580h]
+                          }
+                          v102 = *(coords2 + 540);
+                          __asm { fstp    qword ptr [edi+580h] }
+                          *(coords2 + 1408) = _RT1;
+                          if ( *(v102 + 493) )
+                            HIBYTE(damage[0]) = 1;
+                        }
+                      }
+                    }
+                  }
+                  ++damage[1];
+                }
+                while ( damage[1] < dword_8A03A0 );
+                if ( HIBYTE(damage[0]) )
+                  VoxClass_PlayFromName("EVA_UnitSpeedUpgraded", -1, -1);
+              }
+              if ( HouseClass::Is_Player(Collector->f.t.OwningPlayer) )
+              {
+                SWs_.X = this->pos;
+                v104 = (SLOWORD(SWs_.X) << 8) + 128;
+                v105 = (SHIWORD(SWs_.X) << 8) + 128;
+                powerupData = 0x8000000080i64;
+                v149[2] = CellClass_GetFloorHeight(this, &powerupData);
+                v149[0] = v104;
+                v149[1] = v105;
+                Sound_Effect(RulesData->CrateSpeedSound, v149, 0);
+              }
+              goto pwNop;
+            case pFirepower:
+              WWDebugString("Crate at %d,%d contains firepower\n", this->pos.X, this->pos.Y);
+              damage[1] = 0;
+              if ( dword_8A03A0 > 0 )
+              {
+                do
+                {
+                  coords2 = *(dword_8A0394 + 4 * damage[1]);
+                  if ( coords2 )
+                  {
+                    if ( (*(coords2 + 20) & 1) != 0 )
+                    {
+                      SWs_.X = this->pos;
+                      coords = 128;
+                      v135 = 128;
+                      v139 = CellClass_GetFloorHeight(this, &coords);
+                      v106 = (*(*coords2 + 72))(coords2, v164);
+                      v107 = v106[2];
+                      a3.X = (SLOWORD(SWs_.X) << 8) + 128 - *v106;
+                      a3.Y = (SHIWORD(SWs_.X) << 8) + 128 - v106[1];
+                      a3.Z = v139 - v107;
+                      __asm
+                      {
+                        fild    [esp+188h+var_154]
+                        fild    [esp+188h+var_150]
+                        fild    [esp+188h+a3]
+                        fld     st
+                        fmul    st, st(1)
+                        fld     st(2)
+                        fmul    st, st(3)
+                        faddp   st(1), st
+                        fld     st(3)
+                        fmul    st, st(4)
+                        faddp   st(1), st
+                        fstp    [esp+190h+var_190]
+                        fstp    st
+                        fstp    st
+                        fstp    st
+                      }
+                      float_sqrt(v125);
+                      if ( Float_To_Int_Floor() < RulesData->CrateRadius )
+                      {
+                        _ECX = coords2;
+                        if ( !*(coords2 + 0x160) && *(coords2 + 356) == 1072693248 )
+                        {
+                          __asm
+                          {
+                            fld     qword ptr [esp+188h+powerupData.X]
+                            fmul    qword ptr [ecx+160h]
+                          }
+                          v109 = *coords2;
+                          __asm { fstp    qword ptr [ecx+160h] }
+                          *(coords2 + 352) = _RT1;
+                          v111 = (v109->vt.r.m.o.a.GetOwningHouse)();
+                          if ( HouseClass::Is_Player(v111) )
+                            HIBYTE(damage[0]) = 1;
+                        }
+                      }
+                    }
+                  }
+                  ++damage[1];
+                }
+                while ( damage[1] < dword_8A03A0 );
+                if ( HIBYTE(damage[0]) )
+                  VoxClass_PlayFromName("EVA_UnitFirePowerUpgraded", -1, -1);
+              }
+              if ( HouseClass::Is_Player(Collector->f.t.OwningPlayer) )
+              {
+                SWs_.X = this->pos;
+                v112 = (SLOWORD(SWs_.X) << 8) + 128;
+                v113 = (SHIWORD(SWs_.X) << 8) + 128;
+                powerupData = 0x8000000080i64;
+                v138.Z = CellClass_GetFloorHeight(this, &powerupData);
+                v138.X = v112;
+                v138.Y = v113;
+                Sound_Effect(RulesData->CrateFireSound, &v138.X, 0);
+              }
+              goto pwNop;
+            case pICBM:
+              WWDebugString("Crate at %d,%d contains ICBM\n", this->pos.X, this->pos.Y);
+              FirstOfAction = SuperWeaponType_FindFirstOfAction(Nuke);
+              v85 = 0;
+              House = Collector->f.t.OwningPlayer;
+              cntSW = House->SuperWeapons.length;
+              if ( cntSW <= 0 )
+                goto pwNop;
+              SWs_.X = House->SuperWeapons.data;
+              X = SWs_.X;
+              break;
+            case pVeteran:
+              WWDebugString("Crate at %d,%d contains veterancy(TM)\n", this->pos.X, this->pos.Y);
+              for ( coords2 = 0; coords2 < dword_8A03A0; ++coords2 )
+              {
+                damage[1] = *(dword_8A0394 + 4 * coords2);
+                if ( damage[1] )
+                {
+                  if ( *(damage[1] + 116) )
+                  {
+                    if ( (*(damage[1] + 20) & 1) != 0 )
+                    {
+                      SWs_.X = this->pos;
+                      coords = 128;
+                      v135 = 128;
+                      v139 = CellClass_GetFloorHeight(this, &coords);
+                      v71 = (*(*damage[1] + 72))(damage[1], v158);
+                      v72 = v71[2];
+                      a3.X = (SLOWORD(SWs_.X) << 8) + 128 - *v71;
+                      __asm { fild    [esp+188h+a3] }
+                      a3.Y = (SHIWORD(SWs_.X) << 8) + 128 - v71[1];
+                      a3.Z = v139 - v72;
+                      __asm
+                      {
+                        fild    [esp+188h+var_154]
+                        fild    [esp+188h+var_150]
+                        fld     st
+                        fmul    st, st(1)
+                        fld     st(2)
+                        fmul    st, st(3)
+                        faddp   st(1), st
+                        fld     st(3)
+                        fmul    st, st(4)
+                        faddp   st(1), st
+                        fstp    [esp+190h+var_190]
+                        fstp    st
+                        fstp    st
+                        fstp    st
+                      }
+                      float_sqrt(v122);
+                      if ( Float_To_Int_Floor() < RulesData->CrateRadius )
+                      {
+                        if ( *((*(*damage[1] + 132))(damage[1]) + 3214) )
+                        {
+                          __asm
+                          {
+                            fld     ds:double_0
+                            fcomp   qword ptr [esp+188h+powerupData.X]
+                          }
+                          v73 = 0;
+                          __asm { fnstsw  ax }
+                          if ( (_AX & 0x100) != 0 )
+                          {
+                            v75 = (damage[1] + 336);
+                            do
+                            {
+                              if ( Veterancy_IsVeteran(v75) )
+                                Veterancy_SetElite(v75, 1);
+                              if ( sub_74FFC0(v75) )
+                                Veterancy_SetVeteran(v75, 1);
+                              if ( Veterancy_IsPreRookie(v75) )
+                                Veterancy_Reset(1);
+                              SWs_.X = ++v73;
+                              __asm
+                              {
+                                fild    [esp+188h+SWs_]
+                                fcomp   qword ptr [esp+188h+powerupData.X]
+                                fnstsw  ax
+                              }
+                            }
+                            while ( (_AX & 0x100) != 0 );
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+              if ( HouseClass::Is_Player(Collector->f.t.OwningPlayer) )
+              {
+                SWs_.X = this->pos;
+                v77 = (SLOWORD(SWs_.X) << 8) + 128;
+                v78 = (SHIWORD(SWs_.X) << 8) + 128;
+                powerupData = 0x8000000080i64;
+                v144[2] = CellClass_GetFloorHeight(this, &powerupData);
+                v144[0] = v77;
+                v144[1] = v78;
+                Sound_Effect(RulesData->CratePromoteSound, v144, 0);
+              }
+              goto pwNop;
+            case pGas:
+              WWDebugString("Crate at %d,%d contains poison gas\n", this->pos.X, this->pos.Y);
+              __asm { fld     qword ptr [esp+188h+powerupData.X] }
+              v18 = WarheadTypeClass_FindByName("GAS");
+              v20 = Float_To_Int_Floor();
+              v21 = this->vt;
+              v22 = v20;
+              damage[1] = v20;
+              v23 = v21->GetCoords(this, &v154);
+              Damage_At_Cell_Update_489280(v23, v22, 0, v18, 0, 0);
+              v19 = 0;
+              v17 = 1;
+              do
+              {
+                if ( v17 )
+                {
+                  coords2 = this->pos;
+                  sub_487EA0(&SWs_, &coords2, v19);
+                  coords = *v25;
+                  v24 = MapClass::Coord_Cell(&Map, &coords);
+                }
+                else
+                {
+                  v24 = this;
+                }
+                v26 = v24->vt->GetCoords(v24, &v163);
+                Damage_At_Cell_Update_489280(v26, damage[1], 0, v18, 0, 0);
+                v17 = ++v19 < 8;
+              }
+              while ( v19 < 8 );
+              goto pwNop;
+            case pTiberium:
+              WWDebugString("Crate at %d,%d contains tiberium\n", this->pos.X, this->pos.Y);
+              v27 = Random2Class::operator()(&Scenario->Randomizer, 0, vec_Tiberiums.length - 1);
+              if ( v27 == 1 )
+                v27 = 0;
+              sub_487190(this, v27, 1);
+              v28 = Random2Class::operator()(&Scenario->Randomizer, 10, 20);
+              if ( v28 )
+              {
+                v29 = v28;
+                do
+                {
+                  v119 = Random2Class::operator()(&Scenario->Randomizer, 0, 768);
+                  v30 = this->vt->GetCoords(this, &v157);
+                  sub_49F420(v161, v30, v119, 1);
+                  a3 = *v31;
+                  Target_Cell = MapClass_Get_Target_Cell(&Map, &a3);
+                  sub_487190(Target_Cell, v27, 1);
+                  --v29;
+                }
+                while ( v29 );
+              }
+              goto pwNop;
+            default:
+              goto pwNop;
+          }
+          while ( (*X)->SWType->TypeIndex )
+          {
+            ++v85;
+            ++X;
+            if ( v85 >= cntSW )
+              goto pwNop;
+          }
+          if ( v85 != -1 )
+          {
+            SuperClass::Enable(*(SWs_.X + 4 * FirstOfAction->ArrayIndex), 1, 0, 0);
+            if ( v90 )
+            {
+              if ( Collector->f.t.BelongsToHumanPlayer )
+                SidebarClass_AddCameo(&Map, Special, FirstOfAction->ArrayIndex);
+            }
+          }
+pwNop:
+          if ( powerup_Anims[powerupPostRandomResult] != -1 )
+          {
+            SWs_.X = this->pos;
+            v115 = (SLOWORD(SWs_.X) << 8) + 128;
+            v116 = (SHIWORD(SWs_.X) << 8) + 128;
+            powerupData = 0x8000000080i64;
+            v117 = CellClass_GetFloorHeight(this, &powerupData);
+            v138.X = v115;
+            v138.Y = v116;
+            v138.Z = v117 + 200;
+            v114 = new(sizeof(AnimClass));
+            if ( v114 )
+              AnimClass::AnimClass(
+                v114,
+                vec_AnimTypes.data[powerup_Anims[powerupPostRandomResult]]._,
+                &v138,
+                0,
+                1,
+                0x600u,
+                0,
+                0);
+          }
+        }
+      }
+    }
+  }
+}
+/* Orphan comments:
+Trainable
+ArmorMultiplier
+SpeedMultiplier
+*/

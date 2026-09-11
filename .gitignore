@@ -12,3 +12,9 @@ output
 .project
 /scripts/run_ion_shock.bat
 /scripts/run_yr.bat
+
+# IDA 数据库（约 219MB）体积过大不入库，需要时从 platform\gamemd 复制
+/ida_work/*.idb
+/ida_work/*.i64
+/ida_work/*.nam
+/ida_work/*.til

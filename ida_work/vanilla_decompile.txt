@@ -1,0 +1,890 @@
+====================================================================================================
+TARGET 0x739971 in W?Try_To_Deploy$:UnitClass$n()i [0x7393C0 - 0x739AB8]
+Callers:
+    W?Try_To_Deploy$:UnitClass$n()i depth=0 (caller of: W?Try_To_Deploy$:UnitClass$n()i)
+    sub_6AFD60 depth=1 (caller of: W?Try_To_Deploy$:UnitClass$n()i)
+    W?Per_Cell_Process$:UnitClass$n($PCPType$$)v depth=1 (caller of: W?Try_To_Deploy$:UnitClass$n()i)
+    UnitClass_Unload depth=1 (caller of: W?Try_To_Deploy$:UnitClass$n()i)
+    UnitClass_Hunt depth=1 (caller of: W?Try_To_Deploy$:UnitClass$n()i)
+
+int __fastcall UnitClass::Try_To_Deploy(UnitClass *this)
+{
+  int result; // eax
+  long double v3; // fst7
+  int v4; // edi
+  wXY v5; // esi
+  MapCellExClass *v6; // eax
+  UnitTypeClass *UnitType; // ecx
+  vt_UnitClass *vt; // edx
+  int Facing; // ebx
+  LocomotionClass *Locomotion; // eax
+  __int16 v11; // dx
+  BuildingClass *v12; // eax
+  BuildingClass *v13; // eax
+  BuildingClass *v14; // ebx
+  vt_BuildingClass *VTable; // eax
+  _ObjectClass *Target; // ecx
+  UnitClass *v17; // esi
+  HouseClass *OwningPlayer; // ecx
+  BuildingTypeClass *BuildingType; // eax
+  int X; // eax
+  int Y; // ecx
+  int v22; // eax
+  HouseClass_old *v23; // ecx
+  wXY v24; // esi
+  int v25; // eax
+  long double v26; // fst7
+  SlaveManagerClass *SlaveManager; // ecx
+  char v28; // al
+  vt_UnitClass *v29; // edx
+  _TechnoTypeClass *v30; // eax
+  char Selected; // [esp+54h] [ebp-16h]
+  char v32; // [esp+55h] [ebp-15h]
+  wXY h2; // [esp+56h] [ebp-14h] BYREF
+  MapCellExClass a2; // [esp+5Ah] [ebp-10h] BYREF
+  int pos; // [esp+5Eh] [ebp-Ch] BYREF
+  int v36; // [esp+62h] [ebp-8h]
+  int Z; // [esp+66h] [ebp-4h]
+
+  result = this->vt->vt.vt.Techno_314(this);
+  if ( !result )
+  {
+LABEL_74:
+    this->f.field_688 = 0;
+LABEL_75:
+    LOBYTE(result) = 0;
+    return result;
+  }
+  result = this->f.NavCom_Destination;
+  v4 = 0;
+  if ( result )
+    goto LABEL_75;
+  if ( !this->f.Locomotion )
+    RaiseError(-2147467261);
+  result = this->f.Locomotion->vt->Is_Moving(this->f.Locomotion);
+  if ( result || !this->UnitType->t.PowersUnit )
+    goto LABEL_75;
+  this->vt->vt.vt.r.m.o.Mark(this, Underground);
+  if ( !this->f.Locomotion )
+    RaiseError(-2147467261);
+  this->f.Locomotion->vt->Mark_All_Occupation_Bits(this->f.Locomotion, 0);
+  v6 = this->vt->vt.vt.r.m.o.GetCellCoords(this, &a2);
+  UnitType = this->UnitType;
+  v5 = *v6;
+  a2 = *v6;
+  if ( BuildingTypeClass::X_Foundation_Value(UnitType->t.PowersUnit) > 2
+    || BuildingTypeClass::Y_Foundation_Value(this->UnitType->t.PowersUnit, 0) > 2 )
+  {
+    h2.X = LOWORD(CellCoordDirections[7]) + v5.X;
+    h2.Y = HIWORD(CellCoordDirections[7]) + a2._Y;
+  }
+  else
+  {
+    h2 = v5;
+  }
+  if ( !this->UnitType->t.PowersUnit->vt->t.CanCreateHere(this->UnitType->t.PowersUnit, &h2, 0) )
+  {
+    if ( HouseClass::Is_Player(this->f.t.OwningPlayer) && !LOBYTE(this->UnitType->t.Prerequisite.__.incrementAmount) )
+      VoxClass_PlayFromName("EVA_CannotDeployHere", -1, -1);
+    if ( !HouseClass::Is_Human(this->f.t.OwningPlayer) )
+      BuildingTypeClass::Flush_For_Placement(this->UnitType->t.PowersUnit, &h2, this->f.t.OwningPlayer);
+    if ( !this->f.Locomotion )
+      RaiseError(-2147467261);
+    this->f.Locomotion->vt->Mark_All_Occupation_Bits(this->f.Locomotion, 1);
+    this->vt->vt.vt.r.m.o.Mark(this, Surface);
+    vt = this->vt;
+    this->f.field_688 = 0;
+    result = (vt->vt.vt.r.m.Mission_QueueMission)(this, 5, 0);
+    LOBYTE(result) = 0;
+    return result;
+  }
+  if ( !this->f.Locomotion )
+    RaiseError(-2147467261);
+  this->f.Locomotion->vt->Mark_All_Occupation_Bits(this->f.Locomotion, 1);
+  this->vt->vt.vt.r.m.o.Mark(this, Surface);
+  Facing = BuildingTypeClass_GetFacing(this->UnitType->t.PowersUnit);
+  if ( (((*Desired_Facing256(&this->f.t.Facing, &a2) >> 7) + 1) >> 1) != Facing )
+  {
+    if ( !this->f.Locomotion )
+      RaiseError(-2147467261);
+    if ( !this->f.Locomotion->vt->Is_Moving_Now(this->f.Locomotion) )
+    {
+      Locomotion = this->f.Locomotion;
+      LOBYTE(v11) = 0;
+      HIBYTE(v11) = Facing;
+      a2._X = v11;
+      if ( !Locomotion )
+        RaiseError(-2147467261);
+      this->f.Locomotion->vt->Do_Turn(this->f.Locomotion, a2);
+    }
+    result = (this->vt->vt.vt.r.Radio_CommandFirstDocked)(this, 3);
+    this->f.field_688 = 1;
+    LOBYTE(result) = 1;
+    return result;
+  }
+  Selected = this->f.t.r.m.o.Selected;
+  this->vt->vt.vt.r.m.o.Mark(this, Underground);
+  if ( !this->f.Locomotion )
+    RaiseError(-2147467261);
+  this->f.Locomotion->vt->Mark_All_Occupation_Bits(this->f.Locomotion, 0);
+  v12 = new(sizeof(BuildingClass));
+  if ( !v12 || (v13 = BuildingClass_CTOR(v12, this->UnitType->t.PowersUnit, this->f.t.OwningPlayer), (v14 = v13) == 0) )
+  {
+LABEL_71:
+    if ( !this->f.Locomotion )
+      RaiseError(-2147467261);
+    this->f.Locomotion->vt->Mark_All_Occupation_Bits(this->f.Locomotion, 1);
+    result = (this->vt->vt.vt.r.m.o.Mark)(this, 1);
+    goto LABEL_74;
+  }
+  v13->VTable->vt.r.m.Mission_QueueMission(v13, mi_Construction, 0);
+  VTable = v14->VTable;
+  Z = 0;
+  pos = (h2.X << 8) + 128;
+  v36 = (h2.Y << 8) + 128;
+  if ( !VTable->vt.r.m.o.Put(v14, &pos, 0) )
+  {
+    (v14->VTable->vt.r.m.o.a.SDDTOR)(v14, 1);
+    goto LABEL_71;
+  }
+  (this->vt->vt.vt.r.Radio_CommandFirstDocked)(this, 3);
+  if ( vec_Techno.length > 0 )
+  {
+    do
+    {
+      v17 = vec_Techno.data[v4]._;
+      Target = v17->f.t.Target;
+      if ( Target
+        && Target->vt->a.What_Am_I(Target) == eUnit
+        && v17->f.t.Target == this
+        && v17->f.t.r.m.o.Alive
+        && v17 != this
+        && v17 != v14 )
+      {
+        if ( v14->BuildingType->VoxelBarrelFile[13]
+          && v17->vt->vt.vt.r.m.o.a.What_Am_I(v17) == eInfantry
+          && BYTE2(v17->vt->vt.vt.r.m.o.GetTechnoType(v17)[1].t.o.Turrets[0xD].VXL) )
+        {
+          v17->vt->vt.vt.SetTarget(v17, 0);
+        }
+        else
+        {
+          v17->vt->vt.vt.SetTarget(v17, v14);
+        }
+      }
+      ++v4;
+    }
+    while ( v4 < vec_Techno.length );
+  }
+  v14->t.Group = this->f.t.Group;
+  OwningPlayer = v14->t.OwningPlayer;
+  v14->t.Veterancy = this->f.t.Veterancy;
+  if ( !HouseClass::Is_Player(OwningPlayer) )
+  {
+    v14->BeingProduced = 1;
+    v14->ShouldRebuild = 1;
+  }
+  BuildingType = v14->BuildingType;
+  if ( BuildingType->gap_1730[2] || BuildingType->VoxelBarrelFile[24] )
+  {
+    a2._X = 0x4000;
+    FacingStruct_SetFacing(&v14->t.BarrelFacing, &a2);
+  }
+  v14->VTable->vt.SetTarget(v14, this->f.t.Target);
+  v14->VTable->vt.r.m.o.Techno_198(v14, this->f.t.OwningPlayer);
+  v14->field_6DD = 1;
+  if ( !HouseClass::Is_Human(this->f.t.OwningPlayer) && v14->BuildingType->VoxelBarrelFile[13] && Session.idxGameMode )
+  {
+    X = v14->t.r.m.o.pos.X;
+    Y = v14->t.r.m.o.pos.Y;
+    Z = v14->t.r.m.o.pos.Z;
+    a2._X = X / 256;
+    v22 = Y;
+    v23 = this->f.t.OwningPlayer;
+    a2._Y = v22 / 256;
+    v24 = a2;
+    HouseClass_SetBaseSpawnCell(v23, a2);
+    HouseClass_AcquiredConyard(this->f.t.OwningPlayer);
+    this->f.t.OwningPlayer->Base.vec_Nodes.data->pos = v24;
+    this->f.t.OwningPlayer->Base.field_50 = v24;
+    this->f.t.OwningPlayer->productionEnabled = 1;
+    this->f.t.OwningPlayer->AITriggersActive = 1;
+    this->f.t.OwningPlayer->AutoBaseBuilding = 1;
+    sub_50C920(this->f.t.OwningPlayer);
+  }
+  ObjectClass::Health_Ratio(this);
+  v26 = v3 * v14->BuildingType->t.o.Strength;
+  v25 = Float_To_Int_Floor();
+  v14->t.r.m.o.Health = v25;
+  if ( v25 <= 1 )
+    v25 = 1;
+  v14->t.r.m.o.Health = v25;
+  v14->t.r.m.o.BackupHealth = v25;
+  SlaveManager = this->f.t.SlaveManager;
+  if ( SlaveManager )
+  {
+    sub_6B0D10(SlaveManager);
+    SlaveManagerClass_ReplaceWhichBelongsToUnit(this->f.t.SlaveManager, v14);
+  }
+  qmemcpy(&v14->t.StrX_6, &this->f.t.StrX_6, 0x1Cu);
+  StrX_4060F0(&this->f.t.StrX_6, 0, 0);
+  this->f.t.QueuedVoiceIndex = -1;
+  this->f.t.LastQueuedVoiceIndex = -1;
+  v28 = AllowVoice;
+  LOBYTE(AllowVoice) = 0;
+  v32 = v28;
+  if ( Selected )
+    (v14->VTable->vt.r.m.o.Select)(v14);
+  LOBYTE(AllowVoice) = v32;
+  (this->vt->vt.vt.Techno_3A0)(this, *&v26);
+  if ( this->f.t.r.m.o.Tag )
+  {
+    ObjectClass::Attach_Trigger(v14, this->f.t.r.m.o.Tag);
+    --this->f.t.r.m.o.Tag->field_2C;
+    this->f.t.r.m.o.Tag = 0;
+  }
+  if ( *this->vt->vt.vt.r.m.o.GetTechnoType(this)->t.gap_5C0 != -1 )
+  {
+    pos = this->f.t.r.m.o.pos.X;
+    v29 = this->vt;
+    v36 = this->f.t.r.m.o.pos.Y;
+    Z = this->f.t.r.m.o.pos.Z;
+    v30 = v29->vt.vt.r.m.o.GetTechnoType(this);
+    Sound_Effect(*v30->t.gap_5C0, &pos, 0);
+  }
+  result = this->vt->vt.vt.r.m.o.UnInit(this);
+  LOBYTE(result) = 1;
+  return result;
+}
+
+
+====================================================================================================
+TARGET 0x44A04C in W?Mission_Deconstruction$:BuildingClass$n()i [0x449C30 - 0x44ABC6]
+Callers:
+    W?Mission_Deconstruction$:BuildingClass$n()i depth=0 (caller of: W?Mission_Deconstruction$:BuildingClass$n()i)
+
+signed int __thiscall BuildingClass::Mission_Deconstruction(BuildingClass *this)
+{
+  int MissionStatus; // eax
+  long double v3; // fst7
+  int v4; // eax
+  Point3D *p_pos; // esi
+  BuildingTypeClass *BuildingType; // eax
+  BuildingTypeClass *v7; // eax
+  int v8; // ebx
+  wXY *v9; // eax
+  __int16 v10; // dx
+  int TimeStart; // ebx
+  wXY *v12; // eax
+  __int16 v13; // dx
+  __int16 v15; // cx
+  __int16 v16; // cx
+  UnitClass *v17; // eax
+  _TechnoClass *v18; // ebx
+  vt_BuildingClass *VTable; // edx
+  int v20; // eax
+  BuildingTypeClass *v21; // ecx
+  int v22; // edx
+  int Z; // eax
+  int Y; // ecx
+  int v25; // eax
+  LightSourceClass *LightSource; // ecx
+  int v27; // edi
+  _ObjectClass *Target; // ecx
+  _TechnoClass *v29; // esi
+  int v30; // eax
+  int Facing; // eax
+  signed int v32; // eax
+  _ObjectTypeClass *v33; // eax
+  SlaveManagerClass *SlaveManager; // ecx
+  BuildingTypeClass *v35; // eax
+  __int16 v36; // dx
+  char v37; // al
+  int i; // esi
+  int v39; // eax
+  vt_BuildingClass *v40; // eax
+  LightSourceClass *v41; // ecx
+  int j; // esi
+  int v43; // eax
+  BuildingTypeClass *v44; // eax
+  char CloakRadius; // cl
+  vt_BuildingClass *v46; // edx
+  __int16 *v47; // eax
+  int v48; // edx
+  __int16 *v49; // edi
+  BuildingTypeClass *v50; // eax
+  int v51; // ebx
+  _FootClass *k; // esi
+  __int16 *v53; // ecx
+  __int16 v54; // ax
+  int v55; // ecx
+  int *v56; // eax
+  CellClass *Target_Cell; // eax
+  CellClass *v58; // eax
+  vt_BuildingClass *v59; // eax
+  int v60; // eax
+  int v61; // edx
+  char v62; // al
+  wXY *v63; // eax
+  vt_FootClass *vt; // edx
+  int v65; // ebx
+  InfantryTypeClass *v66; // esi
+  InfantryClass *v67; // eax
+  InfantryClass *v68; // edi
+  int v69; // edx
+  int v70; // eax
+  _WORD *v71; // esi
+  _WORD *v72; // eax
+  __int16 v73; // dx
+  int v74; // eax
+  CellClass *v75; // eax
+  int *v76; // eax
+  BuildingTypeClass *v77; // eax
+  BuildingTypeClass *v78; // eax
+  BuildingTypeClass *v79; // eax
+  BuildingTypeClass *v80; // eax
+  BuildingTypeClass *v81; // eax
+  vt_BuildingClass *v82; // edx
+  BuildingTypeClass *v83; // eax
+  _TechnoClass *FocusOnUnit; // esi
+  _TechnoClass *v85; // ecx
+  _TechnoClass *v86; // esi
+  CellClass *v87; // eax
+  char UpgradeLevel; // al
+  BuildingClass *v89; // esi
+  PtrAnimClass *v90; // ecx
+  int v91; // eax
+  vt_BuildingClass *v92; // edx
+  int v93; // edi
+  _TechnoClass **DamageFireAnims; // esi
+  float v95; // [esp-8h] [ebp-D8h]
+  float v96; // [esp-8h] [ebp-D8h]
+  char Selected; // [esp+12h] [ebp-BEh]
+  char v98; // [esp+12h] [ebp-BEh]
+  char v99; // [esp+13h] [ebp-BDh]
+  _QWORD amount[4]; // [esp+14h] [ebp-BCh] BYREF
+  VectorPtrTechnoClass technos; // [esp+34h] [ebp-9Ch] BYREF
+  int v102; // [esp+4Ch] [ebp-84h]
+  wXY v103; // [esp+50h] [ebp-80h] BYREF
+  wXY v104; // [esp+54h] [ebp-7Ch] BYREF
+  wXY v105; // [esp+58h] [ebp-78h] BYREF
+  dwXYZ pos; // [esp+5Ch] [ebp-74h] BYREF
+  int v107[3]; // [esp+68h] [ebp-68h] BYREF
+  int v108[3]; // [esp+74h] [ebp-5Ch] BYREF
+  int v109[3]; // [esp+80h] [ebp-50h] BYREF
+  int v110; // [esp+8Ch] [ebp-44h] BYREF
+  int v111; // [esp+90h] [ebp-40h] BYREF
+  int v112; // [esp+94h] [ebp-3Ch] BYREF
+  int arg; // [esp+98h] [ebp-38h] BYREF
+  int v114; // [esp+9Ch] [ebp-34h] BYREF
+  int v115; // [esp+A0h] [ebp-30h] BYREF
+  int v116[3]; // [esp+ACh] [ebp-24h] BYREF
+  int v117; // [esp+B8h] [ebp-18h] BYREF
+  int coords1[3]; // [esp+C4h] [ebp-Ch] BYREF
+
+  this->VTable->vt.r.m.o.SetRepairState(this, 0);
+  MissionStatus = this->t.r.m.MissionStatus;
+  Selected = this->t.r.m.o.Selected;
+  if ( MissionStatus )
+  {
+    v4 = MissionStatus - 1;
+    if ( v4 )
+    {
+      if ( v4 == 1 )
+      {
+        p_pos = &this->t.r.m.o.pos;
+        pos = this->t.r.m.o.pos;
+        VocClass_UpdateAtLocation(&pos, &this->field_6A0);
+        if ( this->field_6DD )
+        {
+          this->t.OwningPlayer->recheckTechLevels = 1;
+          this->VTable->vt.SetTarget(this, 0);
+          if ( this->t.BelongsToHumanPlayer && !*&this->BuildingType->t.PoweredUnit )
+            VoxClass_PlayFromName("EVA_StructureSold", -1, -1);
+          BuildingType = this->BuildingType;
+          if ( *&BuildingType->t.PoweredUnit
+            && (!BuildingType->VoxelBarrelFile[0xD]
+             || Session.idxGameMode
+             && this->t.FocusOnUnit
+             && HouseClass::Is_Human(this->t.OwningPlayer)
+             && Session.idxGameMode
+             && gMCVRedeploy
+             && !this->t.MindControlledBy) )
+          {
+            v7 = this->BuildingType;
+            if ( !v7->gap_1730[2] )
+              goto LABEL_20;
+            v8 = *&v7->TheaterSpecificID[14];
+            v9 = Desired_Facing256(&this->t.BarrelFacing, &arg);
+            LOBYTE(v10) = 0;
+            HIBYTE(v10) = v8;
+            if ( v9->X != v10 )
+              goto LABEL_19;
+            TimeStart = this->BuildingType->SuperAnimTimers[5].TimeStart;
+            v12 = Desired_Facing256(&this->t.Facing, &v112);
+            LOBYTE(v13) = 0;
+            HIBYTE(v13) = TimeStart;
+            if ( v12->X == v13 )
+            {
+LABEL_20:
+              ++ScenarioInit;
+              v17 = new(sizeof(UnitClass));
+              if ( v17 )
+                v18 = UnitClass_CTOR(v17, *&this->BuildingType->t.PoweredUnit, this->t.OwningPlayer);
+              else
+                v18 = 0;
+              --ScenarioInit;
+              if ( v18 )
+              {
+                ObjectClass::Health_Ratio(this);
+                VTable = this->VTable;
+                *&amount[2] = v3;
+                v20 = VTable->vt.GetRefund(this);
+                v21 = this->BuildingType;
+                HIDWORD(amount[3]) = v20;
+                LODWORD(amount[0]) = this->t.FocusOnUnit;
+                if ( BuildingTypeClass::X_Foundation_Value(v21) > 2
+                  || BuildingTypeClass::Y_Foundation_Value(this->BuildingType, 0) > 2 )
+                {
+                  Y = this->t.r.m.o.pos.Y;
+                  v25 = CellCoords_wat[3].X + p_pos->X;
+                  HIDWORD(amount[1]) = this->t.r.m.o.pos.Z;
+                  HIDWORD(amount[0]) = ((v25 / 256) << 8) + 128;
+                  LODWORD(amount[1]) = (((Y + CellCoords_wat[3].Y) / 256) << 8) + 128;
+                }
+                else
+                {
+                  v22 = this->t.r.m.o.pos.Y;
+                  Z = this->t.r.m.o.pos.Z;
+                  HIDWORD(amount[0]) = p_pos->X;
+                  amount[1] = __PAIR64__(Z, v22);
+                }
+                LightSource = this->LightSource;
+                if ( LightSource )
+                  LightSourceClass_Stop(LightSource, 0);
+                v27 = 0;
+                technos.data = 0;
+                technos.count = 0;
+                technos.IsInitialized = 1;
+                technos.IsAllocated = 0;
+                technos.vt = &DynamicVectorClass<TechnoClass *>::`vftable';
+                technos.incrementAmount = 10;
+                for ( technos.length = 0; v27 < vec_Techno.length; ++v27 )
+                {
+                  v29 = vec_Techno.data[v27]._;
+                  Target = v29->t.Target;
+                  if ( Target
+                    && Target->vt->a.What_Am_I(Target) == eBuilding
+                    && v29->t.Target == this
+                    && v29->t.r.m.o.Alive
+                    && v29 != this
+                    && v29 != v18
+                    && (technos.length < technos.count
+                     || (technos.IsAllocated || !technos.count)
+                     && technos.incrementAmount > 0
+                     && (technos.vt->SetCapacity)(&technos, technos.incrementAmount + technos.count, 0)) )
+                  {
+                    v30 = technos.length++;
+                    technos.data[v30]._ = v29;
+                  }
+                }
+                (this->VTable->vt.r.m.o.Remove)(this);
+                Facing = BuildingTypeClass_GetFacing(this->BuildingType);
+                if ( v18->vt->r.m.o.Put(v18, (amount + 4), Facing) )
+                {
+                  v33 = (v18->vt->r.m.o.GetType)(v18);
+                  v3 = v33->o.Strength * *&amount[2];
+                  v32 = Float_To_Int_Floor();
+                  v18->t.r.m.o.Health = v32;
+                  if ( v32 <= 1 )
+                    v32 = 1;
+                  v18->t.r.m.o.Health = v32;
+                  v18->t.r.m.o.BackupHealth = v32;
+                  SlaveManager = this->t.SlaveManager;
+                  if ( SlaveManager )
+                    SlaveManagerClass_ReplaceWhichBelongsToUnit(SlaveManager, v18);
+                  v18->t.Group = this->t.Group;
+                  v18->t.Veterancy = this->t.Veterancy;
+                  v35 = this->BuildingType;
+                  if ( v35->gap_1730[2] )
+                  {
+                    LOBYTE(v36) = 0;
+                    HIBYTE(v36) = v35->TheaterSpecificID[14];
+                    v103.X = v36;
+                    FacingStruct_SetFacing(&v18->t.BarrelFacing, &v103);
+                  }
+                  if ( LODWORD(amount[0]) )
+                  {
+                    (v18->vt->SetDestination)(v18, amount[0], 1, *&v3);
+                    v18->vt->r.m.Mission_QueueMission(v18, mi_Move, 0);
+                  }
+                  if ( this->t.r.m.o.Tag )
+                  {
+                    ObjectClass::Attach_Trigger(v18, this->t.r.m.o.Tag);
+                    --this->t.r.m.o.Tag->field_2C;
+                    this->t.r.m.o.Tag = 0;
+                  }
+                  qmemcpy(&v18->t.StrX_6, &this->t.StrX_6, 0x1Cu);
+                  StrX_4060F0(&this->t.StrX_6, 0, 0);
+                  this->t.QueuedVoiceIndex = -1;
+                  this->t.LastQueuedVoiceIndex = -1;
+                  if ( Selected )
+                  {
+                    v37 = AllowVoice;
+                    LOBYTE(AllowVoice) = 0;
+                    v98 = v37;
+                    (v18->vt->r.m.o.Select)(v18);
+                    LOBYTE(AllowVoice) = v98;
+                  }
+                  for ( i = 0; i < technos.length; ++i )
+                    technos.data[i]._->vt->SetTarget(technos.data[i]._, v18);
+                }
+                else
+                {
+                  HouseClass_GiveMoney(this->t.OwningPlayer, SHIDWORD(amount[3]));
+                }
+                technos.vt = &VectorClass<TechnoClass *>::`vftable';
+                if ( technos.data )
+                {
+                  if ( technos.IsAllocated )
+                    delete(technos.data);
+                }
+              }
+              else
+              {
+                v39 = this->VTable->vt.GetRefund(this);
+                HouseClass_GiveMoney(this->t.OwningPlayer, v39);
+              }
+              (this->VTable->vt.r.m.o.Object_DC)(this, 1, *&v3);
+              StrX_DTOR_3(&this->field_6A0);
+              this->VTable->vt.r.m.o.UnInit(this);
+              return 1;
+            }
+            else
+            {
+LABEL_19:
+              LOBYTE(v15) = 0;
+              HIBYTE(v15) = this->BuildingType->TheaterSpecificID[14];
+              v105.X = v15;
+              FacingClass::Set_Desired(&this->t.BarrelFacing, &v105);
+              LOBYTE(v16) = 0;
+              HIBYTE(v16) = this->BuildingType->SuperAnimTimers[5].TimeStart;
+              v104.X = v16;
+              FacingClass::Set_Desired(&this->t.Facing, &v104);
+              return 1;
+            }
+          }
+          v40 = this->VTable;
+          this->idxOwningCountry = -1;
+          (v40->vt.r.m.o.RegisterDestruction)(this, 0);
+          v41 = this->LightSource;
+          if ( v41 )
+            LightSourceClass_Stop(v41, 0);
+          v43 = this->VTable->vt.GetRefund(this);
+          HouseClass_GiveMoney(this->t.OwningPlayer, v43);
+          (this->VTable->vt.r.m.o.Remove)(this);
+          for ( j = Tiberium_FindFirstLoadedType(&this->t.Tiberium1);
+                j != -1;
+                j = Tiberium_FindFirstLoadedType(&this->t.Tiberium1) )
+          {
+            StorageClass_Get_Amount_From(&this->t.Tiberium1, j);
+            v95 = v3;
+            sub_6C96B0(v95, j);
+            v96 = Float_To_Int_Floor();
+            HouseClass::Harvested(this->t.OwningPlayer, v96, j);
+          }
+          this->VTable->vt.r.m.o.UnInit(this);
+          v44 = this->BuildingType;
+          if ( v44->VoxelBarrelFile[27] )
+          {
+            CloakRadius = this->CloakRadius;
+            this->CloakingData = -1;
+            if ( !CloakRadius )
+              this->CloakRadius = v44->TheaterSpecificID[5];
+            v46 = this->VTable;
+            this->t.r.m.o.Sensed = 1;
+            this->CloakRadius = 1;
+            (v46->vt.UpdateTimers)(this, 1);
+            return 1;
+          }
+        }
+      }
+    }
+    else
+    {
+      this->VTable->vt.r.Radio_CommandEachDocked(this, rcExit);
+      if ( !this->t.field_414 )
+      {
+        if ( !this->t.FocusOnUnit || !*&this->BuildingType->t.PoweredUnit )
+        {
+          v102 = (this->VTable->vt.GetCrewCount)(this);
+          v99 = 0;
+          v47 = (this->VTable->vt.r.m.o.Object_108)(this, 0);
+          v48 = 0;
+          v49 = v47;
+          HIDWORD(amount[3]) = 0;
+          while ( *v47 != 0x7FFF || v47[1] != 0x7FFF )
+          {
+            ++v48;
+            v47 += 2;
+          }
+          HIDWORD(amount[3]) = v48;
+          v51 = *this->VTable->vt.r.m.o.GetCellCoords(this, &v110);
+          v50 = this->BuildingType;
+          if ( (v50->VoxelBarrelFile[2] || v50->VoxelBarrelFile[3]) && this->t.Passengers.count > 0 )
+          {
+            for ( k = CargoClass::Detach_Object(&this->t.Passengers); k; k = CargoClass::Detach_Object(&this->t.Passengers) )
+            {
+              v53 = v49;
+              LODWORD(amount[3]) = 0;
+              v49 += 2;
+              v54 = *v53;
+              v55 = (HIWORD(v51) + v53[1]) << 8;
+              LODWORD(amount[2]) = ((v51 + v54) << 8) + 128;
+              HIDWORD(amount[2]) = v55 + 164;
+              if ( k->vt->vt.r.m.o.a.What_Am_I(k) == eUnit )
+              {
+                Target_Cell = MapClass_Get_Target_Cell(&Map, &amount[2]);
+                v56 = Target_Cell->vt->GetCoords(Target_Cell, &v115);
+              }
+              else
+              {
+                v58 = MapClass_Get_Target_Cell(&Map, &amount[2]);
+                v56 = CellClass_PickInfantrySublocation(v58, coords1, &amount[2], 0, 0, 0);
+              }
+              amount[2] = *v56;
+              LODWORD(amount[3]) = v56[2];
+              ++ScenarioInit;
+              k->f.t.r.m.o.OnBridge = this->t.r.m.o.OnBridge;
+              HIDWORD(amount[0]) = this->t.r.m.o.pos.X;
+              v59 = this->VTable;
+              amount[1] = *&this->t.r.m.o.pos.Y;
+              v60 = (v59->vt.r.m.o.GetCell)(this);
+              v61 = *((*(*v60 + 72))(v60, &v117) + 8);
+              v62 = this->field_6E0;
+              HIDWORD(amount[1]) = v61;
+              if ( v62
+                || (v63 = Desired_Facing256(&this->t.Facing, &v114),
+                    !k->vt->vt.r.m.o.Put(k, (amount + 4), (((*v63 >> 7) + 1) >> 1))) )
+              {
+                k->vt->vt.r.m.o.RegisterDestruction(k, 0);
+                (k->vt->vt.r.m.o.a.SDDTOR)(k, 1);
+              }
+              else
+              {
+                if ( !k->f.t.field_434 )
+                {
+                  ++k->f.t.OwningPlayer->OwnedInfantry;
+                  k->f.t.field_434 = 1;
+                }
+                vt = k->vt;
+                k->f.t.Absorbed = 0;
+                (vt->vt.r.m.o.Scatter)(k, &BuildingClass_Default, 1, 0);
+                if ( !HouseClass::Is_Human(this->t.OwningPlayer) )
+                  k->vt->vt.r.m.Mission_QueueMission(k, mi_Hunt, 0);
+              }
+              --ScenarioInit;
+            }
+          }
+          LODWORD(amount[2]) = (this->VTable->vt.r.m.o.Object_108)(this, 0);
+          if ( this->VTable->vt.GetOccupantCount(this) > 0 )
+            BuildingClass_Remove_Ocupents(this, 0, 1);
+          if ( v102 )
+          {
+            v65 = HIDWORD(amount[3]);
+            LODWORD(amount[0]) = v102;
+            do
+            {
+              v66 = this->VTable->vt.GetCrew(this);
+              if ( v66[1].t.o.a.nameCSF[30] )
+              {
+                do
+                {
+                  if ( !v99 )
+                    break;
+                  v66 = this->VTable->vt.GetCrew(this);
+                }
+                while ( v66[1].t.o.a.nameCSF[30] );
+                if ( v66[1].t.o.a.nameCSF[30] )
+                  v99 = 1;
+              }
+              if ( v66 )
+              {
+                v67 = new(sizeof(InfantryClass));
+                if ( v67 )
+                {
+                  v68 = InfantryClass_CTOR(v67, v66, this->t.OwningPlayer);
+                  if ( v68 )
+                  {
+                    ++ScenarioInit;
+                    v70 = Random2Class::operator()(&Scenario->Randomizer, 0, v65 - 1);
+                    v71 = (LODWORD(amount[2]) + 4 * v70);
+                    v72 = (this->VTable->vt.r.m.o.GetCellCoords)(this, &v111);
+                    v73 = v72[1] + v71[1];
+                    v74 = (*v72 + *v71) << 8;
+                    amount[1] = ((v73 << 8) + 164);
+                    HIDWORD(amount[0]) = v74 + 128;
+                    v75 = MapClass_Get_Target_Cell(&Map, (amount + 4));
+                    v76 = CellClass_PickInfantrySublocation(v75, v116, amount + 1, 0, 0, 0);
+                    HIDWORD(amount[0]) = *v76;
+                    LODWORD(amount[1]) = v76[1];
+                    v69 = v76[2];
+                    HIDWORD(amount[1]) = v69;
+                    if ( *(amount + 4) == *&BuildingClass_Default.X && v69 == BuildingClass_Default.Z
+                      || !v68->vt->vt.vt.r.m.o.Put(v68, (amount + 4), 0) )
+                    {
+                      (v68->vt->vt.vt.r.m.o.a.SDDTOR)(v68, 1);
+                    }
+                    else
+                    {
+                      if ( BYTE2(v68->InfantryType->t.EliteWeaponStages[5]) )
+                        v68->IsTechnician = 1;
+                      --ScenarioInit;
+                      (v68->vt->vt.vt.r.m.o.Scatter)(v68, &BuildingClass_Default, 1, 0);
+                      ++ScenarioInit;
+                      v68->vt->vt.vt.r.m.Mission_QueueMission(v68, mi_Move, 0);
+                    }
+                    --ScenarioInit;
+                  }
+                }
+              }
+              --LODWORD(amount[0]);
+            }
+            while ( LODWORD(amount[0]) );
+          }
+        }
+        if ( HouseClass::Is_Player(this->t.OwningPlayer) && !this->VTable->vt.r.m.o.CanBeAutoTargeted(this) )
+        {
+          v77 = this->BuildingType;
+          if ( !*&v77->t.PoweredUnit
+            || v77->VoxelBarrelFile[13]
+            && (!Session.idxGameMode
+             || !this->t.FocusOnUnit
+             || !HouseClass::Is_Human(this->t.OwningPlayer)
+             || !Session.idxGameMode
+             || !gMCVRedeploy
+             || this->t.MindControlledBy) )
+          {
+            v108[0] = this->t.r.m.o.pos.X;
+            v108[1] = this->t.r.m.o.pos.Y;
+            v108[2] = this->t.r.m.o.pos.Z;
+            Sound_Effect(RulesData->SellSound, v108, 0);
+          }
+          v78 = this->BuildingType;
+          if ( v78->field_ED8 != -1 )
+          {
+            v107[0] = this->t.r.m.o.pos.X;
+            v107[1] = this->t.r.m.o.pos.Y;
+            v107[2] = this->t.r.m.o.pos.Z;
+            Sound_Effect(v78->field_ED8, v107, &this->field_6A0);
+          }
+        }
+        this->t.r.m.MissionStatus = 2;
+        BuildingClass::Begin_Mode(this, 0);
+        this->field_6DD = 0;
+        if ( Selected )
+        {
+          (this->VTable->vt.r.m.o.Select)(this);
+          return 1;
+        }
+      }
+    }
+    return 1;
+  }
+  v79 = this->BuildingType;
+  if ( *&v79->t.PoweredUnit
+    && (!v79->VoxelBarrelFile[13]
+     || Session.idxGameMode
+     && this->t.FocusOnUnit
+     && HouseClass::Is_Human(this->t.OwningPlayer)
+     && Session.idxGameMode
+     && gMCVRedeploy
+     && !this->t.MindControlledBy) )
+  {
+    v80 = this->BuildingType;
+    if ( v80->gap_1730[2] || v80->VoxelBarrelFile[24] )
+      this->VTable->vt.SetTarget(this, 0);
+  }
+  v81 = this->BuildingType;
+  if ( *&v81->t.PoweredUnit
+    && (!v81->VoxelBarrelFile[13]
+     || Session.idxGameMode
+     && this->t.FocusOnUnit
+     && HouseClass::Is_Human(this->t.OwningPlayer)
+     && Session.idxGameMode
+     && gMCVRedeploy
+     && !this->t.MindControlledBy) )
+  {
+    if ( *&this->BuildingType->t.PoweredUnit )
+    {
+      (this->VTable->vt.VoiceDeployState)(this);
+      if ( *this->VTable->vt.r.m.o.GetTechnoType(this)->t.gap_5C0 != -1 )
+      {
+        v109[0] = this->t.r.m.o.pos.X;
+        v82 = this->VTable;
+        v109[1] = this->t.r.m.o.pos.Y;
+        v109[2] = this->t.r.m.o.pos.Z;
+        v83 = v82->vt.r.m.o.GetTechnoType(this);
+        Sound_Effect(*v83->t.gap_5C0, v109, 0);
+      }
+    }
+  }
+  if ( this->t.SlaveManager )
+  {
+    FocusOnUnit = this->t.FocusOnUnit;
+    if ( FocusOnUnit != (this->VTable->vt.r.m.o.GetCell)(this) )
+    {
+      v85 = this->t.FocusOnUnit;
+      if ( v85 )
+      {
+        if ( v85->vt->r.m.o.a.What_Am_I(v85) == eCell )
+        {
+          v86 = this->t.FocusOnUnit;
+          v87 = v86 ? (v86->vt->r.m.o.a.What_Am_I(this->t.FocusOnUnit) == eCell ? v86 : 0) : 0;
+          if ( v87->LandType == ltTiberium )
+            SlaveManagerClass_ExplicitHarvest(this->t.SlaveManager);
+        }
+      }
+    }
+  }
+  if ( this->t.BunkerLinkedItem )
+    BuildingClass_UnloadBunker(this);
+  UpgradeLevel = this->UpgradeLevel;
+  if ( !UpgradeLevel )
+  {
+    v92 = this->VTable;
+    this->field_6DD = 0;
+    v92->vt.r.Radio_CommandEachDocked(this, eRadioCommands_17);
+    if ( this->BuildingType->VoxelBarrelFile[18] )
+      BuildingClass_PingLaserFencePost(this, 0);
+    DamageFireAnims = this->DamageFireAnims;
+    v93 = 8;
+    do
+    {
+      if ( *DamageFireAnims )
+      {
+        (*DamageFireAnims)->vt->r.m.o.UnInit(*DamageFireAnims);
+        *DamageFireAnims = 0;
+      }
+      ++DamageFireAnims;
+      --v93;
+    }
+    while ( v93 );
+    this->t.r.m.MissionStatus = 1;
+    return 1;
+  }
+  v90 = this->DamageFireAnims[UpgradeLevel + 8];
+  v89 = (*&v90->_->o.OnBridge)(v90, this->t.OwningPlayer);
+  v91 = v89->VTable->vt.GetRefund(v89);
+  HouseClass_GiveMoney(this->t.OwningPlayer, v91);
+  if ( v89 )
+    (v89->VTable->vt.r.m.o.a.SDDTOR)(v89, 1);
+  BuildingClass_LoseUpgrade(this);
+  this->t.OwningPlayer->RecheckItems = 1;
+  this->t.OwningPlayer->RadarOutage = 1;
+  if ( this->t.BelongsToHumanPlayer )
+    VoxClass_PlayFromName("EVA_StructureSold", -1, -1);
+  this->VTable->vt.r.m.Mission_QueueMission(this, mi_Guard, 0);
+  return 1;
+}
+

@@ -1,0 +1,9 @@
+RENAME 0x007393C0: 'W?Try_To_Deploy$:UnitClass$n()i' -> 'UnitClass_Try_To_Deploy' ok=True
+RENAME 0x00449C30: 'W?Mission_Deconstruction$:BuildingClass$n()i' -> 'BuildingClass_Mission_Deconstruction' ok=True
+FUNCCMT 0x007393C0 ok=True len=304
+FUNCCMT 0x00449C30 ok=True len=428
+CMT    0x00739971 ok=True len=275
+CMT    0x0044A04C ok=True len=176
+CMT    0x00449FE7 ok=True len=114
+CMT    0x0044A002 ok=True len=114
+DONE

@@ -1,0 +1,368 @@
+====================================================================================================
+FUNC containing 0x7012C2: TechnoClass_168 [0x7012C0 - 0x70139D]
+-- disasm 00701290..007013A0 --
+  007012C0: push    )!ebx!)
+  007012C1: push    )!esi!)
+  007012C2: mov     )!esi!)	,	 *!ecx!*
+  007012C4: mov     )!ecx!)	,	 *	[	!esp!	+	8	+	arg_0	]	*
+  007012C8: mov     )!eax!)	,	 *	[	!esi!	]	*
+  007012CA: push    )!ecx!)
+  007012CB: mov     )!ecx!)	,	 *!esi!*
+  007012CD: call    ) dword ptr  	[	!eax!	+	3F8h	]	)
+  007012D3: mov     )!eax!)	,	 *	[	!eax!	]	*
+  007012D5: test    )!eax!)	,	 *!eax!*
+  007012D7: jz      )(00701396loc_701396)
+  007012DD: mov     )!edx!)	,	 *	[	!esi!	]	*
+  007012DF: mov     )!ebx!)	,	 *	[	!eax!	+	0B4h	]	*
+  007012E5: mov     )!ecx!)	,	 *!esi!*
+  007012E7: call    ) dword ptr  	[	!edx!	+	84h	]	)
+  007012ED: mov     )!cl!)	,	 *	[	!eax!	+	_TechnoTypeClass.t.OpenTopped	]	*
+  007012F3: test    )!cl!)	,	 *!cl!*
+  007012F5: jz      )(0070138Floc_70138F)
+  007012FB: push    )!ebp!)
+  007012FC: lea     )!ebp!)	,	 *	[	!esi!	+	114h	]	*
+  00701302: push    )!edi!)
+  00701303: mov     )!ecx!)	,	 *!ebp!*; a1
+  00701305: mov     )!edi!)	,	 *7FFFFFFFh*
+  0070130A: call    )%(00473450CargoClass::Attached_Object%)
+  0070130F: mov     )!esi!)	,	 *!eax!*
+  00701311: test    )!esi!)	,	 *!esi!*
+  00701313: jz       short  )(0070133Eloc_70133E)
+  00701315: mov     )!eax!)	,	 *	[	!esi!	]	*
+  00701317: mov     )!ecx!)	,	 *!esi!*
+  00701319: call    ) dword ptr  	[	!eax!	+	3F4h	]	)
+  0070131F: mov     )!eax!)	,	 *	[	!eax!	]	*
+  00701321: test    )!eax!)	,	 *!eax!*
+  00701323: jz       short  )(00701331loc_701331)
+  00701325: mov     )!eax!)	,	 *	[	!eax!	+	0B4h	]	*
+  0070132B: cmp     )!eax!)	,	 *!edi!*
+  0070132D: jge      short  )(00701331loc_701331)
+  0070132F: mov     )!edi!)	,	 *!eax!*
+  00701331: mov     )!esi!)	,	 *	[	!esi!	+	30h	]	*
+  00701334: test    )!esi!)	,	 *!esi!*
+  00701336: jz       short  )(0070133Eloc_70133E)
+  00701338: test    ) byte ptr  	[	!esi!	+	14h	]	)	,	 *4*
+  0070133C: jnz      short  )(00701315loc_701315)
+  0070133E: cmp     )!ebx!)	,	 *!edi!*
+  00701340: jge      short  )(0070134Bloc_70134B)
+  00701342: pop     )!edi!)
+  00701343: pop     )!ebp!)
+  00701344: mov     )!eax!)	,	 *!ebx!*
+  00701346: pop     )!esi!)
+  00701347: pop     )!ebx!)
+  00701348: retn    )4)
+  0070134B: mov     )!ecx!)	,	 *!ebp!*; a1
+  0070134D: mov     )!edi!)	,	 *7FFFFFFFh*
+  00701352: call    )%(00473450CargoClass::Attached_Object%)
+  00701357: mov     )!esi!)	,	 *!eax!*
+  00701359: test    )!esi!)	,	 *!esi!*
+  0070135B: jz       short  )(00701386loc_701386)
+  0070135D: mov     )!edx!)	,	 *	[	!esi!	]	*
+  0070135F: mov     )!ecx!)	,	 *!esi!*
+  00701361: call    ) dword ptr  	[	!edx!	+	3F4h	]	)
+  00701367: mov     )!eax!)	,	 *	[	!eax!	]	*
+  00701369: test    )!eax!)	,	 *!eax!*
+  0070136B: jz       short  )(00701379loc_701379)
+  0070136D: mov     )!eax!)	,	 *	[	!eax!	+	0B4h	]	*
+  00701373: cmp     )!eax!)	,	 *!edi!*
+  00701375: jge      short  )(00701379loc_701379)
+  00701377: mov     )!edi!)	,	 *!eax!*
+  00701379: mov     )!esi!)	,	 *	[	!esi!	+	30h	]	*
+  0070137C: test    )!esi!)	,	 *!esi!*
+  0070137E: jz       short  )(00701386loc_701386)
+  00701380: test    ) byte ptr  	[	!esi!	+	14h	]	)	,	 *4*
+  00701384: jnz      short  )(0070135Dloc_70135D)
+  00701386: mov     )!eax!)	,	 *!edi!*
+  00701388: pop     )!edi!)
+  00701389: pop     )!ebp!)
+  0070138A: pop     )!esi!)
+  0070138B: pop     )!ebx!)
+  0070138C: retn    )4)
+  0070138F: mov     )!eax!)	,	 *!ebx!*
+  00701391: pop     )!esi!)
+  00701392: pop     )!ebx!)
+  00701393: retn    )4)
+  00701396: pop     )!esi!)
+  00701397: xor     )!eax!)	,	 *!eax!*
+  00701399: pop     )!ebx!)
+  0070139A: retn    )4)
+
+-- hexrays --
+int __thiscall TechnoClass_168(_TechnoClass *this, int a2)
+{
+  WeaponTypeClass *vt; // eax
+  float Range; // ebx
+  cPassengerNode *p_Passengers; // ebp
+  int v6; // edi
+  _FootClass *NextObject; // esi
+  WeaponTypeClass *WeaponType; // eax
+  float v9; // eax
+  int v11; // edi
+  _FootClass *v12; // esi
+  WeaponTypeClass *v13; // eax
+  float v14; // eax
+
+  vt = this->vt->GetWeapon(this, a2)->vt;
+  if ( !vt )
+    return 0;
+  Range = vt->Range;
+  if ( !LOBYTE(this->vt->r.m.o.GetTechnoType(this)->t.Prerequisite._.Vector) )// OpenTopped
+    return LODWORD(Range);
+  p_Passengers = &this->t.Passengers;
+  v6 = 0x7FFFFFFF;
+  NextObject = CargoClass::Attached_Object(&this->t.Passengers);
+  if ( NextObject )
+  {
+    do
+    {
+      WeaponType = NextObject->vt->vt.GetWeapon_TurretChanger(NextObject)->WeaponType;
+      if ( WeaponType )
+      {
+        v9 = WeaponType->Range;
+        if ( SLODWORD(v9) < v6 )
+          v6 = LODWORD(v9);
+      }
+      NextObject = NextObject->f.t.r.m.o.NextObject;
+    }
+    while ( NextObject && (NextObject->f.t.r.m.o.a.derivationFlags & 4) != 0 );
+  }
+  if ( SLODWORD(Range) < v6 )
+    return LODWORD(Range);
+  v11 = 0x7FFFFFFF;
+  v12 = CargoClass::Attached_Object(p_Passengers);
+  if ( v12 )
+  {
+    do
+    {
+      v13 = v12->vt->vt.GetWeapon_TurretChanger(v12)->WeaponType;
+      if ( v13 )
+      {
+        v14 = v13->Range;
+        if ( SLODWORD(v14) < v11 )
+          v11 = LODWORD(v14);
+      }
+      v12 = v12->f.t.r.m.o.NextObject;
+    }
+    while ( v12 && (v12->f.t.r.m.o.a.derivationFlags & 4) != 0 );
+  }
+  return v11;
+}
+
+
+====================================================================================================
+FUNC containing 0x6F72E3: TechnoClass_IsCloseEnoughToTarget [0x6F7220 - 0x6F7660]
+-- disasm 006F7230..006F7300 --
+  006F7230: mov     )!ecx!)	,	 *	[	!ebp!	+	tgt	]	*
+  006F7231: mov     ) dword ptr  	[	!esp!	+	38h	+	a2	]	)	,	 *!esi!*
+  006F7235: test    )!ecx!)	,	 *!ecx!*
+  006F7237: jz      )(006F7655loc_6F7655)
+  006F723D: mov     )!ebx!)	,	 *	[	!ebp!	+	weap	]	*
+  006F7240: test    )!ebx!)	,	 *!ebx!*
+  006F7242: jz      )(006F7655loc_6F7655)
+  006F7248: mov     )!edi!)	,	 *	[	!ebx!	+	0B4h	]	*
+  006F724E: cmp     )!edi!)	,	 *0FFFFFE00h*
+  006F7254: jnz      short  )(006F7261loc_6F7261)
+  006F7256: mov     )!al!)	,	 *1*
+  006F7258: pop     )!edi!)
+  006F7259: pop     )!esi!)
+  006F725A: pop     )!ebx!)
+  006F725B: mov     )!esp!)	,	 *!ebp!*
+  006F725D: pop     )!ebp!)
+  006F725E: retn    )0Ch)
+  006F7261: mov     )!eax!)	,	 *	[	!ecx!	]	*
+  006F7263: call    ) dword ptr  	[	!eax!	+	54h	]	)
+  006F7266: test    )!al!)	,	 *!al!*
+  006F7268: jz       short  )(006F727Aloc_6F727A)
+  006F726A: mov     )!edx!)	,	 *	[	!esi!	]	*
+  006F726C: mov     )!ecx!)	,	 *!esi!*
+  006F726E: call    ) dword ptr  	[	!edx!	+	84h	]	)
+  006F7274: add     )!edi!)	,	 *	[	!eax!	+	_TechnoTypeClass.t.AirRangeBonus	]	*
+  006F727A: mov     )!eax!)	,	 *	[	!esi!	]	*
+  006F727C: mov     )!ecx!)	,	 *!esi!*
+  006F727E: call    ) dword ptr  	[	!eax!	+	400h	]	)
+  006F7284: test    )!al!)	,	 *!al!*
+  006F7286: jz       short  )(006F72A2loc_6F72A2)
+  006F7288: mov     )!edx!)	,	 *	[	!esi!	]	*
+  006F728A: mov     )!ecx!)	,	 *!esi!*
+  006F728C: call    ) dword ptr  	[	!edx!	+	404h	]	)
+  006F7292: mov     )!edi!)	,	 *!eax!*
+  006F7294: mov     )!eax!)	,	 *(008871E0RulesData*
+  006F7299: add     )!edi!)	,	 *	[	!eax!	+(	RulesClass	+	0F48h	)]	*
+  006F729F: shl     )!edi!)	,	 *8*
+  006F72A2: mov     )!eax!)	,	 *	[	!esi!	+	2E4h	]	*
+  006F72A8: test    )!eax!)	,	 *!eax!*
+  006F72AA: jz       short  )(006F72C8loc_6F72C8)
+  006F72AC: mov     )!edx!)	,	 *	[	!esi!	]	*
+  006F72AE: mov     )!ecx!)	,	 *!esi!*
+  006F72B0: call    ) dword ptr  	[	!edx!	+	2Ch	]	)
+  006F72B3: cmp     )!eax!)	,	 *6*
+  006F72B6: jz       short  )(006F72C8loc_6F72C8)
+  006F72B8: mov     )!eax!)	,	 *(008871E0RulesData*
+  006F72BD: mov     )!ecx!)	,	 *	[	!eax!	+(	RulesClass	+	0F54h	)]	*
+  006F72C3: shl     )!ecx!)	,	 *8*
+  006F72C6: add     )!edi!)	,	 *!ecx!*
+  006F72C8: mov     )!al!)	,	 *	[	!esi!	+	82h	]	*
+  006F72CE: test    )!al!)	,	 *!al!*
+  006F72D0: jz       short  )(006F72E3loc_6F72E3)
+  006F72D2: mov     )!edx!)	,	 *(008871E0RulesData*
+  006F72D8: mov     )!eax!)	,	 *	[	!edx!	+(	RulesClass	+	0F5Ch	)]	*
+  006F72DE: shl     )!eax!)	,	 *8*
+  006F72E1: add     )!edi!)	,	 *!eax!*
+  006F72E3: mov     )!eax!)	,	 *	[	!ebx!	+	0A0h	]	*
+  006F72E9: mov     )!ebx!)	,	 *!edi!*
+  006F72EB: mov     ) dword ptr  	[	!esp!	+	38h	+	a2	+	4	]	)	,	 *!eax!*
+  006F72EF: mov     )!cl!)	,	 *	[	!eax!	+	297h	]	*
+  006F72F5: test    )!cl!)	,	 *!cl!*
+  006F72F7: jz       short  )(006F7308loc_6F7308)
+  006F72F9: mov     )!ecx!)	,	 *	[	!ebp!	+	tgt	]	*
+  006F72FC: push    )!ecx!); tgt
+  006F72FD: mov     )!ecx!)	,	 *!esi!*; this
+  006F72FF: call    )%(006F6F60TechnoClass_GetElevationRangeBonus%)
+
+-- hexrays --
+_BOOL1 __thiscall TechnoClass_IsCloseEnoughToTarget(
+        _TechnoClass *this,
+        dwXY *a2,
+        _TechnoClass *tgt,
+        WeaponTypeClass *weap)
+{
+  int Range; // edi
+  int Range_; // ebx
+  dwXYZ *v8; // eax
+  vt_TechnoClass *vt; // edx
+  int Z_1; // eax
+  int Y; // edx
+  int X; // ecx
+  signed int v13; // ebx
+  long double Gravity; // fst7
+  int v15; // ebx
+  int v16; // ecx
+  int v17; // eax
+  _BOOL1 v18; // zf
+  int v19; // edx
+  int v20; // eax
+  WeaponTypeClass *v21; // [esp+4h] [ebp-40h]
+  double v22; // [esp+4h] [ebp-40h]
+  HouseClass_old *OwningPlayer; // [esp+8h] [ebp-3Ch]
+  BulletTypeClass *a2_4; // [esp+1Ch] [ebp-28h]
+  float MinimumRange; // [esp+24h] [ebp-20h]
+  signed int v27; // [esp+24h] [ebp-20h]
+  int v28; // [esp+24h] [ebp-20h]
+  dwXYZ xyz1; // [esp+28h] [ebp-1Ch] BYREF
+  Point3D xyz0; // [esp+34h] [ebp-10h] BYREF
+  int v31; // [esp+40h] [ebp-4h]
+
+  if ( !tgt || !weap )
+    return 0;
+  Range = LODWORD(weap->Range);
+  if ( Range == -512 )
+    return 1;
+  if ( (tgt->vt->r.m.o.a.InAir)() )
+    Range += *this->vt->r.m.o.GetTechnoType(this)->t.gap_6f0;// AirRangeBonus
+  if ( this->vt->CanOccupyFire(this) )
+    Range = (RulesData->OccupyWeaponRange + this->vt->Techno_404(this)) << 8;
+  if ( this->t.BunkerLinkedItem && this->vt->r.m.o.a.What_Am_I(this) != eBuilding )
+    Range += RulesData->BunkerWeaponRangeBonus << 8;
+  if ( this->t.r.m.o.InOpenTopped )
+    Range += RulesData->OpenToppedRangeBonus << 8;
+  Range_ = Range;
+  a2_4 = weap->Projectile;
+  if ( a2_4->SubjectToElevation )
+    Range_ = Range + TechnoClass_GetElevationRangeBonus(this, tgt);
+  v8 = tgt->vt->r.m.o.a.GetCoords(tgt, &xyz0.Y);
+  xyz1.Y = v8->X;
+  xyz1.Z = v8->Y;
+  vt = tgt->vt;
+  xyz0.X = v8->Z;
+  if ( vt->r.m.o.a.OnFloor(tgt)
+    && (xyz0.X = MapClass_GetCellFloorHeight(&Map, &xyz1.Y),
+        (MapClass_Get_Target_Cell(&Map, &xyz1.Y)->flags & 0x100) != 0) )
+  {
+    Z_1 = Bridge_Height_xxx + xyz0.X;
+    xyz0.X += Bridge_Height_xxx;
+  }
+  else
+  {
+    Z_1 = xyz0.X;
+  }
+  MinimumRange = weap->MinimumRange;
+  if ( MinimumRange != 0.0 )
+  {
+    Y = a2->Y;
+    xyz0.Y = a2->X - xyz1.Y;
+    X = a2[1].X;
+    xyz0.Z = Y - xyz1.Z;
+    v31 = X - Z_1;
+    float_sqrt(xyz0.Y * xyz0.Y + (X - Z_1) * (X - Z_1) + (Y - xyz1.Z) * (Y - xyz1.Z));
+    if ( Float_To_Int_Floor() < SLODWORD(MinimumRange) )
+      return 0;
+    Z_1 = xyz0.X;
+  }
+  if ( a2_4->Arcing )
+  {
+    v15 = a2->Y;
+    xyz0.Y = xyz1.Y - a2->X;
+    v16 = a2[1].X;
+    xyz0.Z = xyz1.Z - v15;
+    v31 = Z_1 - v16;
+    Gravity = float_sqrt(xyz0.Y * xyz0.Y + (xyz1.Z - v15) * (xyz1.Z - v15));
+    v27 = Float_To_Int_Floor();
+    v13 = Range;
+    if ( a2_4->SubjectToElevation )
+      v13 = Range + TechnoClass_GetElevationBonusNoSqrt(this, tgt);
+    if ( v27 <= v13 )
+    {
+      if ( weap->Projectile->Floater )
+        GetHalfGravity();
+      else
+        Gravity = RulesData->Gravity;
+      GetFinalSpeedOverDistance(v13, Gravity);
+      if ( sub_48ABC0(v31, Gravity) )
+      {
+        if ( (MapClass_Get_Target_Cell(&Map, &xyz1.Y)->flags & 0x100) == 0
+          || (xyz0.X - a2[1].X) < 3 * Bridge_Height_xxxx )
+        {
+          OwningPlayer = this->t.OwningPlayer;
+          v21 = weap;
+          return sub_4CC310(a2, &xyz1.Y, v21, OwningPlayer) == 0;
+        }
+      }
+    }
+  }
+  else
+  {
+    if ( tgt->vt->r.m.o.a.What_Am_I(tgt) == eBuilding )
+    {
+      v28 = BuildingTypeClass::Y_Foundation_Value(tgt[1].vt, 0);
+      Range_ += (BuildingTypeClass::X_Foundation_Value(tgt[1].vt) + v28) << 6;
+    }
+    v18 = this->vt->r.m.o.a.What_Am_I(this) == eAircraftType;
+    v17 = a2->X;
+    if ( v18 )
+    {
+      v22 = (v17 - xyz1.Y) * (v17 - xyz1.Y) + (a2->Y - xyz1.Z) * (a2->Y - xyz1.Z);
+    }
+    else
+    {
+      v19 = a2[1].X;
+      xyz0.Z = a2->Y - xyz1.Z;
+      xyz0.Y = v17 - xyz1.Y;
+      v31 = v19 - xyz0.X;
+      v22 = (v17 - xyz1.Y) * (v17 - xyz1.Y) + (v19 - xyz0.X) * (v19 - xyz0.X) + xyz0.Z * xyz0.Z;
+    }
+    float_sqrt(v22);
+    if ( Float_To_Int_Floor() <= Range_ )
+    {
+      if ( (MapClass_Get_Target_Cell(&Map, a2)->flags & 0x100) == 0
+        || (v20 = Bridge_Height_xxx + MapClass_GetCellFloorHeight(&Map, a2), a2[1].X >= v20)
+        || xyz0.X < v20 )
+      {
+        OwningPlayer = this->t.OwningPlayer;
+        v21 = weap;
+        return sub_4CC310(a2, &xyz1.Y, v21, OwningPlayer) == 0;
+      }
+    }
+  }
+  return 0;
+}
+

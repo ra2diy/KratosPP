@@ -1,0 +1,1761 @@
+====================================================================================================
+FUNC containing 0x483226: W?Goodie_Check$:CellClass$n(pn$FootClass$$)i [0x481A00 - 0x483394]
+-- disasm 00483200..00483290 --
+  00483200: fstp    *	[	!esp!	+	190h	+	var_190	]	*
+  00483201: fstp    *!st!*
+  00483203: fstp    *!st!*
+  00483205: fstp    *!st!*
+  00483207: call    )%(004CAC40float_sqrt%)
+  0048320C: add     )!esp!)	,	 *8*
+  0048320F: call    )%(007C5F00Float_To_Int_Floor%)
+  00483214: mov     )!ecx!)	,	 *(008871E0RulesData*
+  0048321A: cmp     )!eax!)	,	 *	[	!ecx!	+	172Ch	]	*
+  00483220: jge      short  )(00483261loc_483261)
+  00483222: mov     )!ecx!)	,	 *	[	!esp!	+	188h	+	coords2	]	*
+  00483226: mov     )!eax!)	,	 * dword ptr  	[	!ecx!	+(	TechnoClass.FirepowerMultiplier	+	4	)]	*
+  0048322C: test    )!eax!)	,	 *!eax!*
+  0048322E: jnz      short  )(00483261loc_483261)
+  00483230: cmp     ) dword ptr  	[	!ecx!	+	164h	]	)	,	 *3FF00000h*
+  0048323A: jnz      short  )(00483261loc_483261)
+  0048323C: fld     *	[	!esp!	+	188h	+	powerupData	]	*
+  00483240: fmul    * qword ptr  	[	!ecx!	+	160h	]	*
+  00483246: mov     )!edx!)	,	 *	[	!ecx!	]	*
+  00483248: fstp    * qword ptr  	[	!ecx!	+	160h	]	*
+  0048324E: call    ) dword ptr  	[	!edx!	+	3Ch	]	)
+  00483251: mov     )!ecx!)	,	 *!eax!*; this
+  00483253: call    )%(0050B6F0HouseClass::Is_Player%)
+  00483258: test    )!al!)	,	 *!al!*
+  0048325A: jz       short  )(00483261loc_483261)
+  0048325C: mov     ) byte ptr  	[	!esp!	+	188h	+	damage	+	3	]	)	,	 *1*
+  00483261: mov     )!eax!)	,	 *	[	!esp!	+	188h	+	damage	+	4	]	*
+  00483265: mov     )!ecx!)	,	 *(008A03A0dword_8A03A0*
+  0048326B: inc     )!eax!)
+  0048326C: cmp     )!eax!)	,	 *!ecx!*
+  0048326E: mov     )	[	!esp!	+	188h	+	damage	+	4	]	)	,	 *!eax!*
+  00483272: jl      )(00483151loc_483151)
+  00483278: mov     )!al!)	,	 * byte ptr  	[	!esp!	+	188h	+	damage	+	3	]	*
+  0048327C: test    )!al!)	,	 *!al!*
+  0048327E: jz       short  )(0048328Floc_48328F)
+  00483280: push    )0FFFFFFFFh); int
+  00483282: or      )!edx!)	,	 *0FFFFFFFFh*; int
+  00483285: mov     )!ecx!)	,	 * offset  (0081CE40aEva_unitfirepowerupgraded*; (0081CE40"EVA_UnitFirePowerUpgraded"
+  0048328A: call    )%(00752700VoxClass_PlayFromName%); EVA_UnitFirePowerUpgraded
+  0048328F: mov     )!eax!)	,	 *	[	!ebp!	+	Collector	]	*
+
+-- hexrays (first 400 lines) --
+void __thiscall CellClass::Goodie_Check(CellClass *this, _FootClass *Collector)
+{
+  size_t OverlayTypeIndex; // eax
+  int totalShares; // eax
+  int *powerupShare; // ecx
+  int share; // ebx
+  int v7; // eax
+  int weightSumSoFar; // edx
+  int *v9; // ecx
+  ePowerup idxPowerupKind; // edi
+  ePowerup powerupRandomResult; // ebx
+  OverlayTypeClass *v12; // ecx
+  size_t v13; // edx
+  HouseClass_old *OwningPlayer; // edi
+  _FootClass *Collector2; // edi
+  int CellLandType; // eax
+  _BOOL1 v17; // cf
+  WarheadTypeClass *v18; // ebx
+  int v19; // edi
+  signed int v20; // eax
+  vt_AbstractClass *v21; // edx
+  signed int v22; // edi
+  dwXYZ *v23; // eax
+  CellClass *v24; // eax
+  wXY *v25; // eax
+  dwXYZ *v26; // eax
+  int v27; // edi
+  int v28; // ecx
+  int v29; // ebx
+  int *v30; // eax
+  dwXYZ *v31; // eax
+  CellClass *Target_Cell; // eax
+  UnitTypeClass *pUnitType; // edi
+  _FootClass *Collector3; // ebx
+  int v35; // eax
+  int length; // ecx
+  PtrUnitTypeClass *data; // edx
+  char FoundBase; // bl
+  char Is_Human; // al
+  UnitClass *createdUnit__; // edi
+  int FloorHeight; // eax
+  int v42; // eax
+  int v43; // eax
+  int v44; // edi
+  int v45; // ebx
+  int v46; // eax
+  int updatedAmount; // edi
+  int v48; // eax
+  HouseClass_old *recipient; // ecx
+  AnimTypeClass *v50; // ebx
+  AnimClass *v51; // edi
+  int v52; // edi
+  int v53; // ebx
+  int v54; // eax
+  dwXYZ *v55; // eax
+  int v56; // eax
+  AnimClass *v57; // eax
+  wXY v58; // eax
+  int v59; // edi
+  int v60; // ebx
+  int *v61; // eax
+  int v62; // edi
+  int v63; // ecx
+  int v64; // eax
+  int v65; // edi
+  vt_FootClass *v66; // edx
+  int v67; // edi
+  int v68; // ebx
+  _DWORD *v69; // eax
+  int v70; // edx
+  _DWORD *v71; // eax
+  int v72; // edx
+  int v73; // ebx
+  float *v75; // edi
+  int v77; // edi
+  int v78; // ebx
+  int v79; // edi
+  int v80; // ebx
+  int i; // ebx
+  _ObjectClass *v82; // edi
+  int v83; // eax
+  vt_ObjectClass *vt; // edx
+  int v85; // eax
+  HouseClass *House; // edx
+  int cntSW; // ecx
+  SuperWeaponTypeClass *FirstOfAction; // ebx
+  SuperClass **X; // edi
+  char v90; // al
+  _DWORD *v91; // eax
+  int v92; // edx
+  vt_FootClass *v94; // edx
+  HouseClass *v96; // eax
+  int v97; // edi
+  int v98; // ebx
+  _DWORD *v99; // eax
+  int v100; // edx
+  int v102; // eax
+  int v104; // edi
+  int v105; // ebx
+  _DWORD *v106; // eax
+  int v107; // edx
+  vt_FootClass *v109; // edx
+  HouseClass *v111; // eax
+  int v112; // edi
+  int v113; // ebx
+  AnimClass *v114; // eax
+  int v115; // edi
+  int v116; // ebx
+  int v117; // eax
+  WarheadTypeClass *C4Warhead; // [esp-4h] [ebp-19Ch]
+  int v119; // [esp+8h] [ebp-190h]
+  __int64 Z; // [esp+8h] [ebp-190h]
+  double v121; // [esp+8h] [ebp-190h]
+  double v122; // [esp+8h] [ebp-190h]
+  double v123; // [esp+8h] [ebp-190h]
+  double v124; // [esp+8h] [ebp-190h]
+  double v125; // [esp+8h] [ebp-190h]
+  int v126; // [esp+Ch] [ebp-18Ch]
+  char NeedsBase; // [esp+23h] [ebp-175h]
+  int coords2; // [esp+24h] [ebp-174h] BYREF
+  signed int damage[2]; // [esp+28h] [ebp-170h]
+  Point2D powerupData; // [esp+30h] [ebp-168h] BYREF
+  ePowerup powerupPostRandomResult; // [esp+3Ch] [ebp-15Ch]
+  dwXYZ a3; // [esp+40h] [ebp-158h] BYREF
+  Point2D SWs_; // [esp+4Ch] [ebp-14Ch] BYREF
+  wXY coords; // [esp+54h] [ebp-144h] BYREF
+  int v135; // [esp+58h] [ebp-140h]
+  int v136; // [esp+5Ch] [ebp-13Ch]
+  UnitTypeClass *BaseUnit; // [esp+60h] [ebp-138h] BYREF
+  dwXYZ v138; // [esp+64h] [ebp-134h] BYREF
+  int v139; // [esp+78h] [ebp-120h]
+  int position; // [esp+7Ch] [ebp-11Ch] BYREF
+  dwXYZ a1; // [esp+80h] [ebp-118h] BYREF
+  dwXYZ v142; // [esp+8Ch] [ebp-10Ch] BYREF
+  int v143[3]; // [esp+98h] [ebp-100h] BYREF
+  int v144[3]; // [esp+A4h] [ebp-F4h] BYREF
+  int pos[3]; // [esp+B0h] [ebp-E8h] BYREF
+  int v146[3]; // [esp+BCh] [ebp-DCh] BYREF
+  int v147[3]; // [esp+C8h] [ebp-D0h] BYREF
+  int v148[3]; // [esp+D4h] [ebp-C4h] BYREF
+  int v149[3]; // [esp+E0h] [ebp-B8h] BYREF
+  int v150[3]; // [esp+ECh] [ebp-ACh] BYREF
+  int v151[3]; // [esp+F8h] [ebp-A0h] BYREF
+  dwXYZ v152; // [esp+104h] [ebp-94h] BYREF
+  int a2; // [esp+110h] [ebp-88h] BYREF
+  dwXYZ v154; // [esp+114h] [ebp-84h] BYREF
+  char v155[12]; // [esp+120h] [ebp-78h] BYREF
+  char v156[12]; // [esp+12Ch] [ebp-6Ch] BYREF
+  Point3D v157; // [esp+138h] [ebp-60h] BYREF
+  char v158[12]; // [esp+144h] [ebp-54h] BYREF
+  int v159[3]; // [esp+150h] [ebp-48h] BYREF
+  char v160[12]; // [esp+15Ch] [ebp-3Ch] BYREF
+  int v161[3]; // [esp+168h] [ebp-30h] BYREF
+  char v162[12]; // [esp+174h] [ebp-24h] BYREF
+  int v163; // [esp+180h] [ebp-18h] BYREF
+  char v164[12]; // [esp+18Ch] [ebp-Ch] BYREF
+
+  if ( Collector )
+  {
+    OverlayTypeIndex = this->OverlayTypeIndex;
+    if ( OverlayTypeIndex != -1 )
+    {
+      if ( OverlayTypeClass[OverlayTypeIndex]->Crate )
+      {
+        NeedsBase = 0;
+        coords2 = 0;
+        if ( !Session.idxGameMode || !Collector->f.t.OwningPlayer->Country->MultiplayPassive )
+        {
+          if ( OverlayTypeClass[OverlayTypeIndex]->CrateTrigger )
+          {
+            if ( Collector->f.t.r.m.o.Tag )
+            {
+              WWDebugString("Springing trigger on crate at %d,%d\n", this->pos.X, this->pos.Y);
+              TagClass_RaiseEvent(Collector->f.t.r.m.o.Tag, ekPickupCrate, Collector, CellClass_Default_Coords, 0, 0);
+              if ( !Collector->f.t.r.m.o.Alive )
+                return;
+            }
+            Scenario->gap_34be[0] = 1;
+          }
+          if ( this->Powerup < 0x13u )
+          {
+            powerupRandomResult = this->Powerup;
+          }
+          else
+          {
+            totalShares = 0;
+            powerupShare = powerup_Weights;
+            do
+            {
+              share = *powerupShare++;
+              totalShares += share;
+            }
+            while ( powerupShare < powerup_Anims );
+            v7 = Random2Class::operator()(&Scenario->Randomizer, 1, totalShares);
+            weightSumSoFar = 0;
+            idxPowerupKind = pMoney;
+            v9 = powerup_Weights;
+            do
+            {
+              weightSumSoFar += *v9;
+              if ( v7 <= weightSumSoFar )
+                break;
+              ++v9;
+              ++idxPowerupKind;
+            }
+            while ( v9 < powerup_Anims );
+            powerupRandomResult = idxPowerupKind;
+          }
+          powerupPostRandomResult = powerupRandomResult;
+          if ( Session.idxGameMode )
+          {
+            OwningPlayer = Collector->f.t.OwningPlayer;
+            BaseUnit = HouseClass_FindFirstAccessibleTechnoTypeFromArray(OwningPlayer, &RulesData->BaseUnit);
+            if ( !OwningPlayer->IHouse._.OwnedBuildings
+              && OwningPlayer->IHouse.IHouse->AvailableMoney(&OwningPlayer->IHouse) > 1500
+              && !CounterClass_GetItemCount(
+                    &OwningPlayer->IHouse._.OwnedVehicleTypes,
+                    BaseUnit->field_E60[offsetof(_TechnoTypeClass, VTable)].X)
+              && gBases )
+            {
+              powerupRandomResult = pUnit;
+              powerupPostRandomResult = pUnit;
+              NeedsBase = pUnit;
+            }
+            switch ( powerupRandomResult )
+            {
+              case pUnit:
+                Collector2 = Collector;
+                if ( Collector->f.t.OwningPlayer->OwnedUnits <= 50 )
+                  goto LABEL_36;
+                goto LABEL_35;
+              case pCloak:
+                Collector2 = Collector;
+                if ( Collector->f.t.Cloakable )
+                {
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+                break;
+              case pSquad:
+                Collector2 = Collector;
+                if ( Collector->f.t.OwningPlayer->OwnedInfantry > 100 )
+                {
+LABEL_35:
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+LABEL_36:
+                CellLandType = this->LandType;
+                if ( CellLandType == 2 || CellLandType == 6 )
+                {
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+                break;
+              case pArmor:
+                Collector2 = Collector;
+                if ( LODWORD(Collector->f.t.ArmorMultiplier) || HIDWORD(Collector->f.t.ArmorMultiplier) != 1072693248 )
+                {
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+                break;
+              case pSpeed:
+                Collector2 = Collector;
+                if ( LODWORD(Collector->f.SpeedMult)
+                  || HIDWORD(Collector->f.SpeedMult) != 1072693248
+                  || Collector->vt->vt.r.m.o.a.What_Am_I(Collector) == eAircraft )
+                {
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+                break;
+              case pFirepower:
+                Collector2 = Collector;
+                if ( LODWORD(Collector->f.t.FirepowerMultiplier)
+                  || HIDWORD(Collector->f.t.FirepowerMultiplier) != 1072693248
+                  || !Collector->vt->vt.IsArmed(Collector) )
+                {
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+                break;
+              case pVeteran:
+                Collector2 = Collector;
+                if ( (Collector->f.t.r.m.o.a.derivationFlags & 1) != 0 )
+                {
+                  if ( BYTE2(Collector->vt->vt.r.m.o.GetTechnoType(Collector)->t.EliteWeaponStages[1]) )
+                  {
+                    if ( (Collector->f.t.r.m.o.a.derivationFlags & 1) != 0
+                      && Veterancy_IsElite(&Collector->f.t.Veterancy) )
+                    {
+                      powerupRandomResult = pMoney;
+                      powerupPostRandomResult = pMoney;
+                    }
+                  }
+                  else
+                  {
+                    powerupRandomResult = pMoney;
+                    powerupPostRandomResult = pMoney;
+                  }
+                }
+                break;
+              default:
+                Collector2 = Collector;
+                break;
+            }
+            if ( this->LandType == 2 && !powerupNaval[powerupRandomResult] )
+            {
+              powerupRandomResult = pMoney;
+              powerupPostRandomResult = pMoney;
+            }
+            if ( Session.idxGameMode == gmInternet )
+              Count_IncValue(&Collector2->f.t.OwningPlayer->CollectedPowerups, powerupRandomResult);
+          }
+          else if ( !this->Powerup )
+          {
+            v13 = this->OverlayTypeIndex;
+            coords2 = RulesData->SoloCrateMoney;
+            v12 = OverlayTypeClass[v13];
+            if ( v12 == RulesData->CrateImg )
+            {
+              powerupRandomResult = RulesData->SilverCrate;
+              powerupPostRandomResult = powerupRandomResult;
+            }
+            if ( v12 == RulesData->WoodCrateImg )
+            {
+              powerupRandomResult = RulesData->WoodCrate;
+              powerupPostRandomResult = powerupRandomResult;
+            }
+            if ( v12 == RulesData->WaterCrateImg )
+            {
+              powerupRandomResult = RulesData->WaterCrate;
+              powerupPostRandomResult = powerupRandomResult;
+            }
+          }
+          BaseUnit = this->pos;
+          MapClass::Remove_Crate(&BaseUnit);
+          if ( Session.idxGameMode && gCrates )
+            MapClass::Place_Random_Crate(&Map);
+          if ( powerupRandomResult == pSquad )
+          {
+            powerupRandomResult = pMoney;
+            powerupPostRandomResult = pMoney;
+          }
+          __asm { fld     powerupData[ebx*8] }
+          HIBYTE(damage[0]) = 0;
+          __asm { fstp    qword ptr [esp+188h+powerupData.X] }
+          switch ( powerupRandomResult )
+          {
+            case pMoney:
+              goto LABEL_121;
+            case pUnit:
+              WWDebugString("Crate at %d,%d contains a unit\n", this->pos.X, this->pos.Y);
+              pUnitType = 0;
+              if ( NeedsBase )
+              {
+                Collector3 = Collector;
+                pUnitType = HouseClass_FindFirstAccessibleTechnoTypeFromArray(
+                              Collector->f.t.OwningPlayer,
+                              &RulesData->BaseUnit);
+                if ( pUnitType )
+                  goto LABEL_93;
+              }
+              else
+              {
+                Collector3 = Collector;
+              }
+              if ( (CounterClass_GetItemCount(
+                      &Collector3->f.t.OwningPlayer->OwnedBuildingTypes,
+                      *&RulesData->BuildRefinery.Vector->_->BuildupFile[offsetof(BuildingTypeClass, t)]) > 0
+                 || CounterClass_GetItemCount(
+                      &Collector3->f.t.OwningPlayer->OwnedBuildingTypes,
+                      *&RulesData->BuildRefinery.Vector[1]._->BuildupFile[offsetof(_TechnoTypeClass, t)]) > 0)
+                && !CounterClass_GetItemCount(
+                      &Collector3->f.t.OwningPlayer->OwnedVehicleTypes,
+                      RulesData->HarvesterUnit.data->_->field_E60[offsetof(UnitTypeClass, vt)].X)
+                && !CounterClass_GetItemCount(
+                      &Collector3->f.t.OwningPlayer->OwnedVehicleTypes,
+                      RulesData->HarvesterUnit.data[1]._->field_E60[0].X) )
+              {
+                pUnitType = HouseClass_FindFirstAccessibleTechnoTypeFromArray(
+                              Collector3->f.t.OwningPlayer,
+                              &RulesData->HarvesterUnit);
+              }
+LABEL_93:
+              if ( RulesData->UnitCrateType )
+                pUnitType = RulesData->UnitCrateType;
+              if ( pUnitType )
+                goto LABEL_111;
+              do
+              {
+                while ( 1 )
+                {
+                  do
+                  {
+                    pUnitType = vec_UnitTypes.data[Random2Class::operator()(
+                                                     &Scenario->Randomizer,
+                                                     0,
+                                                     vec_UnitTypes.length - 1)]._;
+
+====================================================================================================
+FUNC containing 0x482E57: W?Goodie_Check$:CellClass$n(pn$FootClass$$)i [0x481A00 - 0x483394]
+-- disasm 00482E30..00482EB0 --
+  00482E30: fstp    *	[	!esp!	+	190h	+	var_190	]	*
+  00482E32: fstp    *!st!*
+  00482E34: fstp    *!st!*
+  00482E36: fstp    *!st!*
+  00482E38: call    )%(004CAC40float_sqrt%)
+  00482E3D: add     )!esp!)	,	 *8*
+  00482E40: call    )%(007C5F00Float_To_Int_Floor%)
+  00482E45: mov     )!ecx!)	,	 *(008871E0RulesData*
+  00482E4B: cmp     )!eax!)	,	 *	[	!ecx!	+	172Ch	]	*
+  00482E51: jge      short  )(00482E92loc_482E92)
+  00482E53: mov     )!ecx!)	,	 *	[	!esp!	+	188h	+	coords2	]	*
+  00482E57: mov     )!eax!)	,	 * dword ptr  	[	!ecx!	+	_TechnoClass.t.ArmorMultiplier	]	*
+  00482E5D: test    )!eax!)	,	 *!eax!*
+  00482E5F: jnz      short  )(00482E92loc_482E92)
+  00482E61: cmp     ) dword ptr  	[	!ecx!	+	15Ch	]	)	,	 *3FF00000h*
+  00482E6B: jnz      short  )(00482E92loc_482E92)
+  00482E6D: fld     * qword ptr  	[	!esp!	+	188h	+	powerupData.X	]	*
+  00482E71: fmul    * qword ptr  	[	!ecx!	+	158h	]	*
+  00482E77: mov     )!edx!)	,	 *	[	!ecx!	]	*
+  00482E79: fstp    * qword ptr  	[	!ecx!	+	158h	]	*
+  00482E7F: call    ) dword ptr  	[	!edx!	+	3Ch	]	)
+  00482E82: mov     )!ecx!)	,	 *!eax!*; this
+  00482E84: call    )%(0050B6F0HouseClass::Is_Player%)
+  00482E89: test    )!al!)	,	 *!al!*
+  00482E8B: jz       short  )(00482E92loc_482E92)
+  00482E8D: mov     ) byte ptr  	[	!esp!	+	188h	+	damage	+	3	]	)	,	 *1*
+  00482E92: mov     )!eax!)	,	 *	[	!esp!	+	188h	+	damage	+	4	]	*
+  00482E96: mov     )!ecx!)	,	 *(008A03A0dword_8A03A0*
+  00482E9C: inc     )!eax!)
+  00482E9D: cmp     )!eax!)	,	 *!ecx!*
+  00482E9F: mov     )	[	!esp!	+	188h	+	damage	+	4	]	)	,	 *!eax!*
+  00482EA3: jl      )(00482D82loc_482D82)
+  00482EA9: mov     )!al!)	,	 * byte ptr  	[	!esp!	+	188h	+	damage	+	3	]	*
+  00482EAD: test    )!al!)	,	 *!al!*
+  00482EAF: jz       short  )(00482EC0loc_482EC0)
+
+-- hexrays (first 400 lines) --
+void __thiscall CellClass::Goodie_Check(CellClass *this, _FootClass *Collector)
+{
+  size_t OverlayTypeIndex; // eax
+  int totalShares; // eax
+  int *powerupShare; // ecx
+  int share; // ebx
+  int v7; // eax
+  int weightSumSoFar; // edx
+  int *v9; // ecx
+  ePowerup idxPowerupKind; // edi
+  ePowerup powerupRandomResult; // ebx
+  OverlayTypeClass *v12; // ecx
+  size_t v13; // edx
+  HouseClass_old *OwningPlayer; // edi
+  _FootClass *Collector2; // edi
+  int CellLandType; // eax
+  _BOOL1 v17; // cf
+  WarheadTypeClass *v18; // ebx
+  int v19; // edi
+  signed int v20; // eax
+  vt_AbstractClass *v21; // edx
+  signed int v22; // edi
+  dwXYZ *v23; // eax
+  CellClass *v24; // eax
+  wXY *v25; // eax
+  dwXYZ *v26; // eax
+  int v27; // edi
+  int v28; // ecx
+  int v29; // ebx
+  int *v30; // eax
+  dwXYZ *v31; // eax
+  CellClass *Target_Cell; // eax
+  UnitTypeClass *pUnitType; // edi
+  _FootClass *Collector3; // ebx
+  int v35; // eax
+  int length; // ecx
+  PtrUnitTypeClass *data; // edx
+  char FoundBase; // bl
+  char Is_Human; // al
+  UnitClass *createdUnit__; // edi
+  int FloorHeight; // eax
+  int v42; // eax
+  int v43; // eax
+  int v44; // edi
+  int v45; // ebx
+  int v46; // eax
+  int updatedAmount; // edi
+  int v48; // eax
+  HouseClass_old *recipient; // ecx
+  AnimTypeClass *v50; // ebx
+  AnimClass *v51; // edi
+  int v52; // edi
+  int v53; // ebx
+  int v54; // eax
+  dwXYZ *v55; // eax
+  int v56; // eax
+  AnimClass *v57; // eax
+  wXY v58; // eax
+  int v59; // edi
+  int v60; // ebx
+  int *v61; // eax
+  int v62; // edi
+  int v63; // ecx
+  int v64; // eax
+  int v65; // edi
+  vt_FootClass *v66; // edx
+  int v67; // edi
+  int v68; // ebx
+  _DWORD *v69; // eax
+  int v70; // edx
+  _DWORD *v71; // eax
+  int v72; // edx
+  int v73; // ebx
+  float *v75; // edi
+  int v77; // edi
+  int v78; // ebx
+  int v79; // edi
+  int v80; // ebx
+  int i; // ebx
+  _ObjectClass *v82; // edi
+  int v83; // eax
+  vt_ObjectClass *vt; // edx
+  int v85; // eax
+  HouseClass *House; // edx
+  int cntSW; // ecx
+  SuperWeaponTypeClass *FirstOfAction; // ebx
+  SuperClass **X; // edi
+  char v90; // al
+  _DWORD *v91; // eax
+  int v92; // edx
+  vt_FootClass *v94; // edx
+  HouseClass *v96; // eax
+  int v97; // edi
+  int v98; // ebx
+  _DWORD *v99; // eax
+  int v100; // edx
+  int v102; // eax
+  int v104; // edi
+  int v105; // ebx
+  _DWORD *v106; // eax
+  int v107; // edx
+  vt_FootClass *v109; // edx
+  HouseClass *v111; // eax
+  int v112; // edi
+  int v113; // ebx
+  AnimClass *v114; // eax
+  int v115; // edi
+  int v116; // ebx
+  int v117; // eax
+  WarheadTypeClass *C4Warhead; // [esp-4h] [ebp-19Ch]
+  int v119; // [esp+8h] [ebp-190h]
+  __int64 Z; // [esp+8h] [ebp-190h]
+  double v121; // [esp+8h] [ebp-190h]
+  double v122; // [esp+8h] [ebp-190h]
+  double v123; // [esp+8h] [ebp-190h]
+  double v124; // [esp+8h] [ebp-190h]
+  double v125; // [esp+8h] [ebp-190h]
+  int v126; // [esp+Ch] [ebp-18Ch]
+  char NeedsBase; // [esp+23h] [ebp-175h]
+  int coords2; // [esp+24h] [ebp-174h] BYREF
+  signed int damage[2]; // [esp+28h] [ebp-170h]
+  Point2D powerupData; // [esp+30h] [ebp-168h] BYREF
+  ePowerup powerupPostRandomResult; // [esp+3Ch] [ebp-15Ch]
+  dwXYZ a3; // [esp+40h] [ebp-158h] BYREF
+  Point2D SWs_; // [esp+4Ch] [ebp-14Ch] BYREF
+  wXY coords; // [esp+54h] [ebp-144h] BYREF
+  int v135; // [esp+58h] [ebp-140h]
+  int v136; // [esp+5Ch] [ebp-13Ch]
+  UnitTypeClass *BaseUnit; // [esp+60h] [ebp-138h] BYREF
+  dwXYZ v138; // [esp+64h] [ebp-134h] BYREF
+  int v139; // [esp+78h] [ebp-120h]
+  int position; // [esp+7Ch] [ebp-11Ch] BYREF
+  dwXYZ a1; // [esp+80h] [ebp-118h] BYREF
+  dwXYZ v142; // [esp+8Ch] [ebp-10Ch] BYREF
+  int v143[3]; // [esp+98h] [ebp-100h] BYREF
+  int v144[3]; // [esp+A4h] [ebp-F4h] BYREF
+  int pos[3]; // [esp+B0h] [ebp-E8h] BYREF
+  int v146[3]; // [esp+BCh] [ebp-DCh] BYREF
+  int v147[3]; // [esp+C8h] [ebp-D0h] BYREF
+  int v148[3]; // [esp+D4h] [ebp-C4h] BYREF
+  int v149[3]; // [esp+E0h] [ebp-B8h] BYREF
+  int v150[3]; // [esp+ECh] [ebp-ACh] BYREF
+  int v151[3]; // [esp+F8h] [ebp-A0h] BYREF
+  dwXYZ v152; // [esp+104h] [ebp-94h] BYREF
+  int a2; // [esp+110h] [ebp-88h] BYREF
+  dwXYZ v154; // [esp+114h] [ebp-84h] BYREF
+  char v155[12]; // [esp+120h] [ebp-78h] BYREF
+  char v156[12]; // [esp+12Ch] [ebp-6Ch] BYREF
+  Point3D v157; // [esp+138h] [ebp-60h] BYREF
+  char v158[12]; // [esp+144h] [ebp-54h] BYREF
+  int v159[3]; // [esp+150h] [ebp-48h] BYREF
+  char v160[12]; // [esp+15Ch] [ebp-3Ch] BYREF
+  int v161[3]; // [esp+168h] [ebp-30h] BYREF
+  char v162[12]; // [esp+174h] [ebp-24h] BYREF
+  int v163; // [esp+180h] [ebp-18h] BYREF
+  char v164[12]; // [esp+18Ch] [ebp-Ch] BYREF
+
+  if ( Collector )
+  {
+    OverlayTypeIndex = this->OverlayTypeIndex;
+    if ( OverlayTypeIndex != -1 )
+    {
+      if ( OverlayTypeClass[OverlayTypeIndex]->Crate )
+      {
+        NeedsBase = 0;
+        coords2 = 0;
+        if ( !Session.idxGameMode || !Collector->f.t.OwningPlayer->Country->MultiplayPassive )
+        {
+          if ( OverlayTypeClass[OverlayTypeIndex]->CrateTrigger )
+          {
+            if ( Collector->f.t.r.m.o.Tag )
+            {
+              WWDebugString("Springing trigger on crate at %d,%d\n", this->pos.X, this->pos.Y);
+              TagClass_RaiseEvent(Collector->f.t.r.m.o.Tag, ekPickupCrate, Collector, CellClass_Default_Coords, 0, 0);
+              if ( !Collector->f.t.r.m.o.Alive )
+                return;
+            }
+            Scenario->gap_34be[0] = 1;
+          }
+          if ( this->Powerup < 0x13u )
+          {
+            powerupRandomResult = this->Powerup;
+          }
+          else
+          {
+            totalShares = 0;
+            powerupShare = powerup_Weights;
+            do
+            {
+              share = *powerupShare++;
+              totalShares += share;
+            }
+            while ( powerupShare < powerup_Anims );
+            v7 = Random2Class::operator()(&Scenario->Randomizer, 1, totalShares);
+            weightSumSoFar = 0;
+            idxPowerupKind = pMoney;
+            v9 = powerup_Weights;
+            do
+            {
+              weightSumSoFar += *v9;
+              if ( v7 <= weightSumSoFar )
+                break;
+              ++v9;
+              ++idxPowerupKind;
+            }
+            while ( v9 < powerup_Anims );
+            powerupRandomResult = idxPowerupKind;
+          }
+          powerupPostRandomResult = powerupRandomResult;
+          if ( Session.idxGameMode )
+          {
+            OwningPlayer = Collector->f.t.OwningPlayer;
+            BaseUnit = HouseClass_FindFirstAccessibleTechnoTypeFromArray(OwningPlayer, &RulesData->BaseUnit);
+            if ( !OwningPlayer->IHouse._.OwnedBuildings
+              && OwningPlayer->IHouse.IHouse->AvailableMoney(&OwningPlayer->IHouse) > 1500
+              && !CounterClass_GetItemCount(
+                    &OwningPlayer->IHouse._.OwnedVehicleTypes,
+                    BaseUnit->field_E60[offsetof(_TechnoTypeClass, VTable)].X)
+              && gBases )
+            {
+              powerupRandomResult = pUnit;
+              powerupPostRandomResult = pUnit;
+              NeedsBase = pUnit;
+            }
+            switch ( powerupRandomResult )
+            {
+              case pUnit:
+                Collector2 = Collector;
+                if ( Collector->f.t.OwningPlayer->OwnedUnits <= 50 )
+                  goto LABEL_36;
+                goto LABEL_35;
+              case pCloak:
+                Collector2 = Collector;
+                if ( Collector->f.t.Cloakable )
+                {
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+                break;
+              case pSquad:
+                Collector2 = Collector;
+                if ( Collector->f.t.OwningPlayer->OwnedInfantry > 100 )
+                {
+LABEL_35:
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+LABEL_36:
+                CellLandType = this->LandType;
+                if ( CellLandType == 2 || CellLandType == 6 )
+                {
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+                break;
+              case pArmor:
+                Collector2 = Collector;
+                if ( LODWORD(Collector->f.t.ArmorMultiplier) || HIDWORD(Collector->f.t.ArmorMultiplier) != 1072693248 )
+                {
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+                break;
+              case pSpeed:
+                Collector2 = Collector;
+                if ( LODWORD(Collector->f.SpeedMult)
+                  || HIDWORD(Collector->f.SpeedMult) != 1072693248
+                  || Collector->vt->vt.r.m.o.a.What_Am_I(Collector) == eAircraft )
+                {
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+                break;
+              case pFirepower:
+                Collector2 = Collector;
+                if ( LODWORD(Collector->f.t.FirepowerMultiplier)
+                  || HIDWORD(Collector->f.t.FirepowerMultiplier) != 1072693248
+                  || !Collector->vt->vt.IsArmed(Collector) )
+                {
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+                break;
+              case pVeteran:
+                Collector2 = Collector;
+                if ( (Collector->f.t.r.m.o.a.derivationFlags & 1) != 0 )
+                {
+                  if ( BYTE2(Collector->vt->vt.r.m.o.GetTechnoType(Collector)->t.EliteWeaponStages[1]) )
+                  {
+                    if ( (Collector->f.t.r.m.o.a.derivationFlags & 1) != 0
+                      && Veterancy_IsElite(&Collector->f.t.Veterancy) )
+                    {
+                      powerupRandomResult = pMoney;
+                      powerupPostRandomResult = pMoney;
+                    }
+                  }
+                  else
+                  {
+                    powerupRandomResult = pMoney;
+                    powerupPostRandomResult = pMoney;
+                  }
+                }
+                break;
+              default:
+                Collector2 = Collector;
+                break;
+            }
+            if ( this->LandType == 2 && !powerupNaval[powerupRandomResult] )
+            {
+              powerupRandomResult = pMoney;
+              powerupPostRandomResult = pMoney;
+            }
+            if ( Session.idxGameMode == gmInternet )
+              Count_IncValue(&Collector2->f.t.OwningPlayer->CollectedPowerups, powerupRandomResult);
+          }
+          else if ( !this->Powerup )
+          {
+            v13 = this->OverlayTypeIndex;
+            coords2 = RulesData->SoloCrateMoney;
+            v12 = OverlayTypeClass[v13];
+            if ( v12 == RulesData->CrateImg )
+            {
+              powerupRandomResult = RulesData->SilverCrate;
+              powerupPostRandomResult = powerupRandomResult;
+            }
+            if ( v12 == RulesData->WoodCrateImg )
+            {
+              powerupRandomResult = RulesData->WoodCrate;
+              powerupPostRandomResult = powerupRandomResult;
+            }
+            if ( v12 == RulesData->WaterCrateImg )
+            {
+              powerupRandomResult = RulesData->WaterCrate;
+              powerupPostRandomResult = powerupRandomResult;
+            }
+          }
+          BaseUnit = this->pos;
+          MapClass::Remove_Crate(&BaseUnit);
+          if ( Session.idxGameMode && gCrates )
+            MapClass::Place_Random_Crate(&Map);
+          if ( powerupRandomResult == pSquad )
+          {
+            powerupRandomResult = pMoney;
+            powerupPostRandomResult = pMoney;
+          }
+          __asm { fld     powerupData[ebx*8] }
+          HIBYTE(damage[0]) = 0;
+          __asm { fstp    qword ptr [esp+188h+powerupData.X] }
+          switch ( powerupRandomResult )
+          {
+            case pMoney:
+              goto LABEL_121;
+            case pUnit:
+              WWDebugString("Crate at %d,%d contains a unit\n", this->pos.X, this->pos.Y);
+              pUnitType = 0;
+              if ( NeedsBase )
+              {
+                Collector3 = Collector;
+                pUnitType = HouseClass_FindFirstAccessibleTechnoTypeFromArray(
+                              Collector->f.t.OwningPlayer,
+                              &RulesData->BaseUnit);
+                if ( pUnitType )
+                  goto LABEL_93;
+              }
+              else
+              {
+                Collector3 = Collector;
+              }
+              if ( (CounterClass_GetItemCount(
+                      &Collector3->f.t.OwningPlayer->OwnedBuildingTypes,
+                      *&RulesData->BuildRefinery.Vector->_->BuildupFile[offsetof(BuildingTypeClass, t)]) > 0
+                 || CounterClass_GetItemCount(
+                      &Collector3->f.t.OwningPlayer->OwnedBuildingTypes,
+                      *&RulesData->BuildRefinery.Vector[1]._->BuildupFile[offsetof(_TechnoTypeClass, t)]) > 0)
+                && !CounterClass_GetItemCount(
+                      &Collector3->f.t.OwningPlayer->OwnedVehicleTypes,
+                      RulesData->HarvesterUnit.data->_->field_E60[offsetof(UnitTypeClass, vt)].X)
+                && !CounterClass_GetItemCount(
+                      &Collector3->f.t.OwningPlayer->OwnedVehicleTypes,
+                      RulesData->HarvesterUnit.data[1]._->field_E60[0].X) )
+              {
+                pUnitType = HouseClass_FindFirstAccessibleTechnoTypeFromArray(
+                              Collector3->f.t.OwningPlayer,
+                              &RulesData->HarvesterUnit);
+              }
+LABEL_93:
+              if ( RulesData->UnitCrateType )
+                pUnitType = RulesData->UnitCrateType;
+              if ( pUnitType )
+                goto LABEL_111;
+              do
+              {
+                while ( 1 )
+                {
+                  do
+                  {
+                    pUnitType = vec_UnitTypes.data[Random2Class::operator()(
+                                                     &Scenario->Randomizer,
+                                                     0,
+                                                     vec_UnitTypes.length - 1)]._;
+
+====================================================================================================
+FUNC containing 0x48303A: W?Goodie_Check$:CellClass$n(pn$FootClass$$)i [0x481A00 - 0x483394]
+-- disasm 00483010..004830A0 --
+  00483010: faddp   )!st(1)!)	,	 *!st!*
+  00483012: fstp    *	[	!esp!	+	190h	+	var_190	]	*
+  00483015: fstp    *!st!*
+  00483017: fstp    *!st!*
+  00483019: fstp    *!st!*
+  0048301B: call    )%(004CAC40float_sqrt%)
+  00483020: add     )!esp!)	,	 *8*
+  00483023: call    )%(007C5F00Float_To_Int_Floor%)
+  00483028: mov     )!ecx!)	,	 *(008871E0RulesData*
+  0048302E: cmp     )!eax!)	,	 *	[	!ecx!	+	172Ch	]	*
+  00483034: jge      short  )(00483081loc_483081)
+  00483036: mov     )!edi!)	,	 *	[	!esp!	+	188h	+	coords2	]	*
+  0048303A: mov     )!eax!)	,	 * dword ptr  	[	!edi!	+(	FootClass.SpeedMult	+	4	)]	*
+  00483040: test    )!eax!)	,	 *!eax!*
+  00483042: jnz      short  )(00483081loc_483081)
+  00483044: cmp     ) dword ptr  	[	!edi!	+	584h	]	)	,	 *3FF00000h*
+  0048304E: jnz      short  )(00483081loc_483081)
+  00483050: mov     )!edx!)	,	 *	[	!edi!	]	*
+  00483052: mov     )!ecx!)	,	 *!edi!*
+  00483054: call    ) dword ptr  	[	!edx!	+	2Ch	]	)
+  00483057: cmp     )!eax!)	,	 *2*
+  0048305A: jz       short  )(00483081loc_483081)
+  0048305C: fld     * qword ptr  	[	!esp!	+	188h	+	powerupData.X	]	*
+  00483060: fmul    * qword ptr  	[	!edi!	+	580h	]	*
+  00483066: mov     )!eax!)	,	 *	[	!edi!	+	21Ch	]	*
+  0048306C: fstp    * qword ptr  	[	!edi!	+	580h	]	*
+  00483072: mov     )!cl!)	,	 *	[	!eax!	+	1EDh	]	*
+  00483078: test    )!cl!)	,	 *!cl!*
+  0048307A: jz       short  )(00483081loc_483081)
+  0048307C: mov     ) byte ptr  	[	!esp!	+	188h	+	damage	+	3	]	)	,	 *1*
+  00483081: mov     )!eax!)	,	 *	[	!esp!	+	188h	+	damage	+	4	]	*
+  00483085: mov     )!ecx!)	,	 *(008A03A0dword_8A03A0*
+  0048308B: inc     )!eax!)
+  0048308C: cmp     )!eax!)	,	 *!ecx!*
+  0048308E: mov     )	[	!esp!	+	188h	+	damage	+	4	]	)	,	 *!eax!*
+  00483092: jl      )(00482F62loc_482F62)
+  00483098: mov     )!al!)	,	 * byte ptr  	[	!esp!	+	188h	+	damage	+	3	]	*
+  0048309C: test    )!al!)	,	 *!al!*
+  0048309E: jz       short  )(004830AFloc_4830AF)
+
+-- hexrays (first 400 lines) --
+void __thiscall CellClass::Goodie_Check(CellClass *this, _FootClass *Collector)
+{
+  size_t OverlayTypeIndex; // eax
+  int totalShares; // eax
+  int *powerupShare; // ecx
+  int share; // ebx
+  int v7; // eax
+  int weightSumSoFar; // edx
+  int *v9; // ecx
+  ePowerup idxPowerupKind; // edi
+  ePowerup powerupRandomResult; // ebx
+  OverlayTypeClass *v12; // ecx
+  size_t v13; // edx
+  HouseClass_old *OwningPlayer; // edi
+  _FootClass *Collector2; // edi
+  int CellLandType; // eax
+  _BOOL1 v17; // cf
+  WarheadTypeClass *v18; // ebx
+  int v19; // edi
+  signed int v20; // eax
+  vt_AbstractClass *v21; // edx
+  signed int v22; // edi
+  dwXYZ *v23; // eax
+  CellClass *v24; // eax
+  wXY *v25; // eax
+  dwXYZ *v26; // eax
+  int v27; // edi
+  int v28; // ecx
+  int v29; // ebx
+  int *v30; // eax
+  dwXYZ *v31; // eax
+  CellClass *Target_Cell; // eax
+  UnitTypeClass *pUnitType; // edi
+  _FootClass *Collector3; // ebx
+  int v35; // eax
+  int length; // ecx
+  PtrUnitTypeClass *data; // edx
+  char FoundBase; // bl
+  char Is_Human; // al
+  UnitClass *createdUnit__; // edi
+  int FloorHeight; // eax
+  int v42; // eax
+  int v43; // eax
+  int v44; // edi
+  int v45; // ebx
+  int v46; // eax
+  int updatedAmount; // edi
+  int v48; // eax
+  HouseClass_old *recipient; // ecx
+  AnimTypeClass *v50; // ebx
+  AnimClass *v51; // edi
+  int v52; // edi
+  int v53; // ebx
+  int v54; // eax
+  dwXYZ *v55; // eax
+  int v56; // eax
+  AnimClass *v57; // eax
+  wXY v58; // eax
+  int v59; // edi
+  int v60; // ebx
+  int *v61; // eax
+  int v62; // edi
+  int v63; // ecx
+  int v64; // eax
+  int v65; // edi
+  vt_FootClass *v66; // edx
+  int v67; // edi
+  int v68; // ebx
+  _DWORD *v69; // eax
+  int v70; // edx
+  _DWORD *v71; // eax
+  int v72; // edx
+  int v73; // ebx
+  float *v75; // edi
+  int v77; // edi
+  int v78; // ebx
+  int v79; // edi
+  int v80; // ebx
+  int i; // ebx
+  _ObjectClass *v82; // edi
+  int v83; // eax
+  vt_ObjectClass *vt; // edx
+  int v85; // eax
+  HouseClass *House; // edx
+  int cntSW; // ecx
+  SuperWeaponTypeClass *FirstOfAction; // ebx
+  SuperClass **X; // edi
+  char v90; // al
+  _DWORD *v91; // eax
+  int v92; // edx
+  vt_FootClass *v94; // edx
+  HouseClass *v96; // eax
+  int v97; // edi
+  int v98; // ebx
+  _DWORD *v99; // eax
+  int v100; // edx
+  int v102; // eax
+  int v104; // edi
+  int v105; // ebx
+  _DWORD *v106; // eax
+  int v107; // edx
+  vt_FootClass *v109; // edx
+  HouseClass *v111; // eax
+  int v112; // edi
+  int v113; // ebx
+  AnimClass *v114; // eax
+  int v115; // edi
+  int v116; // ebx
+  int v117; // eax
+  WarheadTypeClass *C4Warhead; // [esp-4h] [ebp-19Ch]
+  int v119; // [esp+8h] [ebp-190h]
+  __int64 Z; // [esp+8h] [ebp-190h]
+  double v121; // [esp+8h] [ebp-190h]
+  double v122; // [esp+8h] [ebp-190h]
+  double v123; // [esp+8h] [ebp-190h]
+  double v124; // [esp+8h] [ebp-190h]
+  double v125; // [esp+8h] [ebp-190h]
+  int v126; // [esp+Ch] [ebp-18Ch]
+  char NeedsBase; // [esp+23h] [ebp-175h]
+  int coords2; // [esp+24h] [ebp-174h] BYREF
+  signed int damage[2]; // [esp+28h] [ebp-170h]
+  Point2D powerupData; // [esp+30h] [ebp-168h] BYREF
+  ePowerup powerupPostRandomResult; // [esp+3Ch] [ebp-15Ch]
+  dwXYZ a3; // [esp+40h] [ebp-158h] BYREF
+  Point2D SWs_; // [esp+4Ch] [ebp-14Ch] BYREF
+  wXY coords; // [esp+54h] [ebp-144h] BYREF
+  int v135; // [esp+58h] [ebp-140h]
+  int v136; // [esp+5Ch] [ebp-13Ch]
+  UnitTypeClass *BaseUnit; // [esp+60h] [ebp-138h] BYREF
+  dwXYZ v138; // [esp+64h] [ebp-134h] BYREF
+  int v139; // [esp+78h] [ebp-120h]
+  int position; // [esp+7Ch] [ebp-11Ch] BYREF
+  dwXYZ a1; // [esp+80h] [ebp-118h] BYREF
+  dwXYZ v142; // [esp+8Ch] [ebp-10Ch] BYREF
+  int v143[3]; // [esp+98h] [ebp-100h] BYREF
+  int v144[3]; // [esp+A4h] [ebp-F4h] BYREF
+  int pos[3]; // [esp+B0h] [ebp-E8h] BYREF
+  int v146[3]; // [esp+BCh] [ebp-DCh] BYREF
+  int v147[3]; // [esp+C8h] [ebp-D0h] BYREF
+  int v148[3]; // [esp+D4h] [ebp-C4h] BYREF
+  int v149[3]; // [esp+E0h] [ebp-B8h] BYREF
+  int v150[3]; // [esp+ECh] [ebp-ACh] BYREF
+  int v151[3]; // [esp+F8h] [ebp-A0h] BYREF
+  dwXYZ v152; // [esp+104h] [ebp-94h] BYREF
+  int a2; // [esp+110h] [ebp-88h] BYREF
+  dwXYZ v154; // [esp+114h] [ebp-84h] BYREF
+  char v155[12]; // [esp+120h] [ebp-78h] BYREF
+  char v156[12]; // [esp+12Ch] [ebp-6Ch] BYREF
+  Point3D v157; // [esp+138h] [ebp-60h] BYREF
+  char v158[12]; // [esp+144h] [ebp-54h] BYREF
+  int v159[3]; // [esp+150h] [ebp-48h] BYREF
+  char v160[12]; // [esp+15Ch] [ebp-3Ch] BYREF
+  int v161[3]; // [esp+168h] [ebp-30h] BYREF
+  char v162[12]; // [esp+174h] [ebp-24h] BYREF
+  int v163; // [esp+180h] [ebp-18h] BYREF
+  char v164[12]; // [esp+18Ch] [ebp-Ch] BYREF
+
+  if ( Collector )
+  {
+    OverlayTypeIndex = this->OverlayTypeIndex;
+    if ( OverlayTypeIndex != -1 )
+    {
+      if ( OverlayTypeClass[OverlayTypeIndex]->Crate )
+      {
+        NeedsBase = 0;
+        coords2 = 0;
+        if ( !Session.idxGameMode || !Collector->f.t.OwningPlayer->Country->MultiplayPassive )
+        {
+          if ( OverlayTypeClass[OverlayTypeIndex]->CrateTrigger )
+          {
+            if ( Collector->f.t.r.m.o.Tag )
+            {
+              WWDebugString("Springing trigger on crate at %d,%d\n", this->pos.X, this->pos.Y);
+              TagClass_RaiseEvent(Collector->f.t.r.m.o.Tag, ekPickupCrate, Collector, CellClass_Default_Coords, 0, 0);
+              if ( !Collector->f.t.r.m.o.Alive )
+                return;
+            }
+            Scenario->gap_34be[0] = 1;
+          }
+          if ( this->Powerup < 0x13u )
+          {
+            powerupRandomResult = this->Powerup;
+          }
+          else
+          {
+            totalShares = 0;
+            powerupShare = powerup_Weights;
+            do
+            {
+              share = *powerupShare++;
+              totalShares += share;
+            }
+            while ( powerupShare < powerup_Anims );
+            v7 = Random2Class::operator()(&Scenario->Randomizer, 1, totalShares);
+            weightSumSoFar = 0;
+            idxPowerupKind = pMoney;
+            v9 = powerup_Weights;
+            do
+            {
+              weightSumSoFar += *v9;
+              if ( v7 <= weightSumSoFar )
+                break;
+              ++v9;
+              ++idxPowerupKind;
+            }
+            while ( v9 < powerup_Anims );
+            powerupRandomResult = idxPowerupKind;
+          }
+          powerupPostRandomResult = powerupRandomResult;
+          if ( Session.idxGameMode )
+          {
+            OwningPlayer = Collector->f.t.OwningPlayer;
+            BaseUnit = HouseClass_FindFirstAccessibleTechnoTypeFromArray(OwningPlayer, &RulesData->BaseUnit);
+            if ( !OwningPlayer->IHouse._.OwnedBuildings
+              && OwningPlayer->IHouse.IHouse->AvailableMoney(&OwningPlayer->IHouse) > 1500
+              && !CounterClass_GetItemCount(
+                    &OwningPlayer->IHouse._.OwnedVehicleTypes,
+                    BaseUnit->field_E60[offsetof(_TechnoTypeClass, VTable)].X)
+              && gBases )
+            {
+              powerupRandomResult = pUnit;
+              powerupPostRandomResult = pUnit;
+              NeedsBase = pUnit;
+            }
+            switch ( powerupRandomResult )
+            {
+              case pUnit:
+                Collector2 = Collector;
+                if ( Collector->f.t.OwningPlayer->OwnedUnits <= 50 )
+                  goto LABEL_36;
+                goto LABEL_35;
+              case pCloak:
+                Collector2 = Collector;
+                if ( Collector->f.t.Cloakable )
+                {
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+                break;
+              case pSquad:
+                Collector2 = Collector;
+                if ( Collector->f.t.OwningPlayer->OwnedInfantry > 100 )
+                {
+LABEL_35:
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+LABEL_36:
+                CellLandType = this->LandType;
+                if ( CellLandType == 2 || CellLandType == 6 )
+                {
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+                break;
+              case pArmor:
+                Collector2 = Collector;
+                if ( LODWORD(Collector->f.t.ArmorMultiplier) || HIDWORD(Collector->f.t.ArmorMultiplier) != 1072693248 )
+                {
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+                break;
+              case pSpeed:
+                Collector2 = Collector;
+                if ( LODWORD(Collector->f.SpeedMult)
+                  || HIDWORD(Collector->f.SpeedMult) != 1072693248
+                  || Collector->vt->vt.r.m.o.a.What_Am_I(Collector) == eAircraft )
+                {
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+                break;
+              case pFirepower:
+                Collector2 = Collector;
+                if ( LODWORD(Collector->f.t.FirepowerMultiplier)
+                  || HIDWORD(Collector->f.t.FirepowerMultiplier) != 1072693248
+                  || !Collector->vt->vt.IsArmed(Collector) )
+                {
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+                break;
+              case pVeteran:
+                Collector2 = Collector;
+                if ( (Collector->f.t.r.m.o.a.derivationFlags & 1) != 0 )
+                {
+                  if ( BYTE2(Collector->vt->vt.r.m.o.GetTechnoType(Collector)->t.EliteWeaponStages[1]) )
+                  {
+                    if ( (Collector->f.t.r.m.o.a.derivationFlags & 1) != 0
+                      && Veterancy_IsElite(&Collector->f.t.Veterancy) )
+                    {
+                      powerupRandomResult = pMoney;
+                      powerupPostRandomResult = pMoney;
+                    }
+                  }
+                  else
+                  {
+                    powerupRandomResult = pMoney;
+                    powerupPostRandomResult = pMoney;
+                  }
+                }
+                break;
+              default:
+                Collector2 = Collector;
+                break;
+            }
+            if ( this->LandType == 2 && !powerupNaval[powerupRandomResult] )
+            {
+              powerupRandomResult = pMoney;
+              powerupPostRandomResult = pMoney;
+            }
+            if ( Session.idxGameMode == gmInternet )
+              Count_IncValue(&Collector2->f.t.OwningPlayer->CollectedPowerups, powerupRandomResult);
+          }
+          else if ( !this->Powerup )
+          {
+            v13 = this->OverlayTypeIndex;
+            coords2 = RulesData->SoloCrateMoney;
+            v12 = OverlayTypeClass[v13];
+            if ( v12 == RulesData->CrateImg )
+            {
+              powerupRandomResult = RulesData->SilverCrate;
+              powerupPostRandomResult = powerupRandomResult;
+            }
+            if ( v12 == RulesData->WoodCrateImg )
+            {
+              powerupRandomResult = RulesData->WoodCrate;
+              powerupPostRandomResult = powerupRandomResult;
+            }
+            if ( v12 == RulesData->WaterCrateImg )
+            {
+              powerupRandomResult = RulesData->WaterCrate;
+              powerupPostRandomResult = powerupRandomResult;
+            }
+          }
+          BaseUnit = this->pos;
+          MapClass::Remove_Crate(&BaseUnit);
+          if ( Session.idxGameMode && gCrates )
+            MapClass::Place_Random_Crate(&Map);
+          if ( powerupRandomResult == pSquad )
+          {
+            powerupRandomResult = pMoney;
+            powerupPostRandomResult = pMoney;
+          }
+          __asm { fld     powerupData[ebx*8] }
+          HIBYTE(damage[0]) = 0;
+          __asm { fstp    qword ptr [esp+188h+powerupData.X] }
+          switch ( powerupRandomResult )
+          {
+            case pMoney:
+              goto LABEL_121;
+            case pUnit:
+              WWDebugString("Crate at %d,%d contains a unit\n", this->pos.X, this->pos.Y);
+              pUnitType = 0;
+              if ( NeedsBase )
+              {
+                Collector3 = Collector;
+                pUnitType = HouseClass_FindFirstAccessibleTechnoTypeFromArray(
+                              Collector->f.t.OwningPlayer,
+                              &RulesData->BaseUnit);
+                if ( pUnitType )
+                  goto LABEL_93;
+              }
+              else
+              {
+                Collector3 = Collector;
+              }
+              if ( (CounterClass_GetItemCount(
+                      &Collector3->f.t.OwningPlayer->OwnedBuildingTypes,
+                      *&RulesData->BuildRefinery.Vector->_->BuildupFile[offsetof(BuildingTypeClass, t)]) > 0
+                 || CounterClass_GetItemCount(
+                      &Collector3->f.t.OwningPlayer->OwnedBuildingTypes,
+                      *&RulesData->BuildRefinery.Vector[1]._->BuildupFile[offsetof(_TechnoTypeClass, t)]) > 0)
+                && !CounterClass_GetItemCount(
+                      &Collector3->f.t.OwningPlayer->OwnedVehicleTypes,
+                      RulesData->HarvesterUnit.data->_->field_E60[offsetof(UnitTypeClass, vt)].X)
+                && !CounterClass_GetItemCount(
+                      &Collector3->f.t.OwningPlayer->OwnedVehicleTypes,
+                      RulesData->HarvesterUnit.data[1]._->field_E60[0].X) )
+              {
+                pUnitType = HouseClass_FindFirstAccessibleTechnoTypeFromArray(
+                              Collector3->f.t.OwningPlayer,
+                              &RulesData->HarvesterUnit);
+              }
+LABEL_93:
+              if ( RulesData->UnitCrateType )
+                pUnitType = RulesData->UnitCrateType;
+              if ( pUnitType )
+                goto LABEL_111;
+              do
+              {
+                while ( 1 )
+                {
+                  do
+                  {
+                    pUnitType = vec_UnitTypes.data[Random2Class::operator()(
+                                                     &Scenario->Randomizer,
+                                                     0,
+                                                     vec_UnitTypes.length - 1)]._;
+
+====================================================================================================
+FUNC containing 0x48294F: W?Goodie_Check$:CellClass$n(pn$FootClass$$)i [0x481A00 - 0x483394]
+-- disasm 00482930..00482990 --
+  00482930: call    )%(004CAC40float_sqrt%)
+  00482935: add     )!esp!)	,	 *8*
+  00482938: call    )%(007C5F00Float_To_Int_Floor%)
+  0048293D: mov     )!ecx!)	,	 *(008871E0RulesData*
+  00482943: cmp     )!eax!)	,	 *	[	!ecx!	+	172Ch	]	*
+  00482949: jge      short  )(00482956loc_482956)
+  0048294B: mov     )!edx!)	,	 *	[	!esp!	+	188h	+	damage	+	4	]	*
+  0048294F: mov     )	[	!edx!	+	_TechnoClass.t.Cloakable	]	)	,	 *1*
+  00482956: mov     )!eax!)	,	 *	[	!esp!	+	188h	+	coords2	]	*
+  0048295A: mov     )!ecx!)	,	 *(008A03A0dword_8A03A0*
+  00482960: inc     )!eax!)
+  00482961: cmp     )!eax!)	,	 *!ecx!*
+  00482963: mov     )	[	!esp!	+	188h	+	coords2	]	)	,	 *!eax!*
+  00482967: jl      )(0048286Cloc_48286C)
+  0048296D: jmp     )%(004832F5pwNop%); jumptable 00481DE0 default case, cases 6,13,15
+  00482972: movsx   )!eax!)	,	 * word ptr  	[	!esi!	+	26h	]	*; jumptable 00481DE0 case 14
+  00482976: movsx   )!ecx!)	,	 * word ptr  	[	!esi!	+	24h	]	*
+  0048297A: push    )!eax!)
+  0048297B: push    )!ecx!)
+  0048297C: push    ) offset  (0081CF38aCrateAtDDContainsVeterancyTm); (0081CF38"Crate at %d,%d contains veterancy(TM)\n"
+  00482981: call    )%(004068E0WWDebugString%); Crate at %d,%d contains veterancy(TM)
+  00482986: mov     )!eax!)	,	 *(008A03A0dword_8A03A0*
+  0048298B: add     )!esp!)	,	 *0Ch*
+  0048298E: test    )!eax!)	,	 *!eax!*
+
+-- hexrays (first 400 lines) --
+void __thiscall CellClass::Goodie_Check(CellClass *this, _FootClass *Collector)
+{
+  size_t OverlayTypeIndex; // eax
+  int totalShares; // eax
+  int *powerupShare; // ecx
+  int share; // ebx
+  int v7; // eax
+  int weightSumSoFar; // edx
+  int *v9; // ecx
+  ePowerup idxPowerupKind; // edi
+  ePowerup powerupRandomResult; // ebx
+  OverlayTypeClass *v12; // ecx
+  size_t v13; // edx
+  HouseClass_old *OwningPlayer; // edi
+  _FootClass *Collector2; // edi
+  int CellLandType; // eax
+  _BOOL1 v17; // cf
+  WarheadTypeClass *v18; // ebx
+  int v19; // edi
+  signed int v20; // eax
+  vt_AbstractClass *v21; // edx
+  signed int v22; // edi
+  dwXYZ *v23; // eax
+  CellClass *v24; // eax
+  wXY *v25; // eax
+  dwXYZ *v26; // eax
+  int v27; // edi
+  int v28; // ecx
+  int v29; // ebx
+  int *v30; // eax
+  dwXYZ *v31; // eax
+  CellClass *Target_Cell; // eax
+  UnitTypeClass *pUnitType; // edi
+  _FootClass *Collector3; // ebx
+  int v35; // eax
+  int length; // ecx
+  PtrUnitTypeClass *data; // edx
+  char FoundBase; // bl
+  char Is_Human; // al
+  UnitClass *createdUnit__; // edi
+  int FloorHeight; // eax
+  int v42; // eax
+  int v43; // eax
+  int v44; // edi
+  int v45; // ebx
+  int v46; // eax
+  int updatedAmount; // edi
+  int v48; // eax
+  HouseClass_old *recipient; // ecx
+  AnimTypeClass *v50; // ebx
+  AnimClass *v51; // edi
+  int v52; // edi
+  int v53; // ebx
+  int v54; // eax
+  dwXYZ *v55; // eax
+  int v56; // eax
+  AnimClass *v57; // eax
+  wXY v58; // eax
+  int v59; // edi
+  int v60; // ebx
+  int *v61; // eax
+  int v62; // edi
+  int v63; // ecx
+  int v64; // eax
+  int v65; // edi
+  vt_FootClass *v66; // edx
+  int v67; // edi
+  int v68; // ebx
+  _DWORD *v69; // eax
+  int v70; // edx
+  _DWORD *v71; // eax
+  int v72; // edx
+  int v73; // ebx
+  float *v75; // edi
+  int v77; // edi
+  int v78; // ebx
+  int v79; // edi
+  int v80; // ebx
+  int i; // ebx
+  _ObjectClass *v82; // edi
+  int v83; // eax
+  vt_ObjectClass *vt; // edx
+  int v85; // eax
+  HouseClass *House; // edx
+  int cntSW; // ecx
+  SuperWeaponTypeClass *FirstOfAction; // ebx
+  SuperClass **X; // edi
+  char v90; // al
+  _DWORD *v91; // eax
+  int v92; // edx
+  vt_FootClass *v94; // edx
+  HouseClass *v96; // eax
+  int v97; // edi
+  int v98; // ebx
+  _DWORD *v99; // eax
+  int v100; // edx
+  int v102; // eax
+  int v104; // edi
+  int v105; // ebx
+  _DWORD *v106; // eax
+  int v107; // edx
+  vt_FootClass *v109; // edx
+  HouseClass *v111; // eax
+  int v112; // edi
+  int v113; // ebx
+  AnimClass *v114; // eax
+  int v115; // edi
+  int v116; // ebx
+  int v117; // eax
+  WarheadTypeClass *C4Warhead; // [esp-4h] [ebp-19Ch]
+  int v119; // [esp+8h] [ebp-190h]
+  __int64 Z; // [esp+8h] [ebp-190h]
+  double v121; // [esp+8h] [ebp-190h]
+  double v122; // [esp+8h] [ebp-190h]
+  double v123; // [esp+8h] [ebp-190h]
+  double v124; // [esp+8h] [ebp-190h]
+  double v125; // [esp+8h] [ebp-190h]
+  int v126; // [esp+Ch] [ebp-18Ch]
+  char NeedsBase; // [esp+23h] [ebp-175h]
+  int coords2; // [esp+24h] [ebp-174h] BYREF
+  signed int damage[2]; // [esp+28h] [ebp-170h]
+  Point2D powerupData; // [esp+30h] [ebp-168h] BYREF
+  ePowerup powerupPostRandomResult; // [esp+3Ch] [ebp-15Ch]
+  dwXYZ a3; // [esp+40h] [ebp-158h] BYREF
+  Point2D SWs_; // [esp+4Ch] [ebp-14Ch] BYREF
+  wXY coords; // [esp+54h] [ebp-144h] BYREF
+  int v135; // [esp+58h] [ebp-140h]
+  int v136; // [esp+5Ch] [ebp-13Ch]
+  UnitTypeClass *BaseUnit; // [esp+60h] [ebp-138h] BYREF
+  dwXYZ v138; // [esp+64h] [ebp-134h] BYREF
+  int v139; // [esp+78h] [ebp-120h]
+  int position; // [esp+7Ch] [ebp-11Ch] BYREF
+  dwXYZ a1; // [esp+80h] [ebp-118h] BYREF
+  dwXYZ v142; // [esp+8Ch] [ebp-10Ch] BYREF
+  int v143[3]; // [esp+98h] [ebp-100h] BYREF
+  int v144[3]; // [esp+A4h] [ebp-F4h] BYREF
+  int pos[3]; // [esp+B0h] [ebp-E8h] BYREF
+  int v146[3]; // [esp+BCh] [ebp-DCh] BYREF
+  int v147[3]; // [esp+C8h] [ebp-D0h] BYREF
+  int v148[3]; // [esp+D4h] [ebp-C4h] BYREF
+  int v149[3]; // [esp+E0h] [ebp-B8h] BYREF
+  int v150[3]; // [esp+ECh] [ebp-ACh] BYREF
+  int v151[3]; // [esp+F8h] [ebp-A0h] BYREF
+  dwXYZ v152; // [esp+104h] [ebp-94h] BYREF
+  int a2; // [esp+110h] [ebp-88h] BYREF
+  dwXYZ v154; // [esp+114h] [ebp-84h] BYREF
+  char v155[12]; // [esp+120h] [ebp-78h] BYREF
+  char v156[12]; // [esp+12Ch] [ebp-6Ch] BYREF
+  Point3D v157; // [esp+138h] [ebp-60h] BYREF
+  char v158[12]; // [esp+144h] [ebp-54h] BYREF
+  int v159[3]; // [esp+150h] [ebp-48h] BYREF
+  char v160[12]; // [esp+15Ch] [ebp-3Ch] BYREF
+  int v161[3]; // [esp+168h] [ebp-30h] BYREF
+  char v162[12]; // [esp+174h] [ebp-24h] BYREF
+  int v163; // [esp+180h] [ebp-18h] BYREF
+  char v164[12]; // [esp+18Ch] [ebp-Ch] BYREF
+
+  if ( Collector )
+  {
+    OverlayTypeIndex = this->OverlayTypeIndex;
+    if ( OverlayTypeIndex != -1 )
+    {
+      if ( OverlayTypeClass[OverlayTypeIndex]->Crate )
+      {
+        NeedsBase = 0;
+        coords2 = 0;
+        if ( !Session.idxGameMode || !Collector->f.t.OwningPlayer->Country->MultiplayPassive )
+        {
+          if ( OverlayTypeClass[OverlayTypeIndex]->CrateTrigger )
+          {
+            if ( Collector->f.t.r.m.o.Tag )
+            {
+              WWDebugString("Springing trigger on crate at %d,%d\n", this->pos.X, this->pos.Y);
+              TagClass_RaiseEvent(Collector->f.t.r.m.o.Tag, ekPickupCrate, Collector, CellClass_Default_Coords, 0, 0);
+              if ( !Collector->f.t.r.m.o.Alive )
+                return;
+            }
+            Scenario->gap_34be[0] = 1;
+          }
+          if ( this->Powerup < 0x13u )
+          {
+            powerupRandomResult = this->Powerup;
+          }
+          else
+          {
+            totalShares = 0;
+            powerupShare = powerup_Weights;
+            do
+            {
+              share = *powerupShare++;
+              totalShares += share;
+            }
+            while ( powerupShare < powerup_Anims );
+            v7 = Random2Class::operator()(&Scenario->Randomizer, 1, totalShares);
+            weightSumSoFar = 0;
+            idxPowerupKind = pMoney;
+            v9 = powerup_Weights;
+            do
+            {
+              weightSumSoFar += *v9;
+              if ( v7 <= weightSumSoFar )
+                break;
+              ++v9;
+              ++idxPowerupKind;
+            }
+            while ( v9 < powerup_Anims );
+            powerupRandomResult = idxPowerupKind;
+          }
+          powerupPostRandomResult = powerupRandomResult;
+          if ( Session.idxGameMode )
+          {
+            OwningPlayer = Collector->f.t.OwningPlayer;
+            BaseUnit = HouseClass_FindFirstAccessibleTechnoTypeFromArray(OwningPlayer, &RulesData->BaseUnit);
+            if ( !OwningPlayer->IHouse._.OwnedBuildings
+              && OwningPlayer->IHouse.IHouse->AvailableMoney(&OwningPlayer->IHouse) > 1500
+              && !CounterClass_GetItemCount(
+                    &OwningPlayer->IHouse._.OwnedVehicleTypes,
+                    BaseUnit->field_E60[offsetof(_TechnoTypeClass, VTable)].X)
+              && gBases )
+            {
+              powerupRandomResult = pUnit;
+              powerupPostRandomResult = pUnit;
+              NeedsBase = pUnit;
+            }
+            switch ( powerupRandomResult )
+            {
+              case pUnit:
+                Collector2 = Collector;
+                if ( Collector->f.t.OwningPlayer->OwnedUnits <= 50 )
+                  goto LABEL_36;
+                goto LABEL_35;
+              case pCloak:
+                Collector2 = Collector;
+                if ( Collector->f.t.Cloakable )
+                {
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+                break;
+              case pSquad:
+                Collector2 = Collector;
+                if ( Collector->f.t.OwningPlayer->OwnedInfantry > 100 )
+                {
+LABEL_35:
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+LABEL_36:
+                CellLandType = this->LandType;
+                if ( CellLandType == 2 || CellLandType == 6 )
+                {
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+                break;
+              case pArmor:
+                Collector2 = Collector;
+                if ( LODWORD(Collector->f.t.ArmorMultiplier) || HIDWORD(Collector->f.t.ArmorMultiplier) != 1072693248 )
+                {
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+                break;
+              case pSpeed:
+                Collector2 = Collector;
+                if ( LODWORD(Collector->f.SpeedMult)
+                  || HIDWORD(Collector->f.SpeedMult) != 1072693248
+                  || Collector->vt->vt.r.m.o.a.What_Am_I(Collector) == eAircraft )
+                {
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+                break;
+              case pFirepower:
+                Collector2 = Collector;
+                if ( LODWORD(Collector->f.t.FirepowerMultiplier)
+                  || HIDWORD(Collector->f.t.FirepowerMultiplier) != 1072693248
+                  || !Collector->vt->vt.IsArmed(Collector) )
+                {
+                  powerupRandomResult = pMoney;
+                  powerupPostRandomResult = pMoney;
+                }
+                break;
+              case pVeteran:
+                Collector2 = Collector;
+                if ( (Collector->f.t.r.m.o.a.derivationFlags & 1) != 0 )
+                {
+                  if ( BYTE2(Collector->vt->vt.r.m.o.GetTechnoType(Collector)->t.EliteWeaponStages[1]) )
+                  {
+                    if ( (Collector->f.t.r.m.o.a.derivationFlags & 1) != 0
+                      && Veterancy_IsElite(&Collector->f.t.Veterancy) )
+                    {
+                      powerupRandomResult = pMoney;
+                      powerupPostRandomResult = pMoney;
+                    }
+                  }
+                  else
+                  {
+                    powerupRandomResult = pMoney;
+                    powerupPostRandomResult = pMoney;
+                  }
+                }
+                break;
+              default:
+                Collector2 = Collector;
+                break;
+            }
+            if ( this->LandType == 2 && !powerupNaval[powerupRandomResult] )
+            {
+              powerupRandomResult = pMoney;
+              powerupPostRandomResult = pMoney;
+            }
+            if ( Session.idxGameMode == gmInternet )
+              Count_IncValue(&Collector2->f.t.OwningPlayer->CollectedPowerups, powerupRandomResult);
+          }
+          else if ( !this->Powerup )
+          {
+            v13 = this->OverlayTypeIndex;
+            coords2 = RulesData->SoloCrateMoney;
+            v12 = OverlayTypeClass[v13];
+            if ( v12 == RulesData->CrateImg )
+            {
+              powerupRandomResult = RulesData->SilverCrate;
+              powerupPostRandomResult = powerupRandomResult;
+            }
+            if ( v12 == RulesData->WoodCrateImg )
+            {
+              powerupRandomResult = RulesData->WoodCrate;
+              powerupPostRandomResult = powerupRandomResult;
+            }
+            if ( v12 == RulesData->WaterCrateImg )
+            {
+              powerupRandomResult = RulesData->WaterCrate;
+              powerupPostRandomResult = powerupRandomResult;
+            }
+          }
+          BaseUnit = this->pos;
+          MapClass::Remove_Crate(&BaseUnit);
+          if ( Session.idxGameMode && gCrates )
+            MapClass::Place_Random_Crate(&Map);
+          if ( powerupRandomResult == pSquad )
+          {
+            powerupRandomResult = pMoney;
+            powerupPostRandomResult = pMoney;
+          }
+          __asm { fld     powerupData[ebx*8] }
+          HIBYTE(damage[0]) = 0;
+          __asm { fstp    qword ptr [esp+188h+powerupData.X] }
+          switch ( powerupRandomResult )
+          {
+            case pMoney:
+              goto LABEL_121;
+            case pUnit:
+              WWDebugString("Crate at %d,%d contains a unit\n", this->pos.X, this->pos.Y);
+              pUnitType = 0;
+              if ( NeedsBase )
+              {
+                Collector3 = Collector;
+                pUnitType = HouseClass_FindFirstAccessibleTechnoTypeFromArray(
+                              Collector->f.t.OwningPlayer,
+                              &RulesData->BaseUnit);
+                if ( pUnitType )
+                  goto LABEL_93;
+              }
+              else
+              {
+                Collector3 = Collector;
+              }
+              if ( (CounterClass_GetItemCount(
+                      &Collector3->f.t.OwningPlayer->OwnedBuildingTypes,
+                      *&RulesData->BuildRefinery.Vector->_->BuildupFile[offsetof(BuildingTypeClass, t)]) > 0
+                 || CounterClass_GetItemCount(
+                      &Collector3->f.t.OwningPlayer->OwnedBuildingTypes,
+                      *&RulesData->BuildRefinery.Vector[1]._->BuildupFile[offsetof(_TechnoTypeClass, t)]) > 0)
+                && !CounterClass_GetItemCount(
+                      &Collector3->f.t.OwningPlayer->OwnedVehicleTypes,
+                      RulesData->HarvesterUnit.data->_->field_E60[offsetof(UnitTypeClass, vt)].X)
+                && !CounterClass_GetItemCount(
+                      &Collector3->f.t.OwningPlayer->OwnedVehicleTypes,
+                      RulesData->HarvesterUnit.data[1]._->field_E60[0].X) )
+              {
+                pUnitType = HouseClass_FindFirstAccessibleTechnoTypeFromArray(
+                              Collector3->f.t.OwningPlayer,
+                              &RulesData->HarvesterUnit);
+              }
+LABEL_93:
+              if ( RulesData->UnitCrateType )
+                pUnitType = RulesData->UnitCrateType;
+              if ( pUnitType )
+                goto LABEL_111;
+              do
+              {
+                while ( 1 )
+                {
+                  do
+                  {
+                    pUnitType = vec_UnitTypes.data[Random2Class::operator()(
+                                                     &Scenario->Randomizer,
+                                                     0,
+                                                     vec_UnitTypes.length - 1)]._;

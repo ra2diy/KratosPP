@@ -1,0 +1,209 @@
+====================================================================================================
+ANCHOR 0x6F9E50 in TechnoClass_Update [0x6F9E50-0x6FB005]
+   006F9E50: sub     esp, 68h
+   006F9E53: push    ebx
+   006F9E54: push    ebp
+   006F9E55: push    esi
+   006F9E56: mov     esi, ecx
+   006F9E58: xor     ebp, ebp
+   006F9E5A: push    edi
+   006F9E5B: mov     al, [esi+431h]
+   006F9E61: test    al, al
+   006F9E63: jz      short loc_6F9E6C
+   006F9E65: mov     byte ptr [esi+431h], 0
+   006F9E6C: mov     eax, [esi+_TechnoClass.vt]
+   006F9E6E: mov     ecx, esi; this
+   006F9E70: call    [eax+vt_TechnoClass.r.m.o.GetTechnoType]
+   006F9E76: mov     cl, [eax+_TechnoTypeClass.t.IsGattling]
+   006F9E7C: test    cl, cl
+   006F9E7E: jz      short done_gattling_1
+   006F9E80: lea     ecx, [esi+_TechnoClass.t.r.m.o.pos.X]
+   006F9E86: mov     edx, [esi+_TechnoClass.t.r.m.o.pos.X]
+   006F9E8C: mov     [esp+78h+pos.X], edx
+-- pseudo lines with keywords --
+
+====================================================================================================
+ANCHOR 0x6F3260 in TechnoClass_CTOR [0x6F2B40-0x6F3269]
+   006F3220: mov     ecx, vec_Abstracts_9.data; SuperClass, TechnoClass
+   006F3225: mov     [ecx+eax*4], esi
+   006F3228: mov     al, [esi+14h]
+   006F322B: mov     edx, [esp+10h+Owner]
+   006F322F: or      al, 1
+   006F3231: lea     edi, [esi+_TechnoClass.t.FireParticleSys]
+   006F3237: mov     [esi+14h], al
+   006F323A: mov     ecx, 8
+   006F323F: xor     eax, eax
+   006F3241: mov     [esi+_TechnoClass.t.OriginalOwner], edx
+   006F3247: rep stosd
+   006F3249: mov     eax, Scenario
+   006F324E: lea     ecx, [eax+218h]
+   006F3254: call    Random2Class::operator()
+   006F3259: mov     [esi+3C8h], ax
+   006F3260: mov     eax, esi
+   006F3262: pop     edi
+   006F3263: pop     esi
+   006F3264: pop     ebp
+   006F3265: pop     ebx
+   006F3266: retn    4
+-- pseudo lines with keywords --
+   this->t.ArmorMultiplier = 0x3FF0000000000000i64;
+   this->t.FirepowerMultiplier = 0x3FF0000000000000i64;
+
+====================================================================================================
+ANCHOR 0x6FDD50 in TechnoClass_Fire [0x6FDD50-0x6FF94F]
+   006FDD50: push    ebp
+   006FDD51: mov     ebp, esp
+   006FDD53: and     esp, not 7
+   006FDD56: sub     esp, 0A4h
+   006FDD5C: push    ebx
+   006FDD5D: push    this; a7
+   006FDD5E: mov     this, ecx
+   006FDD60: push    edi; a6
+   006FDD61: mov     ecx, [ebp+idxWeapon]
+   006FDD64: mov     eax, [this]
+   006FDD66: push    ecx; slot
+   006FDD67: mov     ecx, this; this
+   006FDD69: call    [eax+vt_TechnoClass.GetWeapon]
+   006FDD6F: mov     ebx, [eax]
+   006FDD71: test    ebx, ebx
+   006FDD73: mov     [esp+0B0h+weap], ebx
+   006FDD77: jz      loc_6FDE03
+   006FDD7D: mov     edi, [ebp+dest]
+   006FDD80: test    edi, edi
+   006FDD82: jnz     short loc_6FDD88
+   006FDD84: xor     eax, eax
+   006FDD86: jmp     short loc_6FDD93
+   006FDD88: mov     al, [edi+14h]
+   006FDD8B: and     al, 2
+   006FDD8D: neg     al
+   006FDD8F: sbb     eax, eax
+-- pseudo lines with keywords --
+   fld     [ecx+HouseClass_old.IHouse._.FirepowerMultiplier]; Used - estimating Damage
+   fmul    [this+_TechnoClass.t.FirepowerMultiplier]
+
+====================================================================================================
+ANCHOR 0x6FE352 in TechnoClass_Fire [0x6FDD50-0x6FF94F]
+   006FE312: test    al, al
+   006FE314: mov     dword ptr [esp+0B0h+coords], edi
+   006FE318: mov     [esp+0B0h+wat.X], edi
+   006FE31C: jnz     short loc_6FE328
+   006FE31E: mov     al, [ebx+WeaponTypeClass.UseFireParticles]
+   006FE324: test    al, al
+   006FE326: jz      short loc_6FE32F
+   006FE328: xor     edi, edi
+   006FE32A: jmp     loc_6FE3DF
+   006FE32F: test    edi, edi
+   006FE331: jle     loc_6FE3E3
+   006FE337: mov     ecx, [this+_TechnoClass.t.OwningPlayer]
+   006FE33D: fld     [ecx+HouseClass_old.IHouse._.FirepowerMultiplier]; Used - estimating Damage
+   006FE343: fmul    [this+_TechnoClass.t.FirepowerMultiplier]
+   006FE349: fimul   dword ptr [esp+0B0h+coords]
+   006FE34D: call    Float_To_Int_Floor
+   006FE352: mov     edi, eax
+   006FE354: lea     ecx, [this+_TechnoClass.t.Veterancy]; this
+   006FE35A: mov     [esp+0B0h+wat.X], edi
+   006FE35E: call    Veterancy_IsVeteran
+   006FE363: test    al, al
+   006FE365: jnz     short loc_6FE376
+   006FE367: lea     ecx, [this+_TechnoClass.t.Veterancy]; this
+   006FE36D: call    Veterancy_IsElite
+   006FE372: test    al, al
+   006FE374: jz      short loc_6FE3E3
+   006FE376: mov     edx, [this]
+   006FE378: mov     ecx, this
+   006FE37A: call    dword ptr [edx+84h]
+   006FE380: lea     ecx, [this+_TechnoClass.t.Veterancy]; this
+   006FE386: mov     [esp+0B0h+var_88], eax
+   006FE38A: call    Veterancy_IsVeteran
+   006FE38F: test    al, al
+   006FE391: jz      short loc_6FE3A1
+-- pseudo lines with keywords --
+   fld     [ecx+HouseClass_old.IHouse._.FirepowerMultiplier]; Used - estimating Damage
+   fmul    [this+_TechnoClass.t.FirepowerMultiplier]
+
+====================================================================================================
+ANCHOR 0x6FDBE2 in TechnoClass_EstimateDamage [0x6FDB80-0x6FDD42]
+   006FDBA2: mov     eax, [ecx+WeaponTypeClass.Damage]
+   006FDBA3: test    dl, dl
+   006FDBA5: mov     [esp+10h+target], eax
+   006FDBA9: jnz     loc_6FDD38
+   006FDBAF: mov     dl, [ecx+129h]
+   006FDBB5: test    dl, dl
+   006FDBB7: jnz     loc_6FDD38
+   006FDBBD: test    eax, eax
+   006FDBBF: jle     loc_6FDD3A
+   006FDBC5: mov     eax, [esi+21Ch]
+   006FDBCB: push    ebx
+   006FDBCC: push    ebp
+   006FDBCD: fld     [eax+HouseClass_old.IHouse._.FirepowerMultiplier]; Used - estimating Damage
+   006FDBD3: fmul    [esi+_TechnoClass.t.FirepowerMultiplier]
+   006FDBD9: fimul   [esp+18h+target]
+   006FDBDD: call    Float_To_Int_Floor
+   006FDBE2: lea     ebp, [esi+150h]
+   006FDBE8: mov     [esp+18h+target], eax
+   006FDBEC: mov     ecx, ebp; this
+   006FDBEE: call    Veterancy_IsVeteran
+   006FDBF3: test    al, al
+   006FDBF5: jnz     short loc_6FDC02
+   006FDBF7: mov     ecx, ebp; this
+   006FDBF9: call    Veterancy_IsElite
+   006FDBFE: test    al, al
+   006FDC00: jz      short loc_6FDC5A
+   006FDC02: mov     edx, [esi]
+   006FDC04: mov     ecx, esi
+   006FDC06: call    dword ptr [edx+84h]
+   006FDC0C: mov     ecx, ebp; this
+   006FDC0E: mov     ebx, eax
+   006FDC10: call    Veterancy_IsVeteran
+   006FDC15: test    al, al
+   006FDC17: jz      short loc_6FDC23
+   006FDC19: mov     al, [ebx+29Eh]
+   006FDC1F: test    al, al
+   006FDC21: jnz     short loc_6FDC42
+-- pseudo lines with keywords --
+   fld     [eax+HouseClass_old.IHouse._.FirepowerMultiplier]; Used - estimating Damage
+   fmul    [esi+_TechnoClass.t.FirepowerMultiplier]
+   fmul    [esi+_TechnoClass.t.ArmorMultiplier]
+
+====================================================================================================
+ANCHOR 0x6FDC87 in TechnoClass_EstimateDamage [0x6FDB80-0x6FDD42]
+   006FDC47: mov     eax, RulesData
+   006FDC4B: fmul    qword ptr [eax+(RulesClass+670h)]
+   006FDC51: call    Float_To_Int_Floor
+   006FDC56: mov     [esp+18h+target], eax
+   006FDC5A: fild    [esp+18h+target]
+   006FDC5E: mov     edx, [esi]
+   006FDC60: mov     ecx, esi
+   006FDC62: fstp    [esp+18h+var_8]
+   006FDC66: call    dword ptr [edx+84h]
+   006FDC6C: mov     ecx, [edi+21Ch]; this
+   006FDC72: push    eax; object
+   006FDC73: call    HouseClass_GetTypeArmorMult
+   006FDC78: fmul    [esi+_TechnoClass.t.ArmorMultiplier]
+   006FDC7E: fdivr   [esp+18h+var_8]
+   006FDC82: call    Float_To_Int_Floor
+   006FDC87: lea     esi, [edi+150h]
+   006FDC8D: mov     ebx, eax
+   006FDC8F: mov     ecx, esi; this
+   006FDC91: mov     [esp+18h+target], ebx
+   006FDC95: call    Veterancy_IsVeteran
+   006FDC9A: test    al, al
+   006FDC9C: jnz     short loc_6FDCA9
+   006FDC9E: mov     ecx, esi; this
+   006FDCA0: call    Veterancy_IsElite
+   006FDCA5: test    al, al
+   006FDCA7: jz      short loc_6FDD00
+   006FDCA9: mov     eax, [edi]
+   006FDCAB: mov     ecx, edi
+   006FDCAD: call    dword ptr [eax+84h]
+   006FDCB3: mov     ecx, esi; this
+   006FDCB5: mov     ebp, eax
+   006FDCB7: call    Veterancy_IsVeteran
+   006FDCBC: test    al, al
+   006FDCBE: jz      short loc_6FDCCA
+   006FDCC0: mov     al, [ebp+29Dh]
+   006FDCC6: test    al, al
+-- pseudo lines with keywords --
+   fld     [eax+HouseClass_old.IHouse._.FirepowerMultiplier]; Used - estimating Damage
+   fmul    [esi+_TechnoClass.t.FirepowerMultiplier]
+   fmul    [esi+_TechnoClass.t.ArmorMultiplier]

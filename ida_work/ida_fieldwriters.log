@@ -1,0 +1,166 @@
+
+  bytes   pages size description
+--------- ----- ---- --------------------------------------------
+ 93437952 11406 8192 allocating memory for b-tree...
+ 31367168  3829 8192 allocating memory for virtual array...
+   262144    32 8192 allocating memory for name pointers...
+-----------------------------------------------------------------
+125067264            total memory allocated
+
+Loading processor module D:\Workspace\ra2mod\platform\IDA_Pro_v8.3_Portable\procs\pc.dll for metapc...Initializing processor module metapc...OK
+Loading type libraries...
+Autoanalysis subsystem has been initialized.
+Database for file '' has been loaded.
+Hex-Rays Decompiler plugin has been loaded (v8.3.0.230608)
+  License: 57-0000-0000-00 Hex-Rays SA (32767 users)
+  The hotkeys are F5: decompile, Ctrl-F5: decompile all.
+
+  Please check the Edit/Plugins menu for more information.
+================================================================================
+Findcrypt v0.2 by David BERARD, 2017
+Findcrypt search shortcut key is Ctrl-Alt-F
+Global rules in D:\Workspace\ra2mod\platform\IDA_Pro_v8.3_Portable\plugins\findcrypt3.rules
+User-defined rules in C:\Users\chris\AppData\Roaming\Hex-Rays\IDA Pro\plugins\findcrypt-yara/*.rules
+================================================================================
+Hex-rays version 8.3.0.230608 has been detected, gooMBA plugin ready to use
+
+ IDA Strong Charset Code View 0.3 
+ Show Strong Charset View Use 'shift' 
+ Auto Set Default 8bit Decode to CP-ACP True.
+ IDA Strong Charset Code View Plugin By 微笑一刀 
+
+written D:\Workspace\ra2mod\platform\KratosPP\ida_work\field_writers.txt 85
+Flushing buffers, please wait...ok
+Unloading IDP module D:\Workspace\ra2mod\platform\IDA_Pro_v8.3_Portable\procs\pc.dll...
+  bytes   pages size description
+--------- ----- ---- --------------------------------------------
+ 93437952 11406 8192 allocating memory for b-tree...
+ 31367168  3829 8192 allocating memory for virtual array...
+   262144    32 8192 allocating memory for name pointers...
+-----------------------------------------------------------------
+125067264            total memory allocated
+
+Loading processor module D:\Workspace\ra2mod\platform\IDA_Pro_v8.3_Portable\procs\pc.dll for metapc...Initializing processor module metapc...OK
+Loading type libraries...
+Autoanalysis subsystem has been initialized.
+Database for file '' has been loaded.
+Hex-Rays Decompiler plugin has been loaded (v8.3.0.230608)
+  License: 57-0000-0000-00 Hex-Rays SA (32767 users)
+  The hotkeys are F5: decompile, Ctrl-F5: decompile all.
+
+  Please check the Edit/Plugins menu for more information.
+================================================================================
+Findcrypt v0.2 by David BERARD, 2017
+Findcrypt search shortcut key is Ctrl-Alt-F
+Global rules in D:\Workspace\ra2mod\platform\IDA_Pro_v8.3_Portable\plugins\findcrypt3.rules
+User-defined rules in C:\Users\chris\AppData\Roaming\Hex-Rays\IDA Pro\plugins\findcrypt-yara/*.rules
+================================================================================
+Hex-rays version 8.3.0.230608 has been detected, gooMBA plugin ready to use
+
+ IDA Strong Charset Code View 0.3 
+ Show Strong Charset View Use 'shift' 
+ Auto Set Default 8bit Decode to CP-ACP True.
+ IDA Strong Charset Code View Plugin By 微笑一刀 
+
+written D:\Workspace\ra2mod\platform\KratosPP\ida_work\field_writers.txt 81
+Flushing buffers, please wait...ok
+Unloading IDP module D:\Workspace\ra2mod\platform\IDA_Pro_v8.3_Portable\procs\pc.dll...
+  bytes   pages size description
+--------- ----- ---- --------------------------------------------
+ 93437952 11406 8192 allocating memory for b-tree...
+ 31367168  3829 8192 allocating memory for virtual array...
+   262144    32 8192 allocating memory for name pointers...
+-----------------------------------------------------------------
+125067264            total memory allocated
+
+Loading processor module D:\Workspace\ra2mod\platform\IDA_Pro_v8.3_Portable\procs\pc.dll for metapc...Initializing processor module metapc...OK
+Loading type libraries...
+Autoanalysis subsystem has been initialized.
+Database for file '' has been loaded.
+Hex-Rays Decompiler plugin has been loaded (v8.3.0.230608)
+  License: 57-0000-0000-00 Hex-Rays SA (32767 users)
+  The hotkeys are F5: decompile, Ctrl-F5: decompile all.
+
+  Please check the Edit/Plugins menu for more information.
+================================================================================
+Findcrypt v0.2 by David BERARD, 2017
+Findcrypt search shortcut key is Ctrl-Alt-F
+Global rules in D:\Workspace\ra2mod\platform\IDA_Pro_v8.3_Portable\plugins\findcrypt3.rules
+User-defined rules in C:\Users\chris\AppData\Roaming\Hex-Rays\IDA Pro\plugins\findcrypt-yara/*.rules
+================================================================================
+Hex-rays version 8.3.0.230608 has been detected, gooMBA plugin ready to use
+
+ IDA Strong Charset Code View 0.3 
+ Show Strong Charset View Use 'shift' 
+ Auto Set Default 8bit Decode to CP-ACP True.
+ IDA Strong Charset Code View Plugin By 微笑一刀 
+
+written D:\Workspace\ra2mod\platform\KratosPP\ida_work\field_writers.txt 73
+Flushing buffers, please wait...ok
+Unloading IDP module D:\Workspace\ra2mod\platform\IDA_Pro_v8.3_Portable\procs\pc.dll...
+  bytes   pages size description
+--------- ----- ---- --------------------------------------------
+ 93437952 11406 8192 allocating memory for b-tree...
+ 31367168  3829 8192 allocating memory for virtual array...
+   262144    32 8192 allocating memory for name pointers...
+-----------------------------------------------------------------
+125067264            total memory allocated
+
+Loading processor module D:\Workspace\ra2mod\platform\IDA_Pro_v8.3_Portable\procs\pc.dll for metapc...Initializing processor module metapc...OK
+Loading type libraries...
+Autoanalysis subsystem has been initialized.
+Database for file '' has been loaded.
+Hex-Rays Decompiler plugin has been loaded (v8.3.0.230608)
+  License: 57-0000-0000-00 Hex-Rays SA (32767 users)
+  The hotkeys are F5: decompile, Ctrl-F5: decompile all.
+
+  Please check the Edit/Plugins menu for more information.
+================================================================================
+Findcrypt v0.2 by David BERARD, 2017
+Findcrypt search shortcut key is Ctrl-Alt-F
+Global rules in D:\Workspace\ra2mod\platform\IDA_Pro_v8.3_Portable\plugins\findcrypt3.rules
+User-defined rules in C:\Users\chris\AppData\Roaming\Hex-Rays\IDA Pro\plugins\findcrypt-yara/*.rules
+================================================================================
+Hex-rays version 8.3.0.230608 has been detected, gooMBA plugin ready to use
+
+ IDA Strong Charset Code View 0.3 
+ Show Strong Charset View Use 'shift' 
+ Auto Set Default 8bit Decode to CP-ACP True.
+ IDA Strong Charset Code View Plugin By 微笑一刀 
+
+written D:\Workspace\ra2mod\platform\KratosPP\ida_work\field_writers.txt 20
+Flushing buffers, please wait...ok
+Unloading IDP module D:\Workspace\ra2mod\platform\IDA_Pro_v8.3_Portable\procs\pc.dll...
+  bytes   pages size description
+--------- ----- ---- --------------------------------------------
+ 93437952 11406 8192 allocating memory for b-tree...
+ 31367168  3829 8192 allocating memory for virtual array...
+   262144    32 8192 allocating memory for name pointers...
+-----------------------------------------------------------------
+125067264            total memory allocated
+
+Loading processor module D:\Workspace\ra2mod\platform\IDA_Pro_v8.3_Portable\procs\pc.dll for metapc...Initializing processor module metapc...OK
+Loading type libraries...
+Autoanalysis subsystem has been initialized.
+Database for file '' has been loaded.
+Hex-Rays Decompiler plugin has been loaded (v8.3.0.230608)
+  License: 57-0000-0000-00 Hex-Rays SA (32767 users)
+  The hotkeys are F5: decompile, Ctrl-F5: decompile all.
+
+  Please check the Edit/Plugins menu for more information.
+================================================================================
+Findcrypt v0.2 by David BERARD, 2017
+Findcrypt search shortcut key is Ctrl-Alt-F
+Global rules in D:\Workspace\ra2mod\platform\IDA_Pro_v8.3_Portable\plugins\findcrypt3.rules
+User-defined rules in C:\Users\chris\AppData\Roaming\Hex-Rays\IDA Pro\plugins\findcrypt-yara/*.rules
+================================================================================
+Hex-rays version 8.3.0.230608 has been detected, gooMBA plugin ready to use
+
+ IDA Strong Charset Code View 0.3 
+ Show Strong Charset View Use 'shift' 
+ Auto Set Default 8bit Decode to CP-ACP True.
+ IDA Strong Charset Code View Plugin By 微笑一刀 
+
+written D:\Workspace\ra2mod\platform\KratosPP\ida_work\field_writers.txt 244053
+Flushing buffers, please wait...ok
+Unloading IDP module D:\Workspace\ra2mod\platform\IDA_Pro_v8.3_Portable\procs\pc.dll...

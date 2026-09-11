@@ -1,0 +1,328 @@
+====================================================================================================
+FUNC containing 0x6F36DB: TechnoClass_SelectWeapon [0x6F3330 - 0x6F3816]
+LABEL 0x6F36DB: TechnoClass_SelectWeapon
+LABEL 0x6F36E3: TechnoClass_SelectWeapon
+LABEL 0x6F3745: TechnoClass_SelectWeapon
+LABEL 0x6F37AD: TechnoClass_SelectWeapon
+LABEL 0x6F37AF: TechnoClass_SelectWeapon
+LABEL 0x6F37EB: TechnoClass_SelectWeapon
+LABEL 0x6F3807: TechnoClass_SelectWeapon
+-- disasm 006F35C0..006F3816 --
+   006F35C0: cmp     )!eax!)	,	 *10h*
+   006F35C3: jnz      short  )(006F35D4@@8)
+   006F35C5: pop     )!edi!)
+   006F35C6: pop     )!esi!)
+   006F35C7: pop     )!ebp!)
+   006F35C8: mov     )!eax!)	,	 *1*
+   006F35CD: pop     )!ebx!)
+   006F35CE: add     )!esp!)	,	 *8*
+   006F35D1: retn    )4)
+   006F35D4: mov     )!eax!)	,	 *	[	!esi!	]	*
+   006F35D6: mov     )!ecx!)	,	 *!esi!*
+   006F35D8: call    ) dword ptr  	[	!eax!	+	2Ch	]	)
+   006F35DB: cmp     )!eax!)	,	 *6*
+   006F35DE: jnz      short  )(006F35F9@@9)
+   006F35E0: mov     )!al!)	,	 *	[	!esi!	+	BuildingClass.OverPowerOn	]	*
+   006F35E6: test    )!al!)	,	 *!al!*
+   006F35E8: jz       short  )(006F35F9@@9)
+   006F35EA: pop     )!edi!)
+   006F35EB: pop     )!esi!)
+   006F35EC: pop     )!ebp!)
+   006F35ED: mov     )!eax!)	,	 *1*
+   006F35F2: pop     )!ebx!)
+   006F35F3: add     )!esp!)	,	 *8*
+   006F35F6: retn    )4)
+   006F35F9: mov     )!edx!)	,	 *	[	!edi!	]	*
+   006F35FB: mov     )!ecx!)	,	 *!edi!*
+   006F35FD: call    ) dword ptr  	[	!edx!	+	2Ch	]	)
+   006F3600: cmp     )!eax!)	,	 *6*
+   006F3603: jnz      short  )(006F3648@@10)
+   006F3605: mov     )!ecx!)	,	 *	[	!esi!	+	21Ch	]	*; this
+   006F360B: push    )!edi!); a2
+   006F360C: call    )%(004F9AF0HouseClass_Belongs_To_Ally%)
+   006F3611: test    )!al!)	,	 *!al!*
+   006F3613: jz       short  )(006F3648@@10)
+   006F3615: mov     )!eax!)	,	 *	[	!esp!	+	18h	+	weap2_	]	*
+   006F3619: mov     )!ecx!)	,	 *	[	!eax!	+	0ACh	]	*
+   006F361F: mov     )!al!)	,	 *	[	!ecx!	+	158h	]	*
+   006F3625: test    )!al!)	,	 *!al!*
+   006F3627: jz       short  )(006F3648@@10)
+   006F3629: mov     )!edx!)	,	 *	[	!edi!	+	520h	]	*
+   006F362F: mov     )!al!)	,	 *	[	!edx!	+	BuildingTypeClass.Overpowerable	]	*
+   006F3635: test    )!al!)	,	 *!al!*
+   006F3637: jz       short  )(006F3648@@10)
+   006F3639: pop     )!edi!)
+   006F363A: pop     )!esi!)
+   006F363B: pop     )!ebp!)
+   006F363C: mov     )!eax!)	,	 *1*
+   006F3641: pop     )!ebx!)
+   006F3642: add     )!esp!)	,	 *8*
+   006F3645: retn    )4)
+   006F3648: mov     )!eax!)	,	 *	[	!esi!	]	*
+   006F364A: mov     )!ecx!)	,	 *!esi!*
+   006F364C: call    ) dword ptr  	[	!eax!	+	2Ch	]	)
+   006F364F: mov     )!ebx!)	,	 *2*
+   006F3654: cmp     )!eax!)	,	 *!ebx!*
+   006F3656: jnz      short  )(006F3671@@11)
+   006F3658: mov     )!al!)	,	 *	[	!esi!	+	AircraftClass.field_6CA	]	*
+   006F365E: test    )!al!)	,	 *!al!*
+   006F3660: jz       short  )(006F3671@@11)
+   006F3662: pop     )!edi!)
+   006F3663: pop     )!esi!)
+   006F3664: pop     )!ebp!)
+   006F3665: mov     )!eax!)	,	 *1*
+   006F366A: pop     )!ebx!)
+   006F366B: add     )!esp!)	,	 *8*
+   006F366E: retn    )4)
+   006F3671: mov     )!edx!)	,	 *	[	!edi!	]	*
+   006F3673: mov     )!ecx!)	,	 *!edi!*
+   006F3675: call    ) dword ptr  	[	!edx!	+	2Ch	]	)
+   006F3678: cmp     )!eax!)	,	 *0Bh*
+   006F367B: jnz      short  )(006F36DB@@14)
+   006F367D: cmp     )	[	!edi!	+	CellClass.LandType	]	)	,	 *!ebx!*
+   006F3683: jz       short  )(006F3690@@12)
+   006F3685: mov     )!eax!)	,	 *	[	!edi!	]	*
+   006F3687: mov     )!ecx!)	,	 *!edi!*; this
+   006F3689: call    )	[	!eax!	+	vt_TechnoClass.r.m.o.a.OnFloor	]	)
+   006F368C: test    )!al!)	,	 *!al!*
+   006F368E: jnz      short  )(006F36AF@@13)
+   006F3690: mov     )!eax!)	,	 *	[	!edi!	+	CellClass.flags	]	*
+   006F3696: test    )!ah!)	,	 *1*
+   006F3699: jz       short  )(006F36DB@@14)
+   006F369B: mov     )!edx!)	,	 *	[	!esi!	]	*
+   006F369D: mov     )!ecx!)	,	 *!esi!*
+   006F369F: call    ) dword ptr  	[	!edx!	+	84h	]	)
+   006F36A5: mov     )!cl!)	,	 *	[	!eax!	+	_TechnoTypeClass.t.Naval	]	*
+   006F36AB: test    )!cl!)	,	 *!cl!*
+   006F36AD: jz       short  )(006F36DB@@14)
+   006F36AF: mov     )!eax!)	,	 *	[	!edi!	]	*
+   006F36B1: mov     )!ecx!)	,	 *!edi!*; this
+   006F36B3: call    )	[	!eax!	+	vt_TechnoClass.r.m.o.a.InAir	]	)
+   006F36B6: test    )!al!)	,	 *!al!*
+   006F36B8: jnz      short  )(006F36DB@@14)
+   006F36BA: mov     )!edx!)	,	 *	[	!esi!	]	*
+   006F36BC: mov     )!ecx!)	,	 *!esi!*
+   006F36BE: call    ) dword ptr  	[	!edx!	+	84h	]	)
+   006F36C4: cmp     )	[	!eax!	+	_TechnoTypeClass.t.LandTargeting	]	)	,	 *!ebx!*
+   006F36CA: jnz      short  )(006F36DB@@14)
+   006F36CC: pop     )!edi!)
+   006F36CD: pop     )!esi!)
+   006F36CE: pop     )!ebp!)
+   006F36CF: mov     )!eax!)	,	 *1*
+   006F36D4: pop     )!ebx!)
+   006F36D5: add     )!esp!)	,	 *8*
+   006F36D8: retn    )4)
+>> 006F36DB: test    )!ebp!)	,	 *!ebp!*
+   006F36DD: jz      )(006F37AD@@19)
+>> 006F36E3: mov     )!eax!)	,	 *	[	!ebp!	+	0	]	*
+   006F36E6: mov     )!ecx!)	,	 *!ebp!*
+   006F36E8: call    ) dword ptr  	[	!eax!	+	84h	]	)
+   006F36EE: mov     )!edx!)	,	 *	[	!esp!	+	18h	+	weap2_	]	*
+   006F36F2: mov     )!ecx!)	,	 *	[	!eax!	+	9Ch	]	*
+   006F36F8: mov     )!eax!)	,	 *	[	!edx!	+	WeaponTypeClass.Warhead	]	*
+   006F36FE: fld     *	[	!eax!	+	!ecx!	*8+	WarheadTypeClass.Verses.None	]	*
+   006F3705: fcomp   *!ds!	:	(007E2800double_0*
+   006F370B: fnstsw  )!ax!)
+   006F370D: test    )!ah!)	,	 *floatEqual*
+   006F3710: jnz     )(006F37AD@@19)
+   006F3716: mov     )!edx!)	,	 *	[	!ebp!	+	0	]	*
+   006F3719: mov     )!ecx!)	,	 *!ebp!*
+   006F371B: call    ) dword ptr  	[	!edx!	+	84h	]	)
+   006F3721: mov     )!ecx!)	,	 *	[	!esp!	+	18h	+	weap1_	]	*
+   006F3725: mov     )!eax!)	,	 *	[	!eax!	+	_TechnoTypeClass.t.o.Armor	]	*
+   006F372B: mov     )!edx!)	,	 *	[	!ecx!	+	0ACh	]	*
+   006F3731: fld     *	[	!edx!	+	!eax!	*8+	WarheadTypeClass.Verses.None	]	*
+   006F3738: fcomp   *!ds!	:	(007E2800double_0*
+   006F373E: fnstsw  )!ax!)
+   006F3740: test    )!ah!)	,	 *floatEqual*
+   006F3743: jz       short  )(006F3754@@15)
+>> 006F3745: pop     )!edi!)
+   006F3746: pop     )!esi!)
+   006F3747: pop     )!ebp!)
+   006F3748: mov     )!eax!)	,	 *1*
+   006F374D: pop     )!ebx!)
+   006F374E: add     )!esp!)	,	 *8*
+   006F3751: retn    )4)
+   006F3754: mov     )!eax!)	,	 *	[	!ebp!	+	0	]	*
+   006F3757: mov     )!ecx!)	,	 *!ebp!*
+   006F3759: call    ) dword ptr  	[	!eax!	+	1BCh	]	)
+   006F375F: cmp     )	[	!eax!	+	CellClass.LandType	]	)	,	 *!ebx!*
+   006F3765: jz       short  )(006F377F@@16)
+   006F3767: mov     )!edx!)	,	 *	[	!ebp!	+	0	]	*
+   006F376A: mov     )!ecx!)	,	 *!ebp!*
+   006F376C: call    ) dword ptr  	[	!edx!	+	1BCh	]	)
+   006F3772: cmp     ) dword ptr  	[	!eax!	+	0ECh	]	)	,	 *6*
+   006F3779: jz       short  )(006F377F@@16)
+   006F377B: xor     )!bl!)	,	 *!bl!*
+   006F377D: jmp      short  )(006F3781@@17)
+   006F377F: mov     )!bl!)	,	 *1*
+   006F3781: mov     )!eax!)	,	 *	[	!ebp!	+	0	]	*
+   006F3784: mov     )!ecx!)	,	 *!ebp!*
+   006F3786: call    ) dword ptr  	[	!eax!	+	54h	]	)
+   006F3789: test    )!al!)	,	 *!al!*
+   006F378B: jz       short  )(006F378F@@18)
+   006F378D: xor     )!bl!)	,	 *!bl!*
+   006F378F: mov     )!al!)	,	 *	[	!ebp!	+	8Ch	]	*
+   006F3795: test    )!al!)	,	 *!al!*
+   006F3797: jnz      short  )(006F37B9@@21)
+   006F3799: test    )!bl!)	,	 *!bl!*
+   006F379B: jz       short  )(006F37B9@@21)
+   006F379D: mov     )!edx!)	,	 *	[	!esi!	]	*
+   006F379F: push    )!edi!)
+   006F37A0: mov     )!ecx!)	,	 *!esi!*
+   006F37A2: call    ) dword ptr  	[	!edx!	+	2E8h	]	)
+   006F37A8: cmp     )!eax!)	,	 *0FFFFFFFFh*
+   006F37AB: jnz      short  )(006F37AF@@20)
+>> 006F37AD: xor     )!eax!)	,	 *!eax!*
+>> 006F37AF: pop     )!edi!)
+   006F37B0: pop     )!esi!)
+   006F37B1: pop     )!ebp!)
+   006F37B2: pop     )!ebx!)
+   006F37B3: add     )!esp!)	,	 *8*
+   006F37B6: retn    )4)
+   006F37B9: mov     )!eax!)	,	 *	[	!ebp!	+	0	]	*
+   006F37BC: mov     )!ecx!)	,	 *!ebp!*
+   006F37BE: call    ) dword ptr  	[	!eax!	+	54h	]	)
+   006F37C1: test    )!al!)	,	 *!al!*
+   006F37C3: jnz      short  )(006F37E7@@22)
+   006F37C5: mov     )!edx!)	,	 *	[	!esi!	]	*
+   006F37C7: mov     )!ecx!)	,	 *!esi!*
+   006F37C9: call    ) dword ptr  	[	!edx!	+	84h	]	)
+   006F37CF: cmp     )	[	!eax!	+	_TechnoTypeClass.t.LandTargeting	]	)	,	 *2*
+   006F37D6: jnz      short  )(006F37E7@@22)
+   006F37D8: pop     )!edi!)
+   006F37D9: pop     )!esi!)
+   006F37DA: pop     )!ebp!)
+   006F37DB: mov     )!eax!)	,	 *1*
+   006F37E0: pop     )!ebx!)
+   006F37E1: add     )!esp!)	,	 *8*
+   006F37E4: retn    )4)
+   006F37E7: mov     )!eax!)	,	 *	[	!esp!	+	18h	+	weap2_	]	*
+>> 006F37EB: mov     )!ecx!)	,	 *	[	!eax!	+	WeaponTypeClass.Projectile	]	*
+   006F37F1: mov     )!al!)	,	 *	[	!ecx!	+	BulletTypeClass.AA	]	*
+   006F37F7: test    )!al!)	,	 *!al!*
+   006F37F9: jz       short  )(006F37AD@@19)
+   006F37FB: mov     )!edx!)	,	 *	[	!ebp!	+	0	]	*
+   006F37FE: mov     )!ecx!)	,	 *!ebp!*
+   006F3800: call    ) dword ptr  	[	!edx!	+	54h	]	)
+   006F3803: test    )!al!)	,	 *!al!*
+   006F3805: jz       short  )(006F37AD@@19)
+>> 006F3807: pop     )!edi!)
+   006F3808: pop     )!esi!)
+   006F3809: pop     )!ebp!)
+   006F380A: mov     )!eax!)	,	 *1*
+   006F380F: pop     )!ebx!)
+   006F3810: add     )!esp!)	,	 *8*
+   006F3813: retn    )4)
+
+-- hexrays --
+int __thiscall TechnoClass_SelectWeapon(_TechnoClass *this, AbstractClass *target)
+{
+  _TechnoTypeClass *v3; // eax
+  int result; // eax
+  WeaponTypeClass *weap2__; // edi
+  vt_AbstractTypeClass *weap1__; // ebx
+  _TechnoClass *tgt_; // ebp
+  int CurrentGattlingStage; // esi
+  int v9; // eax
+  int v10; // eax
+  _BOOL1 IsWater; // bl
+
+  v3 = this->vt->r.m.o.GetTechnoType(this);
+  if ( TechnoTypeClass_IsTurretChanger(v3) && !this->vt->r.m.o.GetTechnoType(this)->t.RejoinTeamIfLimboed )
+    return this->t.CurrentTurretNumber != -1 ? this->t.CurrentTurretNumber : 0;
+  if ( this->vt->CanOccupyFire(this) )
+    return 0;
+  weap2__ = this->vt->GetWeapon(this, 1)->vt;
+  if ( !weap2__ )
+    return 0;
+  weap1__ = this->vt->GetWeapon(this, 0)->vt;
+  if ( !weap1__ || weap2__->NeverUse || !target )
+    return 0;
+  if ( this->t.r.m.o.InOpenTopped && this->vt->r.m.o.GetTechnoType(this)->t.SecondSpawnOffset.Z != -1 )// OpenTransportWeapon
+    return this->vt->r.m.o.GetTechnoType(this)->t.SecondSpawnOffset.Z;// OpenTransportWeapon
+  tgt_ = (target->field_18 & 1) != 0 ? target : 0;
+  if ( !this->vt->r.m.o.GetTechnoType(this)->t.RejoinTeamIfLimboed )// IsGattling
+  {
+    if ( weap2__->Warhead->Airstrike )
+    {
+      if ( (target->iRTTIInfo[1].Create_ID)(target) == 6
+        && HIBYTE(((target->iRTTIInfo[1].Create_ID)(target) == 6 ? &target[41] : 1312)->iRTTIInfo[0xE4].Create_ID) )// CanC4
+      {
+        v9 = (target->iRTTIInfo[1].Create_ID)(target);
+        if ( *(((v9 == 6 ? target : 0)->iRTTIInfo[5].What_Am_I)(v9 == 6 ? target : 0) + 1517) )
+        {                                       // ResourceDestination
+          v10 = (target->iRTTIInfo[1].Create_ID)(target);
+          return !*(((v10 == 6 ? target : 0)->iRTTIInfo[5].What_Am_I)(v10 == 6 ? target : 0) + 0x5EC);
+        }
+        return 1;
+      }
+    }
+    else
+    {
+      if ( *(weap1__[1].GetArrayIndex + 347) && tgt_ && tgt_->vt->r.m.o.a.What_Am_I(tgt_) == eBuilding )
+        return 1;
+      if ( weap2__->DrainWeapon
+        && tgt_
+        && HIBYTE(tgt_->vt->r.m.o.GetTechnoType(tgt_)->t.Prerequisite.__.incrementAmount)
+        && !this->t.DrainTarget
+        && !HouseClass::Is_Ally(this->t.OwningPlayer, tgt_) )
+      {
+        return 1;
+      }
+      if ( weap2__->AreaFire && this->vt->r.m.o.GetCurrentMission(this) == mi_Unload )
+        return 1;
+      if ( this->vt->r.m.o.a.What_Am_I(this) == eBuilding && BYTE1(this[1].t.CurrentGattlingStage) )
+        return 1;
+      if ( (target->iRTTIInfo[1].Create_ID)(target) == eBuilding
+        && HouseClass_Belongs_To_Ally(this->t.OwningPlayer, target)
+        && weap2__->Warhead->ElectricAssault
+        && BYTE1(target[41].iRTTIInfo[0xE4].Create_ID) )
+      {
+        return 1;                               // Overpowerable
+      }
+      if ( this->vt->r.m.o.a.What_Am_I(this) == eAircraft && BYTE2(this[1].t.AirstrikeTimer.TimeStart) )// BeingProduced
+        return 1;
+      if ( (target->iRTTIInfo[1].Create_ID)(target) == 11
+        && (LODWORD(CONTAINING_RECORD(target, CellClass, a)->RadLevel) != 2 && (target->iRTTIInfo[3].Release)(target)
+         || (CONTAINING_RECORD(target, CellClass, a)->field_144 & 0x100) != 0
+         && this->vt->r.m.o.GetTechnoType(this)->t.ImmuneToPsionicWeapons)
+        && !(target->iRTTIInfo[3].What_Am_I)(target)
+        && this->vt->r.m.o.GetTechnoType(this)->t.gap_668 == 2 )// Naval
+      {
+        return 1;
+      }
+      if ( tgt_ && *(&weap2__->Warhead->Verses.None + tgt_->vt->r.m.o.GetTechnoType(tgt_)->t.o.Armor) != 0.0 )
+      {
+        if ( *(weap1__[1].GetArrayIndex + tgt_->vt->r.m.o.GetTechnoType(tgt_)->t.o.Armor + 0x14) == 0.0 )
+          return 1;
+        IsWater = *((tgt_->vt->r.m.o.GetCell)(tgt_) + offsetof(CellClass, LandType)) == 2
+               || *((tgt_->vt->r.m.o.GetCell)(tgt_) + 236) == 6;
+        if ( tgt_->vt->r.m.o.a.InAir(tgt_) )
+          IsWater = 0;
+        if ( !tgt_->t.r.m.o.OnBridge && IsWater )
+        {
+          result = (this->vt->SelectNavalTargeting)(this, target);
+          if ( result != -1 )
+            return result;
+          return 0;
+        }
+        if ( !tgt_->vt->r.m.o.a.InAir(tgt_) && this->vt->r.m.o.GetTechnoType(this)->t.gap_668 == 2 )
+          return 1;
+        if ( weap2__->Projectile->AA && tgt_->vt->r.m.o.a.InAir(tgt_) )
+          return 1;
+      }
+    }
+    return 0;
+  }
+  CurrentGattlingStage = this->t.CurrentGattlingStage;
+  if ( weap2__->Projectile->AA && tgt_ && tgt_->vt->r.m.o.a.InAir(tgt_) )
+    return 2 * CurrentGattlingStage + 1;
+  else
+    return 2 * CurrentGattlingStage;
+}
+/* Orphan comments:
+IsGattling
+ResourceGatherer
+Drainable
+*/
