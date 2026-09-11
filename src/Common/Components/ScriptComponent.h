@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <YRPP.h>
 #include <GeneralDefinitions.h>
@@ -66,6 +66,24 @@ public:
 				_ownerType = OwnerType::Bullet;
 		}
 		return _ownerType;
+	}
+
+	/// <summary>
+	/// 宿主（ExtData/OwnerObject）已发生变化，丢弃按宿主缓存的类型信息。
+	/// InheritAE 之类的操作会把整棵组件树搬到另一个 GameObject 上（只更换 _extData，不走 Clean），
+	/// 不重置会让 GetAbsType 一直返回旧宿主的类型
+	/// （例如建筑的 AE 管理器被继承给载具后，IsBuilding 仍然返回 true）。
+	/// </summary>
+	void ResetOwnerCache()
+	{
+		_ownerType = OwnerType::None;
+		_absType = AbstractType::None;
+	}
+
+	// ExtData 变更通知（变形、GiftBox/DeploysInto 继承、搬移组件树等），必须重新识别宿主类型
+	virtual void ExtChanged() override
+	{
+		ResetOwnerCache();
 	}
 
 	virtual void Awake() override
@@ -186,8 +204,7 @@ public:
 	{
 		ScriptComponent::Clean();
 
-		_ownerType = OwnerType::None;
-		_absType = AbstractType::None;
+		ResetOwnerCache();
 	}
 protected:
 	OwnerType _ownerType = OwnerType::None;

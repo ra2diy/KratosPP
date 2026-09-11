@@ -170,6 +170,8 @@ void AnimationEffect::OnPut(CoordStruct* pCoords, DirType faceDir)
 
 void AnimationEffect::ExtChanged()
 {
+	// 宿主可能已经被 InheritAE 换成另一个对象，先重新识别宿主类型
+	ObjectScript::ExtChanged();
 	if (Data->IdleAnim.Enable)
 	{
 		if (!pIdleAnim)

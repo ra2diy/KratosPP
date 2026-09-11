@@ -213,6 +213,8 @@ public:
 
 	virtual void ExtChanged() override
 	{
+		// 宿主可能已经被 InheritAE 换成了另一个对象，先重新识别宿主类型
+		ObjectScript::ExtChanged();
 		_typeData = nullptr;
 		_groupData = nullptr;
 		_attachOnceFlag = false;

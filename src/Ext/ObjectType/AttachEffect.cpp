@@ -1521,7 +1521,10 @@ void AttachEffect::OnUpdate()
 			if (!PowerOff && IsBuilding())
 			{
 				// 关闭当前建筑电源
-				PowerOff = !abstract_cast<BuildingClass*, true>(pTechno)->HasPower;
+				if (BuildingClass* pBuilding = abstract_cast<BuildingClass*, true>(pTechno))
+				{
+					PowerOff = !pBuilding->HasPower;
+				}
 			}
 		}
 

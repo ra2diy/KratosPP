@@ -600,6 +600,8 @@ void StandEffect::OnTechnoDelete(EventSystem* sender, Event e, void* args)
 
 void StandEffect::ExtChanged()
 {
+	// 宿主可能已经被 InheritAE 换成另一个对象，先重新识别宿主类型
+	ObjectScript::ExtChanged();
 	SetupStandStatus();
 }
 
