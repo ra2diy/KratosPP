@@ -2551,12 +2551,20 @@ VectorResult VectorEffect::GetVectorResult()
 			pAnchorUnit = abstract_cast<TechnoClass*>(_pSource);
 		break;
 	}
-	const bool anchorAlive = pAnchorUnit && !IsDeadOrInvisible(pAnchorUnit);
-	// 停更 = NoUpdate=yes（永久锁定）|| 无锚（死亡/打格子——2026-09-05 用户拍板：
-	// 目标死亡瞬间弹体目标 = 死亡前最后锁定坐标，原定打哪里还打哪里，永不变化）。
-	// 缓存 _lockedSmallCircleTarget 每帧在 else 尾写（锚活帧 = 最后完整目标点；
-	// NoUpdate 首帧 / 无锚首帧 = 固化值）；命中路径（NoUpdate 或 无锚）直接复用不再重摆。
-	if ((Data->OriginNoUpdate || !anchorAlive) && !_lockedSmallCircleTarget.IsEmpty())
+	// 停更判定（修正）：NoUpdate=yes 永久锁定；参考对象死亡/无单位（打格子、参照 null）也停更。
+	// 参考对象用 FindOriginTechno（Origin 参考单位本身），与 IsOnOrigin（TargetFLH 坐标系选择标签）解耦——
+	// IsOnOrigin=no 时 pAnchorUnit 为空只代表"目标点不挂单位姿态"，不代表参考对象不存在。
+	// 旧写法以 pAnchorUnit 存活当停更依据，导致 Origin=Target/Source（IsOnOrigin 默认 no）恒命中停更，
+	// 无论 NoUpdate 填什么都是冻结效果。
+	// 缓存 _lockedSmallCircleTarget 每帧在 else 尾写（刷新帧 = 最后完整目标点；
+	// 停更首帧 = 固化值）；命中路径直接复用不再重摆。
+	bool originRefAlive = Data->Origin == VectorData::VectorOrigin::Self; // Self：弹体自身/载体，恒刷新
+	if (!originRefAlive)
+	{
+		TechnoClass* pOriginRefUnit = FindOriginTechno();
+		originRefAlive = pOriginRefUnit && !IsDeadOrInvisible(pOriginRefUnit);
+	}
+	if ((Data->OriginNoUpdate || !originRefAlive) && !_lockedSmallCircleTarget.IsEmpty())
 	{
 		smallCircleTarget = _lockedSmallCircleTarget;
 	}
