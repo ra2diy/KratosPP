@@ -62,6 +62,7 @@ public:
 	// ========================================================================
 	void ParseCommon();              // 计时/快照/Duration/AcquireZ
 	void ParseTargetOffset();        // _randomTargetOffset（Radius/F/L/H 两套 + Angles）
+	void ParseOriginOffset();        // 圆心偏移随机一次（小圆 _randomSmallCircleOriginOffset / 大圆 _randomBigCircleOriginOffset）
 	void ParseArcParams(bool origin); // 弧参数三件套：origin=false 主，true 大圆
 	void ParseSpeed();               // 初始速度（LinearSpeed/单位 Speed/弹体 Speed/随机）
 	void InitOrigin();               // _pLauncher/_pSource + CacheTargetNow + 按 Origin 锁定基线
@@ -103,7 +104,8 @@ public:
 	CoordStruct ResolveTilting(const CoordStruct& base, const CoordStruct& flh, const PoseParams& pose);
 	// OriginFLH 解算流程：读 Origin 系标签（OriginIsOnWorld/AllowOriginTilt/OriginIsOnTurret/
 	// OriginIsOnVectorOrigin/CoordinateTilt）填 PoseParams → ResolveTilting。
-	// 解算偏移 = OriginFLH + CircleOrigin（主圆圆心偏移，同姿态线性合并一次摆）。
+	// 解算偏移 = OriginFLH（圆心偏移唯一输入；OriginOffsetF/L/H 随机偏移不进本函数——
+	// 它在圆心最终定值后并入圆心本身，见 _randomSmallCircleOriginOffset 叠加点）。
 	// base=Origin 单位坐标；fallbackFacing=水平兜底朝向（挂载期 _fAxisDir，每帧 fAxisDir）；
 	// currentPos=弹体现在位置（连线终点）。死亡/无锚 = 停止计算：直接返回 base
 	//（保持死亡帧完整解算点，调用点写回）；AllowOriginTilt 不参与死后判定。
@@ -301,6 +303,10 @@ public:
 	bool _targetOffsetActive = false;   // Radius/F-L/H 任一区间有效 = 本次配了偏移（消费/预转门槛，与 Normal 是否填写解耦，2026-09-05 用户拍板）
 	CoordStruct _originTargetOffset{};  // 大圆 TargetFLH 随机偏移
 
+	// --- 圆心偏移随机（Vector.OriginOffsetF/L/H 与 Vector.Origin.OriginOffsetF/L/H，OnStart 随机一次定格）---
+	CoordStruct _randomSmallCircleOriginOffset{};  // 小圆：世界坐标偏移（进入瞬间随机定格；在圆心定值后并入圆心本身，圆心 = 解算值 + 偏移）
+	CoordStruct _randomBigCircleOriginOffset{};    // 大圆：世界坐标偏移（同上；在基准点解算后并入基准点本身）
+
 	// --- 大圆圆心运动 ---
 	CoordStruct _bigCircleOffset{};        // 圆心相对解算起始点偏移（首帧 0，每帧累加 disp）
 	CoordStruct _prevBigCircleCenter{};    // 上一帧圆心位置（计算叠加位移用）
@@ -348,6 +354,8 @@ public:
 			.Process(this->_fAxisDir)
 			.Process(this->_randomTargetOffset)
 			.Process(this->_originTargetOffset)
+			.Process(this->_randomSmallCircleOriginOffset)
+			.Process(this->_randomBigCircleOriginOffset)
 			.Process(this->_bigCircleOffset)
 			.Process(this->_prevBigCircleCenter)
 			.Process(this->_circlePos)

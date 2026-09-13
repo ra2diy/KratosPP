@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="qJoBE6eL8qEz28mjWA25gw">
+<head data-page-node-id="EHUJSKqNgCMkCsDXIRDbKw">
+<meta charset="UTF-8" data-page-node-id="EL3NjQVTV7pxOuRDrBWjGj">
+<title>Vector 序列生成器</title>
+<style>
+  :root{
+    --bg:#f5f6f8; --panel:#ffffff; --line:#d8dce3; --grid:#e8ebf0; --grid-major:#c9cfda;
+    --text:#22262e; --muted:#6b7280; --accent:#2563eb; --accent-soft:#dbeafe;
+    --danger:#dc2626; --ok:#059669;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font:13px/1.5 "Microsoft YaHei","Segoe UI",system-ui,sans-serif}
+  .app{max-width:1180px;margin:0 auto;padding:16px}
+  h1{font-size:17px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:12px;margin-bottom:12px}
+  .cols{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px}
+  .left{flex:0 0 auto}
+  .right{flex:1 1 300px;min-width:290px}
+  .toolbar{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+  button{font:inherit;padding:5px 12px;border:1px solid var(--line);border-radius:6px;
+         background:#fff;color:var(--text);cursor:pointer}
+  button:hover{background:#f0f2f6}
+  button.active{background:var(--accent);border-color:var(--accent);color:#fff}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  button.primary:hover{filter:brightness(1.08)}
+  button.mini{padding:2px 7px;font-size:12px}
+  canvas{display:block;border:1px solid var(--line);border-radius:6px;cursor:crosshair;background:#fff}
+  canvas.selectmode{cursor:default}
+  label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
+  textarea,input[type=text],input[type=number]{width:100%;font:12px/1.5 Consolas,"Courier New",monospace;
+    color:var(--text);background:#fbfcfe;border:1px solid var(--line);border-radius:6px;padding:7px 8px;resize:vertical}
+  textarea:focus,input:focus{outline:none;border-color:var(--accent);background:#fff}
+  #commonCfg{height:130px}
+  #out{height:230px;font-size:12px}
+  .row{display:flex;gap:10px}
+  .row>div{flex:1}
+  .hint{color:var(--muted);font-size:12px;margin-top:8px}
+  .list{margin-top:10px;max-height:190px;overflow:auto;border:1px solid var(--line);border-radius:6px}
+  .item{display:flex;align-items:center;gap:6px;padding:4px 8px;border-bottom:1px solid var(--grid);font-size:12px}
+  .item:last-child{border-bottom:none}
+  .item.sel{background:var(--accent-soft)}
+  .item .idx{width:22px;color:var(--muted)}
+  .item .coord{flex:1;font-family:Consolas,monospace}
+  .item .nm{color:var(--muted);font-family:Consolas,monospace;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .bar{display:flex;gap:8px;align-items:center;margin-top:10px}
+  .msg{font-size:12px;color:var(--ok)}
+  .foot{margin-top:12px}
+  .flexhead{display:flex;justify-content:space-between;align-items:baseline}
+</style>
+</head>
+<body data-page-node-id="dIRTZfWYG8FVrjYIGSm5Uh">
+<div class="app" data-page-node-id="XxTNvMOFZeGsCAFXj4TQIh">
+  <h1 data-page-node-id="IhtiK4VW19vK5j1vF9qugY">Vector 序列生成器</h1>
+  <div class="sub" data-page-node-id="WIAh1UkKA7n6n3yM9kif1S">
+    坐标纸用 xy（右为 x+，上为 y+）输入；输出自动换算为 <b data-page-node-id="q9feGGnH5gTNkE7PuhrtnF">F = y、L = −x</b> 的坐标值。
+    每点生成一段完整 section：统一配置 + 「标签名=F,L,H」（标签名在下方可填，如 Vector.TargetFLH / AutoWeapon.TargetFLH）；段间可按点顺序串 Next 链（可勾选开关，末段不写）。
+  </div>
+
+  <div class="cols" data-page-node-id="QSjXL4wgAKkZeDbXaapOR2">
+    <!-- ================= 坐标纸 ================= -->
+    <div class="card left" data-page-node-id="LeClDr8zgXJpfAZe7QwIFY">
+      <div class="toolbar" data-page-node-id="mMgmDN7DGsHlSTPLkESWB7">
+        <button id="btnAdd" class="active" data-page-node-id="bC1CfTSq97AcnKKiEr8qcq">添加模式</button>
+        <button id="btnSelect" data-page-node-id="lpeeJOTMmTmypdN1SxWgHD">选择模式</button>
+        <button id="btnRotate">旋转模式</button>
+        <button id="btnInsert" data-page-node-id="QVdenQXvaFcXid8MumRXBl">插队</button>
+        <button id="btnGroup">编组</button>
+        <button id="btnUngroup">解组</button>
+        <button id="btnClear" data-page-node-id="oxrZ7CFrUyYewTDHuGLASC">清空所有点</button>
+        <label style="display:flex;align-items:center;gap:5px;margin:0 0 0 6px;font-size:12px;color:var(--text)">
+          <input type="checkbox" id="showLink" checked style="width:auto"> 绘制连线
+        </label>
+      </div>
+      <canvas id="cv" width="640" height="640" data-page-node-id="b1uPiqAicQ1cFaExCiCZnN"></canvas>
+      <div class="hint" data-page-node-id="tDWbZQgpzqUyawWKhv8P9h">
+        添加模式：点击 + 号光标处即加一个点（追加到末尾）。<br data-page-node-id="FLZ8xWSykDo8byF6FPXKVx">
+        选择模式：点选某个点后可拖动位置，按 Delete 删除；列表里可上移/下移调整顺序。<br data-page-node-id="lmfbvBZPATIdDq5mXvHed4">
+        <b data-page-node-id="dkLYsr6O3axzgc3o9A3E4l">插队</b>：先选中一个点，再点【插队】，然后点击坐标纸 → 新点插到该点<b data-page-node-id="1zznxDRbchECFNAaJyrJoF">之后</b>，插完自动退出插队模式（再点一次按钮或按 Esc 可取消）。<br data-page-node-id="lp15j85WGhgjdExNfV5Jdg">
+        坐标纸 1 格 = 256 lepton，原点居中，视野 ±2560 lepton。<br data-page-node-id="lp15j85WGhgjdExNfV5Jdg">
+        <b>绘制连线</b>：按点顺序把相邻点连起来并标出走向箭头，纯预览，不写入 INI（可随时关闭）。<br>
+        <b>旋转模式</b>：选中一个组后进入本模式，拖动鼠标即绕原点旋转整组（吸附角在右侧填，0 = 自由旋转）。<br>
+        <b>预设点</b>：右侧填边数与半径 → 【预览】只看形状（空心点+虚线轮廓）→ 【生成编组】才真正落点；成组后拖一个点 = 整组平移，Delete = 删整组，点【解组】后各点独立。<br>
+        <b>Ctrl + 点击 = 多选</b>（点组内点则整组进出选择集），选好至少 2 个后点【编组】把它们合成一组（可跨组/独立点混选）；<b>解组</b>点工具栏按钮（也可点列表组行里的【解组】），编组/解组随时自由来回。
+      </div>
+    </div>
+
+    <!-- ================= 控制面板 ================= -->
+    <div class="card right" data-page-node-id="N0fiWBHHdFNEO0VZ565VaF">
+      <label data-page-node-id="BKdB5qkmitZ1bxO08hnEJa">统一配置（原样复制进每个片段，一行一条）</label>
+      <textarea id="commonCfg" spellcheck="false">Vector.Origin=Self
+Vector.OriginFLH=0,0,0
+Vector.CircleRadius=648</textarea>
+
+      <div class="row" data-page-node-id="thKfqWtIVwcpFe2AZYWZ2p">
+        <div data-page-node-id="VjCsYGWNJv1YriV0kw2PsG">
+          <label data-page-node-id="IDY5NQPShV052VB3WVhilp">H 高度（统一）</label>
+          <input type="text" id="hVal" value="0" data-page-node-id="V3Kan9BkkiJNywzKzwlH9y">
+        </div>
+        <div data-page-node-id="jAnfb40GFLz1vDBPpoUJEk">
+          <label data-page-node-id="Hj1uoDV5BIyrZvuN4WXob7">随机名位数</label>
+          <input type="number" id="nameLen" value="12" min="4" max="32" data-page-node-id="pTP0bCt9kXtREd9RxxNEno">
+        </div>
+      </div>
+
+      <label>坐标语句的标签名（工具拼成「标签名=F,L,H」，写任意标签均可）</label>
+      <input type="text" id="coordTag" value="Vector.TargetFLH" spellcheck="false"
+             placeholder="例如 Vector.TargetFLH / AutoWeapon.TargetFLH">
+
+      <label style="display:flex;align-items:center;gap:6px;margin-top:10px;color:var(--text)">
+        <input type="checkbox" id="useNext" checked style="width:auto">
+        生成 Next 链（按点顺序串接，最后一段省略；不勾选则不写任何 Next 行）
+      </label>
+
+      <label style="margin-top:14px;color:var(--text);font-weight:bold">预设点（正多边形，中心 = 原点，生成后默认编组）</label>
+      <div class="row">
+        <div>
+          <label style="margin-top:0">边数</label>
+          <input type="number" id="polyN" value="6" min="3" max="64">
+        </div>
+        <div>
+          <label style="margin-top:0">半径（lepton）</label>
+          <input type="number" id="polyR" value="640" min="1" step="8">
+        </div>
+        <div>
+          <label style="margin-top:0">旋转吸附角（度，0=不吸附）</label>
+          <input type="number" id="snapDeg" value="15" min="0" max="180">
+        </div>
+      </div>
+      <div class="bar">
+        <button id="btnPreview">预览（不落画布）</button>
+        <button id="btnPolyGen" class="primary">生成编组</button>
+      </div>
+
+      <div class="bar" data-page-node-id="YFvDRkBggKv8Hs0TpWEuML">
+        <button id="btnGen" class="primary" data-page-node-id="DrEwkS5KKpMFwDxiQhuUeO">生成 INI</button>
+        <button id="btnCopy" data-page-node-id="TFhAam4ZO98Azpoi2Ea2j4">复制输出</button>
+        <button id="btnRename" data-page-node-id="hEfVPoZdxEd1GHQlIuufjK">重新随机名字</button>
+        <span id="msg" class="msg" data-page-node-id="IOknjuk6QgN6h2uoP4WdIH"></span>
+      </div>
+
+      <label data-page-node-id="H7PqvIalrFqDhiajIKxobw">点列表（顺序即输出顺序）</label>
+      <div class="list" id="list" data-page-node-id="M9VCCBZslsC9AC6d8QCzUG"></div>
+    </div>
+  </div>
+
+  <!-- ================= 输出 ================= -->
+  <div class="card foot" data-page-node-id="ZepLaMu5Qn1094377jRfv3">
+    <div class="flexhead" data-page-node-id="JBCV33EmeGEHSKMK5O9LId">
+      <label style="margin-top:0" data-page-node-id="tZYG0n33Vj5q7Pf4ST4iET">输出（选中后可 Ctrl+C 复制）</label>
+      <span class="msg" id="msg2" data-page-node-id="O9WUdBzY0Hd8udqwuokySO"></span>
+    </div>
+    <textarea id="out" spellcheck="false" placeholder="点击【生成 INI】后在此显示结果……"></textarea>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   参数与约定
+   ---------------------------------------------------------------------
+   屏幕像素 ↔ lepton：1 格 = 32px = 256 lepton，即 1px = 8 lepton。
+   屏幕坐标（像素）→ xy（lepton）：x = (px − 中心) × 8；y = (中心 − py) × 8
+   输出换算（用户给定案例 (x=−50,y=150) → FL=(150,50)）：F = y，L = −x。
+   ===================================================================== */
+const CV = document.getElementById('cv');
+const ctx = CV.getContext('2d');
+const CELL_PX = 32;            // 一格像素宽
+const LEPTON_PER_CELL = 256;   // 一格代表多少 lepton
+const PX2LEP = LEPTON_PER_CELL / CELL_PX;   // 1px = 8 lepton
+const CX = CV.width / 2, CY = CV.height / 2;
+
+let points = [];        // [{x, y, name, gid}]  x,y 为 lepton 整数；name 为随机段名；gid=0 未编组，>0 属于组
+let groups = [];        // [{id, n, r, rot, dx, dy, members:[点对象]}]  正多边形组（中心恒为原点）
+let nextGid = 1;        // 组号自增
+let mode = 'add';       // 'add' 添加 | 'select' 选择(可移动) | 'rotate' 旋转模式
+let insertMode = false; // 插队模式：先选中锚点，点【插队】后点坐标纸 → 新点插到锚点之后，一次即结束
+let selected = -1;      // 选中的单点下标（-1 = 无）
+let selectedGroup = 0;  // 选中的组 id（0 = 无）；组态时 selected = -1，两者互斥
+let multiSel = [];      // Ctrl 多选集合（存点对象；点到组内点 = 整组成员一起进出该集合）
+let dragging = -1;      // 拖动中的点下标
+let dragStart = null;   // 拖动起始信息（整组平移用）
+let rotStart = null;    // 旋转起始信息
+let previewPoly = null; // 待生成多边形的预览参数 {n, r}（只画不落，再次点【预览】即关闭）
+
+/* ---------- 坐标换算 ---------- */
+function lep2px(x, y){ return { px: CX + x / PX2LEP, py: CY - y / PX2LEP }; }
+function px2lep(px, py){
+  return { x: Math.round((px - CX) * PX2LEP), y: Math.round((CY - py) * PX2LEP) };
+}
+
+/* ---------- 随机段名：大小写字母 + 数字混编 ---------- */
+const NAME_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+function randomName(len){
+  let s = '';
+  for (let i = 0; i < len; i++) s += NAME_CHARS[Math.floor(Math.random() * NAME_CHARS.length)];
+  return s;
+}
+function currentNameLen(){
+  const inputLen = parseInt(document.getElementById('nameLen').value, 10);
+  return (Number.isFinite(inputLen) && inputLen >= 4) ? inputLen : 12;
+}
+
+/* ---------- 画坐标纸 ---------- */
+function draw(){
+  ctx.clearRect(0, 0, CV.width, CV.height);
+
+  const halfCellsX = Math.floor(CX / CELL_PX);
+
+  // 网格：每格一条细线，每 2 格加深并标注刻度数字（lepton）
+  for (let i = -halfCellsX; i <= halfCellsX; i++){
+    const { px } = lep2px(i * LEPTON_PER_CELL, 0);
+    const major = (i % 2 === 0);
+    ctx.strokeStyle = major ? getComputedStyle(document.documentElement).getPropertyValue('--grid-major')
+                            : getComputedStyle(document.documentElement).getPropertyValue('--grid');
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(px + .5, 0); ctx.lineTo(px + .5, CV.height); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, px + .5); ctx.lineTo(CV.width, px + .5); ctx.stroke();
+  }
+  // 刻度数字（避开外侧留白，只标在轴附近）
+  ctx.fillStyle = '#8a93a3';
+  ctx.font = '10px Consolas,monospace';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  for (let i = -halfCellsX; i <= halfCellsX; i++){
+    if (i === 0 || i % 2 !== 0) continue;
+    const { px } = lep2px(i * LEPTON_PER_CELL, 0);
+    ctx.fillText(String(i * LEPTON_PER_CELL), px, CY + 4);          // x 轴刻度
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(String(i * LEPTON_PER_CELL), CX - 4, px);          // y 轴刻度
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  }
+
+  // 坐标轴（x 轴、y 轴加粗）
+  ctx.strokeStyle = '#7d8698'; ctx.lineWidth = 1.4;
+  ctx.beginPath(); ctx.moveTo(0, CY + .5); ctx.lineTo(CV.width, CY + .5); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(CX + .5, 0); ctx.lineTo(CX + .5, CV.height); ctx.stroke();
+
+  // 轴标注：x 向右为正；y 向上为正（因此 L = −x、F = y）
+  ctx.fillStyle = '#5b6474'; ctx.font = '12px "Microsoft YaHei"';
+  ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
+  ctx.fillText('x →', CV.width - 6, CY - 5);
+  ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+  ctx.fillText('↑ y', CX + 6, 6);
+
+  // 原点标记
+  ctx.fillStyle = '#dc2626';
+  ctx.beginPath(); ctx.arc(CX, CY, 3, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#9aa2b1'; ctx.font = '10px Consolas,monospace';
+  ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+  ctx.fillText('0,0', CX + 5, CY + 4);
+
+  // 先后点的连线 + 方向箭头（纯预览，不写入 INI）——由工具栏「绘制连线」开关控制
+  if (document.getElementById('showLink').checked && points.length > 1){
+    ctx.strokeStyle = '#8fb2f0'; ctx.lineWidth = 1.6;
+    for (let i = 0; i < points.length - 1; i++){
+      const a = lep2px(points[i].x, points[i].y);
+      const b = lep2px(points[i + 1].x, points[i + 1].y);
+      ctx.beginPath(); ctx.moveTo(a.px, a.py); ctx.lineTo(b.px, b.py); ctx.stroke();
+      drawArrow(a, b);   // 中线箭头表示走向（指向下一个点）
+    }
+  }
+
+  // 预设多边形预览（空心点 + 虚线轮廓）——只画在画布上，不进点列表、不写 INI
+  if (previewPoly){
+    const step = Math.PI * 2 / previewPoly.n;
+    ctx.setLineDash([5, 4]);
+    ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    for (let i = 0; i <= previewPoly.n; i++){
+      const a = i * step;
+      const q = lep2px(Math.cos(a) * previewPoly.r, Math.sin(a) * previewPoly.r);
+      if (i === 0) ctx.moveTo(q.px, q.py); else ctx.lineTo(q.px, q.py);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+    for (let i = 0; i < previewPoly.n; i++){
+      const a = i * step;
+      const q = lep2px(Math.cos(a) * previewPoly.r, Math.sin(a) * previewPoly.r);
+      ctx.fillStyle = '#fff'; ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.arc(q.px, q.py, 5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    }
+  }
+
+  // 所有点：序号 + 圆点 + 坐标
+  points.forEach((p, i) => {
+    const { px, py } = lep2px(p.x, p.y);
+    const isSel = (i === selected);
+    const inSelGroup = (p.gid > 0 && p.gid === selectedGroup);   // 选中组 → 整组一起高亮
+    const inMulti = multiSel.includes(p);                        // Ctrl 多选
+    ctx.fillStyle = isSel ? '#dc2626'
+                  : inMulti ? '#0891b2'
+                  : inSelGroup ? '#ea580c'
+                  : (p.gid > 0) ? '#7c3aed'      // 编组点（未选中）= 紫
+                  : '#2563eb';                   // 独立点 = 蓝
+    ctx.beginPath(); ctx.arc(px, py, (isSel || inSelGroup || inMulti) ? 6 : 5, 0, Math.PI * 2); ctx.fill();
+    if (isSel || inSelGroup || inMulti){
+      ctx.strokeStyle = inMulti ? '#0891b2' : (isSel ? '#dc2626' : '#ea580c');
+      ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(px, py, 9, 0, Math.PI * 2); ctx.stroke();
+    }
+    ctx.fillStyle = isSel ? '#dc2626' : inMulti ? '#0e7490'
+                  : inSelGroup ? '#ea580c' : (p.gid > 0 ? '#5b21b6' : '#1e40af');
+    ctx.font = 'bold 11px Consolas,monospace';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+    ctx.fillText(String(i + 1), px + 8, py - 4);
+    ctx.font = '10px Consolas,monospace';
+    ctx.textBaseline = 'top';
+    ctx.fillText('(' + p.x + ',' + p.y + ')', px + 8, py + 3);
+  });
+}
+
+/* ---------- 连线方向箭头（预览用，线段中点指向下一个点） ---------- */
+function drawArrow(a, b){
+  const dx = b.px - a.px, dy = b.py - a.py;
+  const len = Math.hypot(dx, dy);
+  if (len < 26) return;                       // 两点太近不画箭头，免得糊成一团
+  const ux = dx / len, uy = dy / len;
+  const mx = a.px + dx * 0.55, my = a.py + dy * 0.55;
+  const size = 7;
+  ctx.fillStyle = '#8fb2f0';
+  ctx.beginPath();
+  ctx.moveTo(mx + ux * size, my + uy * size);
+  ctx.lineTo(mx - ux * size * 0.7 - uy * size * 0.55, my - uy * size * 0.7 + ux * size * 0.55);
+  ctx.lineTo(mx - ux * size * 0.7 + uy * size * 0.55, my - uy * size * 0.7 - ux * size * 0.55);
+  ctx.closePath(); ctx.fill();
+}
+
+/* ---------- 编组工具（统一模型：成员存基态坐标，组参数只记旋转与平移） ---------- */
+const POLY_BASE_ANGLE = 0;   // 预设多边形第一个顶点的起始角（0 = +x 方向），其余顶点逆时针均分
+
+function findGroup(gid){ return groups.find(g => g.id === gid) || null; }
+function groupOfPoint(p){ return (p && p.gid > 0) ? findGroup(p.gid) : null; }
+
+// 按 组参数重算全部成员坐标：成员基态 (bx,by) 绕原点旋转 rot，再整体平移 (dx,dy)
+// 预设组：基态 = 正多边形顶点；手动编组：基态 = 编组那一刻各点的位置。两种组走同一套变换。
+function recalcGroup(g){
+  const cos = Math.cos(g.rot), sin = Math.sin(g.rot);
+  g.members.forEach(p => {
+    const bx = p.bx, by = p.by;
+    p.x = Math.round(bx * cos - by * sin + g.dx);
+    p.y = Math.round(bx * sin + by * cos + g.dy);
+  });
+}
+
+// 把一组点收拢成一个新组：成员在序列里会被聚到连续位置（组内必须连续）
+// 若成员原先属于别的组，会从原组移出；原组剩余不足 2 点则自动解散（剩余点变独立）
+function groupSelection(){
+  const picked = multiSel.slice();
+  if (picked.length < 2){ flash('请先按住 Ctrl 多选至少 2 个点，再点【编组】'); return; }
+
+  // 1) 从旧组里摘出这些点
+  const affected = Array.from(new Set(picked.filter(p => p.gid > 0).map(p => p.gid)));
+  affected.forEach(gid => {
+    const g = findGroup(gid);
+    if (!g) return;
+    g.members = g.members.filter(m => !picked.includes(m));
+    if (g.members.length < 2){            // 原组不足以成组 → 剩下的人也独立
+      g.members.forEach(m => { m.gid = 0; m.bx = m.x; m.by = m.y; });
+      groups = groups.filter(x => x.id !== gid);
+    } else {
+      g.n = g.members.length;
+      recalcGroup(g);
+    }
+  });
+
+  // 2) 建新组：基态 = 当前坐标（rot/dx/dy 从零起）
+  const gid = nextGid++;
+  const g = { id: gid, n: picked.length, r: 0, manual: true, rot: 0, dx: 0, dy: 0, members: [] };
+  picked.forEach(p => { p.gid = gid; p.bx = p.x; p.by = p.y; g.members.push(p); });
+  groups.push(g);
+
+  // 3) 聚拢到连续位置（放在原序列中最靠前那个成员的位置处，保持成员之间原有先后关系）
+  const set = new Set(picked);
+  const firstIdx = points.findIndex(p => set.has(p));
+  let insertAt = 0;
+  for (let i = 0; i < firstIdx; i++) if (!set.has(points[i])) insertAt++;
+  const rest = points.filter(p => !set.has(p));
+  points = rest.slice(0, insertAt).concat(picked, rest.slice(insertAt));
+
+  multiSel = [];
+  selected = -1; selectedGroup = gid;
+  refresh(); syncMode();
+  flash('已编组 ' + gid + '（' + picked.length + ' 点）');
+}
+
+// 删除整组（成员点一并从序列里移除）
+function deleteGroup(gid){
+  const g = findGroup(gid);
+  if (!g) return;
+  points = points.filter(p => p.gid !== gid);
+  groups = groups.filter(x => x.id !== gid);
+  if (selectedGroup === gid) selectedGroup = 0;
+  multiSel = multiSel.filter(p => p.gid !== gid);
+}
+
+// 解组：成员变成独立点（保留当前坐标，可单独编辑/删除），组记录销毁
+function ungroup(gid){
+  const g = findGroup(gid);
+  if (!g) return;
+  g.members.forEach(p => { p.gid = 0; p.bx = p.x; p.by = p.y; });
+  groups = groups.filter(x => x.id !== gid);
+  if (selectedGroup === gid) selectedGroup = 0;
+  refresh();
+  flash('组 ' + gid + ' 已解开，各点可独立操作');
+}
+
+// 整组在输出序列里上/下移一位（与相邻的单点或整组交换位置）
+function moveGroupBlock(gid, dir){
+  const idx = points.map((p, i) => p.gid === gid ? i : -1).filter(i => i >= 0);
+  if (!idx.length) return;
+  const start = idx[0], end = idx[idx.length - 1];
+  if (dir < 0 && start > 0){
+    const moved = points.splice(start - 1, 1)[0];   // 把组前面那个元素挪到组后面
+    points.splice(end, 0, moved);
+  } else if (dir > 0 && end < points.length - 1){
+    const moved = points.splice(end + 1, 1)[0];     // 把组后面那个元素挪到组前面
+    points.splice(start, 0, moved);
+  }
+  refresh();
+}
+
+// 读取预设模块参数（带范围兜底）
+function readPolyParams(){
+  const nEl = document.getElementById('polyN'), rEl = document.getElementById('polyR');
+  const n = Math.min(64, Math.max(3, parseInt(nEl.value, 10) || 6));
+  const r = Math.max(1, parseInt(rEl.value, 10) || 640);
+  return { n, r };
+}
+
+// 生成编组：把预设参数真正落成 n 个点（同一 gid，默认编组）
+// 基态 = 正多边形顶点（从起始角起逆时针均分），组的 rot/dx/dy 从零起
+function generatePolygon(){
+  const { n, r } = readPolyParams();
+  const gid = nextGid++;
+  const g = { id: gid, n, r, rot: 0, dx: 0, dy: 0, members: [] };
+  const step = Math.PI * 2 / n;
+  for (let i = 0; i < n; i++){
+    const a = POLY_BASE_ANGLE + i * step;
+    const bx = Math.round(Math.cos(a) * r);
+    const by = Math.round(Math.sin(a) * r);
+    const p = { x: bx, y: by, bx, by, name: randomName(currentNameLen()), gid };
+    g.members.push(p);
+    points.push(p);
+  }
+  groups.push(g);
+  previewPoly = null;            // 落成后清掉预览
+  selected = -1; selectedGroup = gid;
+  multiSel = [];
+  refresh(); syncMode();
+  flash('已生成编组 ' + gid + '（' + n + ' 点 / 半径 ' + r + '）');
+}
+
+/* ---------- 列表渲染 ---------- */
+function renderList(){
+  const box = document.getElementById('list');
+  if (points.length === 0){ box.innerHTML = '<div class="item" style="color:#9aa2b1">（暂无点，请在坐标纸上点击添加）</div>'; return; }
+  let html = '';
+  let i = 0;
+  while (i < points.length){
+    const p = points[i];
+    if (p.gid > 0){
+      // 组内点必然连续：合并成一行显示
+      let j = i;
+      while (j < points.length && points[j].gid === p.gid) j++;
+      const g = findGroup(p.gid);
+      const rotDeg = g ? Math.round(g.rot * 180 / Math.PI) : 0;
+      const desc = g ? (g.manual ? '手动编组' : ('半径 ' + g.r)) : '';
+      html += `<div class="item ${p.gid === selectedGroup ? 'sel' : ''}" data-gid="${p.gid}">
+        <span class="idx">${i + 1}-${j}</span>
+        <span class="coord">⛓ 组${p.gid} · ${g ? g.n : '?'} 点 · ${desc} · 已转 ${rotDeg}°</span>
+        <span class="nm"></span>
+        <button class="mini" data-act="ungroup" data-gid="${p.gid}">解组</button>
+        <button class="mini" data-act="gup" data-gid="${p.gid}">↑</button>
+        <button class="mini" data-act="gdown" data-gid="${p.gid}">↓</button>
+        <button class="mini" data-act="gdel" data-gid="${p.gid}">✕</button>
+      </div>`;
+      i = j;
+    } else {
+      html += `<div class="item ${i === selected ? 'sel' : ''}" data-i="${i}">
+        <span class="idx">${i + 1}</span>
+        <span class="coord">x=${p.x}, y=${p.y} → F=${p.y}, L=${-p.x}</span>
+        <span class="nm" title="${p.name}">${p.name}</span>
+        <button class="mini" data-act="up" data-i="${i}">↑</button>
+        <button class="mini" data-act="down" data-i="${i}">↓</button>
+        <button class="mini" data-act="del" data-i="${i}">✕</button>
+      </div>`;
+      i++;
+    }
+  }
+  box.innerHTML = html;
+}
+
+/* ---------- 交互：画布 ---------- */
+function hitPoint(px, py){
+  for (let i = points.length - 1; i >= 0; i--){
+    const q = lep2px(points[i].x, points[i].y);
+    if (Math.hypot(q.px - px, q.py - py) <= 10) return i;
+  }
+  return -1;
+}
+CV.addEventListener('mousedown', e => {
+  const r = CV.getBoundingClientRect();
+  const px = (e.clientX - r.left) * CV.width / r.width;
+  const py = (e.clientY - r.top) * CV.height / r.height;
+
+  // 插队模式优先：点一下坐标纸 → 新点插到选中锚点之后，随即退出插队模式
+  if (insertMode){
+    if (selected < 0){ insertMode = false; syncMode(); flash('锚点已失效，请重新选中一个点再插队'); return; }
+    const lp = px2lep(px, py);
+    let pos = Math.min(selected + 1, points.length);
+    const anchor = points[selected];
+    if (anchor && anchor.gid > 0){
+      // 锚点是组内点：插到该组末尾之后，避免把编组拆散（组内点必须连续）
+      let j = selected;
+      while (j + 1 < points.length && points[j + 1].gid === anchor.gid) j++;
+      pos = j + 1;
+    }
+    points.splice(pos, 0, { x: lp.x, y: lp.y, name: randomName(currentNameLen()), gid: 0 });
+    selected = pos;          // 新点即当前选中
+    insertMode = false;      // 插队一次即结束
+    syncMode();
+    refresh();
+    flash('已插队到第 ' + (pos + 1) + ' 位');
+    return;
+  }
+
+  // 旋转模式：按住拖动 → 绕原点旋转选中的组（组内所有点一起转）
+  if (mode === 'rotate'){
+    if (!selectedGroup){ flash('请先选中一个组（点画布上的组内点，或列表里的组行），再拖动旋转'); return; }
+    const g = findGroup(selectedGroup);
+    if (!g){ selectedGroup = 0; flash('选中的组已不存在'); return; }
+    rotStart = { g, a0: Math.atan2(py - CY, px - CX), rot0: g.rot };
+    return;
+  }
+
+  if (mode === 'add'){
+    const lp = px2lep(px, py);
+    points.push({ x: lp.x, y: lp.y, name: randomName(currentNameLen()), gid: 0 });
+    selected = points.length - 1;
+    selectedGroup = 0;
+    refresh();
+    return;
+  }
+
+  // 选择模式：命中则选中；组内点 → 整组选中并可整体平移，独立点 → 单点移动
+  const hit = hitPoint(px, py);
+  if (hit < 0){
+    selected = -1; selectedGroup = 0; dragging = -1; dragStart = null;
+    refresh(); syncMode();
+    return;
+  }
+  const clickedPoint = points[hit];
+  const grp = groupOfPoint(clickedPoint);
+
+  // Ctrl（或 Mac 的 Cmd）+ 点击 = 多选：独立点加入/移出集合；组内点 = 整组成员一起加入/移出
+  if (e.ctrlKey || e.metaKey){
+    const targets = grp ? grp.members : [clickedPoint];
+    const allIn = targets.every(t => multiSel.includes(t));
+    if (allIn) multiSel = multiSel.filter(t => !targets.includes(t));
+    else targets.forEach(t => { if (!multiSel.includes(t)) multiSel.push(t); });
+    selected = -1; selectedGroup = 0; dragging = -1; dragStart = null;
+    refresh(); syncMode();
+    flash('已多选 ' + multiSel.length + ' 个点' + (multiSel.length >= 2 ? '，可点【编组】' : ''));
+    return;
+  }
+
+  multiSel = [];                                      // 普通点击 = 清空多选
+  if (grp){
+    selectedGroup = grp.id; selected = -1;
+    dragging = hit;                                   // 拖动任意成员 = 整组平移
+    dragStart = { g: grp, gx: grp.dx, gy: grp.dy, mx: px, my: py };
+  } else {
+    selected = hit; selectedGroup = 0;
+    dragging = hit; dragStart = null;
+  }
+  refresh(); syncMode();
+});
+window.addEventListener('mousemove', e => {
+  const r = CV.getBoundingClientRect();
+  const px = (e.clientX - r.left) * CV.width / r.width;
+  const py = (e.clientY - r.top) * CV.height / r.height;
+
+  // 旋转中：角度差 = 鼠标绕原点的屏幕角变化；吸附角 > 0 时对总角度取整吸附
+  if (rotStart){
+    const a = Math.atan2(py - CY, px - CX);
+    let rot = rotStart.rot0 + (a - rotStart.a0);
+    const snapDeg = parseFloat(document.getElementById('snapDeg').value);
+    if (Number.isFinite(snapDeg) && snapDeg > 0){
+      const snap = snapDeg * Math.PI / 180;
+      rot = Math.round(rot / snap) * snap;
+    }
+    rotStart.g.rot = rot;
+    recalcGroup(rotStart.g);
+    refresh();
+    return;
+  }
+
+  if (dragging < 0) return;
+  const lp = px2lep(px, py);
+  const p = points[dragging];
+  if (dragStart && dragStart.g){                      // 整组平移（形状不变）
+    dragStart.g.dx = dragStart.gx + Math.round((px - dragStart.mx) * PX2LEP);
+    dragStart.g.dy = dragStart.gy + Math.round((dragStart.my - py) * PX2LEP);
+    recalcGroup(dragStart.g);
+  } else {                                            // 独立点：跟随鼠标
+    p.x = lp.x; p.y = lp.y;
+  }
+  refresh();
+});
+window.addEventListener('mouseup', () => { dragging = -1; dragStart = null; rotStart = null; });
+window.addEventListener('keydown', e => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (tag === 'textarea' || tag === 'input') return;   // 输入框里不抢键
+  if (e.key === 'Escape'){
+    if (insertMode){ insertMode = false; syncMode(); flash('已取消插队'); return; }
+    if (mode === 'rotate'){ mode = 'select'; syncMode(); flash('已退出旋转模式'); return; }
+  }
+  if (e.key === 'Delete' || e.key === 'Backspace'){
+    if (selectedGroup){                                // 组态：删整组
+      e.preventDefault();
+      const gid = selectedGroup;
+      deleteGroup(gid);
+      insertMode = false;
+      refresh(); syncMode();
+      flash('已删除组 ' + gid + '（整组）');
+      return;
+    }
+    if (selected >= 0){                                // 单点删除
+      e.preventDefault();
+      const removed = points[selected];
+      points.splice(selected, 1);
+      multiSel = multiSel.filter(t => t !== removed);   // 清掉多选里的残留引用
+      selected = -1;
+      insertMode = false;
+      refresh(); syncMode();
+    }
+  }
+});
+
+/* ---------- 交互：列表按钮 ---------- */
+document.getElementById('list').addEventListener('click', e => {
+  const btn = e.target.closest('button');
+  const row = e.target.closest('.item');
+  // 点击行本身 = 选中（组行 → 选整组；点行 → 选单点）
+  if (row && !btn){
+    if (row.dataset.gid){
+      selectedGroup = parseInt(row.dataset.gid, 10);
+      selected = -1;
+    } else {
+      selected = parseInt(row.dataset.i, 10);
+      selectedGroup = 0;
+    }
+    refresh(); syncMode();
+    return;
+  }
+  if (!btn) return;
+  const act = btn.dataset.act;
+
+  // ------- 组按钮 -------
+  if (btn.dataset.gid){
+    const gid = parseInt(btn.dataset.gid, 10);
+    if (act === 'ungroup'){ ungroup(gid); syncMode(); }
+    if (act === 'gup'){ moveGroupBlock(gid, -1); }
+    if (act === 'gdown'){ moveGroupBlock(gid, 1); }
+    if (act === 'gdel'){ deleteGroup(gid); insertMode = false; refresh(); syncMode(); flash('已删除组 ' + gid + '（整组）'); }
+    return;
+  }
+
+  // ------- 单点按钮 -------
+  const i = parseInt(btn.dataset.i, 10);
+  if (act === 'del'){
+    const removed = points[i];
+    points.splice(i, 1);
+    multiSel = multiSel.filter(t => t !== removed);     // 清掉多选里的残留引用
+    selected = -1; insertMode = false; syncMode();
+  }
+  if (act === 'up' && i > 0){ [points[i - 1], points[i]] = [points[i], points[i - 1]]; selected = i - 1; }
+  if (act === 'down' && i < points.length - 1){ [points[i + 1], points[i]] = [points[i], points[i + 1]]; selected = i + 1; }
+  refresh();
+});
+
+/* ---------- 模式切换、插队、预设与清空 ---------- */
+document.getElementById('btnAdd').onclick = () => { mode = 'add'; insertMode = false; syncMode(); };
+document.getElementById('btnSelect').onclick = () => { mode = 'select'; insertMode = false; syncMode(); };
+document.getElementById('btnRotate').onclick = () => {
+  mode = 'rotate'; insertMode = false; syncMode();
+  flash(selectedGroup ? ('旋转模式：拖动鼠标绕原点旋转组 ' + selectedGroup + '（Esc 退出）')
+                      : '旋转模式：请先选中一个组（Esc 退出）');
+};
+document.getElementById('btnInsert').onclick = () => {
+  if (insertMode){ // 再点一次 = 取消
+    insertMode = false; syncMode(); flash('已取消插队');
+    return;
+  }
+  if (selected < 0){ flash('请先在列表或坐标纸上选中一个点，再点【插队】'); return; }
+  mode = 'select'; insertMode = true; syncMode();
+  flash('插队模式：点击坐标纸放置新点（插到第 ' + (selected + 1) + ' 位之后）');
+};
+document.getElementById('btnGroup').onclick = () => groupSelection();
+// 解组：优先解当前选中的组；没选中组时，解开「多选里涉及到的组」（解组同样自由可控）
+document.getElementById('btnUngroup').onclick = () => {
+  let gids = [];
+  if (selectedGroup) gids = [selectedGroup];
+  else if (multiSel.length) gids = Array.from(new Set(multiSel.filter(p => p.gid > 0).map(p => p.gid)));
+  if (!gids.length){
+    flash('请先选中一个组（点画布上的组内点或列表的组行），或 Ctrl 多选组内点，再点【解组】');
+    return;
+  }
+  gids.forEach(gid => ungroup(gid));
+  refresh(); syncMode();
+  flash('已解开 ' + gids.length + ' 个组（成员变独立点）');
+};
+document.getElementById('btnClear').onclick = () => {
+  if ((points.length || groups.length) && !confirm('清空所有点（含全部编组）？')) return;
+  points = []; groups = []; nextGid = 1; previewPoly = null; multiSel = [];
+  selected = -1; selectedGroup = 0; insertMode = false;
+  refresh(); syncMode();
+};
+
+// 预设点：预览（只画空心点 + 虚线轮廓，不落画布）/ 生成（真正落成一组编组点）
+document.getElementById('btnPreview').onclick = () => {
+  if (previewPoly){ previewPoly = null; draw(); flash('已关闭预设预览'); return; }
+  const { n, r } = readPolyParams();
+  previewPoly = { n, r };
+  draw();
+  flash('预览：正 ' + n + ' 边形 / 半径 ' + r + '（中心=原点，未落画布）');
+};
+document.getElementById('btnPolyGen').onclick = () => generatePolygon();
+
+function syncMode(){
+  document.getElementById('btnAdd').classList.toggle('active', mode === 'add' && !insertMode);
+  document.getElementById('btnSelect').classList.toggle('active', mode === 'select' && !insertMode);
+  document.getElementById('btnRotate').classList.toggle('active', mode === 'rotate');
+  document.getElementById('btnInsert').classList.toggle('active', insertMode);
+  CV.classList.toggle('selectmode', mode === 'select' && !insertMode);
+  CV.style.cursor = (mode === 'add' || insertMode) ? 'crosshair'
+                  : (mode === 'rotate') ? 'grab' : 'default';
+}
+
+/* ---------- 生成 INI ---------- */
+function buildINI(){
+  if (points.length === 0) return '';
+  const cfgRaw = document.getElementById('commonCfg').value;
+  // 统一配置原样下发（仅去掉整体首尾空白，内部每行保持用户写法）
+  const cfgLines = cfgRaw.replace(/\r\n/g, '\n').trim();
+  const h = document.getElementById('hVal').value.trim() || '0';
+  // 坐标语句的标签名由用户填（默认 Vector.TargetFLH），工具只负责拼上坐标值 F,L,H
+  const coordTag = document.getElementById('coordTag').value.trim() || 'Vector.TargetFLH';
+  // Next 链开关：勾选 = 按点顺序串接（末段省略）；不勾选 = 不写任何 Next 行
+  const useNext = document.getElementById('useNext').checked;
+
+  const blocks = points.map((p, i) => {
+    const F = p.y;
+    const L = -p.x;
+    const lines = ['[' + p.name + ']'];
+    if (cfgLines) lines.push(cfgLines);
+    lines.push(coordTag + '=' + F + ',' + L + ',' + h);
+    if (useNext && i < points.length - 1) lines.push('Next=' + points[i + 1].name);  // 末段省略 Next
+    return lines.join('\n');
+  });
+  return blocks.join('\n\n');
+}
+
+document.getElementById('btnGen').onclick = () => {
+  const txt = buildINI();
+  document.getElementById('out').value = txt;
+  flash(txt ? ('已生成 ' + points.length + ' 段') : '还没有点，先在坐标纸上添加');
+};
+document.getElementById('btnRename').onclick = () => {
+  const len = currentNameLen();
+  points.forEach(p => { p.name = randomName(len); });
+  refresh();
+  flash('已重新随机 ' + points.length + ' 个段名（' + len + ' 位）');
+};
+document.getElementById('btnCopy').onclick = async () => {
+  const out = document.getElementById('out');
+  if (!out.value){ flash('输出为空，先点【生成 INI】'); return; }
+  try{
+    await navigator.clipboard.writeText(out.value);
+    flash('已复制到剪贴板');
+  }catch{
+    out.select(); document.execCommand('copy');
+    flash('已复制（兼容模式）');
+  }
+};
+function flash(msg){
+  const a = document.getElementById('msg'), b = document.getElementById('msg2');
+  a.textContent = msg; b.textContent = msg;
+  clearTimeout(flash._t);
+  flash._t = setTimeout(() => { a.textContent = ''; b.textContent = ''; }, 2600);
+}
+
+/* ---------- 刷新 ---------- */
+function refresh(){ draw(); renderList(); }
+
+// 「绘制连线」开关：纯预览，只触发重绘（不影响生成结果）
+document.getElementById('showLink').addEventListener('change', () => draw());
+
+syncMode();
+refresh();
+</script>
+</body>
+</html>
