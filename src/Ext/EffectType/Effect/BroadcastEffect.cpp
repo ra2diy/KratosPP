@@ -15,6 +15,17 @@ void BroadcastEffect::FindAndAttach(BroadcastEntity data, std::vector<std::strin
 	ObjectClass* pSource = AE->pSource;
 	HouseClass* pSourceHouse = AE->pSourceHouse;
 	CoordStruct projectileLocation{};
+	// 指定身份过滤放行的唯一单位：宿主是弹体时认打出它的单位，宿主是子机时认它的母舰
+	// 由宿主类型决定，至多有一个存在，取不到时为空，此时谁都放行不了
+	TechnoClass* pAllowed = nullptr;
+	if (Data->OnlyAffectBulletShooter && pBullet)
+	{
+		pAllowed = pBullet->Owner;
+	}
+	else if (Data->OnlyAffectSpawnOwner && pTechno)
+	{
+		pAllowed = pTechno->SpawnOwner;
+	}
 	if (AEData.ReceiverOwn || !pSource || !pSourceHouse)
 	{
 		pSource = pObject;
@@ -38,6 +49,11 @@ void BroadcastEffect::FindAndAttach(BroadcastEntity data, std::vector<std::strin
 		int attachCount = 0;
 		FindTechnoOnMark([&](TechnoClass* pTarget, AttachEffect* aeManager)
 			{
+				// 指定身份过滤只放行射击者或母舰
+				if ((Data->OnlyAffectBulletShooter || Data->OnlyAffectSpawnOwner) && pTarget != pAllowed)
+				{
+					return false;
+				}
 				if (getMode)
 				{
 					selfAEM->Attach(types, chances, false, pTarget, pTarget->Owner, projectileLocation);
@@ -60,6 +76,11 @@ void BroadcastEffect::FindAndAttach(BroadcastEntity data, std::vector<std::strin
 		int attachCount = 0;
 		FindBulletOnMark([&](BulletClass* pTarget, AttachEffect* aeManager)
 			{
+				// 只影响发射者就是宿主本人的弹体，宿主不是单位时没人能发射弹体，一律不通过
+				if (Data->OnlyAffectMyBullet && pTarget->Owner != pTechno)
+				{
+					return false;
+				}
 				if (getMode)
 				{
 					HouseClass* pTargetHouse = GetSourceHouse(pTarget);
