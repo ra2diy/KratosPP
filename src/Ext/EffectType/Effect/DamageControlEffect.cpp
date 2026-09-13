@@ -12,14 +12,9 @@
 
 #include <Ext/ObjectType/AttachEffect.h>
 
-DamageControlEntity DamageControlEffect::GetDataEntity()
+const DamageControlEntity& DamageControlEffect::GetDataEntity()
 {
-	DamageControlEntity data = Data->Data;
-	if (_isElite)
-	{
-		data = Data->EliteData;
-	}
-	return data;
+	return _isElite ? Data->EliteData : Data->Data;
 }
 
 void DamageControlEffect::OnStart()
@@ -35,6 +30,33 @@ void DamageControlEffect::OnStart()
 	_attachFrame = -1;
 
 	_isElite = pTechno && pTechno->Veterancy.IsElite();
+
+	// 向 AE 管理器登记：本单位存在这类段，管线不能再走快速跳过
+	RegisterToAEManager();
+}
+
+void DamageControlEffect::RegisterToAEManager()
+{
+	// 段在新建时走 OnStart、读档时走 Load，两条路径都要登记
+	if (_gameObject)
+	{
+		if (AttachEffect* aem = _gameObject->GetComponent<AttachEffect>())
+		{
+			_aem = aem;
+			aem->AddDamageControlSegment();
+		}
+	}
+}
+
+void DamageControlEffect::UnregisterFromAEManager()
+{
+	// 本段即将被释放：通知 AE 管理器把段缓存作废，下次受伤时重建。
+	// 只写一个标志位、不做其它访问，所以即使管理器正在销毁过程中也安全。
+	if (_aem)
+	{
+		_aem->MarkDamageControlDirty();
+		_aem = nullptr;
+	}
 }
 
 void DamageControlEffect::OnUpdate()
@@ -51,11 +73,7 @@ void DamageControlEffect::OnUpdate()
 	if (isElite != _isElite)
 	{
 		// 精英状态发生变化时，按当前生效的配置决定是否清零计数
-		DamageControlEntity data = Data->Data;
-		if (isElite)
-		{
-			data = Data->EliteData;
-		}
+		const DamageControlEntity& data = isElite ? Data->EliteData : Data->Data;
 		if (data.ResetTimes)
 		{
 			_count = 0;
@@ -112,7 +130,7 @@ bool DamageControlEffect::IsRunning()
 
 bool DamageControlEffect::IsDone()
 {
-	DamageControlEntity data = GetDataEntity();
+	const DamageControlEntity& data = GetDataEntity();
 	if (data.TriggeredTimes <= 0)
 	{
 		// 0 与负数都表示不限次数
@@ -129,7 +147,7 @@ bool DamageControlEffect::IsDone()
 
 bool DamageControlEffect::Timeup()
 {
-	DamageControlEntity data = GetDataEntity();
+	const DamageControlEntity& data = GetDataEntity();
 	if (data.InfiniteTimesPerFrame && _triggerFrame == Unsorted::CurrentFrame)
 	{
 		// 本帧已经记过账：视为同一次触发的延续，本帧内不受冷却限制
@@ -148,22 +166,21 @@ bool DamageControlEffect::CanPlayAnim()
 	return _animDelay <= 0 || _animDelayTimer.Expired();
 }
 
-bool DamageControlEffect::CheckUsable(WarheadTypeClass* pWH)
+bool DamageControlEffect::CheckUsable(WarheadTypeClass* pWH, WarheadTypeExt::TypeData* whData)
 {
 	if (!IsRunning() || !IsReady())
 	{
 		return false;
 	}
 
-	DamageControlEntity data = GetDataEntity();
+	const DamageControlEntity& data = GetDataEntity();
 	if (!data.Enable || !data.WarheadOnMark(pWH->ID))
 	{
 		return false;
 	}
 
 	// 弹头穿透：写了 Modes 就以清单为准，只对列出的类别不响应；没写清单才看总开关
-	WarheadTypeExt::TypeData* whData = GetTypeData<WarheadTypeExt, WarheadTypeExt::TypeData>(pWH);
-	std::vector<DamageReactionMode> ignoreModes = whData->IgnoreDamageReactionModes;
+	const std::vector<DamageReactionMode>& ignoreModes = whData->IgnoreDamageReactionModes;
 	if (!ignoreModes.empty())
 	{
 		// 清单非空时弹头侧会把总开关一并置真，这里必须让清单优先，否则"只穿透指定类别"会退化成全部穿透
@@ -184,7 +201,7 @@ bool DamageControlEffect::CheckUsable(WarheadTypeClass* pWH)
 
 bool DamageControlEffect::CheckCondition(int damage)
 {
-	DamageControlEntity data = GetDataEntity();
+	const DamageControlEntity& data = GetDataEntity();
 	switch (data.Compare)
 	{
 	case FortitudeCompare::EQ:
@@ -216,7 +233,7 @@ bool DamageControlEffect::IsLethal(int damage, args_ReceiveDamage* args)
 
 void DamageControlEffect::OnTriggered(args_ReceiveDamage* args)
 {
-	DamageControlEntity data = GetDataEntity();
+	const DamageControlEntity& data = GetDataEntity();
 	int currentFrame = Unsorted::CurrentFrame;
 
 	// 记账：默认每帧只记一次账，同一帧内的后续命中视为同一次触发
@@ -248,7 +265,7 @@ void DamageControlEffect::OnTriggered(args_ReceiveDamage* args)
 
 void DamageControlEffect::PlayAnim()
 {
-	DamageControlEntity data = GetDataEntity();
+	const DamageControlEntity& data = GetDataEntity();
 	if (AnimTypeClass* pAnimType = AnimTypeClass::Find(data.Anim.c_str()))
 	{
 		CoordStruct location = pTechno->GetCoords();
@@ -268,7 +285,7 @@ void DamageControlEffect::PlayAnim()
 
 void DamageControlEffect::AttachTriggeredEffects(args_ReceiveDamage* args)
 {
-	DamageControlEntity data = GetDataEntity();
+	const DamageControlEntity& data = GetDataEntity();
 	if (data.TriggeredAttachEffects.empty())
 	{
 		return;

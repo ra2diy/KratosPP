@@ -1618,7 +1618,7 @@ void AttachEffect::OnFire(AbstractClass* pTarget, int weaponIdx)
 }
 
 /// @brief 把一条 DamageControl 段列表按 Priority 降序排列（同一档内保持附着顺序），并做同档淘汰
-/// @param list 按附着顺序排好的段
+/// @param list 按附着顺序排好的段；调用处用 std::move 交出所有权，函数内排序的就是它本身，不产生额外拷贝
 /// @param keepComparer true 时，只做比较不改数值的刚毅段不参与淘汰，全部保留
 /// @return 真正要执行的段，顺序即结算顺序
 static std::vector<DamageControlEffect*> FilterDamageControlByPriority(std::vector<DamageControlEffect*> list, bool keepComparer)
@@ -1664,18 +1664,11 @@ static std::vector<DamageControlEffect*> FilterDamageControlByPriority(std::vect
 	return result;
 }
 
-void AttachEffect::OnReceiveDamage(args_ReceiveDamage* args)
+void AttachEffect::RebuildDamageControlCache()
 {
-	ApplyDamageControl(args);
-}
-
-void AttachEffect::ApplyDamageControl(args_ReceiveDamage* args)
-{
-	// 无伤害不进管线；负数（治疗）也要进管线，交给刚毅处理
-	if (!pTechno || !args || !args->Damage || *args->Damage == 0)
-	{
-		return;
-	}
+	_dcEvasions.clear();
+	_dcModifiers.clear();
+	_dcPrevents.clear();
 
 	// 按附着顺序收集三类段：AE 子组件的顺序就是附着顺序
 	std::vector<DamageControlEffect*> evasions{};
@@ -1703,9 +1696,52 @@ void AttachEffect::ApplyDamageControl(args_ReceiveDamage* args)
 				}
 			}
 		}
-		}, true);
+		}, false);
 
-	if (evasions.empty() && modifiers.empty() && prevents.empty())
+	// 闪避与刚毅/减免的顺序和同档淘汰在这里一次定死；免死不参与排序
+	_dcEvasions = FilterDamageControlByPriority(std::move(evasions), false);
+	_dcModifiers = FilterDamageControlByPriority(std::move(modifiers), true);
+	_dcPrevents = std::move(prevents);
+
+	// 校正计数器：这样"段已经全部消失"的单位下次就能直接 O(1) 跳过
+	_damageControlSegments = (int)(_dcEvasions.size() + _dcModifiers.size() + _dcPrevents.size());
+	_dcCacheDirty = false;
+}
+
+void AttachEffect::OnReceiveDamage(args_ReceiveDamage* args)
+{
+	ApplyDamageControl(args);
+}
+
+void AttachEffect::ApplyDamageControl(args_ReceiveDamage* args)
+{
+	// 无伤害不进管线；负数（治疗）也要进管线，交给刚毅处理
+	if (!pTechno || !args || !args->Damage || *args->Damage == 0)
+	{
+		return;
+	}
+
+	// 无视防御的真实伤害不做任何响应（与旧 DamageReaction 同口径）
+	if (args->IgnoreDefenses)
+	{
+		return;
+	}
+	// 本单位没有任何 DamageControl 段：直接跳过，省掉一次子树遍历
+	if (_damageControlSegments <= 0)
+	{
+		return;
+	}
+	// 弹头扩展数据在这里取一次，供所有段复用
+	// 用 :: 限定：本类有一个同名的 GetTypeData() 成员函数，非限定写法会把它遮蔽掉
+	WarheadTypeClass* pWH = args->WH;
+	WarheadTypeExt::TypeData* whData = ::GetTypeData<WarheadTypeExt, WarheadTypeExt::TypeData>(pWH);
+
+	// 段缓存：只在段集合变过之后重建一次；平时每次受伤只比较这一个标志位
+	if (_dcCacheDirty)
+	{
+		RebuildDamageControlCache();
+	}
+	if (_dcEvasions.empty() && _dcModifiers.empty() && _dcPrevents.empty())
 	{
 		return;
 	}
@@ -1719,9 +1755,9 @@ void AttachEffect::ApplyDamageControl(args_ReceiveDamage* args)
 		// 相位 1（闪避）：按 Priority 降序并出总闪避率，摇中则伤害归零并直接出口
 		double dodgeRate = 0;
 		std::vector<DamageControlEffect*> dodgeHits{};
-		for (DamageControlEffect* effect : FilterDamageControlByPriority(evasions, false))
+		for (DamageControlEffect* effect : _dcEvasions)
 		{
-			if (!effect->CheckUsable(args->WH))
+			if (!effect->CheckUsable(pWH, whData))
 			{
 				continue;
 			}
@@ -1751,9 +1787,9 @@ void AttachEffect::ApplyDamageControl(args_ReceiveDamage* args)
 
 	// 相位 2（刚毅 / 减免）：按 Priority 降序逐段结算，前一段改完的数值就是后一段看到的
 	bool exit = false;
-	for (DamageControlEffect* effect : FilterDamageControlByPriority(modifiers, true))
+	for (DamageControlEffect* effect : _dcModifiers)
 	{
-		if (!effect->CheckUsable(args->WH))
+		if (!effect->CheckUsable(pWH, whData))
 		{
 			continue;
 		}
@@ -1799,9 +1835,9 @@ void AttachEffect::ApplyDamageControl(args_ReceiveDamage* args)
 	// 相位 3（免死）：不参与 Priority，按附着顺序逐条判定致死
 	if (!exit)
 	{
-		for (DamageControlEffect* effect : prevents)
+		for (DamageControlEffect* effect : _dcPrevents)
 		{
-			if (!effect->CheckUsable(args->WH))
+			if (!effect->CheckUsable(pWH, whData))
 			{
 				continue;
 			}

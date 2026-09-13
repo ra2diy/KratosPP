@@ -9,6 +9,8 @@
 #include "../EffectScript.h"
 #include "DamageControlData.h"
 
+#include <Extension/WarheadTypeExt.h>
+
 
 /// @brief 一条 DamageControl AE 的效果器。
 /// 每段只负责自己那一类的一次处理：判断自己能不能用、算自己那一份、记账、放表现。
@@ -35,6 +37,8 @@ public:
 
 		_triggerFrame = -1;
 		_attachFrame = -1;
+
+		UnregisterFromAEManager();
 	}
 
 	virtual void OnStart() override;
@@ -67,9 +71,10 @@ public:
 
 	/// @brief 判断本段在这一次伤害里是否可用
 	/// @param pWH 本次伤害的弹头
+	/// @param whData 弹头扩展数据（由管线统一取一次后传入，避免每段重复查找与容器拷贝）
 	/// @return true = 本次可用；否则本段对这一次伤害不产生任何影响
 	/// @note 内部含概率摇骰，每一条段在每一次伤害事件里只允许调用一次
-	bool CheckUsable(WarheadTypeClass* pWH);
+	bool CheckUsable(WarheadTypeClass* pWH, WarheadTypeExt::TypeData* whData);
 
 	/// @brief 刚毅的条件判定
 	/// @param damage 当前伤害值
@@ -109,6 +114,9 @@ public:
 	virtual bool Load(ExStreamReader& stream, bool registerForChange) override
 	{
 		EffectScript::Load(stream, registerForChange);
+
+		// 读档恢复出来的段不会走 OnStart，这里补登记一次
+		RegisterToAEManager();
 		return this->Serialize(stream);
 	}
 	virtual bool Save(ExStreamWriter& stream) const override
@@ -118,8 +126,15 @@ public:
 	}
 #pragma endregion
 private:
+	/// @brief 向 AE 管理器登记本段（新建走 OnStart、读档走 Load，两条路径都要登记）
+	void RegisterToAEManager();
+
+	/// @brief 本段被释放（组件回池）时把 AE 管理器的段缓存标脏
+	void UnregisterFromAEManager();
+
 	/// @brief 取本条段当前生效的配置（精英单位取精英配置）
-	DamageControlEntity GetDataEntity();
+	/// @note 返回引用：结构体里带多个 string / vector，按值返回会让每个取值点都产生一批堆分配
+	const DamageControlEntity& GetDataEntity();
 
 	/// @brief 本段是否处于运行状态（已启动且未暂停）
 	bool IsRunning();
@@ -155,4 +170,6 @@ private:
 
 	int _triggerFrame = -1; // 本段最近一次记账的帧号，用于"每帧只记一次账"
 	int _attachFrame = -1; // 本段最近一次贴附属 AE 的帧号，用于"每帧只贴一次"
+
+	AttachEffect* _aem = nullptr; // 本段所属的 AE 管理器；Clean 时用它把段缓存标脏
 };
