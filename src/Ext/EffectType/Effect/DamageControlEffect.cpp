@@ -269,7 +269,8 @@ void DamageControlEffect::PlayAnim()
 	if (AnimTypeClass* pAnimType = AnimTypeClass::Find(data.Anim.c_str()))
 	{
 		CoordStruct location = pTechno->GetCoords();
-		if (!data.AnimFLH.IsEmpty())
+		// CoordStruct::IsEmpty() 不是 const 成员函数，这里用与空坐标比较代替（data 是 const 引用）
+		if (!(data.AnimFLH == CoordStruct::Empty))
 		{
 			location = GetFLHAbsoluteCoords(pTechno, data.AnimFLH, false);
 		}

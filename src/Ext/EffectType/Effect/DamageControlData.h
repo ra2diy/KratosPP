@@ -277,7 +277,7 @@ public:
 	/// @brief 判断某个弹头是否允许触发本段
 	/// @param warheadId 弹头的 ID
 	/// @return true = 允许触发；白名单存在时必须在白名单内，黑名单命中时一律不允许
-	bool WarheadOnMark(const char* warheadId)
+	bool WarheadOnMark(const char* warheadId) const
 	{
 		bool hasWhiteList = !OnlyReactionWarheads.empty();
 		bool hasBlackList = !NotReactionWarheads.empty();
