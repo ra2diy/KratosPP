@@ -22,6 +22,7 @@ class BulletStatus;
 class TechnoStatus;
 
 class CounterEffect;
+class DamageControlEffect;
 
 /// @brief 快速查找的map，使用vector代替map，以达到更快的查找速度
 template<typename K, typename V>
@@ -271,6 +272,16 @@ public:
 
 	virtual void CanFire(AbstractClass* pTarget, WeaponTypeClass* pWeapon, bool& ceaseFire) override;
 	virtual void OnFire(AbstractClass* pTarget, int weaponIdx) override;
+
+	virtual void OnReceiveDamage(args_ReceiveDamage* args) override;
+
+	/**
+	 *@brief 把本单位名下所有 DamageControl 段收拢成一条管线，结算出一个唯一的伤害值写回原伤害。
+	 * 相位固定：闪避 → 刚毅 / 减免（按 Priority 降序，同档只留最后附着的那一条）→ 免死（按附着顺序）。
+	 *
+	 * @param args 本次伤害的参数，伤害值会被就地改写
+	 */
+	void ApplyDamageControl(args_ReceiveDamage* args);
 
 	virtual void OnReceiveDamageDestroy() override;
 

@@ -72,6 +72,7 @@
     <ClCompile Include="src\Ext\EffectType\Effect\CrateBuffEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\CounterEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\CountTriggerEffect.cpp" />
+    <ClCompile Include="src\Ext\EffectType\Effect\DamageControlEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\DamageSelfEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\ExtraFireEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\FireSuperEffect.cpp" />
