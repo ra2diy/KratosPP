@@ -33,6 +33,7 @@
 #include "Effect/VampireData.h"
 #include "Effect/CopyData.h"
 #include "Effect/TraceData.h"
+#include "Effect/DamageControlData.h"
 // State Effects
 #include <Ext/StateType/State/AntiBulletData.h>
 #include <Ext/StateType/State/BlackHoleData.h>
@@ -183,6 +184,7 @@ public:
 	EFFECT_VAR_DEFINE(Vampire);
 	EFFECT_VAR_DEFINE(Copy);
 	EFFECT_VAR_DEFINE(Trace);
+	EFFECT_VAR_DEFINE(DamageControl);
 	// State Effects
 	EFFECT_VAR_DEFINE(AntiBullet);
 	EFFECT_VAR_DEFINE(BlackHole);
@@ -230,6 +232,7 @@ public:
 		EFFECT_VAR_READ(Vampire);
 		EFFECT_VAR_READ(Copy);
 		EFFECT_VAR_READ(Trace);
+		EFFECT_VAR_READ(DamageControl);
 		// State Effects
 		EFFECT_VAR_READ(AntiBullet);
 		EFFECT_VAR_READ(BlackHole);
@@ -280,6 +283,7 @@ public:
 		EFFECT_VAR_SCRIPT_NAME(Revenge);
 		EFFECT_VAR_SCRIPT_NAME(Stack);
 		EFFECT_VAR_SCRIPT_NAME(Vampire);
+		EFFECT_VAR_SCRIPT_NAME(DamageControl);
 		// State Effects
 		EFFECT_VAR_SCRIPT_NAME(AntiBullet);
 		EFFECT_VAR_SCRIPT_NAME(BlackHole);
@@ -332,6 +336,7 @@ public:
 			EFFECT_VAR_PROCESS(Vampire)
 			EFFECT_VAR_PROCESS(Copy)
 			EFFECT_VAR_PROCESS(Trace)
+			EFFECT_VAR_PROCESS(DamageControl)
 			// State Effects
 			EFFECT_VAR_PROCESS(AntiBullet)
 			EFFECT_VAR_PROCESS(BlackHole)

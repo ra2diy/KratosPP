@@ -22,6 +22,7 @@ class BulletStatus;
 class TechnoStatus;
 
 class CounterEffect;
+class DamageControlEffect;
 
 /// @brief 快速查找的map，使用vector代替map，以达到更快的查找速度
 template<typename K, typename V>
@@ -235,6 +236,13 @@ public:
 
 		_ownerIsDead = false;
 
+		_damageControlSegments = 0; // 段计数器随组件复用一起归零
+
+		_dcEvasions.clear(); // 段缓存同样不能跨复用残留
+		_dcModifiers.clear();
+		_dcPrevents.clear();
+		_dcCacheDirty = true;
+
 		_attachOnceFlag = false;
 
 		_attachStateEffectFlag = false;
@@ -272,6 +280,28 @@ public:
 	virtual void CanFire(AbstractClass* pTarget, WeaponTypeClass* pWeapon, bool& ceaseFire) override;
 	virtual void OnFire(AbstractClass* pTarget, int weaponIdx) override;
 
+	virtual void OnReceiveDamage(args_ReceiveDamage* args) override;
+
+	/**
+	 *@brief 把本单位名下所有 DamageControl 段收拢成一条管线，结算出一个唯一的伤害值写回原伤害。
+	 * 相位固定：闪避 → 刚毅 / 减免（按 Priority 降序，同档只留最后附着的那一条）→ 免死（按附着顺序）。
+	 *
+	 * @param args 本次伤害的参数，伤害值会被就地改写
+	 */
+	void ApplyDamageControl(args_ReceiveDamage* args);
+
+	/// @brief 登记一条 DamageControl 段，供管线判断"本单位到底有没有这类段"
+	/// @note 计数器只增不减：段失效由各段自己的可用性检查拦下，不从计数器里扣。
+	/// 这样即使某条移除路径没通知到，最坏也只是多做一次收集，不会漏执行。
+	void AddDamageControlSegment() { _damageControlSegments++; _dcCacheDirty = true; }
+
+	/// @brief 段缓存作废：新增段或段被释放（组件回池）时调用，下次受伤时重建一次
+	/// @note 只写一个标志位、不做其它访问，所以调用时机安全
+	void MarkDamageControlDirty() { _dcCacheDirty = true; }
+
+	/// @brief 重新收集全部段、分类与排序、同档淘汰，并校正段计数器
+	void RebuildDamageControlCache();
+
 	virtual void OnReceiveDamageDestroy() override;
 
 	virtual void OnDetonate(CoordStruct* pCoords, bool& skip) override;
@@ -279,6 +309,15 @@ public:
 	virtual void OnUnInit() override;
 
 	bool PowerOff = false; // 停电状态
+
+	int _damageControlSegments = 0; // 本单位已登记的 DamageControl 段数量；为 0 时管线直接跳过
+
+	// 段缓存：收集、分类、排序、同档淘汰只在"段集合变了"之后做一次，
+	// 之后每次受伤直接走这份列表，不再遍历组件树
+	std::vector<DamageControlEffect*> _dcEvasions{};
+	std::vector<DamageControlEffect*> _dcModifiers{};
+	std::vector<DamageControlEffect*> _dcPrevents{};
+	bool _dcCacheDirty = true; // 段集合是否变过；变过就重建一次，之后每次受伤只看这一个标志位
 
 	std::vector<int> PassengerIds{}; // 乘客持有的AEMode ID
 	std::map<std::string, CDTimerClass> DisableDelayTimers{};
