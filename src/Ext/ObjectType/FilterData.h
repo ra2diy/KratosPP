@@ -36,6 +36,13 @@ public:
 	bool AffectCannon = true;
 	bool AffectBomb = true;
 
+	// 只影响发射者就是宿主本人的弹体，不向子机、替身延续
+	bool OnlyAffectMyBullet = false;
+	// 只影响弹体的射击者，射击者 = 打出宿主这枚弹体的单位，宿主不是弹体时不存在
+	bool OnlyAffectBulletShooter = false;
+	// 只影响子机的母舰，宿主本身是子机时才存在
+	bool OnlyAffectSpawnOwner = false;
+
 	bool AffectStand = false;
 	bool AffectSelf = false;
 	bool AffectInAir = true;
@@ -83,6 +90,10 @@ public:
 		{
 			AffectBullet = false;
 		}
+
+		OnlyAffectMyBullet = reader->Get(title + "OnlyAffectMyBullet", OnlyAffectMyBullet);
+		OnlyAffectBulletShooter = reader->Get(title + "OnlyAffectBulletShooter", OnlyAffectBulletShooter);
+		OnlyAffectSpawnOwner = reader->Get(title + "OnlyAffectSpawnOwner", OnlyAffectSpawnOwner);
 
 		AffectStand = reader->Get(title + "AffectStand", AffectStand);
 		AffectSelf = reader->Get(title + "AffectSelf", AffectSelf);
@@ -229,6 +240,10 @@ public:
 			.Process(this->AffectTorpedo)
 			.Process(this->AffectCannon)
 			.Process(this->AffectBomb)
+
+			.Process(this->OnlyAffectMyBullet)
+			.Process(this->OnlyAffectBulletShooter)
+			.Process(this->OnlyAffectSpawnOwner)
 
 			.Process(this->AffectStand)
 			.Process(this->AffectSelf)
