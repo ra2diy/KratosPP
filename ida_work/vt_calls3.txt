@@ -1,0 +1,29 @@
+.text = 0x401000-0x7E1000
+=== indirect calls referencing +144h/+140h/+148h ===
+  0x00447091  call dword ptr [edx+148h]                     in BuildingClass_19C
+  0x004AE8C4  call dword ptr [edx+140h]                     in sub_4AE750
+  0x004AE927  call dword ptr [ebp+140h]                     in sub_4AE750
+  0x004AE97C  call dword ptr [ebp+140h]                     in sub_4AE750
+  0x004C739F  call dword ptr [edx+148h]                     in Networking_RespondToEvent
+  0x004DCA93  call dword ptr [edx+144h]                     in FootClass_ExecutePlanningWaypoint
+  0x004DCDCF  call dword ptr [eax+140h]                     in FootClass_ExecutePlanningWaypoint
+  0x004DCDFF  call dword ptr [edx+140h]                     in FootClass_ExecutePlanningWaypoint
+  0x0051A5D0  call dword ptr [ebx+148h]                     in InfantryClass_UpdatePosition
+
+=== vtable entries -> UnitClass_ClickedMission (0x738890) ===
+  at 0x7F5DB4 (seg .rdata) in -
+
+=== vtable entries -> FootClass_ClickedMission (0x4D74E0) ===
+  at 0x417C4E (seg .text) in AircraftClass_ClickedMission
+  at 0x51F1EF (seg .text) in InfantryClass_ClickedMission
+  at 0x738902 (seg .text) in UnitClass_ClickedMission
+  at 0x7E8C94 (seg .rdata) in -
+
+=== callers of FootClass_ExecutePlanningWaypoint ===
+
+containing func of 0x4DCA93 = FootClass_ExecutePlanningWaypoint [0x4DC8C0-0x4DCE7A]
+  0x416885 in AircraftClass_Mi_Move
+  0x417570 in AircraftClass_Mi_Patrol
+  0x4D8440 in FootClass_484
+  0x4D8ECB in FootClass_UpdatePosition
+  0x4DE5C4 in FootClass_ProceedToNextPlanningWaypoint

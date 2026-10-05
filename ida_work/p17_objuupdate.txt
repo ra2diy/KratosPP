@@ -1,0 +1,255 @@
+############ ObjectClass_Update 0x5F3F30..0x5F4030 (含 +0x18C 调用) ############
+  005F3F30  call    dword ptr [edx+1D0h]
+  005F3F32  mov     ecx, [this+2Ch]
+  005F3F35  mov     edi, eax
+  005F3F37  mov     al, [this+74h]
+  005F3F3A  add     edi, ecx
+  005F3F3C  test    al, al
+  005F3F3E  jz      short loc_5F3F60
+  005F3F40  mov     eax, [this]
+  005F3F42  push    0
+  005F3F44  mov     ecx, this
+  005F3F46  call    dword ptr [eax+124h]
+  005F3F4C  mov     edx, [this]
+  005F3F4E  push    1
+  005F3F50  mov     ecx, this
+  005F3F52  mov     [this+0A4h], edi
+  005F3F58  call    dword ptr [edx+124h]
+  005F3F5E  jmp     short loc_5F3F66
+  005F3F60  mov     [this+0A4h], edi
+  005F3F66  mov     eax, [this]
+  005F3F68  mov     ecx, this
+  005F3F6A  call    dword ptr [eax+1C8h]
+  005F3F70  test    eax, eax
+  005F3F72  jg      short loc_5F3FA4
+  005F3F74  mov     edx, [this]
+  005F3F76  push    0
+  005F3F78  mov     ecx, this
+  005F3F7A  call    dword ptr [edx+1CCh]
+  005F3F80  mov     eax, [this]
+  005F3F82  push    2
+  005F3F84  mov     ecx, this
+  005F3F86  mov     byte ptr [this+8Dh], 0
+  005F3F8D  call    dword ptr [eax+18Ch]
+  005F3F93  mov     eax, [this+88h]
+  005F3F99  test    eax, eax
+  005F3F9B  jz      short loc_5F3FA4
+  005F3F9D  mov     byte ptr [eax+195h], 0
+  005F3FA4  mov     al, [this+OverlayClass.o.InLimbo]
+  005F3FAA  test    al, al
+  005F3FAC  jnz     loc_5F4146
+  005F3FB2  mov     al, [this+OverlayClass.o.HasParachute]
+  005F3FB8  test    al, al
+  005F3FBA  jz      short loc_5F3FD7
+  005F3FBC  mov     edi, [this+OverlayClass.o.FallRate]
+  005F3FBF  dec     edi
+  005F3FC0  mov     [this+OverlayClass.o.FallRate], edi
+  005F3FC3  mov     ecx, RulesData
+  005F3FC9  mov     eax, edi
+  005F3FCB  mov     ecx, [ecx+7B8h]
+  005F3FD1  cmp     eax, ecx
+  005F3FD3  jg      short loc_5F3FFA
+  005F3FD5  jmp     short loc_5F3FF8
+  005F3FD7  fild    dword ptr [this+2Ch]
+  005F3FDA  fsub    ds:dbl_7EF248; 1.4
+  005F3FE0  call    Float_To_Int_Floor
+  005F3FE5  mov     [this+2Ch], eax
+  005F3FE8  mov     edx, RulesData
+  005F3FEE  mov     ecx, [edx+7BCh]
+  005F3FF4  cmp     eax, ecx
+  005F3FF6  jg      short loc_5F3FFA
+  005F3FF8  mov     eax, ecx
+  005F3FFA  mov     [this+2Ch], eax
+  005F3FFD  mov     eax, [this]
+  005F3FFF  mov     ecx, this
+  005F4001  call    dword ptr [eax+78h]
+  005F4004  cmp     ebp, eax
+  005F4006  jz      short loc_5F4013
+  005F4008  push    this; anim
+  005F4009  mov     ecx, offset Map; this
+  005F400E  call    DisplayClass::Submit
+  005F4013  mov     al, [this+OverlayClass.o.Falling]
+  005F4019  test    al, al
+  005F401B  jnz     lct_Out
+  005F4021  mov     al, [this+OverlayClass.o.IsABomb]
+  005F4027  test    al, al
+  005F4029  jz      short loc_5F405B
+  005F402B  mov     eax, [this+OverlayClass.o.Health]
+  005F402E  test    eax, eax
+
+############ TechnoClass::Per_Cell_Process 0x6F5090 头部 ############
+  006F5090  mov     eax, [esp+coords]
+  006F5094  sub     esp, 10h
+  006F5097  cmp     eax, 2
+  006F509A  push    esi
+  006F509B  mov     esi, ecx
+  006F509D  jnz     loc_6F5188
+  006F50A3  mov     ecx, [esi+TechnoClass.TemporalTargettingMe]; this
+  006F50A9  test    ecx, ecx
+  006F50AB  jz      short loc_6F50B9
+  006F50AD  mov     eax, [ecx+28h]
+  006F50B0  test    eax, eax
+  006F50B2  jz      short loc_6F50B9
+  006F50B4  call    TemporalClass_LetGo
+  006F50B9  mov     eax, [esi]
+  006F50BB  lea     ecx, [esp+14h+var_C]
+  006F50BF  push    ecx
+  006F50C0  mov     ecx, esi
+  006F50C2  call    dword ptr [eax+48h]
+  006F50C5  mov     ecx, eax
+  006F50C7  mov     eax, [ecx]
+  006F50C9  cdq
+  006F50CA  and     edx, 0FFh
+  006F50D0  add     eax, edx
+  006F50D2  sar     eax, 8
+  006F50D5  mov     word ptr [esp+14h+var_10], ax
+  006F50DA  mov     eax, [ecx+4]
+  006F50DD  cdq
+  006F50DE  and     edx, 0FFh
+  006F50E4  mov     ecx, esi
+  006F50E6  add     eax, edx
+  006F50E8  sar     eax, 8
+  006F50EB  mov     word ptr [esp+14h+var_10+2], ax
+  006F50F0  mov     edx, [esp+14h+var_10]
+  006F50F4  mov     eax, [esi]
+  006F50F6  mov     [esp+14h+coords], edx
+  006F50FA  call    dword ptr [eax+420h]
+  006F5100  mov     ecx, [esi+34h]; this
+  006F5103  test    ecx, ecx
+  006F5105  jz      short loc_6F511A
+  006F5107  mov     edx, dword ptr someMoreCoords.X
+  006F510D  push    0; source
+  006F510F  push    0; isRepeating
+  006F5111  push    edx; loc
+  006F5112  push    esi; TagObject
+  006F5113  push    22h ; '"'; eventKind
+  006F5115  call    TagClass_RaiseEvent; eventKind = 34
+  006F511A  mov     al, [esi+3D5h]
+  006F5120  test    al, al
+  006F5122  jnz     short loc_6F5140
+  006F5124  lea     eax, [esp+14h+coords]
+  006F5128  push    1; skipRange
+  006F512A  push    eax; where
+  006F512B  mov     ecx, offset Map; this
+  006F5130  call    MapClass::In_Radar
+  006F5135  test    al, al
+  006F5137  jz      short loc_6F5140
+  006F5139  mov     byte ptr [esi+3D5h], 1
+  006F5140  mov     al, [esi+41Bh]
+  006F5146  test    al, al
+  006F5148  jnz     short loc_6F5172
+  006F514A  lea     ecx, [esp+14h+coords]
+  006F514E  push    ecx; coords
+  006F514F  mov     ecx, offset Map; this
+  006F5154  call    MapClass::Coord_Cell
+  006F5159  test    byte ptr [eax+12Ch], 10h
+  006F5160  jz      short loc_6F5172
+  006F5162  mov     eax, HouseClass_PlayerPtr
+  006F5167  mov     edx, [esi]
+  006F5169  push    eax
+  006F516A  mov     ecx, esi
+  006F516C  call    dword ptr [edx+198h]
+  006F5172  lea     ecx, [esp+14h+coords]
+  006F5176  push    ecx; coords
+  006F5177  mov     ecx, offset Map; this
+  006F517C  call    MapClass::Coord_Cell
+  006F5181  mov     ecx, eax; this
+  006F5183  call    CellClass_ActivateVeins
+  006F5188  pop     esi
+  006F5189  add     esp, 10h
+  006F518C  retn    4
+  006F518F  align 10h
+  006F5190  sub     esp, 8Ch
+  006F5196  push    ebp
+  006F5197  mov     ebp, ecx
+  006F5199  push    esi
+  006F519A  push    edi
+  006F519B  mov     al, [ebp+_TechnoClass.t.field_3C9]
+  006F51A1  mov     [esp+98h+var_4], ebp
+  006F51A8  test    al, al
+  006F51AA  jnz     lct_Out
+  006F51B0  mov     al, [ebp+_TechnoClass.t.r.m.o.BombVisible]
+  006F51B3  test    al, al
+  006F51B5  jz      lct_NoBomb
+  006F51BB  mov     eax, [ebp+_TechnoClass.t.r.m.o.IvanBomb]
+  006F51BE  test    eax, eax
+  006F51C0  jz      lct_NoBomb
+  006F51C6  mov     eax, [ebp+0]
+  006F51C9  lea     ecx, [esp+98h+var_6C.Z]
+  006F51CD  push    ecx
+  006F51CE  mov     ecx, ebp
+
+############ FootClass_ExecutePlanningWaypoint 0x4DC8C0 头部 ############
+  004DC8C0  sub     esp, 48h
+  004DC8C3  xor     al, al
+  004DC8C5  push    esi
+  004DC8C6  mov     esi, ecx
+  004DC8C8  push    edi; boo
+  004DC8C9  mov     cl, [esi+430h]
+  004DC8CF  test    cl, cl
+  004DC8D1  jz      short loc_4DC8DA
+  004DC8D3  mov     byte ptr [esi+43Ah], 1
+  004DC8DA  mov     edi, [esp+50h+wpt]
+  004DC8DE  test    edi, edi
+  004DC8E0  jz      loc_4DCE30
+  004DC8E6  push    ebx; MovementZone
+  004DC8E7  lea     eax, [esi+_FootClass.f.idxWP]
+  004DC8ED  push    ebp; boo
+  004DC8EE  lea     ecx, [esi+_FootClass.f.idxPath]
+  004DC8F4  push    eax; idxWP
+  004DC8F5  push    ecx; idxPath
+  004DC8F6  mov     ecx, HouseClass_PlayerPtr; this
+  004DC8FC  push    edi; a2
+  004DC8FD  call    HouseClass_GetPlanningWaypointProperties
+  004DC902  mov     edx, [edi]
+  004DC904  mov     ecx, [edi+8]
+  004DC907  mov     eax, [edi+4]
+  004DC90A  mov     [esp+58h+a2.X], edx
+  004DC90E  lea     edx, [esp+58h+a2]
+  004DC912  mov     [esp+58h+var_10], ecx
+  004DC916  push    edx; a2
+  004DC917  mov     ecx, offset Map; this
+  004DC91C  mov     [esp+5Ch+a2.Y], eax
+  004DC920  call    MapClass_Get_Target_Cell
+  004DC925  mov     ebp, [eax+0E4h]
+  004DC92B  mov     ecx, ebp; this
+  004DC92D  call    Is_Techno
+  004DC932  mov     edi, eax
+  004DC934  mov     eax, [esp+58h+a2.X]
+  004DC938  cdq
+  004DC939  and     edx, 0FFh
+  004DC93F  add     eax, edx
+  004DC941  mov     ecx, eax
+  004DC943  mov     eax, [esp+58h+a2.Y]
+  004DC947  cdq
+  004DC948  and     edx, 0FFh
+  004DC94E  add     eax, edx
+  004DC950  sar     ecx, 8
+  004DC953  sar     eax, 8
+  004DC956  mov     word ptr [esp+58h+wpt], cx
+  004DC95B  mov     word ptr [esp+58h+wpt+2], ax
+  004DC960  mov     edx, [esp+58h+wpt]
+  004DC964  mov     word ptr [esp+58h+wpt], cx
+  004DC969  mov     [esi+528h], edx
+  004DC96F  mov     dl, AllowVoice
+  004DC975  mov     word ptr [esp+58h+wpt+2], ax
+  004DC97A  mov     eax, [esp+58h+wpt]
+  004DC97E  test    edi, edi
+  004DC980  mov     [esp+58h+var_45], dl
+  004DC984  mov     AllowVoice, 0
+  004DC98B  mov     dword ptr [esp+58h+a3.X], eax
+  004DC98F  mov     byte ptr [esp+58h+wpt], 1
+  004DC994  jz      loc_4DCB9B
+  004DC99A  mov     edx, [esi]
+  004DC99C  push    1
+  004DC99E  push    ebp
+  004DC99F  mov     ecx, esi
+  004DC9A1  call    dword ptr [edx+74h]
+  004DC9A4  mov     ecx, HouseClass_PlayerPtr; this
+  004DC9AA  mov     ebx, eax
+  004DC9AC  mov     eax, [edi+21Ch]
+  004DC9B2  mov     [esp+58h+a14], ebx
+  004DC9B6  push    eax; h2
+  004DC9B7  call    HouseClass::Is_Ally
+  004DC9BC  test    al, al
+  004DC9BE  jz      loc_4DCAB4

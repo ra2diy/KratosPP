@@ -1,0 +1,637 @@
+FUNC 0x64DAB0 sub_64DAB0 [0x64DAB0-0x64DE7D]
+
+---- DISASM ----
+0x0064DAB0  mov     ecx, dword ptr inf_vec.IsInitialized
+0x0064DAB6  sub     esp, 14h
+0x0064DAB9  xor     eax, eax
+0x0064DABB  push    ebx
+0x0064DABC  push    ebp
+0x0064DABD  push    esi
+0x0064DABE  xor     esi, esi
+0x0064DAC0  test    ecx, ecx
+0x0064DAC2  push    edi
+0x0064DAC3  mov     dword_AC51FC, eax
+0x0064DAC8  jle     loc_64DB57
+0x0064DACE  mov     eax, inf_vec.vt
+0x0064DAD3  mov     eax, [eax+esi*4]
+0x0064DAD6  lea     ecx, [eax+9Ch]
+0x0064DADC  mov     edi, [eax+9Ch]
+0x0064DAE2  mov     ebx, [ecx+4]
+0x0064DAE5  mov     edx, [ecx+8]; arg
+0x0064DAE8  lea     ecx, [esp+24h+arg]
+0x0064DAEC  push    ecx; arg
+0x0064DAED  lea     ecx, [eax+388h]; Facing
+0x0064DAF3  mov     [esp+28h+var_4], edx
+0x0064DAF7  call    Desired_Facing256
+0x0064DAFC  mov     ebp, [eax]
+0x0064DAFE  mov     eax, 66666667h
+0x0064DB03  imul    ebx
+0x0064DB05  sar     edx, 2
+0x0064DB08  shr     ebp, 7
+0x0064DB0B  mov     eax, edx
+0x0064DB0D  inc     ebp
+0x0064DB0E  shr     eax, 1Fh
+0x0064DB11  shr     ebp, 1
+0x0064DB13  add     edx, eax
+0x0064DB15  and     ebp, 0FFh
+0x0064DB1B  shl     edx, 10h
+0x0064DB1E  mov     eax, 66666667h
+0x0064DB23  add     ebp, edx
+0x0064DB25  imul    edi
+0x0064DB27  sar     edx, 2
+0x0064DB2A  mov     ecx, edx
+0x0064DB2C  add     edx, ebp
+0x0064DB2E  shr     ecx, 1Fh
+0x0064DB31  add     ecx, edx
+0x0064DB33  mov     edx, dword_AC51FC
+0x0064DB39  mov     eax, edx
+0x0064DB3B  shr     eax, 1Fh
+0x0064DB3E  lea     eax, [eax+edx*2]
+0x0064DB41  add     eax, ecx
+0x0064DB43  mov     ecx, dword ptr inf_vec.IsInitialized
+0x0064DB49  inc     esi
+0x0064DB4A  mov     dword_AC51FC, eax
+0x0064DB4F  cmp     esi, ecx
+0x0064DB51  jl      loc_64DACE
+0x0064DB57  mov     ecx, vec_Units.length
+0x0064DB5D  xor     ebx, ebx
+0x0064DB5F  test    ecx, ecx
+0x0064DB61  jle     loc_64DC19
+0x0064DB67  mov     ecx, vec_Units.data
+0x0064DB6D  mov     edi, [ecx+ebx*4]
+0x0064DB70  lea     edx, [edi+9Ch]
+0x0064DB76  mov     ebp, [edi+9Ch]
+0x0064DB7C  mov     eax, [edx+4]
+0x0064DB7F  mov     [esp+24h+var_8], eax
+0x0064DB83  mov     ecx, [edx+8]
+0x0064DB86  lea     edx, [esp+24h+arg]; arg
+0x0064DB8A  mov     [esp+24h+var_4], ecx
+0x0064DB8E  push    edx; arg
+0x0064DB8F  lea     ecx, [edi+388h]; Facing
+0x0064DB95  call    Desired_Facing256
+0x0064DB9A  mov     esi, [eax]
+0x0064DB9C  lea     eax, [esp+24h+var_10]
+0x0064DBA0  shr     esi, 7
+0x0064DBA3  inc     esi
+0x0064DBA4  push    eax; arg
+0x0064DBA5  shr     esi, 1
+0x0064DBA7  lea     ecx, [edi+3A0h]; Facing
+0x0064DBAD  and     esi, 0FFh
+0x0064DBB3  call    Desired_Facing256
+0x0064DBB8  mov     ecx, [eax]
+0x0064DBBA  mov     eax, 66666667h
+0x0064DBBF  imul    [esp+24h+var_8]
+0x0064DBC3  sar     edx, 2
+0x0064DBC6  mov     eax, edx
+0x0064DBC8  shr     eax, 1Fh
+0x0064DBCB  add     edx, eax
+0x0064DBCD  mov     eax, 66666667h
+0x0064DBD2  mov     edi, edx
+0x0064DBD4  imul    ebp
+0x0064DBD6  shr     ecx, 7
+0x0064DBD9  inc     ecx
+0x0064DBDA  shr     ecx, 1
+0x0064DBDC  shl     edi, 10h
+0x0064DBDF  sar     edx, 2
+0x0064DBE2  and     ecx, 0FFh
+0x0064DBE8  add     edi, esi
+0x0064DBEA  mov     eax, edx
+0x0064DBEC  add     edi, ecx
+0x0064DBEE  mov     ecx, dword_AC51FC
+0x0064DBF4  shr     eax, 1Fh
+0x0064DBF7  add     edx, eax
+0x0064DBF9  mov     eax, ecx
+0x0064DBFB  shr     eax, 1Fh
+0x0064DBFE  add     edx, edi
+0x0064DC00  lea     eax, [eax+ecx*2]
+0x0064DC03  mov     ecx, vec_Units.length
+0x0064DC09  add     eax, edx
+0x0064DC0B  inc     ebx
+0x0064DC0C  cmp     ebx, ecx
+0x0064DC0E  mov     dword_AC51FC, eax
+0x0064DC13  jl      loc_64DB67
+0x0064DC19  mov     ecx, vec_Buildings.length
+0x0064DC1F  xor     esi, esi
+0x0064DC21  test    ecx, ecx
+0x0064DC23  jle     loc_64DCB3
+0x0064DC29  mov     ecx, vec_Buildings.vector
+0x0064DC2F  mov     eax, [ecx+esi*4]
+0x0064DC32  lea     edx, [eax+9Ch]
+0x0064DC38  mov     edi, [eax+9Ch]
+0x0064DC3E  mov     ebx, [edx+4]
+0x0064DC41  mov     ecx, [edx+8]
+0x0064DC44  lea     edx, [esp+24h+var_10]; arg
+0x0064DC48  mov     [esp+24h+var_4], ecx
+0x0064DC4C  push    edx; arg
+0x0064DC4D  lea     ecx, [eax+388h]; Facing
+0x0064DC53  call    Desired_Facing256
+0x0064DC58  mov     ebp, [eax]
+0x0064DC5A  mov     eax, 66666667h
+0x0064DC5F  imul    ebx
+0x0064DC61  sar     edx, 2
+0x0064DC64  shr     ebp, 7
+0x0064DC67  mov     eax, edx
+0x0064DC69  inc     ebp
+0x0064DC6A  shr     eax, 1Fh
+0x0064DC6D  shr     ebp, 1
+0x0064DC6F  add     edx, eax
+0x0064DC71  and     ebp, 0FFh
+0x0064DC77  shl     edx, 10h
+0x0064DC7A  mov     eax, 66666667h
+0x0064DC7F  add     ebp, edx
+0x0064DC81  imul    edi
+0x0064DC83  sar     edx, 2
+0x0064DC86  mov     ecx, edx
+0x0064DC88  add     edx, ebp
+0x0064DC8A  shr     ecx, 1Fh
+0x0064DC8D  add     ecx, edx
+0x0064DC8F  mov     edx, dword_AC51FC
+0x0064DC95  mov     eax, edx
+0x0064DC97  shr     eax, 1Fh
+0x0064DC9A  lea     eax, [eax+edx*2]
+0x0064DC9D  add     eax, ecx
+0x0064DC9F  mov     ecx, vec_Buildings.length
+0x0064DCA5  inc     esi
+0x0064DCA6  mov     dword_AC51FC, eax
+0x0064DCAB  cmp     esi, ecx
+0x0064DCAD  jl      loc_64DC29
+0x0064DCB3  mov     edi, vec_Houses.length
+0x0064DCB9  test    edi, edi
+0x0064DCBB  jle     short loc_64DCE4
+0x0064DCBD  mov     edx, vec_Houses.Vector
+0x0064DCC3  mov     ecx, [edx]
+0x0064DCC5  xor     ebx, ebx
+0x0064DCC7  add     edx, 4
+0x0064DCCA  mov     bl, [ecx+241h]
+0x0064DCD0  mov     ecx, eax
+0x0064DCD2  shr     ecx, 1Fh
+0x0064DCD5  mov     esi, ebx
+0x0064DCD7  lea     eax, [ecx+eax*2]
+0x0064DCDA  add     eax, esi
+0x0064DCDC  dec     edi
+0x0064DCDD  mov     dword_AC51FC, eax
+0x0064DCE2  jnz     short loc_64DCC3
+0x0064DCE4  mov     ebp, offset vec_ObjectsInLayers.length
+0x0064DCE9  mov     eax, [ebp+0]
+0x0064DCEC  xor     edi, edi
+0x0064DCEE  test    eax, eax
+0x0064DCF0  mov     [esp+24h+arg], edi
+0x0064DCF4  jle     loc_64DD89
+0x0064DCFA  mov     edx, [ebp-0Ch]
+0x0064DCFD  mov     esi, [edx+edi*4]
+0x0064DD00  mov     ecx, esi
+0x0064DD02  mov     eax, [esi]
+0x0064DD04  call    dword ptr [eax+2Ch]
+0x0064DD07  cmp     eax, 4
+0x0064DD0A  jnz     short loc_64DD1B
+0x0064DD0C  mov     ecx, [esi+4]
+0x0064DD0F  lea     eax, [esi+4]
+0x0064DD12  push    eax
+0x0064DD13  call    dword ptr [ecx+10h]
+0x0064DD16  cmp     eax, 0FFFFFFFEh
+0x0064DD19  jz      short loc_64DD79
+0x0064DD1B  lea     edx, [esi+9Ch]
+0x0064DD21  mov     ecx, esi
+0x0064DD23  mov     edi, [edx]
+0x0064DD25  mov     ebx, [edx+4]
+0x0064DD28  mov     eax, [edx+8]
+0x0064DD2B  mov     edx, [esi]
+0x0064DD2D  mov     [esp+24h+var_4], eax
+0x0064DD31  call    dword ptr [edx+2Ch]
+0x0064DD34  mov     ecx, eax
+0x0064DD36  mov     eax, 66666667h
+0x0064DD3B  imul    ebx
+0x0064DD3D  sar     edx, 2
+0x0064DD40  mov     eax, edx
+0x0064DD42  shr     eax, 1Fh
+0x0064DD45  add     edx, eax
+0x0064DD47  mov     eax, 66666667h
+0x0064DD4C  shl     edx, 10h
+0x0064DD4F  add     ecx, edx
+0x0064DD51  imul    edi
+0x0064DD53  sar     edx, 2
+0x0064DD56  mov     eax, edx
+0x0064DD58  add     edx, ecx
+0x0064DD5A  shr     eax, 1Fh
+0x0064DD5D  add     eax, edx
+0x0064DD5F  mov     edx, dword_AC51FC
+0x0064DD65  mov     ecx, edx
+0x0064DD67  mov     edi, [esp+24h+arg]
+0x0064DD6B  shr     ecx, 1Fh
+0x0064DD6E  lea     ecx, [ecx+edx*2]
+0x0064DD71  add     ecx, eax
+0x0064DD73  mov     dword_AC51FC, ecx
+0x0064DD79  mov     eax, [ebp+0]
+0x0064DD7C  inc     edi
+0x0064DD7D  cmp     edi, eax
+0x0064DD7F  mov     [esp+24h+arg], edi
+0x0064DD83  jl      loc_64DCFA
+0x0064DD89  add     ebp, 18h
+0x0064DD8C  cmp     ebp, offset dword_8A03E8
+0x0064DD92  jl      loc_64DCE9
+0x0064DD98  mov     eax, vec_Logics.length
+0x0064DD9D  xor     ebp, ebp
+0x0064DD9F  test    eax, eax
+0x0064DDA1  jle     loc_64DE33
+0x0064DDA7  mov     edx, vec_Logics.data
+0x0064DDAD  mov     esi, [edx+ebp*4]
+0x0064DDB0  mov     ecx, esi
+0x0064DDB2  mov     eax, [esi]
+0x0064DDB4  call    dword ptr [eax+2Ch]
+0x0064DDB7  cmp     eax, 4
+0x0064DDBA  jnz     short loc_64DDCB
+0x0064DDBC  mov     ecx, [esi+4]
+0x0064DDBF  lea     eax, [esi+4]
+0x0064DDC2  push    eax
+0x0064DDC3  call    dword ptr [ecx+10h]
+0x0064DDC6  cmp     eax, 0FFFFFFFEh
+0x0064DDC9  jz      short loc_64DE25
+0x0064DDCB  lea     edx, [esi+9Ch]
+0x0064DDD1  mov     ecx, esi
+0x0064DDD3  mov     edi, [edx]
+0x0064DDD5  mov     ebx, [edx+4]
+0x0064DDD8  mov     eax, [edx+8]
+0x0064DDDB  mov     edx, [esi]
+0x0064DDDD  mov     [esp+24h+var_4], eax
+0x0064DDE1  call    dword ptr [edx+2Ch]
+0x0064DDE4  mov     ecx, eax
+0x0064DDE6  mov     eax, 66666667h
+0x0064DDEB  imul    ebx
+0x0064DDED  sar     edx, 2
+0x0064DDF0  mov     eax, edx
+0x0064DDF2  shr     eax, 1Fh
+0x0064DDF5  add     edx, eax
+0x0064DDF7  mov     eax, 66666667h
+0x0064DDFC  shl     edx, 10h
+0x0064DDFF  add     ecx, edx
+0x0064DE01  imul    edi
+0x0064DE03  sar     edx, 2
+0x0064DE06  mov     eax, edx
+0x0064DE08  add     edx, ecx
+0x0064DE0A  shr     eax, 1Fh
+0x0064DE0D  add     eax, edx
+0x0064DE0F  mov     edx, dword_AC51FC
+0x0064DE15  mov     ecx, edx
+0x0064DE17  shr     ecx, 1Fh
+0x0064DE1A  lea     ecx, [ecx+edx*2]
+0x0064DE1D  add     ecx, eax
+0x0064DE1F  mov     dword_AC51FC, ecx
+0x0064DE25  mov     eax, vec_Logics.length
+0x0064DE2A  inc     ebp
+0x0064DE2B  cmp     ebp, eax
+0x0064DE2D  jl      loc_64DDA7
+0x0064DE33  mov     edx, Scenario
+0x0064DE39  lea     ecx, [edx+218h]
+0x0064DE3F  call    Random2Class::operator()
+0x0064DE44  mov     edx, dword_AC51FC
+0x0064DE4A  mov     ecx, edx
+0x0064DE4C  shr     ecx, 1Fh
+0x0064DE4F  lea     ecx, [ecx+edx*2]
+0x0064DE52  add     ecx, eax
+0x0064DE54  mov     dword_AC51FC, ecx
+0x0064DE5A  mov     ecx, Frame
+0x0064DE60  and     ecx, 800000FFh
+0x0064DE66  jns     short loc_64DE70
+0x0064DE68  dec     ecx
+0x0064DE69  or      ecx, 0FFFFFF00h
+0x0064DE6F  inc     ecx
+0x0064DE70  call    sub_650A90
+0x0064DE75  pop     edi
+0x0064DE76  pop     esi
+0x0064DE77  pop     ebp
+0x0064DE78  pop     ebx
+0x0064DE79  add     esp, 14h
+0x0064DE7C  retn
+
+---- CALLED FUNCTIONS ----
+  x4   W?Desired_Facing256$n(iiii)$DirType$$
+  x2   loc_64DACE
+  x2   loc_64DB57
+  x2   loc_64DB67
+  x2   loc_64DC19
+  x2   loc_64DC29
+  x2   loc_64DCB3
+  x2   loc_64DCE4
+  x2   loc_64DCC3
+  x2   loc_64DCE9
+  x2   loc_64DCFA
+  x2   loc_64DD89
+  x2   loc_64DD1B
+  x2   loc_64DD79
+  x2   loc_64DDA7
+  x2   loc_64DE33
+  x2   loc_64DDCB
+  x2   loc_64DE25
+  x2   loc_64DE70
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   _ZN12Random2ClassclEv
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_650A90
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+  x1   sub_64DAB0
+
+---- GLOBAL / DATA REFS ----
+  x14  0xAC51FC dword_AC51FC
+  x2   0xA83DF8 0xA83DF8
+  x2   0xFF02761F 0xFF02761F
+  x2   0x8B4118 0x8B4118
+  x2   0xFF01BBAA 0xFF01BBAA
+  x2   0xA8EB50 0xA8EB50
+  x2   0xFF0215DC 0xFF0215DC
+  x2   0x87F788 0x87F788
+  x2   0xFF024399 0xFF024399
+  x1   0xA83DEC inf_vec
+  x1   0xFF02761C 0xFF02761C
+  x1   0x8B410C 0x8B410C
+  x1   0xFF01BBA4 0xFF01BBA4
+  x1   0xA8EB44 0xA8EB44
+  x1   0xFF0215D6 0xFF0215D6
+  x1   0xA80238 0xA80238
+  x1   0xFF01BA92 0xFF01BA92
+  x1   0xA8022C 0xA8022C
+  x1   0xFF01BA8C 0xFF01BA8C
+  x1   0x8A0370 0x8A0370
+  x1   0xFF027623 0xFF027623
+  x1   0x8A03E8 dword_8A03E8
+  x1   0x87F77C 0x87F77C
+  x1   0xFF024393 0xFF024393
+  x1   0xA8B230 Scenario
+  x1   0xA8ED84 W?Frame$nl

@@ -18,3 +18,14 @@ output
 /ida_work/*.i64
 /ida_work/*.nam
 /ida_work/*.til
+# 强杀 IDA 后残留的未打包库，以及临时改名存放它们的目录（用完整套即删，勿长期堆积）
+/ida_work/*.id0
+/ida_work/*.id1
+/ida_work/_stale_ida*/
+
+# Python 工具（tools/gen_hook_conflict.py 等）的字节码缓存
+__pycache__/
+*.pyc
+
+# AI 助手的工作记忆（私有工作状态，不入库；确实要提交时用 git add -f）
+/.workbuddy/

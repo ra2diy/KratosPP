@@ -1,0 +1,1086 @@
+====================================================================================================
+### TechnoClass::In_WeaponRange 区域  [0x701260 - 0x7013A0]
+====================================================================================================
+函数: sub_7011A0  起点=0x7011A0 终点=0x7012B4
+
+0x00701260  fld     qword ptr [edx+1848h]            ; 
+0x00701263  fld     st(1)                            ; 
+0x00701265  fcompp                                   ; 
+0x00701267  fnstsw  ax                               ; 
+0x00701269  test    ah, 1                            ; 
+0x0070126C  jnz     short loc_701276                 ; 
+0x0070126E  fstp    st                               ; 
+0x00701270  fld     qword ptr [edx+1848h]            ; 
+0x00701276  imul    ecx, Bridge_Height_xxxx          ; 
+0x0070127D  mov     esi, ecx                         ; 
+0x0070127F  call    Float_To_Int_Floor               ; 
+0x00701284  shl     eax, 8                           ; 
+0x00701287  mov     ecx, eax                         ; 
+0x00701289  mov     edx, esi                         ; 
+0x0070128B  imul    ecx, eax                         ; 
+0x0070128E  imul    edx, esi                         ; 
+0x00701291  add     ecx, edx                         ; 
+0x00701293  sub     esp, 8                           ; 
+0x00701296  mov     [esp+2Ch+var_1C], ecx            ; 
+0x0070129A  fild    [esp+2Ch+var_1C]                 ; 
+0x0070129E  fstp    [esp+2Ch+var_2C]                 ; 
+0x007012A1  call    float_sqrt                       ; 
+0x007012A6  add     esp, 8                           ; 
+0x007012A9  call    Float_To_Int_Floor               ; 
+0x007012AE  pop     edi                              ; 
+0x007012AF  pop     esi                              ; 
+0x007012B0  add     esp, 1Ch                         ; 
+0x007012B3  retn                                     ; 
+0x007012B4  db 0Ch dup(90h)                          ; 
+0x007012C0  push    ebx                              ; 
+0x007012C1  push    esi                              ; 
+0x007012C2  mov     esi, ecx                         ; 
+0x007012C4  mov     ecx, [esp+8+arg_0]               ; 
+0x007012C8  mov     eax, [esi]                       ; 
+0x007012CA  push    ecx                              ; 
+0x007012CB  mov     ecx, esi                         ; 
+0x007012CD  call    dword ptr [eax+3F8h]             ; 
+0x007012D3  mov     eax, [eax]                       ; 
+0x007012D5  test    eax, eax                         ; 
+0x007012D7  jz      loc_701396                       ; 
+0x007012DD  mov     edx, [esi]                       ; 
+0x007012DF  mov     ebx, [eax+0B4h]                  ; 
+0x007012E5  mov     ecx, esi                         ; 
+0x007012E7  call    dword ptr [edx+84h]              ; 
+0x007012ED  mov     cl, [eax+_TechnoTypeClass.t.OpenTopped] ; 
+0x007012F3  test    cl, cl                           ; 
+0x007012F5  jz      loc_70138F                       ; 
+0x007012FB  push    ebp                              ; 
+0x007012FC  lea     ebp, [esi+114h]                  ; 
+0x00701302  push    edi                              ; 
+0x00701303  mov     ecx, ebp; a1                     ; a1
+0x00701305  mov     edi, 7FFFFFFFh                   ; 
+0x0070130A  call    CargoClass::Attached_Object      ; 
+0x0070130F  mov     esi, eax                         ; 
+0x00701311  test    esi, esi                         ; 
+0x00701313  jz      short loc_70133E                 ; 
+0x00701315  mov     eax, [esi]                       ; 
+0x00701317  mov     ecx, esi                         ; 
+0x00701319  call    dword ptr [eax+3F4h]             ; 
+0x0070131F  mov     eax, [eax]                       ; 
+0x00701321  test    eax, eax                         ; 
+0x00701323  jz      short loc_701331                 ; 
+0x00701325  mov     eax, [eax+0B4h]                  ; 
+0x0070132B  cmp     eax, edi                         ; 
+0x0070132D  jge     short loc_701331                 ; 
+0x0070132F  mov     edi, eax                         ; 
+0x00701331  mov     esi, [esi+30h]                   ; 
+0x00701334  test    esi, esi                         ; 
+0x00701336  jz      short loc_70133E                 ; 
+0x00701338  test    byte ptr [esi+14h], 4            ; 
+0x0070133C  jnz     short loc_701315                 ; 
+0x0070133E  cmp     ebx, edi                         ; 
+0x00701340  jge     short loc_70134B                 ; 
+0x00701342  pop     edi                              ; 
+0x00701343  pop     ebp                              ; 
+0x00701344  mov     eax, ebx                         ; 
+0x00701346  pop     esi                              ; 
+0x00701347  pop     ebx                              ; 
+0x00701348  retn    4                                ; 
+0x0070134B  mov     ecx, ebp; a1                     ; a1
+0x0070134D  mov     edi, 7FFFFFFFh                   ; 
+0x00701352  call    CargoClass::Attached_Object      ; 
+0x00701357  mov     esi, eax                         ; 
+0x00701359  test    esi, esi                         ; 
+0x0070135B  jz      short loc_701386                 ; 
+0x0070135D  mov     edx, [esi]                       ; 
+0x0070135F  mov     ecx, esi                         ; 
+0x00701361  call    dword ptr [edx+3F4h]             ; 
+0x00701367  mov     eax, [eax]                       ; 
+0x00701369  test    eax, eax                         ; 
+0x0070136B  jz      short loc_701379                 ; 
+0x0070136D  mov     eax, [eax+0B4h]                  ; 
+0x00701373  cmp     eax, edi                         ; 
+0x00701375  jge     short loc_701379                 ; 
+0x00701377  mov     edi, eax                         ; 
+0x00701379  mov     esi, [esi+30h]                   ; 
+0x0070137C  test    esi, esi                         ; 
+0x0070137E  jz      short loc_701386                 ; 
+0x00701380  test    byte ptr [esi+14h], 4            ; 
+0x00701384  jnz     short loc_70135D                 ; 
+0x00701386  mov     eax, edi                         ; 
+0x00701388  pop     edi                              ; 
+0x00701389  pop     ebp                              ; 
+0x0070138A  pop     esi                              ; 
+0x0070138B  pop     ebx                              ; 
+0x0070138C  retn    4                                ; 
+0x0070138F  mov     eax, ebx                         ; 
+0x00701391  pop     esi                              ; 
+0x00701392  pop     ebx                              ; 
+0x00701393  retn    4                                ; 
+0x00701396  pop     esi                              ; 
+0x00701397  xor     eax, eax                         ; 
+0x00701399  pop     ebx                              ; 
+0x0070139A  retn    4                                ; 
+0x0070139D  db 3 dup(90h)                            ; 
+
+----- Hex-Rays -----
+signed int __thiscall sub_7011A0(int *this)
+{
+  wXY ElevationIncrementBonus_high; // edx
+  int v4; // eax
+  _DWORD *v5; // eax
+  CellClass *v6; // esi
+  int v7; // esi
+  signed int v8; // eax
+  wXY v9; // [esp+14h] [ebp-1Ch]
+  wXY coords[3]; // [esp+18h] [ebp-18h] BYREF
+  char v11[12]; // [esp+24h] [ebp-Ch] BYREF
+
+  if ( (*(*this + 84))(this) )
+    return 0;
+  if ( !RulesData->ElevationIncrement )
+    return 0;
+  ElevationIncrementBonus_high = HIDWORD(RulesData->ElevationIncrementBonus);
+  v4 = *this;
+  coords[1] = LODWORD(RulesData->ElevationIncrementBonus);
+  coords[2] = ElevationIncrementBonus_high;
+  v5 = (*(v4 + 72))(this, v11);
+  v9.X = *v5 / 256;
+  v9.Y = v5[1] / 256;
+  coords[0] = v9;
+  v6 = MapClass::Coord_Cell(&Map, coords);
+  sub_588990(&Map);
+  v7 = Bridge_Height_xxxx * v6->Level;
+  v8 = Float_To_Int_Floor();
+  float_sqrt((v7 * v7 + (v8 << 8) * (v8 << 8)));
+  return Float_To_Int_Floor();
+}
+
+
+====================================================================================================
+### TechnoClass::In_Range 区域(另一Hook 0x6F72E3)  [0x6F72C0 - 0x6F7340]
+====================================================================================================
+函数: TechnoClass_IsCloseEnoughToTarget  起点=0x6F7220 终点=0x6F7660
+
+0x006F72C0  mov     ecx, [eax+(RulesClass+0F54h)]    ; 
+0x006F72C3  shl     ecx, 8                           ; 
+0x006F72C6  add     edi, ecx                         ; 
+0x006F72C8  mov     al, [esi+82h]                    ; 
+0x006F72CE  test    al, al                           ; 
+0x006F72D0  jz      short loc_6F72E3                 ; 
+0x006F72D2  mov     edx, RulesData                   ; 
+0x006F72D8  mov     eax, [edx+(RulesClass+0F5Ch)]    ; 
+0x006F72DE  shl     eax, 8                           ; 
+0x006F72E1  add     edi, eax                         ; 
+0x006F72E3  mov     eax, [ebx+0A0h]                  ; 
+0x006F72E9  mov     ebx, edi                         ; 
+0x006F72EB  mov     dword ptr [esp+38h+a2+4], eax    ; 
+0x006F72EF  mov     cl, [eax+297h]                   ; 
+0x006F72F5  test    cl, cl                           ; 
+0x006F72F7  jz      short loc_6F7308                 ; 
+0x006F72F9  mov     ecx, [ebp+tgt]                   ; 
+0x006F72FC  push    ecx; tgt                         ; tgt
+0x006F72FD  mov     ecx, esi; this                   ; this
+0x006F72FF  call    TechnoClass_GetElevationRangeBonus ; 
+0x006F7304  mov     ebx, eax                         ; 
+0x006F7306  add     ebx, edi                         ; 
+0x006F7308  mov     esi, [ebp+tgt]                   ; 
+0x006F730B  lea     eax, [esp+38h+xyz0.Y]            ; 
+0x006F730F  push    eax                              ; 
+0x006F7310  mov     ecx, esi                         ; 
+0x006F7312  mov     edx, [esi]                       ; 
+0x006F7314  call    dword ptr [edx+48h]              ; 
+0x006F7317  mov     ecx, [eax]                       ; 
+0x006F7319  mov     [esp+38h+xyz1.Y], ecx            ; 
+0x006F731D  mov     ecx, esi                         ; 
+0x006F731F  mov     edx, [eax+4]                     ; 
+0x006F7322  mov     [esp+38h+xyz1.Z], edx            ; 
+0x006F7326  mov     edx, [esi]                       ; 
+0x006F7328  mov     eax, [eax+8]                     ; 
+0x006F732B  mov     [esp+38h+xyz0.X], eax            ; 
+0x006F732F  call    dword ptr [edx+50h]              ; 
+0x006F7332  test    al, al                           ; 
+0x006F7334  jz      short loc_6F7375                 ; 
+0x006F7336  lea     eax, [esp+38h+xyz1.Y]            ; 
+0x006F733A  mov     ecx, offset Map; this            ; this
+0x006F733F  push    eax; loc                         ; loc
+
+----- Hex-Rays -----
+_BOOL1 __thiscall TechnoClass_IsCloseEnoughToTarget(
+        _TechnoClass *this,
+        dwXY *a2,
+        _TechnoClass *tgt,
+        WeaponTypeClass *weap)
+{
+  int Range; // edi
+  int Range_; // ebx
+  dwXYZ *v8; // eax
+  vt_TechnoClass *vt; // edx
+  int Z_1; // eax
+  int Y; // edx
+  int X; // ecx
+  signed int v13; // ebx
+  long double Gravity; // fst7
+  int v15; // ebx
+  int v16; // ecx
+  int v17; // eax
+  _BOOL1 v18; // zf
+  int v19; // edx
+  int v20; // eax
+  WeaponTypeClass *v21; // [esp+4h] [ebp-40h]
+  double v22; // [esp+4h] [ebp-40h]
+  HouseClass_old *OwningPlayer; // [esp+8h] [ebp-3Ch]
+  BulletTypeClass *a2_4; // [esp+1Ch] [ebp-28h]
+  float MinimumRange; // [esp+24h] [ebp-20h]
+  signed int v27; // [esp+24h] [ebp-20h]
+  int v28; // [esp+24h] [ebp-20h]
+  dwXYZ xyz1; // [esp+28h] [ebp-1Ch] BYREF
+  Point3D xyz0; // [esp+34h] [ebp-10h] BYREF
+  int v31; // [esp+40h] [ebp-4h]
+
+  if ( !tgt || !weap )
+    return 0;
+  Range = LODWORD(weap->Range);
+  if ( Range == -512 )
+    return 1;
+  if ( (tgt->vt->r.m.o.a.InAir)() )
+    Range += *this->vt->r.m.o.GetTechnoType(this)->t.gap_6f0;// AirRangeBonus
+  if ( this->vt->CanOccupyFire(this) )
+    Range = (RulesData->OccupyWeaponRange + this->vt->Techno_404(this)) << 8;
+  if ( this->t.BunkerLinkedItem && this->vt->r.m.o.a.What_Am_I(this) != eBuilding )
+    Range += RulesData->BunkerWeaponRangeBonus << 8;
+  if ( this->t.r.m.o.InOpenTopped )
+    Range += RulesData->OpenToppedRangeBonus << 8;
+  Range_ = Range;
+  a2_4 = weap->Projectile;
+  if ( a2_4->SubjectToElevation )
+    Range_ = Range + TechnoClass_GetElevationRangeBonus(this, tgt);
+  v8 = tgt->vt->r.m.o.a.GetCoords(tgt, &xyz0.Y);
+  xyz1.Y = v8->X;
+  xyz1.Z = v8->Y;
+  vt = tgt->vt;
+  xyz0.X = v8->Z;
+  if ( vt->r.m.o.a.OnFloor(tgt)
+    && (xyz0.X = MapClass_GetCellFloorHeight(&Map, &xyz1.Y),
+        (MapClass_Get_Target_Cell(&Map, &xyz1.Y)->flags & 0x100) != 0) )
+  {
+    Z_1 = Bridge_Height_xxx + xyz0.X;
+    xyz0.X += Bridge_Height_xxx;
+  }
+  else
+  {
+    Z_1 = xyz0.X;
+  }
+  MinimumRange = weap->MinimumRange;
+  if ( MinimumRange != 0.0 )
+  {
+    Y = a2->Y;
+    xyz0.Y = a2->X - xyz1.Y;
+    X = a2[1].X;
+    xyz0.Z = Y - xyz1.Z;
+    v31 = X - Z_1;
+    float_sqrt(xyz0.Y * xyz0.Y + (X - Z_1) * (X - Z_1) + (Y - xyz1.Z) * (Y - xyz1.Z));
+    if ( Float_To_Int_Floor() < SLODWORD(MinimumRange) )
+      return 0;
+    Z_1 = xyz0.X;
+  }
+  if ( a2_4->Arcing )
+  {
+    v15 = a2->Y;
+    xyz0.Y = xyz1.Y - a2->X;
+    v16 = a2[1].X;
+    xyz0.Z = xyz1.Z - v15;
+    v31 = Z_1 - v16;
+    Gravity = float_sqrt(xyz0.Y * xyz0.Y + (xyz1.Z - v15) * (xyz1.Z - v15));
+    v27 = Float_To_Int_Floor();
+    v13 = Range;
+    if ( a2_4->SubjectToElevation )
+      v13 = Range + TechnoClass_GetElevationBonusNoSqrt(this, tgt);
+    if ( v27 <= v13 )
+    {
+      if ( weap->Projectile->Floater )
+        GetHalfGravity();
+      else
+        Gravity = RulesData->Gravity;
+      GetFinalSpeedOverDistance(v13, Gravity);
+      if ( sub_48ABC0(v31, Gravity) )
+      {
+        if ( (MapClass_Get_Target_Cell(&Map, &xyz1.Y)->flags & 0x100) == 0
+          || (xyz0.X - a2[1].X) < 3 * Bridge_Height_xxxx )
+        {
+          OwningPlayer = this->t.OwningPlayer;
+          v21 = weap;
+          return sub_4CC310(a2, &xyz1.Y, v21, OwningPlayer) == 0;
+        }
+      }
+    }
+  }
+  else
+  {
+    if ( tgt->vt->r.m.o.a.What_Am_I(tgt) == eBuilding )
+    {
+      v28 = BuildingTypeClass::Y_Foundation_Value(tgt[1].vt, 0);
+      Range_ += (BuildingTypeClass::X_Foundation_Value(tgt[1].vt) + v28) << 6;
+    }
+    v18 = this->vt->r.m.o.a.What_Am_I(this) == eAircraftType;
+    v17 = a2->X;
+    if ( v18 )
+    {
+      v22 = (v17 - xyz1.Y) * (v17 - xyz1.Y) + (a2->Y - xyz1.Z) * (a2->Y - xyz1.Z);
+    }
+    else
+    {
+      v19 = a2[1].X;
+      xyz0.Z = a2->Y - xyz1.Z;
+      xyz0.Y = v17 - xyz1.Y;
+      v31 = v19 - xyz0.X;
+      v22 = (v17 - xyz1.Y) * (v17 - xyz1.Y) + (v19 - xyz0.X) * (v19 - xyz0.X) + xyz0.Z * xyz0.Z;
+    }
+    float_sqrt(v22);
+    if ( Float_To_Int_Floor() <= Range_ )
+    {
+      if ( (MapClass_Get_Target_Cell(&Map, a2)->flags & 0x100) == 0
+        || (v20 = Bridge_Height_xxx + MapClass_GetCellFloorHeight(&Map, a2), a2[1].X >= v20)
+        || xyz0.X < v20 )
+      {
+        OwningPlayer = this->t.OwningPlayer;
+        v21 = weap;
+        return sub_4CC310(a2, &xyz1.Y, v21, OwningPlayer) == 0;
+      }
+    }
+  }
+  return 0;
+}
+
+
+====================================================================================================
+### TechnoClass::Greatest_Threat 相关(0x6F9039)  [0x6F9000 - 0x6F9050]
+====================================================================================================
+函数: W?Greatest_Threat$:TechnoClass$n.x($ThreatType$$)l  起点=0x6F8DF0 终点=0x6F9DAF
+
+0x006F9000  cmp     dword ptr [esi+0ACh], 19h        ; 
+0x006F9002  jnz     short loc_6F9012                 ; 
+0x006F9004  mov     eax, [esi]                       ; 
+0x006F9006  push    2                                ; 
+0x006F9008  mov     ecx, esi; this                   ; this
+0x006F900A  call    [eax+vt_TechnoClass.Techno_31C]  ; 
+0x006F9010  jmp     short loc_6F901E                 ; 
+0x006F9012  mov     edx, [esi]                       ; 
+0x006F9014  push    1                                ; 
+0x006F9016  mov     ecx, esi                         ; 
+0x006F9018  call    dword ptr [edx+31Ch]             ; 
+0x006F901E  mov     edi, eax                         ; 
+0x006F9020  mov     [esp+6Ch+wanteddistance], edi    ; 
+0x006F9024  push    ebp; idxWeapon                   ; idxWeapon
+0x006F9025  mov     ecx, esi; this                   ; this
+0x006F9027  call    TechnoClass::Combat_Damage; arg = -1 ; arg = -1
+0x006F902C  test    eax, eax                         ; 
+0x006F902E  jge     short loc_6F9042                 ; 
+0x006F9030  cmp     [esi+_MissionClass.m.currentMission], 5 ; 
+0x006F9037  jnz     short loc_6F9042                 ; 
+0x006F9039  mov     edi, 200h                        ; 
+0x006F903E  mov     [esp+6Ch+wanteddistance], edi    ; 
+0x006F9042  mov     eax, edi                         ; 
+0x006F9044  cdq                                      ; 
+0x006F9045  and     edx, 0FFh                        ; 
+0x006F904B  add     eax, edx                         ; 
+0x006F904D  sar     eax, 8                           ; 
+
+----- Hex-Rays -----
+_TechnoClass *__thiscall TechnoClass::Greatest_Threat(
+        _TechnoClass *this,
+        eTargetTypeFlags projFlags,
+        int curThreat,
+        char a4)
+{
+  vt_TechnoClass *this__; // eax
+  __int32 projFlags_; // ebx
+  int *v8; // eax
+  vt_TechnoClass *vt; // edx
+  _TechnoTypeClass *v10; // eax
+  __int32 v11; // ebx
+  int v12; // eax
+  int v13; // ecx
+  int v14; // eax
+  _TechnoClass *Transporter; // ecx
+  int v16; // edi
+  int v17; // eax
+  _TechnoTypeClass *v18; // eax
+  int Cost; // eax
+  int v20; // edi
+  int v21; // ecx
+  vt_TechnoClass *v22; // edx
+  _TechnoClass *target_; // ebp
+  CellClass *v24; // eax
+  _TechnoClass *v25; // eax
+  HouseClass_old *v26; // ecx
+  int v27; // eax
+  int count; // ecx
+  int incrementAmount; // eax
+  int length; // eax
+  PtrCellTypeClass *data; // edx
+  int v32; // ecx
+  int v33; // eax
+  int v34; // eax
+  int *v35; // edx
+  _TechnoClass *v36; // eax
+  int v37; // edi
+  eTargetTypeFlags v38; // ebx
+  int v39; // eax
+  _TechnoClass *v40; // ebp
+  int v41; // ecx
+  int v42; // eax
+  PtrCellTypeClass *v43; // edx
+  int v44; // ecx
+  int v45; // eax
+  int v46; // eax
+  int *v47; // edx
+  int v48; // eax
+  int v49; // eax
+  int v50; // ebp
+  int v51; // ecx
+  int v52; // eax
+  PtrCellTypeClass *v53; // edx
+  int v54; // ecx
+  int v55; // eax
+  int v56; // eax
+  int *v57; // edx
+  int v58; // eax
+  int v59; // ebx
+  int v60; // eax
+  int v61; // ebp
+  int v62; // ecx
+  int v63; // eax
+  PtrCellTypeClass *v64; // edx
+  int v65; // ecx
+  int v66; // eax
+  int v67; // eax
+  int *v68; // edx
+  int v69; // eax
+  int v70; // eax
+  int v71; // ebp
+  int v72; // ecx
+  int v73; // eax
+  PtrCellTypeClass *v74; // edx
+  int v75; // ecx
+  int v76; // eax
+  int v77; // eax
+  int *v78; // edx
+  int v79; // eax
+  int v80; // edi
+  char v81; // bl
+  int i; // ebp
+  AircraftClass *curAircraft; // edi
+  HouseClass_old *OwningPlayer; // ecx
+  int v85; // eax
+  int v86; // ebx
+  int *v87; // ebp
+  _TechnoClass *v88; // edi
+  HouseClass_old *v89; // ecx
+  _BOOL1 v90; // [esp+13h] [ebp-59h]
+  int newTargetFlags; // [esp+14h] [ebp-58h]
+  int threat_; // [esp+18h] [ebp-54h] BYREF
+  int BestThreat; // [esp+1Ch] [ebp-50h]
+  _TechnoClass *BestTarget; // [esp+20h] [ebp-4Ch]
+  int v95; // [esp+24h] [ebp-48h]
+  wXY a2; // [esp+28h] [ebp-44h] BYREF
+  int wanteddistance; // [esp+2Ch] [ebp-40h]
+  int v98; // [esp+30h] [ebp-3Ch]
+  wXY v99; // [esp+34h] [ebp-38h] BYREF
+  int v100; // [esp+38h] [ebp-34h]
+  _TechnoTypeClass *wat; // [esp+3Ch] [ebp-30h]
+  wXY v102; // [esp+40h] [ebp-2Ch]
+  wXY v103; // [esp+44h] [ebp-28h]
+  wXY v104; // [esp+48h] [ebp-24h]
+  wXY v105; // [esp+4Ch] [ebp-20h]
+  wXY position; // [esp+50h] [ebp-1Ch] BYREF
+  int v107; // [esp+54h] [ebp-18h]
+  wXY coords; // [esp+58h] [ebp-14h] BYREF
+  Point3D ptr; // [esp+60h] [ebp-Ch] BYREF
+
+  BestTarget = 0;
+  ++TargetScan;
+  this__ = this->vt;
+  BestThreat = -1;
+  wat = -1;
+  if ( LOBYTE(this__->r.m.o.GetTechnoType(this)->t.JumpjetWobbles) && HouseClass::Is_Human(this->t.OwningPlayer) )// NoAutoFire
+    return 0;
+  LOWORD(projFlags_) = projFlags;
+  if ( (projFlags & e01) == 0
+    && this->vt->r.m.o.a.What_Am_I(this) != eBuilding
+    && this->vt->r.m.o.a.What_Am_I(this) != eAircraft )
+  {
+    v8 = this->vt->r.m.o.a.GetCoords(this, &ptr);
+    v102.X = *v8 / 256;
+    vt = this->vt;
+    v102.Y = v8[1] / 256;
+    position = v102;
+    v10 = vt->r.m.o.GetTechnoType(this);
+    wat = MapClass_CanLocationBeReached(&Map, &position, v10->t.MindControlRingOffset, 1);
+  }
+  if ( this->vt->r.m.o.a.What_Am_I(this) == eInfantry )
+  {
+    if ( TechnoClass::Combat_Damage(this, -1) < 0 )
+    {
+      projFlags_ = projFlags & (e02|e01) | ttFriendlies|ttInf;
+LABEL_16:
+      projFlags = projFlags_;
+      goto LABEL_17;
+    }
+    if ( *(this[1].t.IronTintTimer.TimeLeft + 0xEC3) )// Engineer
+    {
+      LOWORD(projFlags_) = projFlags & ~(ttVeh|ttInf);
+      projFlags &= ~(ttVeh|ttInf);
+    }
+  }
+  else if ( this->vt->r.m.o.a.What_Am_I(this) == eUnit && TechnoClass::Combat_Damage(this, -1) < 0 )
+  {
+    projFlags_ = projFlags & (e02|e01) | ttFriendlies|ttVeh;
+    goto LABEL_16;
+  }
+LABEL_17:
+  newTargetFlags = 0;
+  if ( (projFlags_ & 0x100) != 0 )
+    newTargetFlags = eTargetTypeNewFlags_8000|ttnBuilding|ttnAircraft;
+  v11 = projFlags_ & ttAircraft;
+  if ( v11 )
+  {
+    v12 = newTargetFlags;
+    LOBYTE(v12) = newTargetFlags | ttnVehicle;
+    newTargetFlags = v12;
+  }
+  if ( (projFlags & (ttTechCapture|ttOccupiable|ttBaseDefense|ttFactories|ttPower|eCapture|ttHarvest|ttBuild)) != 0 )
+    newTargetFlags |= ttnBuilding;
+  if ( (projFlags & ttInf) != 0 )
+  {
+    v13 = newTargetFlags;
+    BYTE1(v13) = BYTE1(newTargetFlags) | ttnInfantry;
+    newTargetFlags = v13;
+  }
+  if ( (projFlags & (ttHarvest|ttVeh)) != 0 )
+  {
+    v14 = newTargetFlags;
+    LOBYTE(v14) = newTargetFlags | ttnAircraft;
+    newTargetFlags = v14;
+  }
+  if ( LOBYTE(this->vt->r.m.o.GetTechnoType(this)->t.RotCount) )// DistributedFire
+  {
+    this->t.CurrentTargets.vt->Clear();
+    this->t.CurrentTargetThreats.vt->Clear();
+  }
+  Transporter = this->t.Transporter;
+  v90 = 0;
+  if ( Transporter && LOBYTE(Transporter->vt->r.m.o.GetTechnoType(Transporter)->t.Prerequisite._.Vector) )// OpenTopped
+    v90 = this->t.Transporter->t.MindControlledBy != 0;
+  if ( (projFlags & (e02|e01)) == 0 )
+  {
+    v81 = a4;
+    if ( (newTargetFlags & ttnVehicle) != 0 )
+    {
+      for ( i = 0; i < vec_Aircrafts.length; ++i )
+      {
+        OwningPlayer = this->t.OwningPlayer;
+        curAircraft = vec_Aircrafts.data[i]._;  // AttackFriendlies
+        position = 0;
+        if ( (!HouseClass::Is_Ally(OwningPlayer, curAircraft)
+           || LOBYTE(this->vt->r.m.o.GetTechnoType(this)->t.Points_)
+           || this->t.Berzerk
+           || v90)
+          && (!v81 || curAircraft->f.t.OwningPlayer->PlayerNumber == this->t.OwningPlayer->idxEnemyHouse)
+          && ((BYTE1(projFlags) & 0x40) == 0 || HouseClass::Is_Ally(this->t.OwningPlayer, curAircraft->f.t.OwningPlayer))
+          && TechnoClass::Evaluate_Object(
+               this,
+               projFlags,
+               newTargetFlags,
+               -1,
+               curAircraft,
+               &position,
+               -1,
+               &TechnoClass_DefaultCoords.X)
+          && *&position > BestThreat )
+        {
+          BestTarget = curAircraft;
+          BestThreat = position;
+        }
+      }
+    }
+    if ( (projFlags & ttVeh) != 0 )
+    {
+      v85 = newTargetFlags;
+      LOBYTE(v85) = newTargetFlags | ttnVehicle;
+      newTargetFlags = v85;
+    }
+    v86 = 0;
+    if ( vec_Techno.length > 0 )
+    {
+      v87 = curThreat;
+      do
+      {
+        v89 = this->t.OwningPlayer;
+        v88 = vec_Techno.data[v86]._;
+        curThreat = 0;
+        if ( (!HouseClass::Is_Ally(v89, v88)
+           || TechnoClass::Combat_Damage(this, -1) < 0
+           || !HouseClass::Is_Human(this->t.OwningPlayer)
+           && this
+           && this->vt->r.m.o.a.What_Am_I(this) == eInfantry
+           && *(*(this->vt->r.m.o.a.What_Am_I(this) == eInfantry ? &this[1].t.IronTintTimer.TimeLeft : 1728) + 0xEC3)
+           || LOBYTE(this->vt->r.m.o.GetTechnoType(this)->t.Points_)
+           || this->t.Berzerk
+           || v90)
+          && v88->t.r.m.o.BerserkCapable == 2
+          && (!a4 || v88->t.OwningPlayer->PlayerNumber == this->t.OwningPlayer->idxEnemyHouse)
+          && ((BYTE1(projFlags) & 0x40) == 0 || HouseClass::Is_Ally(this->t.OwningPlayer, v88->t.OwningPlayer))
+          && TechnoClass::Evaluate_Object(this, projFlags, newTargetFlags, -1, v88, &curThreat, wat, v87)
+          && curThreat > BestThreat )
+        {
+          BestTarget = v88;
+          BestThreat = curThreat;
+        }
+        ++v86;
+      }
+      while ( v86 < vec_Techno.length );
+    }
+    return BestTarget;
+  }
+  v16 = 0;
+  wanteddistance = 0;
+  if ( (projFlags & 1) != 0 )
+  {
+    v17 = (this->vt->Techno_31C)(this, 0);
+LABEL_39:
+    v16 = v17;
+    wanteddistance = v17;
+    goto LABEL_40;
+  }
+  if ( (projFlags & e02) != 0 )
+  {
+    if ( this->t.r.m.currentMission == mi_Patrol )
+      v17 = this->vt->Techno_31C(this);
+    else
+      v17 = (this->vt->Techno_31C)(this, 1);
+    goto LABEL_39;
+  }
+LABEL_40:
+  if ( TechnoClass::Combat_Damage(this, -1) < 0 && this->t.r.m.currentMission == mi_Guard )
+  {
+    v16 = 512;
+    wanteddistance = 512;
+  }
+  v100 = v16 / 256;
+  if ( !v16 )
+  {
+    v18 = this->vt->r.m.o.GetTechnoType(this);
+    if ( !TechnoTypeClass_IsTurretChanger(v18) || this->vt->r.m.o.GetTechnoType(this)->t.RejoinTeamIfLimboed )
+    {
+      if ( this->vt->r.m.o.GetTechnoType(this)->t.Palette[1]
+        && HIBYTE(this->vt->r.m.o.GetTechnoType(this)[1].VTable)
+        && LOBYTE(this->vt->r.m.o.GetTechnoType(this)->t.JumpjetCrash) )// Underwater && Organic && SelfHealing
+      {
+        Cost = this->vt->r.m.o.GetTechnoType(this)->t.Cost;// GuardRange
+      }
+      else
+      {
+        v20 = this->vt->r.m.o.GetWeaponRange(this, 1);
+        if ( this->vt->r.m.o.GetWeaponRange(this, 0) <= v20 )
+          Cost = this->vt->r.m.o.GetWeaponRange(this, 1);
+        else
+          Cost = this->vt->r.m.o.GetWeaponRange(this, 0);
+      }
+    }
+    else
+    {
+      Cost = this->vt->r.m.o.GetWeaponRange(this, this->t.CurrentTurretNumber);
+    }
+    v100 = Cost / 256 + *this->vt->r.m.o.GetTechnoType(this)->t.gap_6f0 / 256 + 1;
+  }
+  v21 = curThreat;
+  LOWORD(curThreat) = *curThreat / 256;
+  v22 = this->vt;
+  HIWORD(curThreat) = *(v21 + 4) / 256;
+  coords = curThreat;
+  if ( v22->CanOccupyFire(this) )
+    v100 = this->vt->Techno_404(this) + RulesData->OccupyWeaponRange + 1;
+  if ( v11 )
+  {
+    v24 = MapClass::Coord_Cell(&Map, &coords);
+    sub_412B40(v24, v100);
+    gfv_removeFirstItem(&GlobalUnitsForSomething);
+    target_ = v25;
+    if ( v25 )
+    {
+      do
+      {
+        v26 = this->t.OwningPlayer;
+        curThreat = 0;
+        if ( (!HouseClass::Is_Ally(v26, target_)
+           || LOBYTE(this->vt->r.m.o.GetTechnoType(this)->t.Points_)
+           || this->t.Berzerk
+           || v90)
+          && ((BYTE1(projFlags) & 0x40) == 0 || HouseClass::Is_Ally(this->t.OwningPlayer, target_->t.OwningPlayer)) )
+        {
+          if ( target_->t.r.m.o.field_6C )
+          {
+            LOBYTE(v27) = target_->vt->r.m.o.InWhichLayer(target_);
+            if ( v27 != 2 && (!a4 || target_->t.OwningPlayer->PlayerNumber == this->t.OwningPlayer->idxEnemyHouse) )
+            {
+              if ( TechnoClass::Evaluate_Object(
+                     this,
+                     projFlags,
+                     (newTargetFlags | 0x8002),
+                     wanteddistance,
+                     target_,
+                     &curThreat,
+                     -1,
+                     &TechnoClass_DefaultCoords.X) )
+              {
+                if ( LOBYTE(this->vt->r.m.o.GetTechnoType(this)->t.RotCount) )// DistributedFire
+                {
+                  count = this->t.CurrentTargets.count;
+                  if ( this->t.CurrentTargets.length < count
+                    || (this->t.CurrentTargets.IsAllocated || !count)
+                    && (incrementAmount = this->t.CurrentTargets.incrementAmount, incrementAmount > 0)
+                    && this->t.CurrentTargets.vt->Resize(count + incrementAmount, 0) )
+                  {
+                    length = this->t.CurrentTargets.length;
+                    data = this->t.CurrentTargets.data;
+                    this->t.CurrentTargets.length = length + 1;
+                    data[length]._ = target_;
+                  }
+                  v32 = this->t.CurrentTargetThreats.count;
+                  if ( this->t.CurrentTargetThreats.length < v32
+                    || (this->t.CurrentTargetThreats.IsAllocated || !v32)
+                    && (v33 = this->t.field_450, v33 > 0)
+                    && (this->t.CurrentTargetThreats.vt->Resize)(&this->t.CurrentTargetThreats, v32 + v33, 0) )
+                  {
+                    v34 = this->t.CurrentTargetThreats.length;
+                    v35 = this->t.CurrentTargetThreats.data;
+                    this->t.CurrentTargetThreats.length = v34 + 1;
+                    v35[v34] = curThreat;
+                  }
+                }
+                if ( curThreat > BestThreat )
+                {
+                  BestTarget = target_;
+                  BestThreat = curThreat;
+                }
+              }
+            }
+          }
+        }
+        gfv_removeFirstItem(&GlobalUnitsForSomething);
+        target_ = v36;
+      }
+      while ( v36 );
+    }
+  }
+  if ( (projFlags & ttVeh) != 0 )
+    newTargetFlags |= ttnVehicle;
+  if ( projFlags == (ttAircraft|e01) )
+    return BestTarget;
+  v99.X = 0;
+  v99.Y = 0;
+  v98 = 0;
+  v95 = 0;
+  if ( v100 <= 0 )
+    return BestTarget;
+  while ( 1 )
+  {
+    v37 = -v95;
+    v102 = -v95;
+    if ( -v95 <= v95 )
+    {
+      HIWORD(ptr.X) = -v95;
+      while ( 1 )
+      {
+        v103.Y = HIWORD(ptr.X) + coords.Y;
+        v103.X = v37 + coords.X;
+        a2 = v103;
+        if ( MapClass::In_Radar(&Map, &a2) )
+        {
+          v38 = projFlags;
+          if ( TechnoClass::Evaluate_Cell(
+                 this,
+                 projFlags,
+                 newTargetFlags,
+                 &a2,
+                 wanteddistance,
+                 &curThreat,
+                 &threat_,
+                 wat)
+            && curThreat
+            && (!a4 || *(*(curThreat + 540) + 48) == this->t.OwningPlayer->idxEnemyHouse)
+            && ((BYTE1(projFlags) & 0x40) == 0 || HouseClass::Is_Ally(this->t.OwningPlayer, *(curThreat + 540))) )
+          {
+            if ( LOBYTE(this->vt->r.m.o.GetTechnoType(this)->t.RotCount) )
+            {
+              v39 = this->t.CurrentTargets.count;
+              v40 = curThreat;
+              if ( this->t.CurrentTargets.length < v39
+                || (this->t.CurrentTargets.IsAllocated || !v39)
+                && (v41 = this->t.CurrentTargets.incrementAmount, v41 > 0)
+                && (this->t.CurrentTargets.vt->Resize)(&this->t.CurrentTargets, v39 + v41, 0) )
+              {
+                v42 = this->t.CurrentTargets.length;
+                v43 = this->t.CurrentTargets.data;
+                this->t.CurrentTargets.length = v42 + 1;
+                v43[v42]._ = v40;
+              }
+              v44 = this->t.CurrentTargetThreats.count;
+              if ( this->t.CurrentTargetThreats.length < v44
+                || (this->t.CurrentTargetThreats.IsAllocated || !v44)
+                && (v45 = this->t.field_450, v45 > 0)
+                && (this->t.CurrentTargetThreats.vt->Resize)(&this->t.CurrentTargetThreats, v44 + v45, 0) )
+              {
+                v46 = this->t.CurrentTargetThreats.length;
+                v47 = this->t.CurrentTargetThreats.data;
+                this->t.CurrentTargetThreats.length = v46 + 1;
+                v47[v46] = threat_;
+              }
+            }
+            if ( BestThreat < threat_ )
+            {
+              BestThreat = threat_;
+              BestTarget = curThreat;
+            }
+          }
+          if ( !BestTarget )
+          {
+            v48 = TechnoClass::Evaluate_Just_Cell(&a2);
+            threat_ = v48;
+            if ( v98 < v48 )
+            {
+              v98 = v48;
+              v99 = a2;
+            }
+          }
+          LOWORD(v37) = v102.X;
+        }
+        else
+        {
+          v38 = projFlags;
+        }
+        v104.Y = v95 + coords.Y;
+        v104.X = v37 + coords.X;
+        a2 = v104;
+        if ( MapClass::In_Radar(&Map, &a2) )
+        {
+          if ( TechnoClass::Evaluate_Cell(this, v38, newTargetFlags, &a2, wanteddistance, &curThreat, &threat_, wat)
+            && curThreat
+            && (!a4 || *(*(curThreat + 540) + 48) == this->t.OwningPlayer->idxEnemyHouse)
+            && ((BYTE1(v38) & 0x40) == 0 || HouseClass::Is_Ally(this->t.OwningPlayer, *(curThreat + 540))) )
+          {
+            if ( LOBYTE(this->vt->r.m.o.GetTechnoType(this)->t.RotCount) )
+            {
+              v49 = this->t.CurrentTargets.count;
+              v50 = curThreat;
+              if ( this->t.CurrentTargets.length < v49
+                || (this->t.CurrentTargets.IsAllocated || !v49)
+                && (v51 = this->t.CurrentTargets.incrementAmount, v51 > 0)
+                && (this->t.CurrentTargets.vt->Resize)(&this->t.CurrentTargets, v49 + v51, 0) )
+              {
+                v52 = this->t.CurrentTargets.length;
+                v53 = this->t.CurrentTargets.data;
+                this->t.CurrentTargets.length = v52 + 1;
+                v53[v52]._ = v50;
+              }
+              v54 = this->t.CurrentTargetThreats.count;
+              if ( this->t.CurrentTargetThreats.length < v54
+                || (this->t.CurrentTargetThreats.IsAllocated || !v54)
+                && (v55 = this->t.field_450, v55 > 0)
+                && (this->t.CurrentTargetThreats.vt->Resize)(&this->t.CurrentTargetThreats, v54 + v55, 0) )
+              {
+                v56 = this->t.CurrentTargetThreats.length;
+                v57 = this->t.CurrentTargetThreats.data;
+                this->t.CurrentTargetThreats.length = v56 + 1;
+                v57[v56] = threat_;
+              }
+            }
+            if ( BestThreat < threat_ )
+            {
+              BestThreat = threat_;
+              BestTarget = curThreat;
+            }
+          }
+          if ( !BestTarget )
+          {
+            v58 = TechnoClass::Evaluate_Just_Cell(&a2);
+            threat_ = v58;
+            if ( v98 < v58 )
+            {
+              v98 = v58;
+              v99 = a2;
+            }
+          }
+        }
+        if ( ++*&v102 > v95 )
+          break;
+        LOWORD(v37) = v102.X;
+      }
+    }
+    v59 = 1 - v95;
+    if ( 1 - v95 < v95 )
+    {
+      LOWORD(v107) = -v95;
+      do
+      {
+        v105.X = coords.X + v107;
+        v105.Y = v59 + coords.Y;
+        a2 = v105;
+        if ( MapClass::In_Radar(&Map, &a2) )
+        {
+          if ( TechnoClass::Evaluate_Cell(
+                 this,
+                 projFlags,
+                 newTargetFlags,
+                 &a2,
+                 wanteddistance,
+                 &curThreat,
+                 &threat_,
+                 wat)
+            && curThreat
+            && (!a4 || *(*(curThreat + 540) + 48) == this->t.OwningPlayer->idxEnemyHouse)
+            && ((BYTE1(projFlags) & 0x40) == 0 || HouseClass::Is_Ally(this->t.OwningPlayer, *(curThreat + 540))) )
+          {
+            if ( LOBYTE(this->vt->r.m.o.GetTechnoType(this)->t.RotCount) )// DistributedFire
+            {
+              v60 = this->t.CurrentTargets.count;
+              v61 = curThreat;
+              if ( this->t.CurrentTargets.length < v60
+                || (this->t.CurrentTargets.IsAllocated || !v60)
+                && (v62 = this->t.CurrentTargets.incrementAmount, v62 > 0)
+                && (this->t.CurrentTargets.vt->Resize)(&this->t.CurrentTargets, v60 + v62, 0) )
+              {
+                v63 = this->t.CurrentTargets.length;
+                v64 = this->t.CurrentTargets.data;
+                this->t.CurrentTargets.length = v63 + 1;
+                v64[v63]._ = v61;
+              }
+              v65 = this->t.CurrentTargetThreats.count;
+              if ( this->t.CurrentTargetThreats.length < v65
+                || (this->t.CurrentTargetThreats.IsAllocated || !v65)
+                && (v66 = this->t.field_450, v66 > 0)
+                && (this->t.CurrentTargetThreats.vt->Resize)(&this->t.CurrentTargetThreats, v65 + v66, 0) )
+              {
+                v67 = this->t.CurrentTargetThreats.length;
+                v68 = this->t.CurrentTargetThreats.data;
+                this->t.CurrentTargetThreats.length = v67 + 1;
+                v68[v67] = threat_;
+              }
+            }
+            if ( BestThreat < threat_ )
+            {
+              BestThreat = threat_;
+              BestTarget = curThreat;
+            }
+          }
+          if ( !BestTarget )
+          {
+            v69 = TechnoClass::Evaluate_Just_Cell(&a2);
+            threat_ = v69;
+            if ( v98 < v69 )
+            {
+              v98 = v69;
+              v99 = a2;
+            }
+          }
+        }
+        position.X = coords.X + v95;
+        position.Y = v59 + coords.Y;
+        a2 = position;
+        if ( MapClass::In_Radar(&Map, &a2) )
+        {
+          if ( TechnoClass::Evaluate_Cell(
+                 this,
+                 projFlags,
+                 newTargetFlags,
+                 &a2,
+                 wanteddistance,
+                 &curThreat,
+                 &threat_,
+                 wat)
+            && curThreat
+            && (!a4 || *(*(curThreat + 540) + 48) == this->t.OwningPlayer->idxEnemyHouse)
+            && ((BYTE1(projFlags) & 0x40) == 0 || HouseClass::Is_Ally(this->t.OwningPlayer, *(curThreat + 540))) )
+          {
+            if ( LOBYTE(this->vt->r.m.o.GetTechnoType(this)->t.RotCount) )// DistributedFire
+            {
+              v70 = this->t.CurrentTargets.count;
+              v71 = curThreat;
+              if ( this->t.CurrentTargets.length < v70
+                || (this->t.CurrentTargets.IsAllocated || !v70)
+                && (v72 = this->t.CurrentTargets.incrementAmount, v72 > 0)
+                && (this->t.CurrentTargets.vt->Resize)(&this->t.CurrentTargets, v70 + v72, 0) )
+              {
+                v73 = this->t.CurrentTargets.length;
+                v74 = this->t.CurrentTargets.data;
+                this->t.CurrentTargets.length = v73 + 1;
+                v74[v73]._ = v71;
+              }
+              v75 = this->t.CurrentTargetThreats.count;
+              if ( this->t.CurrentTargetThreats.length < v75
+                || (this->t.CurrentTargetThreats.IsAllocated || !v75)
+                && (v76 = this->t.field_450, v76 > 0)
+                && (this->t.CurrentTargetThreats.vt->Resize)(&this->t.CurrentTargetThreats, v75 + v76, 0) )
+              {
+                v77 = this->t.CurrentTargetThreats.length;
+                v78 = this->t.CurrentTargetThreats.data;
+                this->t.CurrentTargetThreats.length = v77 + 1;
+                v78[v77] = threat_;
+              }
+            }
+            if ( BestThreat < threat_ )
+            {
+              BestThreat = threat_;
+              BestTarget = curThreat;
+            }
+          }
+          if ( !BestTarget )
+          {
+            v79 = TechnoClass::Evaluate_Just_Cell(&a2);
+            threat_ = v79;
+            if ( v98 < v79 )
+            {
+              v98 = v79;
+              v99 = a2;
+            }
+          }
+        }
+        ++v59;
+      }
+      while ( v59 < v95 );
+    }
+    if ( BestTarget )
+    {
+      v80 = v95;
+      if ( v95 == v100 / 4 || v95 == v100 / 2 )
+        return BestTarget;
+    }
+    else
+    {
+      v80 = v95;
+    }
+    if ( v99.X != someMoreCoords.X || v99.Y != someMoreCoords.Y )
+      break;
+    v95 = v80 + 1;
+    if ( v80 + 1 >= v100 )
+      return BestTarget;
+  }
+  return MapClass::Coord_Cell(&Map, &v99);
+}
+/* Orphan comments:
+IsGattling
+AirRangeBonus
+AttackFriendlies
+AttackFriendlies || Engineer
+*/
+
+
+====================================================================================================
+### XrefsTo 0x7012DF / 0x6F72E3 / 0x6F9039
+====================================================================================================
+--- Xrefs to 0x7012DF ---
+   来自 0x007012DD  (TechnoClass_168)
+
+--- Xrefs to 0x6F72E3 ---
+   来自 0x006F72E1  (TechnoClass_IsCloseEnoughToTarget)
+   来自 0x006F72D0  (TechnoClass_IsCloseEnoughToTarget)
+
+--- Xrefs to 0x6F9039 ---
+   来自 0x006F9037  (W?Greatest_Threat$:TechnoClass$n.x($ThreatType$$)l)

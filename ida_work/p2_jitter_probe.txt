@@ -1,0 +1,792 @@
+############ 0. 段表 ############
+  .text        00401000..007E1000 size=4063232
+  .idata       007E1000..007E1608 size=1544
+  .rdata       007E1608..00812000 size=199160
+  .data        00812000..00B79BE4 size=3570660
+  .pd          00B98000..00B99000 size=4096
+
+扫描段: ('.rdata', 8263176, 8462336)
+读取 199160 字节
+
+############ A. 命中虚表 base 19 个 ############
+007E22A4 007E3AD0 007E46E4 007E8C94 007EB058 007EC258 007EDCC0 007EF060 007EF3D4 007EF954 007EFB9C 007F0508 007F32FC 007F4960 007F522C 007F5C70 007F6318 007F66A8 007F6BF4
+
+---- vtable base 007E22A4 ----
+   +000 QInterface       00414290  AircraftClass_QueryInterface
+   +048 GetCoords        005F65A0  W?Center_Coord$:ObjectClass$n.x()ul
+   +04C GetDestination   004DBDF0  FootClass_GetCoords_unknown1
+   +054 IsInAir          0041B920  AircraftClass_InAir
+   +058 GetCenterCoords  00410540  AbstractClass_GetCoords_1arg
+   +078 InWhichLayer     0041ADC0  TechnoClass_InWhichLayer
+   +084 GetTechnoType    006F3270  TechnoClass_84
+   +0A4 GetTargetCoords  0041BDD0  ObjectClass_GetPos
+   +0A8 GetDockCoords    005F6C80  ObjectClass_GetCoords_1
+   +0AC GetRenderCoords  0041BE00  ObjectClass_GetCoords_2
+   +0B0 GetFLH           006F3AD0  TechnoClass_GetFLH
+   +0B8 GetYSort         005F6BD0  ObjectClass_ReturnRealYSort
+   +1B4 SetLocation      004DB810  FootClass_SetCoords
+   +1C8 GetHeight        005F5F40  TechnoClass_GetHeight
+   +1CC SetHeight        005F5FA0  TechnoClass_SetHeight
+   +1D0 GetZ             005F5F30  TechnoClass_GetZ
+
+---- vtable base 007E3AD0 ----
+   +000 QInterface       00410260  AbstractClass_QueryInterface
+   +048 GetCoords        005F65A0  W?Center_Coord$:ObjectClass$n.x()ul
+   +04C GetDestination   004104F0  AbstractClass_GetCoords_2arg
+   +054 IsInAir          005F6B90  TechnoClass_InAir
+   +058 GetCenterCoords  00410540  AbstractClass_GetCoords_1arg
+   +078 InWhichLayer     004369F0  BuildingLightClass_InWhichLayer
+   +084 GetTechnoType    005F6BC0  ObjectClass_GetTechnoType
+   +0A4 GetTargetCoords  0041BDD0  ObjectClass_GetPos
+   +0A8 GetDockCoords    005F6C80  ObjectClass_GetCoords_1
+   +0AC GetRenderCoords  0041BE00  ObjectClass_GetCoords_2
+   +0B0 GetFLH           004263D0  ObjectClass_GetFLH
+   +0B8 GetYSort         005F6BD0  ObjectClass_ReturnRealYSort
+   +1B4 SetLocation      005F6940  ObjectClass_SetPosition
+   +1C8 GetHeight        005F5F40  TechnoClass_GetHeight
+   +1CC SetHeight        005F5FA0  TechnoClass_SetHeight
+   +1D0 GetZ             005F5F30  TechnoClass_GetZ
+
+---- vtable base 007E46E4 ----
+   +000 QInterface       00410260  AbstractClass_QueryInterface
+   +048 GetCoords        005F65A0  W?Center_Coord$:ObjectClass$n.x()ul
+   +04C GetDestination   004104F0  AbstractClass_GetCoords_2arg
+   +054 IsInAir          005F6B90  TechnoClass_InAir
+   +058 GetCenterCoords  00410540  AbstractClass_GetCoords_1arg
+   +078 InWhichLayer     00468B90  BulletClass_InWhichLayer
+   +084 GetTechnoType    005F6BC0  ObjectClass_GetTechnoType
+   +0A4 GetTargetCoords  0041BDD0  ObjectClass_GetPos
+   +0A8 GetDockCoords    005F6C80  ObjectClass_GetCoords_1
+   +0AC GetRenderCoords  0041BE00  ObjectClass_GetCoords_2
+   +0B0 GetFLH           004263D0  ObjectClass_GetFLH
+   +0B8 GetYSort         005F6BD0  ObjectClass_ReturnRealYSort
+   +1B4 SetLocation      005F6940  ObjectClass_SetPosition
+   +1C8 GetHeight        005F5F40  TechnoClass_GetHeight
+   +1CC SetHeight        005F5FA0  TechnoClass_SetHeight
+   +1D0 GetZ             005F5F30  TechnoClass_GetZ
+
+---- vtable base 007E8C94 ----
+   +000 QInterface       00410260  AbstractClass_QueryInterface
+   +048 GetCoords        005F65A0  W?Center_Coord$:ObjectClass$n.x()ul
+   +04C GetDestination   004DBDF0  FootClass_GetCoords_unknown1
+   +054 IsInAir          004DE620  FootClass_InAir
+   +058 GetCenterCoords  00410540  AbstractClass_GetCoords_1arg
+   +078 InWhichLayer     004DB7E0  FootClass_InWhichLayer
+   +084 GetTechnoType    006F3270  TechnoClass_84
+   +0A4 GetTargetCoords  0041BDD0  ObjectClass_GetPos
+   +0A8 GetDockCoords    005F6C80  ObjectClass_GetCoords_1
+   +0AC GetRenderCoords  0041BE00  ObjectClass_GetCoords_2
+   +0B0 GetFLH           006F3AD0  TechnoClass_GetFLH
+   +0B8 GetYSort         005F6BD0  ObjectClass_ReturnRealYSort
+   +1B4 SetLocation      004DB810  FootClass_SetCoords
+   +1C8 GetHeight        005F5F40  TechnoClass_GetHeight
+   +1CC SetHeight        005F5FA0  TechnoClass_SetHeight
+   +1D0 GetZ             005F5F30  TechnoClass_GetZ
+
+---- vtable base 007EB058 ----
+   +000 QInterface       00410260  AbstractClass_QueryInterface
+   +048 GetCoords        005F65A0  W?Center_Coord$:ObjectClass$n.x()ul
+   +04C GetDestination   004DBDF0  FootClass_GetCoords_unknown1
+   +054 IsInAir          004DE620  FootClass_InAir
+   +058 GetCenterCoords  00410540  AbstractClass_GetCoords_1arg
+   +078 InWhichLayer     004DB7E0  FootClass_InWhichLayer
+   +084 GetTechnoType    006F3270  TechnoClass_84
+   +0A4 GetTargetCoords  0041BDD0  ObjectClass_GetPos
+   +0A8 GetDockCoords    005F6C80  ObjectClass_GetCoords_1
+   +0AC GetRenderCoords  0041BE00  ObjectClass_GetCoords_2
+   +0B0 GetFLH           00523250  InfantryClass_GetFLH
+   +0B8 GetYSort         005F6BD0  ObjectClass_ReturnRealYSort
+   +1B4 SetLocation      004DB810  FootClass_SetCoords
+   +1C8 GetHeight        005F5F40  TechnoClass_GetHeight
+   +1CC SetHeight        005F5FA0  TechnoClass_SetHeight
+   +1D0 GetZ             005F5F30  TechnoClass_GetZ
+
+---- vtable base 007EC258 ----
+   +000 QInterface       00410260  AbstractClass_QueryInterface
+   +048 GetCoords        005F65A0  W?Center_Coord$:ObjectClass$n.x()ul
+   +04C GetDestination   004104F0  AbstractClass_GetCoords_2arg
+   +054 IsInAir          005F6B90  TechnoClass_InAir
+   +058 GetCenterCoords  00410540  AbstractClass_GetCoords_1arg
+   +078 InWhichLayer     005F4260  TechnoClass_78
+   +084 GetTechnoType    005F6BC0  ObjectClass_GetTechnoType
+   +0A4 GetTargetCoords  0041BDD0  ObjectClass_GetPos
+   +0A8 GetDockCoords    005F6C80  ObjectClass_GetCoords_1
+   +0AC GetRenderCoords  0041BE00  ObjectClass_GetCoords_2
+   +0B0 GetFLH           004263D0  ObjectClass_GetFLH
+   +0B8 GetYSort         005F6BD0  ObjectClass_ReturnRealYSort
+   +1B4 SetLocation      005F6940  ObjectClass_SetPosition
+   +1C8 GetHeight        005F5F40  TechnoClass_GetHeight
+   +1CC SetHeight        005F5FA0  TechnoClass_SetHeight
+   +1D0 GetZ             005F5F30  TechnoClass_GetZ
+
+---- vtable base 007EDCC0 ----
+   +000 QInterface       00410260  AbstractClass_QueryInterface
+   +048 GetCoords        005F65A0  W?Center_Coord$:ObjectClass$n.x()ul
+   +04C GetDestination   004104F0  AbstractClass_GetCoords_2arg
+   +054 IsInAir          005F6B90  TechnoClass_InAir
+   +058 GetCenterCoords  00410540  AbstractClass_GetCoords_1arg
+   +078 InWhichLayer     005F4260  TechnoClass_78
+   +084 GetTechnoType    005F6BC0  ObjectClass_GetTechnoType
+   +0A4 GetTargetCoords  0041BDD0  ObjectClass_GetPos
+   +0A8 GetDockCoords    005F6C80  ObjectClass_GetCoords_1
+   +0AC GetRenderCoords  0041BE00  ObjectClass_GetCoords_2
+   +0B0 GetFLH           004263D0  ObjectClass_GetFLH
+   +0B8 GetYSort         005F6BD0  ObjectClass_ReturnRealYSort
+   +1B4 SetLocation      005F6940  ObjectClass_SetPosition
+   +1C8 GetHeight        005F5F40  TechnoClass_GetHeight
+   +1CC SetHeight        005F5FA0  TechnoClass_SetHeight
+   +1D0 GetZ             005F5F30  TechnoClass_GetZ
+
+---- vtable base 007EF060 ----
+   +000 QInterface       00410260  AbstractClass_QueryInterface
+   +048 GetCoords        005F65A0  W?Center_Coord$:ObjectClass$n.x()ul
+   +04C GetDestination   004104F0  AbstractClass_GetCoords_2arg
+   +054 IsInAir          005F6B90  TechnoClass_InAir
+   +058 GetCenterCoords  00410540  AbstractClass_GetCoords_1arg
+   +078 InWhichLayer     005F4260  TechnoClass_78
+   +084 GetTechnoType    005F6BC0  ObjectClass_GetTechnoType
+   +0A4 GetTargetCoords  0041BDD0  ObjectClass_GetPos
+   +0A8 GetDockCoords    005F6C80  ObjectClass_GetCoords_1
+   +0AC GetRenderCoords  0041BE00  ObjectClass_GetCoords_2
+   +0B0 GetFLH           004263D0  ObjectClass_GetFLH
+   +0B8 GetYSort         005F6BD0  ObjectClass_ReturnRealYSort
+   +1B4 SetLocation      005F6940  ObjectClass_SetPosition
+   +1C8 GetHeight        005F5F40  TechnoClass_GetHeight
+   +1CC SetHeight        005F5FA0  TechnoClass_SetHeight
+   +1D0 GetZ             005F5F30  TechnoClass_GetZ
+
+---- vtable base 007EF3D4 ----
+   +000 QInterface       00410260  AbstractClass_QueryInterface
+   +048 GetCoords        005F65A0  W?Center_Coord$:ObjectClass$n.x()ul
+   +04C GetDestination   004104F0  AbstractClass_GetCoords_2arg
+   +054 IsInAir          005F6B90  TechnoClass_InAir
+   +058 GetCenterCoords  00410540  AbstractClass_GetCoords_1arg
+   +078 InWhichLayer     005F4260  TechnoClass_78
+   +084 GetTechnoType    005F6BC0  ObjectClass_GetTechnoType
+   +0A4 GetTargetCoords  0041BDD0  ObjectClass_GetPos
+   +0A8 GetDockCoords    005F6C80  ObjectClass_GetCoords_1
+   +0AC GetRenderCoords  0041BE00  ObjectClass_GetCoords_2
+   +0B0 GetFLH           004263D0  ObjectClass_GetFLH
+   +0B8 GetYSort         005F6BD0  ObjectClass_ReturnRealYSort
+   +1B4 SetLocation      005F6940  ObjectClass_SetPosition
+   +1C8 GetHeight        005F5F40  TechnoClass_GetHeight
+   +1CC SetHeight        005F5FA0  TechnoClass_SetHeight
+   +1D0 GetZ             005F5F30  TechnoClass_GetZ
+
+---- vtable base 007EF954 ----
+   +000 QInterface       00410260  AbstractClass_QueryInterface
+   +048 GetCoords        005F65A0  W?Center_Coord$:ObjectClass$n.x()ul
+   +04C GetDestination   004104F0  AbstractClass_GetCoords_2arg
+   +054 IsInAir          005F6B90  TechnoClass_InAir
+   +058 GetCenterCoords  00410540  AbstractClass_GetCoords_1arg
+   +078 InWhichLayer     0062D770  ParticleClass_InWhichLayer
+   +084 GetTechnoType    005F6BC0  ObjectClass_GetTechnoType
+   +0A4 GetTargetCoords  0041BDD0  ObjectClass_GetPos
+   +0A8 GetDockCoords    005F6C80  ObjectClass_GetCoords_1
+   +0AC GetRenderCoords  0041BE00  ObjectClass_GetCoords_2
+   +0B0 GetFLH           004263D0  ObjectClass_GetFLH
+   +0B8 GetYSort         005F6BD0  ObjectClass_ReturnRealYSort
+   +1B4 SetLocation      005F6940  ObjectClass_SetPosition
+   +1C8 GetHeight        005F5F40  TechnoClass_GetHeight
+   +1CC SetHeight        005F5FA0  TechnoClass_SetHeight
+   +1D0 GetZ             005F5F30  TechnoClass_GetZ
+
+---- vtable base 007EFB9C ----
+   +000 QInterface       00410260  AbstractClass_QueryInterface
+   +048 GetCoords        005F65A0  W?Center_Coord$:ObjectClass$n.x()ul
+   +04C GetDestination   004104F0  AbstractClass_GetCoords_2arg
+   +054 IsInAir          005F6B90  TechnoClass_InAir
+   +058 GetCenterCoords  00410540  AbstractClass_GetCoords_1arg
+   +078 InWhichLayer     0062FE80  ParticleClass_GetLayer
+   +084 GetTechnoType    005F6BC0  ObjectClass_GetTechnoType
+   +0A4 GetTargetCoords  0041BDD0  ObjectClass_GetPos
+   +0A8 GetDockCoords    005F6C80  ObjectClass_GetCoords_1
+   +0AC GetRenderCoords  0041BE00  ObjectClass_GetCoords_2
+   +0B0 GetFLH           004263D0  ObjectClass_GetFLH
+   +0B8 GetYSort         005F6BD0  ObjectClass_ReturnRealYSort
+   +1B4 SetLocation      005F6940  ObjectClass_SetPosition
+   +1C8 GetHeight        005F5F40  TechnoClass_GetHeight
+   +1CC SetHeight        005F5FA0  TechnoClass_SetHeight
+   +1D0 GetZ             005F5F30  TechnoClass_GetZ
+
+---- vtable base 007F0508 ----
+   +000 QInterface       00410260  AbstractClass_QueryInterface
+   +048 GetCoords        005F65A0  W?Center_Coord$:ObjectClass$n.x()ul
+   +04C GetDestination   004104F0  AbstractClass_GetCoords_2arg
+   +054 IsInAir          005F6B90  TechnoClass_InAir
+   +058 GetCenterCoords  00410540  AbstractClass_GetCoords_1arg
+   +078 InWhichLayer     005F4260  TechnoClass_78
+   +084 GetTechnoType    005F6BC0  ObjectClass_GetTechnoType
+   +0A4 GetTargetCoords  0041BDD0  ObjectClass_GetPos
+   +0A8 GetDockCoords    005F6C80  ObjectClass_GetCoords_1
+   +0AC GetRenderCoords  0041BE00  ObjectClass_GetCoords_2
+   +0B0 GetFLH           004263D0  ObjectClass_GetFLH
+   +0B8 GetYSort         005F6BD0  ObjectClass_ReturnRealYSort
+   +1B4 SetLocation      005F6940  ObjectClass_SetPosition
+   +1C8 GetHeight        005F5F40  TechnoClass_GetHeight
+   +1CC SetHeight        005F5FA0  TechnoClass_SetHeight
+   +1D0 GetZ             005F5F30  TechnoClass_GetZ
+
+---- vtable base 007F32FC ----
+   +000 QInterface       00410260  AbstractClass_QueryInterface
+   +048 GetCoords        005F65A0  W?Center_Coord$:ObjectClass$n.x()ul
+   +04C GetDestination   004104F0  AbstractClass_GetCoords_2arg
+   +054 IsInAir          005F6B90  TechnoClass_InAir
+   +058 GetCenterCoords  00410540  AbstractClass_GetCoords_1arg
+   +078 InWhichLayer     005F4260  TechnoClass_78
+   +084 GetTechnoType    005F6BC0  ObjectClass_GetTechnoType
+   +0A4 GetTargetCoords  0041BDD0  ObjectClass_GetPos
+   +0A8 GetDockCoords    005F6C80  ObjectClass_GetCoords_1
+   +0AC GetRenderCoords  0041BE00  ObjectClass_GetCoords_2
+   +0B0 GetFLH           004263D0  ObjectClass_GetFLH
+   +0B8 GetYSort         005F6BD0  ObjectClass_ReturnRealYSort
+   +1B4 SetLocation      005F6940  ObjectClass_SetPosition
+   +1C8 GetHeight        005F5F40  TechnoClass_GetHeight
+   +1CC SetHeight        005F5FA0  TechnoClass_SetHeight
+   +1D0 GetZ             005F5F30  TechnoClass_GetZ
+
+---- vtable base 007F4960 ----
+   +000 QInterface       00410260  AbstractClass_QueryInterface
+   +048 GetCoords        005F65A0  W?Center_Coord$:ObjectClass$n.x()ul
+   +04C GetDestination   004104F0  AbstractClass_GetCoords_2arg
+   +054 IsInAir          005F6B90  TechnoClass_InAir
+   +058 GetCenterCoords  00410540  AbstractClass_GetCoords_1arg
+   +078 InWhichLayer     005F4260  TechnoClass_78
+   +084 GetTechnoType    006F3270  TechnoClass_84
+   +0A4 GetTargetCoords  0041BDD0  ObjectClass_GetPos
+   +0A8 GetDockCoords    005F6C80  ObjectClass_GetCoords_1
+   +0AC GetRenderCoords  0041BE00  ObjectClass_GetCoords_2
+   +0B0 GetFLH           006F3AD0  TechnoClass_GetFLH
+   +0B8 GetYSort         005F6BD0  ObjectClass_ReturnRealYSort
+   +1B4 SetLocation      005F6940  ObjectClass_SetPosition
+   +1C8 GetHeight        005F5F40  TechnoClass_GetHeight
+   +1CC SetHeight        005F5FA0  TechnoClass_SetHeight
+   +1D0 GetZ             005F5F30  TechnoClass_GetZ
+
+---- vtable base 007F522C ----
+   +000 QInterface       00410260  AbstractClass_QueryInterface
+   +048 GetCoords        005F65A0  W?Center_Coord$:ObjectClass$n.x()ul
+   +04C GetDestination   004104F0  AbstractClass_GetCoords_2arg
+   +054 IsInAir          005F6B90  TechnoClass_InAir
+   +058 GetCenterCoords  00410540  AbstractClass_GetCoords_1arg
+   +078 InWhichLayer     005F4260  TechnoClass_78
+   +084 GetTechnoType    005F6BC0  ObjectClass_GetTechnoType
+   +0A4 GetTargetCoords  0041BDD0  ObjectClass_GetPos
+   +0A8 GetDockCoords    005F6C80  ObjectClass_GetCoords_1
+   +0AC GetRenderCoords  0041BE00  ObjectClass_GetCoords_2
+   +0B0 GetFLH           004263D0  ObjectClass_GetFLH
+   +0B8 GetYSort         005F6BD0  ObjectClass_ReturnRealYSort
+   +1B4 SetLocation      005F6940  ObjectClass_SetPosition
+   +1C8 GetHeight        005F5F40  TechnoClass_GetHeight
+   +1CC SetHeight        005F5FA0  TechnoClass_SetHeight
+   +1D0 GetZ             005F5F30  TechnoClass_GetZ
+
+---- vtable base 007F5C70 ----
+   +000 QInterface       00410260  AbstractClass_QueryInterface
+   +048 GetCoords        005F65A0  W?Center_Coord$:ObjectClass$n.x()ul
+   +04C GetDestination   004DBDF0  FootClass_GetCoords_unknown1
+   +054 IsInAir          004DE620  FootClass_InAir
+   +058 GetCenterCoords  00410540  AbstractClass_GetCoords_1arg
+   +078 InWhichLayer     004DB7E0  FootClass_InWhichLayer
+   +084 GetTechnoType    006F3270  TechnoClass_84
+   +0A4 GetTargetCoords  0041BDD0  ObjectClass_GetPos
+   +0A8 GetDockCoords    005F6C80  ObjectClass_GetCoords_1
+   +0AC GetRenderCoords  0041BE00  ObjectClass_GetCoords_2
+   +0B0 GetFLH           006F3AD0  TechnoClass_GetFLH
+   +0B8 GetYSort         005F6BD0  ObjectClass_ReturnRealYSort
+   +1B4 SetLocation      004DB810  FootClass_SetCoords
+   +1C8 GetHeight        005F5F40  TechnoClass_GetHeight
+   +1CC SetHeight        005F5FA0  TechnoClass_SetHeight
+   +1D0 GetZ             005F5F30  TechnoClass_GetZ
+
+---- vtable base 007F6318 ----
+   +000 QInterface       00410260  AbstractClass_QueryInterface
+   +048 GetCoords        005F65A0  W?Center_Coord$:ObjectClass$n.x()ul
+   +04C GetDestination   004104F0  AbstractClass_GetCoords_2arg
+   +054 IsInAir          005F6B90  TechnoClass_InAir
+   +058 GetCenterCoords  00410540  AbstractClass_GetCoords_1arg
+   +078 InWhichLayer     0074A960  sub_74A960
+   +084 GetTechnoType    005F6BC0  ObjectClass_GetTechnoType
+   +0A4 GetTargetCoords  0041BDD0  ObjectClass_GetPos
+   +0A8 GetDockCoords    005F6C80  ObjectClass_GetCoords_1
+   +0AC GetRenderCoords  0041BE00  ObjectClass_GetCoords_2
+   +0B0 GetFLH           004263D0  ObjectClass_GetFLH
+   +0B8 GetYSort         005F6BD0  ObjectClass_ReturnRealYSort
+   +1B4 SetLocation      005F6940  ObjectClass_SetPosition
+   +1C8 GetHeight        005F5F40  TechnoClass_GetHeight
+   +1CC SetHeight        005F5FA0  TechnoClass_SetHeight
+   +1D0 GetZ             005F5F30  TechnoClass_GetZ
+
+---- vtable base 007F66A8 ----
+   +000 QInterface       00410260  AbstractClass_QueryInterface
+   +048 GetCoords        005F65A0  W?Center_Coord$:ObjectClass$n.x()ul
+   +04C GetDestination   004104F0  AbstractClass_GetCoords_2arg
+   +054 IsInAir          005F6B90  TechnoClass_InAir
+   +058 GetCenterCoords  00410540  AbstractClass_GetCoords_1arg
+   +078 InWhichLayer     0074F330  ?underflow@?$basic_streambuf@DU?$char_traits@D@std@@@std@@MAEHXZ_6
+   +084 GetTechnoType    005F6BC0  ObjectClass_GetTechnoType
+   +0A4 GetTargetCoords  0041BDD0  ObjectClass_GetPos
+   +0A8 GetDockCoords    005F6C80  ObjectClass_GetCoords_1
+   +0AC GetRenderCoords  0041BE00  ObjectClass_GetCoords_2
+   +0B0 GetFLH           004263D0  ObjectClass_GetFLH
+   +0B8 GetYSort         005F6BD0  ObjectClass_ReturnRealYSort
+   +1B4 SetLocation      005F6940  ObjectClass_SetPosition
+   +1C8 GetHeight        005F5F40  TechnoClass_GetHeight
+   +1CC SetHeight        005F5FA0  TechnoClass_SetHeight
+   +1D0 GetZ             005F5F30  TechnoClass_GetZ
+
+---- vtable base 007F6BF4 ----
+   +000 QInterface       00410260  AbstractClass_QueryInterface
+   +048 GetCoords        005F65A0  W?Center_Coord$:ObjectClass$n.x()ul
+   +04C GetDestination   004104F0  AbstractClass_GetCoords_2arg
+   +054 IsInAir          005F6B90  TechnoClass_InAir
+   +058 GetCenterCoords  00410540  AbstractClass_GetCoords_1arg
+   +078 InWhichLayer     0075F890  sub_75F890
+   +084 GetTechnoType    005F6BC0  ObjectClass_GetTechnoType
+   +0A4 GetTargetCoords  0041BDD0  ObjectClass_GetPos
+   +0A8 GetDockCoords    005F6C80  ObjectClass_GetCoords_1
+   +0AC GetRenderCoords  0041BE00  ObjectClass_GetCoords_2
+   +0B0 GetFLH           004263D0  ObjectClass_GetFLH
+   +0B8 GetYSort         005F6BD0  ObjectClass_ReturnRealYSort
+   +1B4 SetLocation      005F6940  ObjectClass_SetPosition
+   +1C8 GetHeight        005F5F40  TechnoClass_GetHeight
+   +1CC SetHeight        005F5FA0  TechnoClass_SetHeight
+   +1D0 GetZ             005F5F30  TechnoClass_GetZ
+
+############ F. SetLocation / GetHeight / SetHeight / GetYSort impl ############
+---- SetLocation impl @ 004DB810 (FootClass_SetCoords) ----
+  004DB810  push    ebx
+  004DB811  push    esi
+  004DB812  mov     esi, ecx
+  004DB814  push    edi
+  004DB815  mov     edi, [esp+0Ch+arg_Coords]
+  004DB819  lea     eax, [esi+9Ch]
+  004DB81F  mov     ebx, [edi]
+  004DB821  mov     edx, eax
+  004DB823  mov     eax, [edx]
+  004DB825  cmp     ebx, eax
+  004DB827  mov     ecx, [edx+4]
+  004DB82A  mov     edx, [edx+8]
+  004DB82D  jnz     short loc_4DB839
+  004DB82F  cmp     [edi+4], ecx
+  004DB832  jnz     short loc_4DB839
+  004DB834  cmp     [edi+8], edx
+  004DB837  jz      short loc_4DB83D
+  004DB839  mov     bl, 1
+  004DB83B  jmp     short loc_4DB83F
+  004DB83D  xor     bl, bl
+  004DB83F  mov     al, [esi+74h]
+  004DB842  test    al, al
+  004DB844  jz      short loc_4DB868
+  004DB846  mov     eax, [esi]
+  004DB848  push    0
+  004DB84A  mov     ecx, esi
+  004DB84C  call    dword ptr [eax+124h]
+  004DB852  push    edi
+  004DB853  mov     ecx, esi
+  004DB855  call    ObjectClass_SetPosition
+  004DB85A  mov     edx, [esi]
+  004DB85C  push    1
+  004DB85E  mov     ecx, esi
+  004DB860  call    dword ptr [edx+124h]
+  004DB866  jmp     short loc_4DB870
+  004DB868  push    edi
+  004DB869  mov     ecx, esi
+  004DB86B  call    ObjectClass_SetPosition
+  004DB870  test    bl, bl
+  004DB872  jz      short loc_4DB88F
+  004DB874  mov     eax, [esi]
+  004DB876  mov     ecx, esi
+  004DB878  call    dword ptr [eax+84h]
+  004DB87E  mov     cl, [eax+5E4h]
+  004DB884  test    cl, cl
+  004DB886  jz      short loc_4DB88F
+  004DB888  mov     ecx, esi
+  004DB88A  call    sub_7104F0
+  004DB88F  pop     edi
+  004DB890  pop     esi
+  004DB891  pop     ebx
+  004DB892  retn    4
+
+---- GetHeight impl @ 005F5F40 (TechnoClass_GetHeight) ----
+  005F5F40  sub     esp, 0Ch
+  005F5F43  push    esi
+  005F5F44  mov     esi, ecx
+  005F5F46  lea     eax, [esi+9Ch]
+  005F5F4C  mov     ecx, [esi+9Ch]
+  005F5F52  mov     [esp+10h+loc.X], ecx
+  005F5F56  lea     ecx, [esp+10h+loc]
+  005F5F5A  mov     edx, [eax+4]
+  005F5F5D  push    ecx; loc
+  005F5F5E  mov     ecx, offset Map; this
+  005F5F63  mov     [esp+14h+loc.Y], edx
+  005F5F67  mov     eax, [eax+8]
+  005F5F6A  mov     [esp+14h+loc.Z], eax
+  005F5F6E  call    MapClass_GetCellFloorHeight
+  005F5F73  mov     ecx, [esi+0A4h]
+  005F5F79  sub     ecx, eax
+  005F5F7B  mov     al, [esi+8Ch]
+  005F5F81  test    al, al
+  005F5F83  pop     esi
+  005F5F84  jz      short loc_5F5F8C
+  005F5F86  sub     ecx, const_int_ObjectClass_1A0h
+  005F5F8C  mov     eax, ecx
+  005F5F8E  add     esp, 0Ch
+  005F5F91  retn
+
+---- SetHeight impl @ 005F5FA0 (TechnoClass_SetHeight) ----
+  005F5FA0  sub     esp, 0Ch
+  005F5FA3  push    esi
+  005F5FA4  mov     esi, ecx
+  005F5FA6  push    edi
+  005F5FA7  mov     edi, [esp+14h+arg_0]
+  005F5FAB  mov     al, [esi+8Ch]
+  005F5FB1  test    al, al
+  005F5FB3  jz      short loc_5F5FBB
+  005F5FB5  add     edi, const_int_ObjectClass_1A0h
+  005F5FBB  mov     al, [esi+74h]
+  005F5FBE  test    al, al
+  005F5FC0  jz      short loc_5F6017
+  005F5FC2  mov     eax, [esi]
+  005F5FC4  push    0
+  005F5FC6  mov     ecx, esi
+  005F5FC8  call    dword ptr [eax+124h]
+  005F5FCE  lea     ecx, [esi+9Ch]
+  005F5FD4  mov     edx, [esi+9Ch]
+  005F5FDA  mov     [esp+14h+loc.X], edx
+  005F5FDE  lea     edx, [esp+14h+loc]
+  005F5FE2  mov     eax, [ecx+4]
+  005F5FE5  push    edx; loc
+  005F5FE6  mov     [esp+18h+loc.Y], eax
+  005F5FEA  mov     ecx, [ecx+8]
+  005F5FED  mov     [esp+18h+loc.Z], ecx
+  005F5FF1  mov     ecx, offset Map; this
+  005F5FF6  call    MapClass_GetCellFloorHeight
+  005F5FFB  add     eax, edi
+  005F5FFD  push    1
+  005F5FFF  mov     [esi+0A4h], eax
+  005F6005  mov     eax, [esi]
+  005F6007  mov     ecx, esi
+  005F6009  call    dword ptr [eax+124h]
+  005F600F  pop     edi
+  005F6010  pop     esi
+  005F6011  add     esp, 0Ch
+  005F6014  retn    4
+
+---- GetYSort impl @ 005F6BD0 (ObjectClass_ReturnRealYSort) ----
+  005F6BD0  sub     esp, 18h
+  005F6BD3  push    esi
+  005F6BD4  mov     esi, ecx
+  005F6BD6  lea     ecx, [esp+1Ch+ptr]
+  005F6BDA  push    edi
+  005F6BDB  mov     eax, [esi]
+  005F6BDD  push    ecx; ptr
+  005F6BDE  mov     ecx, esi; this
+  005F6BE0  call    [eax+vt_AnimClass.o.GetCoords_]
+  005F6BE6  mov     edx, [esi]
+  005F6BE8  mov     edi, eax
+  005F6BEA  lea     eax, [esp+20h+var_C]
+  005F6BEE  mov     ecx, esi; this
+  005F6BF0  push    eax; ptr
+  005F6BF1  call    [edx+vt_AnimClass.o.GetCoords_]
+  005F6BF7  mov     ecx, [edi+4]
+  005F6BFA  mov     edx, [eax]
+  005F6BFC  add     ecx, edx
+  005F6BFE  pop     edi
+  005F6BFF  mov     eax, ecx
+  005F6C01  pop     esi
+  005F6C02  add     esp, 18h
+  005F6C05  retn
+
+---- GetZ impl @ 005F5F30 (TechnoClass_GetZ) ----
+  005F5F30  mov     eax, [ecx+0A4h]
+  005F5F36  retn
+
+---- SetLocation impl @ 005F6940 (ObjectClass_SetPosition) ----
+  005F6940  mov     eax, [esp+arg_Coords]
+  005F6944  add     ecx, 9Ch
+  005F694A  mov     edx, [eax]
+  005F694C  mov     [ecx], edx
+  005F694E  mov     edx, [eax+4]
+  005F6951  mov     [ecx+4], edx
+  005F6954  mov     eax, [eax+8]
+  005F6957  mov     [ecx+8], eax
+  005F695A  retn    4
+
+############ H1. DriveLocomotionClass_Draw_Matrix 0x4AFF60 ############
+  004AFF60  push    ebp
+  004AFF61  mov     ebp, esp
+  004AFF63  and     esp, 0FFFFFFF8h
+  004AFF66  sub     esp, 224h
+  004AFF6C  push    ebx
+  004AFF6D  push    esi
+  004AFF6E  mov     esi, [ebp+arg_0]
+  004AFF71  push    edi
+  004AFF72  mov     edi, [esi+2Ch]
+  004AFF75  test    edi, edi
+  004AFF77  mov     [esp+230h+var_218], edi
+  004AFF7B  jnz     short loc_4AFF85
+  004AFF7D  fld     ds:dbl1_0; 1.0
+  004AFF83  jmp     short loc_4AFFB0
+  004AFF85  mov     edx, [esi+20h]
+  004AFF88  mov     eax, [esi+28h]
+  004AFF8B  cmp     edx, 0FFFFFFFFh
+  004AFF8E  jz      short loc_4AFFA2
+  004AFF90  mov     ecx, Frame
+  004AFF96  sub     ecx, edx
+  004AFF98  cmp     ecx, eax
+  004AFF9A  jge     short loc_4AFFA0
+  004AFF9C  sub     eax, ecx
+  004AFF9E  jmp     short loc_4AFFA2
+  004AFFA0  xor     eax, eax
+  004AFFA2  sub     edi, eax
+  004AFFA4  mov     [esp+230h+var_21C], edi
+  004AFFA8  fild    [esp+230h+var_21C]
+  004AFFAC  fidiv   [esp+230h+var_218]
+  004AFFB0  fcomp   ds:dbl1_0; 1.0
+  004AFFB6  fnstsw  ax
+  004AFFB8  test    ah, 40h
+  004AFFBB  jz      short loc_4AFFEE
+  004AFFBD  mov     ecx, [esi+8]
+  004AFFC0  fld     dword ptr [ecx+328h]
+  004AFFC6  fabs
+  004AFFC8  fcomp   ds:dbl_7E44E8
+  004AFFCE  fnstsw  ax
+  004AFFD0  test    ah, 1
+  004AFFD3  jz      short loc_4AFFEE
+  004AFFD5  fld     dword ptr [ecx+32Ch]
+  004AFFDB  fabs
+  004AFFDD  fcomp   ds:dbl_7E44E8
+  004AFFE3  fnstsw  ax
+  004AFFE5  test    ah, 1
+  004AFFE8  jnz     loc_4B02B3
+  004AFFEE  lea     ecx, [esp+230h+var_1E0]
+  004AFFF2  call    Matrix3D::Matrix3D
+  004AFFF7  lea     ecx, [esp+230h+var_1B0]
+  004AFFFE  call    Matrix3D::Matrix3D
+  004B0003  mov     ecx, [esi+8]
+  004B0006  mov     eax, [ecx]
+  004B0008  call    dword ptr [eax+84h]
+  004B000E  mov     ecx, [esi+8]
+  004B0011  fld     qword ptr [eax+360h]
+  004B0017  mov     edx, [ecx]
+  004B0019  fstp    [esp+230h+var_21C]
+  004B001D  call    dword ptr [edx+84h]
+  004B0023  fld     qword ptr [eax+368h]
+  004B0029  mov     eax, [esi+8]
+  004B002C  sub     esp, 8
+  004B002F  fstp    [esp+238h+var_218]
+  004B0033  fld     dword ptr [eax+32Ch]
+  004B0039  fstp    [esp+238h+var_238]; double
+  004B003C  call    float_cos
+  004B0041  mov     ecx, [esi+8]
+  004B0044  fstp    [esp+238h+var_224]
+  004B0048  fld     dword ptr [ecx+32Ch]
+  004B004E  fstp    [esp+238h+var_238]
+  004B0051  call    float_sin
+  004B0056  mov     edx, [esi+8]
+  004B0059  fstp    [esp+238h+var_214]
+  004B005D  fld     dword ptr [edx+328h]
+  004B0063  fstp    [esp+238h+var_238]; double
+  004B0066  call    float_cos
+  004B006B  mov     eax, [esi+8]
+  004B006E  fstp    [esp+238h+var_220]
+  004B0072  fld     dword ptr [eax+328h]
+  004B0078  fstp    [esp+238h+var_238]
+  004B007B  call    float_sin
+  004B0080  fabs
+  004B0082  fmul    [esp+238h+var_21C]
+  004B0086  fld     [esp+238h+var_214]
+  004B008A  fabs
+  004B008C  fmul    [esp+238h+var_218]
+  004B0090  add     esp, 8
+  004B0093  faddp   st(1), st
+  004B0095  call    Float_To_Int_Floor
+  004B009A  fld     [esp+230h+var_224]
+  004B009E  fmul    [esp+230h+var_218]
+
+############ H2. ShipLocomotionClass_Draw_Matrix 0x69F670 ############
+  0069F670  push    ebp
+  0069F671  mov     ebp, esp
+  0069F673  and     esp, 0FFFFFFF8h
+  0069F676  sub     esp, 224h
+  0069F67C  push    ebx
+  0069F67D  push    esi
+  0069F67E  mov     esi, [ebp+arg_0]
+  0069F681  push    edi
+  0069F682  mov     edi, [esi+2Ch]
+  0069F685  test    edi, edi
+  0069F687  mov     [esp+230h+var_218], edi
+  0069F68B  jnz     short loc_69F695
+  0069F68D  fld     ds:dbl1_0; 1.0
+  0069F693  jmp     short loc_69F6C0
+  0069F695  mov     edx, [esi+20h]
+  0069F698  mov     eax, [esi+28h]
+  0069F69B  cmp     edx, 0FFFFFFFFh
+  0069F69E  jz      short loc_69F6B2
+  0069F6A0  mov     ecx, Frame
+  0069F6A6  sub     ecx, edx
+  0069F6A8  cmp     ecx, eax
+  0069F6AA  jge     short loc_69F6B0
+  0069F6AC  sub     eax, ecx
+  0069F6AE  jmp     short loc_69F6B2
+  0069F6B0  xor     eax, eax
+  0069F6B2  sub     edi, eax
+  0069F6B4  mov     [esp+230h+var_21C], edi
+  0069F6B8  fild    [esp+230h+var_21C]
+  0069F6BC  fidiv   [esp+230h+var_218]
+  0069F6C0  fcomp   ds:dbl1_0; 1.0
+  0069F6C6  fnstsw  ax
+  0069F6C8  test    ah, 40h
+  0069F6CB  jz      short loc_69F6FE
+  0069F6CD  mov     ecx, [esi+8]
+  0069F6D0  fld     dword ptr [ecx+328h]
+  0069F6D6  fabs
+  0069F6D8  fcomp   ds:dbl_7E44E8
+  0069F6DE  fnstsw  ax
+  0069F6E0  test    ah, 1
+  0069F6E3  jz      short loc_69F6FE
+  0069F6E5  fld     dword ptr [ecx+32Ch]
+  0069F6EB  fabs
+  0069F6ED  fcomp   ds:dbl_7E44E8
+  0069F6F3  fnstsw  ax
+  0069F6F5  test    ah, 1
+  0069F6F8  jnz     loc_69F9C3
+  0069F6FE  lea     ecx, [esp+230h+var_1E0]
+  0069F702  call    Matrix3D::Matrix3D
+  0069F707  lea     ecx, [esp+230h+var_1B0]
+  0069F70E  call    Matrix3D::Matrix3D
+  0069F713  mov     ecx, [esi+8]
+  0069F716  mov     eax, [ecx]
+  0069F718  call    dword ptr [eax+84h]
+  0069F71E  mov     ecx, [esi+8]
+  0069F721  fld     qword ptr [eax+360h]
+  0069F727  mov     edx, [ecx]
+  0069F729  fstp    [esp+230h+var_21C]
+  0069F72D  call    dword ptr [edx+84h]
+  0069F733  fld     qword ptr [eax+368h]
+  0069F739  mov     eax, [esi+8]
+  0069F73C  sub     esp, 8
+  0069F73F  fstp    [esp+238h+var_218]
+  0069F743  fld     dword ptr [eax+32Ch]
+  0069F749  fstp    [esp+238h+var_238]; double
+  0069F74C  call    float_cos
+  0069F751  mov     ecx, [esi+8]
+  0069F754  fstp    [esp+238h+var_224]
+  0069F758  fld     dword ptr [ecx+32Ch]
+  0069F75E  fstp    [esp+238h+var_238]
+  0069F761  call    float_sin
+  0069F766  mov     edx, [esi+8]
+  0069F769  fstp    [esp+238h+var_214]
+  0069F76D  fld     dword ptr [edx+328h]
+  0069F773  fstp    [esp+238h+var_238]; double
+  0069F776  call    float_cos
+  0069F77B  mov     eax, [esi+8]
+  0069F77E  fstp    [esp+238h+var_220]
+  0069F782  fld     dword ptr [eax+328h]
+  0069F788  fstp    [esp+238h+var_238]
+  0069F78B  call    float_sin
+  0069F790  fabs
+  0069F792  fmul    [esp+238h+var_21C]
+  0069F796  fld     [esp+238h+var_214]
+  0069F79A  fabs
+  0069F79C  fmul    [esp+238h+var_218]
+  0069F7A0  add     esp, 8
+  0069F7A3  faddp   st(1), st
+  0069F7A5  call    Float_To_Int_Floor
+  0069F7AA  fld     [esp+230h+var_224]
+  0069F7AE  fmul    [esp+230h+var_218]
+
+############ H3. LocomotionClass_Draw_Matrix 0x55A730 ############
+  0055A730  sub     esp, 34h
+  0055A733  push    esi
+  0055A734  push    edi
+  0055A735  lea     ecx, [esp+3Ch+this]
+  0055A739  call    Matrix3D::Matrix3D
+  0055A73E  mov     edi, dword ptr [esp+3Ch+arg.X]
+  0055A742  lea     eax, [esp+3Ch+a2]
+  0055A746  push    eax; arg
+  0055A747  mov     ecx, [edi+8]
+  0055A74A  add     ecx, 388h; Facing
+  0055A750  call    Desired_Facing256
+  0055A755  mov     ecx, [eax]
+  0055A757  shr     ecx, 0Ah
+  0055A75A  inc     ecx
+  0055A75B  shr     ecx, 1
+  0055A75D  and     ecx, 1Fh
+  0055A760  sub     ecx, 8
+  0055A763  mov     dword ptr [esp+3Ch+arg.X], ecx
+  0055A767  push    ecx; float
+  0055A768  fild    dword ptr [esp+40h+arg.X]
+  0055A76C  lea     ecx, [esp+40h+this]; this
+  0055A770  fmul    ds:dbl_7E4408
+  0055A776  fstp    [esp+40h+var_40]; a2
+  0055A779  call    Matrix3D_5AF1A0
+  0055A77E  mov     esi, [esp+3Ch+arg_8]
+  0055A782  test    esi, esi
+  0055A784  jz      short loc_55A7B6
+  0055A786  mov     eax, [esi]
+  0055A788  cmp     eax, 0FFFFFFFFh
+  0055A78B  jz      short loc_55A7B6
+  0055A78D  shl     eax, 5
+  0055A790  mov     [esi], eax
+  0055A792  mov     ecx, [edi+8]
+  0055A795  lea     edx, [esp+3Ch+arg]; arg
+  0055A799  add     ecx, 388h; Facing
+  0055A79F  push    edx; arg
+  0055A7A0  call    Desired_Facing256
+  0055A7A5  mov     eax, [eax]
+  0055A7A7  mov     ecx, [esi]
+  0055A7A9  shr     eax, 0Ah
+  0055A7AC  inc     eax
+  0055A7AD  shr     eax, 1
+  0055A7AF  and     eax, 1Fh
+  0055A7B2  or      ecx, eax
+  0055A7B4  mov     [esi], ecx
+  0055A7B6  mov     eax, [esp+3Ch+arg_4]
+  0055A7BA  mov     ecx, 0Ch
+  0055A7BF  lea     esi, [esp+3Ch+this]
+  0055A7C3  mov     edi, eax
+  0055A7C5  rep movsd
+  0055A7C7  pop     edi
+  0055A7C8  pop     esi
+  0055A7C9  add     esp, 34h
+  0055A7CC  retn    0Ch
+
+############ H4. ObjectClass_ReturnRealYSort 0x5F6BD0 ############
+  005F6BD0  sub     esp, 18h
+  005F6BD3  push    esi
+  005F6BD4  mov     esi, ecx
+  005F6BD6  lea     ecx, [esp+1Ch+ptr]
+  005F6BDA  push    edi
+  005F6BDB  mov     eax, [esi]
+  005F6BDD  push    ecx; ptr
+  005F6BDE  mov     ecx, esi; this
+  005F6BE0  call    [eax+vt_AnimClass.o.GetCoords_]
+  005F6BE6  mov     edx, [esi]
+  005F6BE8  mov     edi, eax
+  005F6BEA  lea     eax, [esp+20h+var_C]
+  005F6BEE  mov     ecx, esi; this
+  005F6BF0  push    eax; ptr
+  005F6BF1  call    [edx+vt_AnimClass.o.GetCoords_]
+  005F6BF7  mov     ecx, [edi+4]
+  005F6BFA  mov     edx, [eax]
+  005F6BFC  add     ecx, edx
+  005F6BFE  pop     edi
+  005F6BFF  mov     eax, ecx
+  005F6C01  pop     esi
+  005F6C02  add     esp, 18h
+  005F6C05  retn
+
+############ I. call [reg+0AC] 分布 ############
+共 0 处
+
+############ I. call [reg+048] 分布 ############
+共 0 处
+
+############ I. call [reg+1B4] 分布 ############
+共 0 处
+
+############ I. call [reg+1CC] 分布 ############
+共 0 处
+

@@ -74,8 +74,19 @@ bool JumpjetCarryall::InMission()
 bool JumpjetCarryall::CanLift(TechnoClass* pTarget, bool& toPayload)
 {
 	FootClass* pTargetFoot = abstract_cast<FootClass*>(pTarget);
+	// ★ 判据必须是"全端一致"的（失同步优先）：
+	//   原写法 `pTechno->Owner->IsControlledByCurrentPlayer()` 在联机下等价于
+	//   `HouseClass::IsCurrentPlayer()`（见 YRpp/HouseClass.h:461）—— **各客户端结果不同**：
+	//   同一个运输机，在 A 客户端返回 true、在 B 客户端返回 false。
+	//   而 `CanLift` 经 `UnitClass::What_Action`(`0x73FD50..0x7404AA` 内的 `0x74041B`，
+	//   是虚函数、由 vtable `0x7F5CE4` 派发) 到达，`What_Action` 的返回值会决定
+	//   `Action::Tote`(吊运) 还是 `Action::Select` —— 一旦两端结果不同，
+	//   同一帧的吊运判定分叉 ⇒ 目标/任务分叉 ⇒ 失同步。
+	//   改用 `IsControlledByHuman()`：联机下 == `IsHumanPlayer`（House 级属性，全端一致；
+	//   战役下 == `IsHumanPlayer || IsInPlayerControl`，与原写法**完全相同**）。
+	//   对本地玩家的体验零影响（本机自己的运输机两种判据都为真）。
 	if (pTechno && pTargetFoot && pTechno != pTargetFoot
-		&& pTechno->Owner->IsControlledByCurrentPlayer() && pTechno->Owner->IsAlliedWith(pTargetFoot->GetOwningHouse())
+		&& pTechno->Owner->IsControlledByHuman() && pTechno->Owner->IsAlliedWith(pTargetFoot->GetOwningHouse())
 		&& !pTargetFoot->ParasiteEatingMe && !pTargetFoot->IsIronCurtained() && !pTargetFoot->WarpingOut && !pTargetFoot->IsImmobilized && !pTargetFoot->IsAttackedByLocomotor)
 	{
 		TechnoTypeClass* pType = pTechno->GetTechnoType();

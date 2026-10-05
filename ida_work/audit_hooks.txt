@@ -1,0 +1,893 @@
+==============================================================================================================
+### A. 全部 Hook 指令边界 / 长度体检
+==============================================================================================================
+ADDR      NAME     SIZE   addr+size 是否指令头     备注 / 文件
+00639DD8 Planning 0x5    00639DDD OK        AircraftExtHook.cpp:23 
+0073C47A UnitClas 0x5    0073C47F OK        AircraftExtHook.cpp:42 
+004147F9 Aircraft 0x6    004147FF OK        AircraftExtHook.cpp:62 
+00707323 TechnoCl 0x5    00707328 OK        AircraftExtHook.cpp:81 
+0073C4F8 TechnoCl 0x7    0073C4FF OK        AircraftExtHook.cpp:87 
+0073C58E TechnoCl 0x7    0073C595 OK        AircraftExtHook.cpp:88 
+00414876 TechnoCl 0x7    0041487D OK        AircraftExtHook.cpp:89 
+004CF80D FlyLocom 0x5    004CF812 OK        AircraftExtHook.cpp:178 
+004CF4C5 FlyLocom 0xA    004CF4CF OK        AircraftExtHook.cpp:194 
+004CF3E3 FlyLocom 0x9    004CF3EC OK        AircraftExtHook.cpp:215 
+004CF3C5 FlyLocom 0x6    004CF3CB OK        AircraftExtHook.cpp:230 
+0041B760 IFlyCont 0x6    0041B766 OK        AircraftExtHook.cpp:254 
+0041A697 Aircraft 0x6    0041A69D OK        AircraftExtHook.cpp:272 
+0041A96C Aircraft 0x6    0041A972 OK        AircraftExtHook.cpp:285 
+004CF780 FlyLocom 0x5    004CF785 OK        AircraftExtHook.cpp:298 
+00418478 Aircraft 0x6    0041847E OK        AircraftExtHook.cpp:322 
+004186D7 Aircraft 0x6    004186DD OK        AircraftExtHook.cpp:336 
+00418826 Aircraft 0x6    0041882C OK        AircraftExtHook.cpp:350 
+00418935 Aircraft 0x6    0041893B OK        AircraftExtHook.cpp:364 
+00418A44 Aircraft 0x6    00418A4A OK        AircraftExtHook.cpp:378 
+00418B40 Aircraft 0x6    00418B46 OK        AircraftExtHook.cpp:392 
+004181CF Aircraft 0x5    004181D4 OK        AircraftExtHook.cpp:426 
+004184FC Aircraft 0x6    00418502 OK        AircraftExtHook.cpp:443 
+00418506 Aircraft 0x6    0041850C OK        AircraftExtHook.cpp:451 
+00418572 Aircraft 0xA    0041857C OK        AircraftExtHook.cpp:458 
+004186B6 Aircraft 0x6    004186BC OK        AircraftExtHook.cpp:476 
+004183D3 Aircraft 0x6    004183D9 OK        AircraftExtHook.cpp:486 
+00418743 Aircraft 0x6    00418749 OK        AircraftExtHook.cpp:501 
+00418680 Aircraft 0x6    00418686 OK        AircraftExtHook.cpp:516 
+00418792 Aircraft 0x6    00418798 OK        AircraftExtHook.cpp:531 
+004CDCFD FlyLocom 0x7    004CDD04 OK        AircraftExtHook.cpp:548 
+004DDD66 FootClas 0x6    004DDD6C OK        AircraftExtHook.cpp:577 
+006F3477 TechnoCl 0xA    006F3481 OK        AirstrikeExtHook.cpp:26 
+0051EAE0 Infantry 0x7    0051EAE7 OK        AirstrikeExtHook.cpp:33 
+006F348F TechnoCl 0x7    006F3496 OK        AirstrikeExtHook.cpp:39 
+0041D97B Airstrik 0x7    0041D982 OK        AirstrikeExtHook.cpp:71 
+0041DA52 Airstrik 0x6    0041DA58 OK        AirstrikeExtHook.cpp:88 
+0041DA80 Airstrik 0x6    0041DA86 OK        AirstrikeExtHook.cpp:98 
+0041DAA4 Airstrik 0xA    0041DAAE OK        AirstrikeExtHook.cpp:108 
+0041D994 Airstrik 0x6    0041D99A OK        AirstrikeExtHook.cpp:126 
+0041DA68 Airstrik 0x7    0041DA6F OK        AirstrikeExtHook.cpp:141 
+0041DA88 Airstrik 0x7    0041DA8F OK        AirstrikeExtHook.cpp:156 
+0041DAD4 Airstrik 0x6    0041DADA OK        AirstrikeExtHook.cpp:166 
+0041DBD4 Airstrik 0x7    0041DBDB OK        AirstrikeExtHook.cpp:180 
+0041DC10 Airstrik 0x6    0041DC16 OK        AirstrikeExtHook.cpp:200 
+0041D604 Airstrik 0x6    0041D60A OK        AirstrikeExtHook.cpp:213 
+0065E97F HouseCla 0x6    0065E985 OK        AirstrikeExtHook.cpp:230 
+0065E997 Airstrik 0x6    0065E99D OK        AirstrikeExtHook.cpp:263 
+006D481D Tactical 0x7    006D4824 OK        AirstrikeExtHook.cpp:303 
+00705976 TechnoCl 0x8    0070597E OK        AirstrikeExtHook.cpp:327 
+00705986 TechnoCl 0x6    0070598C OK        AirstrikeExtHook.cpp:352 
+00705860 TechnoCl 0x8    00705868 OK        AirstrikeExtHook.cpp:370 
+007058F6 TechnoCl 0x5    007058FB OK        AirstrikeExtHook.cpp:380 
+0070597A TechnoCl 0x6    00705980 OK        AirstrikeExtHook.cpp:408 
+0070E92F TechnoCl 0x5    0070E934 OK        AirstrikeExtHook.cpp:421 
+0043F9E0 Building 0x6    0043F9E6 OK        AirstrikeExtHook.cpp:434 
+00448DF1 Building 0x6    00448DF7 OK        AirstrikeExtHook.cpp:447 
+00451ABC Building 0x6    00451AC2 OK        AirstrikeExtHook.cpp:460 
+00452041 Building 0x6    00452047 OK        AirstrikeExtHook.cpp:473 
+00456E5A Building 0x6    00456E60 OK        AirstrikeExtHook.cpp:486 
+0043D390 Building 0x6    0043D396 OK        AirstrikeExtHook.cpp:499 
+00706342 TechnoCl 0x7    00706349 OK        AirstrikeExtHook.cpp:505 
+0043DC2A Building 0x6    0043DC30 OK        AirstrikeExtHook.cpp:523 
+0070679B TechnoCl 0x5    007067A0 OK        AirstrikeExtHook.cpp:529 
+0073BFA4 UnitClas 0x6    0073BFAA OK        AirstrikeExtHook.cpp:548 
+00422126 AnimClas 0x5    0042212B OK        AnimExtHook.cpp:26 
+00422707 AnimClas 0x5    0042270C OK        AnimExtHook.cpp:27 
+004228D2 AnimClas 0x5    004228D7 NO        AnimExtHook.cpp:28 addr+size 非指令头!!
+00422967 AnimClas 0x6    0042296D OK        AnimExtHook.cpp:39 
+00426598 AnimClas 0x7    0042659F OK        AnimExtHook.cpp:49 
+00425280 AnimClas 0x5    00425285 OK        AnimExtHook.cpp:62 
+004253B0 AnimClas 0x5    004253B5 OK        AnimExtHook.cpp:63 
+00425391 AnimClas 0x7    00425398 OK        AnimExtHook.cpp:73 
+004253A2 AnimClas 0x7    004253A9 NO        AnimExtHook.cpp:74 addr+size 非指令头!!
+00425358 AnimClas 0x7    0042535F OK        AnimExtHook.cpp:75 
+004253FF AnimClas 0x5    00425404 OK        AnimExtHook.cpp:81 
+00423AC0 AnimClas 0x6    00423AC6 OK        AnimExtHook.cpp:91 
+0042429E AnimClas 0x6    004242A4 OK        AnimExtHook.cpp:104 
+0042437E AnimClas 0x6    00424384 OK        AnimExtHook.cpp:105 
+004243A6 AnimClas 0x6    004243AC OK        AnimExtHook.cpp:106 
+00424567 AnimClas 0x6    0042456D OK        AnimExtHook.cpp:107 
+004246DC AnimClas 0x6    004246E2 OK        AnimExtHook.cpp:108 
+00424B42 AnimClas 0x6    00424B48 OK        AnimExtHook.cpp:109 
+004247EB AnimClas 0x6    004247F1 OK        AnimExtHook.cpp:110 
+0042492A AnimClas 0x6    00424930 OK        AnimExtHook.cpp:111 
+00424B29 AnimClas 0x6    00424B2F OK        AnimExtHook.cpp:112 
+00424B1B AnimClas 0x6    00424B21 OK        AnimExtHook.cpp:113 
+00424785 AnimClas 0x6    0042478B OK        AnimExtHook.cpp:124 
+004247F3 AnimClas 0x6    004247F9 OK        AnimExtHook.cpp:137 
+00424298 AnimClas 0x6    0042429E OK        AnimExtHook.cpp:138 
+00424807 AnimClas 0x6    0042480D OK        AnimExtHook.cpp:151 
+0042312A AnimClas 0x6    00423130 OK        AnimExtHook.cpp:171 
+00423136 AnimClas 0x6    0042313C OK        AnimExtHook.cpp:181 
+00423E75 AnimClas 0x6    00423E7B OK        AnimExtHook.cpp:191 
+00423991 AnimClas 0x5    00423996 OK        AnimExtHook.cpp:202 
+00423F8C AnimClas 0x5    00423F91 OK        AnimExtHook.cpp:216 
+004242E1 AnimClas 0x5    004242E6 OK        AnimExtHook.cpp:230 
+0045197B Building 0x6    00451981 OK        AnimExtHook.cpp:243 
+00423630 AnimClas 0x6    00423636 OK        AnimExtHook.cpp:263 
+00424513 AnimClas 0x6    00424519 OK        AnimExtHook.cpp:296 
+00423E7B AnimClas 0xA    00423E85 OK        AnimExtHook.cpp:310 
+00423CD5 AnimClas 0x6    00423CDB OK        AnimExtHook.cpp:326 
+0042784B AnimType 0x5    00427850 OK        AnimTypeExtHook.cpp:10 
+00428EA8 AnimType 0x5    00428EAD OK        AnimTypeExtHook.cpp:21 
+00428970 AnimType 0x8    00428978 OK        AnimTypeExtHook.cpp:29 
+00428800 AnimType 0xA    0042880A OK        AnimTypeExtHook.cpp:30 
+0042892C AnimType 0x6    00428932 OK        AnimTypeExtHook.cpp:40 
+00428958 AnimType 0x6    0042895E OK        AnimTypeExtHook.cpp:41 
+0042898A AnimType 0x3    0042898D NO        AnimTypeExtHook.cpp:47 addr+size 非指令头!!
+004287E9 AnimType 0xA    004287F3 OK        AnimTypeExtHook.cpp:53 
+004287DC AnimType 0xA    004287E6 OK        AnimTypeExtHook.cpp:54 
+00441A26 Building 0x5    00441A2B OK        BuildingExtHook.cpp:18 
+00441B22 Building 0x6    00441B28 OK        BuildingExtHook.cpp:29 
+00441D41 Building 0x6    00441D47 OK        BuildingExtHook.cpp:40 
+00453E02 Building 0x6    00453E08 OK        BuildingExtHook.cpp:56 
+004AE95E DisplayC 0x5    004AE963 OK        BuildingExtHook.cpp:90 
+004664BA BulletCl 0x5    004664BF NO        BulletExtHook.cpp:27 addr+size 非指令头!!
+004665E9 BulletCl 0xA    004665F3 OK        BulletExtHook.cpp:40 
+0046AFB0 BulletCl 0x8    0046AFB8 OK        BulletExtHook.cpp:54 
+0046AE70 BulletCl 0x5    0046AE75 OK        BulletExtHook.cpp:55 
+0046AF97 BulletCl 0x7    0046AF9E OK        BulletExtHook.cpp:65 
+0046AF9E BulletCl 0x7    0046AFA5 NO        BulletExtHook.cpp:66 addr+size 非指令头!!
+0046AFC4 BulletCl 0x5    0046AFC9 NO        BulletExtHook.cpp:73 addr+size 非指令头!!
+00466556 BulletCl 0x6    0046655C OK        BulletExtHook.cpp:84 
+00468B5D BulletCl 0x6    00468B63 OK        BulletExtHook.cpp:97 
+004666F7 BulletCl 0x6    004666FD OK        BulletExtHook.cpp:112 
+00467FEE BulletCl 0x6    00467FF4 OK        BulletExtHook.cpp:125 
+00466781 BulletCl 0x6    00466787 OK        BulletExtHook.cpp:126 
+004690C1 BulletCl 0x8    004690C9 OK        BulletExtHook.cpp:139 
+00469A75 BulletCl 0x7    00469A7C OK        BulletExtHook.cpp:165 
+00469C46 BulletCl 0x8    00469C4E OK        BulletExtHook.cpp:184 
+00469D5C BulletCl 0x6    00469D62 OK        BulletExtHook.cpp:207 
+00469EB4 BulletCl 0x6    00469EBA OK        BulletExtHook.cpp:224 
+004683E2 BulletCl 0x5    004683E7 OK        BulletExtHook.cpp:247 
+004683E7 BulletCl 0x9    004683F0 OK        BulletExtHook.cpp:267 
+0046B201 BulletCl 0x7    0046B208 OK        BulletExtHook.cpp:278 
+0046745C BulletCl 0x7    00467463 OK        BulletExtHook.cpp:294 
+004677C7 BulletCl 0x8    004677CF OK        BulletExtHook.cpp:313 
+00466E18 BulletCl 0x6    00466E1E OK        BulletExtHook.cpp:334 
+00467E53 BulletCl 0x6    00467E59 OK        BulletExtHook.cpp:361 
+0046BDD9 BulletTy 0x5    0046BDDE NO        BulletTypeExtHook.cpp:10 addr+size 非指令头!!
+0046C8B6 BulletTy 0x6    0046C8BC OK        BulletTypeExtHook.cpp:21 
+0046C730 BulletTy 0x8    0046C738 OK        BulletTypeExtHook.cpp:30 
+0046C6A0 BulletTy 0x5    0046C6A5 OK        BulletTypeExtHook.cpp:31 
+0046C722 BulletTy 0x4    0046C726 NO        BulletTypeExtHook.cpp:41 addr+size 非指令头!!
+0046C74A BulletTy 0x3    0046C74D NO        BulletTypeExtHook.cpp:48 addr+size 非指令头!!
+0046C429 BulletTy 0xA    0046C433 OK        BulletTypeExtHook.cpp:55 
+0046C41C BulletTy 0xA    0046C426 OK        BulletTypeExtHook.cpp:56 
+004C1E42 EBolt_CT 0x5    004C1E47 OK        EBoltExtHook.cpp:23 
+004C2951 EBolt_DT 0x5    004C2956 OK        EBoltExtHook.cpp:31 
+006FD494 TechnoCl 0x7    006FD49B OK        EBoltExtHook.cpp:44 
+004C28B6 EBolt_Dr 0x6    004C28BC OK        EBoltExtHook.cpp:81 
+004C20BC EBolt_Dr 0xB    004C20C7 OK        EBoltExtHook.cpp:110 
+004C24C3 EBolt_Dr 0x9    004C24CC OK        EBoltExtHook.cpp:120 
+004C25D0 EBolt_Dr 0x6    004C25D6 OK        EBoltExtHook.cpp:130 
+004C26D5 EBolt_Dr 0x6    004C26DB OK        EBoltExtHook.cpp:140 
+004C2AE7 EBolt_Fi 0x6    004C2AED OK        EBoltExtHook.cpp:150 
+004F4497 GScreenC 0x6    004F449D OK        GScreenHook.cpp:21 
+004F4583 GScreenC 0x6    004F4589 OK        GScreenHook.cpp:27 
+006A70EB SidebarC 0x6    006A70F1 OK        GScreenHook.cpp:34 
+0052BA60 YR_Boot  0x5    0052BA65 OK        GeneralHook.cpp:40 
+0052F639 YR_CmdLi 0x5    0052F63E OK        GeneralHook.cpp:45 
+007CD810 ExeRun   0x9    007CD819 OK        GeneralHook.cpp:57 
+006851F0 Scenario 0x6    006851F6 OK        GeneralHook.cpp:81 
+00685659 Scenario 0xA    00685663 OK        GeneralHook.cpp:88 
+006875F3 Scenario 0x6    006875F9 OK        GeneralHook.cpp:96 
+0055AFB3 LogicCla 0x6    0055AFB9 OK        GeneralHook.cpp:108 
+0055B719 LogicCla 0x5    0055B71E NO        GeneralHook.cpp:114 addr+size 非指令头!!
+004F6532 HouseCla 0x5    004F6537 OK        HouseExtHook.cpp:16 
+004F7371 HouseCla 0x6    004F7377 OK        HouseExtHook.cpp:28 
+00504080 HouseCla 0x5    00504085 OK        HouseExtHook.cpp:37 
+00503040 HouseCla 0x5    00503045 OK        HouseExtHook.cpp:38 
+00504069 HouseCla 0x7    00504070 OK        HouseExtHook.cpp:48 
+005046DE HouseCla 0x7    005046E5 NO        HouseExtHook.cpp:55 addr+size 非指令头!!
+0050114D HouseCla 0x5    00501152 OK        HouseExtHook.cpp:62 
+005194EF Infantry 0x5    005194F4 OK        InfantryExtHook.cpp:17 
+005184F7 Infantry 0x8    005184FF OK        InfantryExtHook.cpp:28 
+0051F5C0 Infantry 0x6    0051F5C6 OK        InfantryExtHook.cpp:47 
+00550D1F LaserDra 0x6    00550D25 OK        LaserDrawHook.cpp:19 
+00550F47 LaserDra 0x0    00550F47 OK        LaserDrawHook.cpp:26 
+00489280 MapClass 0x6    00489286 OK        MapExtHook.cpp:24 
+00481D0E CellClas 0x6    00481D14 OK        MapExtHook.cpp:92 
+00481C6C CellClas 0x6    00481C72 OK        MapExtHook.cpp:106 
+00481CE1 CellClas 0x6    00481CE7 OK        MapExtHook.cpp:120 
+00481D3D CellClas 0x6    00481D43 OK        MapExtHook.cpp:134 
+00483226 CellClas 0x6    0048322C OK        MapExtHook.cpp:154 
+00482E57 CellClas 0x6    00482E5D OK        MapExtHook.cpp:171 
+0048303A CellClas 0x6    00483040 OK        MapExtHook.cpp:188 
+0069251A ScrollCl 0x6    00692520 OK        MapExtHook.cpp:219 
+006DA3FF Tactical 0x6    006DA405 OK        MapExtHook.cpp:240 
+006D5116 Tactical 0x5    006D511B OK        MapExtHook.cpp:263 
+004A904E DisplayC 0x5    004A9053 OK        MapExtHook.cpp:457 
+0062A13F Parasite 0x5    0062A144 OK        ParasiteExtHooks.cpp:14 
+006297F0 Parasite 0x6    006297F6 OK        ParasiteExtHooks.cpp:29 
+004101F0 Abstract 0x6    004101F6 OK        PointerExpireHook.cpp:25 
+005F65F1 ObjectCl 0x5    005F65F6 OK        PointerExpireHook.cpp:32 
+007258D0 DetachTh 0x6    007258D6 OK        PointerExpireHook.cpp:41 
+0067CEF0 SaveGame 0x6    0067CEF6 OK        SaveGameHook.cpp:29 
+0067D2F1 SaveGame 0x6    0067D2F7 OK        SaveGameHook.cpp:38 
+0067D300 SaveGame 0x5    0067D305 OK        SaveGameHook.cpp:47 
+0067E42E SaveGame 0xD    0067E43B NO        SaveGameHook.cpp:55 addr+size 非指令头!!
+0067E440 LoadGame 0x6    0067E446 OK        SaveGameHook.cpp:63 
+0067E720 LoadGame 0x6    0067E726 OK        SaveGameHook.cpp:71 
+0067E730 LoadGame 0x5    0067E735 OK        SaveGameHook.cpp:79 
+0067F7C8 LoadGame 0x5    0067F7CD OK        SaveGameHook.cpp:88 
+006B6CDF SpawnMan 0x7    006B6CE6 OK        SpawnManagerExtHook.cpp:52 
+006B6D4D SpawnMan 0x6    006B6D53 OK        SpawnManagerExtHook.cpp:85 
+006B78E4 SpawnMan 0x6    006B78EA OK        SpawnManagerExtHook.cpp:114 
+006B7317 SpawnMan 0x7    006B731E OK        SpawnManagerExtHook.cpp:143 
+006B743E SpawnMan 0x6    006B7444 OK        SpawnManagerExtHook.cpp:171 
+006B796A SpawnMan 0x5    006B796F OK        SpawnManagerExtHook.cpp:250 
+006B77B4 SpawnMan 0x7    006B77BB OK        SpawnManagerExtHook.cpp:267 
+006B7A32 SpawnMan 0x5    006B7A37 OK        SpawnManagerExtHook.cpp:278 
+0054E478 Kamikaze 0x5    0054E47D OK        SpawnManagerExtHook.cpp:312 
+0054E51D Kamikaze 0x5    0054E522 OK        SpawnManagerExtHook.cpp:339 
+0054E524 Kamikaze 0xA    0054E52E OK        SpawnManagerExtHook.cpp:348 
+0054E540 Kamikaze 0x7    0054E547 OK        SpawnManagerExtHook.cpp:363 
+0054E56D Kamikaze 0x6    0054E573 OK        SpawnManagerExtHook.cpp:370 
+006622C0 RocketLo 0x6    006622C6 OK        SpawnManagerExtHook.cpp:387 
+00662CAC RocketLo 0x6    00662CB2 OK        SpawnManagerExtHook.cpp:409 
+0066304F RocketLo 0x5    00663054 OK        SpawnManagerExtHook.cpp:423 
+006FA2A2 TechnoCl 0x6    006FA2A8 OK        StandExtHook.cpp:22 
+006FA45D TechnoCl 0x6    006FA463 OK        StandExtHook.cpp:34 
+005F6B90 ObjectCl 0x5    005F6B95 OK        StandExtHook.cpp:44 
+004D94B0 FootClas 0x5    004D94B5 OK        StandExtHook.cpp:58 
+00508EC6 HouseCla 0x5    00508ECB OK        StandExtHook.cpp:71 
+00508F9B HouseCla 0x5    00508FA0 OK        StandExtHook.cpp:82 
+006FC749 TechnoCl 0x5    006FC74E OK        StandExtHook.cpp:93 
+006FF66C TechnoCl 0x6    006FF672 OK        StandExtHook.cpp:121 
+006FCDBE TechnoCl 0x6    006FCDC4 OK        StandExtHook.cpp:141 
+004D9947 FootClas 0x6    004D994D OK        StandExtHook.cpp:160 
+0055DBC3 MainLoop 0x5    0055DBC8 OK        StandExtHook.cpp:225 
+004DA87A FootClas 0x6    004DA880 OK        StandExtHook.cpp:231 
+004DB091 FootClas 0x6    004DB097 OK        StandExtHook.cpp:251 
+005F6BF7 ObjectCl 0x5    005F6BFC OK        StandExtHook.cpp:328 
+0075C7E0 WalkLoco 0x5    0075C7E5 OK        StandExtHook.cpp:417 
+006A3E50 ShipLoco 0x5    006A3E55 OK        StandExtHook.cpp:425 
+005B19D0 MechLoco 0x5    005B19D5 OK        StandExtHook.cpp:433 
+00517100 HoverLoc 0x5    00517105 OK        StandExtHook.cpp:441 
+004B4820 DriveLoc 0x5    004B4825 OK        StandExtHook.cpp:449 
+0054B8E9 JumpjetL 0x6    0054B8EF OK        StandExtHook.cpp:458 
+00414C27 Aircraft 0x5    00414C2C OK        StandExtHook.cpp:473 
+00440406 Building 0x5    0044040B OK        StandExtHook.cpp:485 
+0044050C Building 0x5    00440511 OK        StandExtHook.cpp:497 
+0051BB17 Infantry 0x5    0051BB1C OK        StandExtHook.cpp:509 
+00736250 UnitClas 0x5    00736255 OK        StandExtHook.cpp:521 
+006CE6F6 SuperWea 0x5    006CE6FB NO        SuperWeaponTypeHook.cpp:10 addr+size 非指令头!!
+006CEFE0 SuperWea 0x8    006CEFE8 OK        SuperWeaponTypeHook.cpp:21 
+006CE8D0 SuperWea 0x8    006CE8D8 OK        SuperWeaponTypeHook.cpp:29 
+006CE800 SuperWea 0xA    006CE80A OK        SuperWeaponTypeHook.cpp:30 
+006CE8BE SuperWea 0x7    006CE8C5 OK        SuperWeaponTypeHook.cpp:40 
+006CE8EA SuperWea 0x3    006CE8ED NO        SuperWeaponTypeHook.cpp:46 addr+size 非指令头!!
+006CEE50 SuperWea 0xA    006CEE5A OK        SuperWeaponTypeHook.cpp:52 
+006CEE43 SuperWea 0xA    006CEE4D OK        SuperWeaponTypeHook.cpp:53 
+006F3260 TechnoCl 0x5    006F3265 OK        TechnoExtHook.cpp:36 
+006F4500 TechnoCl 0x5    006F4505 OK        TechnoExtHook.cpp:49 
+0070C250 TechnoCl 0x8    0070C258 OK        TechnoExtHook.cpp:64 
+0070BF50 TechnoCl 0x5    0070BF55 OK        TechnoExtHook.cpp:65 
+0070C249 TechnoCl 0x5    0070C24E NO        TechnoExtHook.cpp:75 addr+size 非指令头!!
+0070C264 TechnoCl 0x5    0070C269 NO        TechnoExtHook.cpp:82 addr+size 非指令头!!
+006F42ED TechnoCl 0xA    006F42F7 OK        TechnoExtHook.cpp:93 
+006F6CA0 TechnoCl 0x7    006F6CA7 OK        TechnoExtHook.cpp:106 
+006F6AC4 TechnoCl 0x5    006F6AC9 OK        TechnoExtHook.cpp:123 
+006F9E50 TechnoCl 0x5    006F9E55 OK        TechnoExtHook.cpp:136 
+006FAFFD TechnoCl 0x7    006FB004 OK        TechnoExtHook.cpp:150 
+006FAF7A TechnoCl 0x7    006FAF81 OK        TechnoExtHook.cpp:151 
+0044055D TechnoCl 0x6    00440563 OK        TechnoExtHook.cpp:165 
+0051BBDF TechnoCl 0x6    0051BBE5 OK        TechnoExtHook.cpp:166 
+00736321 TechnoCl 0x6    00736327 OK        TechnoExtHook.cpp:167 
+00414CF2 TechnoCl 0x6    00414CF8 OK        TechnoExtHook.cpp:168 
+0071A88D Temporal 0x8    0071A895 OK        TechnoExtHook.cpp:181 
+0071A917 Temporal 0x5    0071A91C OK        TechnoExtHook.cpp:201 
+00701900 TechnoCl 0x6    00701906 OK        TechnoExtHook.cpp:217 
+007019D8 TechnoCl 0x5    007019DD OK        TechnoExtHook.cpp:242 
+00471D2E CaptureM 0x7    00471D35 OK        TechnoExtHook.cpp:262 
+0053B233 IonStorm 0x6    0053B239 OK        TechnoExtHook.cpp:274 
+00701C45 TechnoCl 0x6    00701C4B OK        TechnoExtHook.cpp:287 
+00701C08 TechnoCl 0xA    00701C12 OK        TechnoExtHook.cpp:298 
+00701C78 TechnoCl 0x6    00701C7E OK        TechnoExtHook.cpp:309 
+005F5498 ObjectCl 0xC    005F54A4 OK        TechnoExtHook.cpp:324 
+00701DFF TechnoCl 0x7    00701E06 OK        TechnoExtHook.cpp:350 
+00702050 TechnoCl 0x6    00702056 OK        TechnoExtHook.cpp:368 
+00702E9D TechnoCl 0x6    00702EA3 OK        TechnoExtHook.cpp:381 
+006FC339 TechnoCl 0x6    006FC33F OK        TechnoExtHook.cpp:402 
+006FDD50 TechnoCl 0x6    006FDD56 OK        TechnoExtHook.cpp:433 
+006F65D1 TechnoCl 0x6    006F65D7 OK        TechnoExtHook.cpp:447 
+006F683C TechnoCl 0x7    006F6843 OK        TechnoExtHook.cpp:462 
+005F45A0 TechnoCl 0x5    005F45A5 OK        TechnoExtHook.cpp:477 
+00730DEB ObjectCl 0x6    00730DF1 OK        TechnoExtHook.cpp:495 
+00730E56 ObjectCl 0x6    00730E5C OK        TechnoExtHook.cpp:496 
+00730EEB ObjectCl 0x6    00730EF1 OK        TechnoExtHook.cpp:512 
+006F9039 TechnoCl 0x5    006F903E OK        TechnoExtHook.cpp:528 
+007012DF TechnoCl 0x6    007012E5 OK        TechnoExtHook.cpp:554 
+007012DF TechnoCl 0x6    007012E5 OK        TechnoExtHook.cpp:574 
+006F72E3 TechnoCl 0x6    006F72E9 OK        TechnoExtHook.cpp:594 
+007067F1 TechnoCl 0x6    007067F7 OK        TechnoExtHook.cpp:609 
+006FC016 TechnoCl 0x8    006FC01E OK        TechnoExtHook.cpp:628 
+0070EFD0 TechnoCl 0x6    0070EFD6 OK        TechnoExtHook.cpp:640 
+007063FF TechnoCl 0x7    00706406 OK        TechnoExtHook.cpp:653 
+00706640 TechnoCl 0x5    00706645 OK        TechnoExtHook.cpp:666 
+0073C15F UnitClas 0x7    0073C166 OK        TechnoExtHook.cpp:678 
+00702299 TechnoCl 0xA    007022A3 OK        TechnoExtHook.cpp:692 
+0070256C TechnoCl 0x6    00702572 OK        TechnoExtHook.cpp:728 
+007024B0 TechnoCl 0x6    007024B6 OK        TechnoExtHook.cpp:744 
+006FC833 TechnoCl 0x7    006FC83A OK        TechnoExtHook.cpp:763 
+006F36DB TechnoCl 0x8    006F36E3 OK        TechnoExtHook.cpp:774 
+006F37EB TechnoCl 0x6    006F37F1 OK        TechnoExtHook.cpp:918 
+006FDD61 TechnoCl 0x5    006FDD66 OK        TechnoExtHook.cpp:941 
+0070D6B4 TechnoCl 0x6    0070D6BA OK        TechnoExtHook.cpp:957 
+0070D773 TechnoCl 0x6    0070D779 OK        TechnoExtHook.cpp:973 
+006FF29E TechnoCl 0x6    006FF2A4 OK        TechnoExtHook.cpp:995 
+004B0521 Locomoti 0x5    004B0526 OK        TechnoExtHook.cpp:1020 
+0069FC31 Locomoti 0x5    0069FC36 OK        TechnoExtHook.cpp:1021 
+00736A95 UnitClas 0x6    00736A9B OK        TechnoExtHook.cpp:1033 
+004CCBB3 FlyLocom 0x5    004CCBB8 OK        TechnoExtHook.cpp:1044 
+0054B1D1 JumpjetL 0x6    0054B1D7 OK        TechnoExtHook.cpp:1056 
+0054AED0 JumpjetL 0x5    0054AED5 OK        TechnoExtHook.cpp:1071 
+0054BED4 JumpjetL 0x7    0054BEDB OK        TechnoExtHook.cpp:1101 
+0054C2DF JumpjetL 0xA    0054C2E9 OK        TechnoExtHook.cpp:1118 
+0054D600 JumpjetL 0x6    0054D606 OK        TechnoExtHook.cpp:1137 
+0054BC44 JumpjetL 0x8    0054BC4C OK        TechnoExtHook.cpp:1190 
+0054BF53 JumpjetL 0x5    0054BF58 OK        TechnoExtHook.cpp:1215 
+0054BE6D JumpjetL 0x6    0054BE73 OK        TechnoExtHook.cpp:1245 
+0054C0BB JumpjetL 0x7    0054C0C2 OK        TechnoExtHook.cpp:1282 
+0054C0FC JumpjetL 0x6    0054C102 OK        TechnoExtHook.cpp:1306 
+006622E0 RocketLo 0x6    006622E6 OK        TechnoExtHook.cpp:1342 
+00739971 UnitClas 0x6    00739977 OK        TechnoExtHook.cpp:1353 
+0044A04C Building 0x6    0044A052 OK        TechnoExtHook.cpp:1368 
+00711835 TechnoTy 0x5    0071183A OK        TechnoTypeExtHook.cpp:10 
+00711AE0 TechnoTy 0x5    00711AE5 OK        TechnoTypeExtHook.cpp:21 
+00716DC0 TechnoTy 0x5    00716DC5 OK        TechnoTypeExtHook.cpp:30 
+007162F0 TechnoTy 0x6    007162F6 OK        TechnoTypeExtHook.cpp:31 
+00716DAC TechnoTy 0xA    00716DB6 OK        TechnoTypeExtHook.cpp:41 
+00717094 TechnoTy 0x5    00717099 NO        TechnoTypeExtHook.cpp:48 addr+size 非指令头!!
+00716132 TechnoTy 0x5    00716137 OK        TechnoTypeExtHook.cpp:55 
+00716123 TechnoTy 0x5    00716128 OK        TechnoTypeExtHook.cpp:56 
+0071C94C TerrainC 0xA    0071C956 OK        TerrainExtHook.cpp:13 
+0071BB2C TerrainC 0x6    0071BB32 OK        TerrainExtHook.cpp:14 
+0071DBC0 TerrainT 0x7    0071DBC7 NO        TerrainTypeExtHook.cpp:10 addr+size 非指令头!!
+0071E364 TerrainT 0x6    0071E36A OK        TerrainTypeExtHook.cpp:25 
+0071E1D0 TerrainT 0x5    0071E1D5 OK        TerrainTypeExtHook.cpp:34 
+0071E240 TerrainT 0x8    0071E248 OK        TerrainTypeExtHook.cpp:35 
+0071E235 TerrainT 0x5    0071E23A NO        TerrainTypeExtHook.cpp:45 addr+size 非指令头!!
+0071E25A TerrainT 0x5    0071E25F OK        TerrainTypeExtHook.cpp:52 
+0071E0A6 TerrainT 0x5    0071E0AB OK        TerrainTypeExtHook.cpp:59 
+006FF8F1 TechnoCl 0x6    006FF8F7 OK        UnitExtHook.cpp:24 
+006FF923 TechnoCl 0x6    006FF929 OK        UnitExtHook.cpp:41 
+00739C7A UnitClas 0x6    00739C80 OK        UnitExtHook.cpp:53 
+006F3B5C UnitClas 0x6    006F3B62 OK        UnitExtHook.cpp:66 
+006F3D2F UnitClas 0x5    006F3D34 OK        UnitExtHook.cpp:88 
+00738749 UnitClas 0x6    0073874F OK        UnitExtHook.cpp:102 
+00738801 UnitClas 0x6    00738807 OK        UnitExtHook.cpp:114 
+006F4222 TechnoCl 0x7    006F4229 OK        UnitExtHook.cpp:130 
+007466D8 UnitClas 0xA    007466E2 OK        UnitExtHook.cpp:204 
+00746AFF UnitClas 0xA    00746B09 OK        UnitExtHook.cpp:224 
+00746B6D UnitClas 0x5    00746B72 OK        UnitExtHook.cpp:236 
+00736A26 UnitClas 0x6    00736A2C OK        UnitExtHook.cpp:260 
+00736BCA UnitClas 0x5    00736BCF OK        UnitExtHook.cpp:280 
+00736BBB UnitClas 0x5    00736BC0 OK        UnitExtHook.cpp:301 
+00736B7E UnitClas 0xA    00736B88 OK        UnitExtHook.cpp:322 
+0073CD01 UnitClas 0x5    0073CD06 OK        UnitExtHook.cpp:334 
+0073C71D UnitClas 0x6    0073C723 OK        UnitExtHook.cpp:373 
+0073C655 UnitClas 0x6    0073C65B OK        UnitExtHook.cpp:409 
+0073C69D UnitClas 0x6    0073C6A3 OK        UnitExtHook.cpp:422 
+0073C702 UnitClas 0x6    0073C708 OK        UnitExtHook.cpp:441 
+0073C725 UnitClas 0x6    0073C72B OK        UnitExtHook.cpp:454 
+0073B765 UnitClas 0x5    0073B76A OK        UnitExtHook.cpp:470 
+0073BA78 UnitClas 0x6    0073BA7E OK        UnitExtHook.cpp:471 
+0073BD8B UnitClas 0x5    0073BD90 OK        UnitExtHook.cpp:472 
+0073BDA3 UnitClas 0x5    0073BDA8 OK        UnitExtHook.cpp:473 
+0073B8DB UnitClas 0x8    0073B8E3 OK        UnitExtHook.cpp:491 
+0073BA53 UnitClas 0x7    0073BA5A OK        UnitExtHook.cpp:512 
+0073BC1D UnitClas 0x7    0073BC24 OK        UnitExtHook.cpp:513 
+00706724 TechnoCl 0x5    00706729 OK        UnitExtHook.cpp:536 
+0073C485 UnitClas 0x8    0073C48D OK        UnitExtHook.cpp:543 
+00700E8B TechnoCl 0x6    00700E91 OK        UnitExtHook.cpp:562 
+0073D6F8 UnitClas 0x6    0073D6FE OK        UnitExtHook.cpp:580 
+0073D6E6 UnitClas 0x6    0073D6EC OK        UnitExtHook.cpp:606 
+0073D6EC UnitClas 0x6    0073D6F2 OK        UnitExtHook.cpp:607 
+0074041B UnitClas 0x5    00740420 OK        UnitExtHook.cpp:629 
+0074000B UnitClas 0x6    00740011 OK        UnitExtHook.cpp:650 
+0073FFF4 UnitClas 0x8    0073FFFC OK        UnitExtHook.cpp:662 
+007388FD UnitClas 0x5    00738902 OK        UnitExtHook.cpp:676 
+0073CF16 UnitClas 0x7    0073CF1D OK        UnitExtHook.cpp:698 
+0073D317 UnitClas 0x6    0073D31D OK        UnitExtHook.cpp:723 
+004DB157 FootClas 0x8    004DB15F OK        UnitExtHook.cpp:755 
+00749951 VoxelAni 0xC    0074995D OK        VoxelAnimExtHook.cpp:14 
+0074942E VoxelAni 0xC    0074943A OK        VoxelAnimExtHook.cpp:15 
+007499F1 VoxelAni 0x5    007499F6 OK        VoxelAnimExtHook.cpp:24 
+0074A970 VoxelAni 0x5    0074A975 OK        VoxelAnimExtHook.cpp:33 
+0074AA10 VoxelAni 0x8    0074AA18 OK        VoxelAnimExtHook.cpp:34 
+0074A9FB VoxelAni 0x7    0074AA02 NO        VoxelAnimExtHook.cpp:44 addr+size 非指令头!!
+0074AA24 VoxelAni 0x5    0074AA29 NO        VoxelAnimExtHook.cpp:50 addr+size 非指令头!!
+0074AEB0 VoxelAni 0xB    0074AEBB OK        VoxelAnimTypeExtHook.cpp:10 
+0074BA31 VoxelAni 0x5    0074BA36 OK        VoxelAnimTypeExtHook.cpp:21 
+0074B810 VoxelAni 0x5    0074B815 OK        VoxelAnimTypeExtHook.cpp:29 
+0074B8D0 VoxelAni 0x8    0074B8D8 OK        VoxelAnimTypeExtHook.cpp:30 
+0074B8C2 VoxelAni 0x5    0074B8C7 NO        VoxelAnimTypeExtHook.cpp:40 addr+size 非指令头!!
+0074B8EA VoxelAni 0x5    0074B8EF NO        VoxelAnimTypeExtHook.cpp:46 addr+size 非指令头!!
+0074B607 VoxelAni 0x5    0074B60C OK        VoxelAnimTypeExtHook.cpp:52 
+0074B561 VoxelAni 0x5    0074B566 OK        VoxelAnimTypeExtHook.cpp:53 
+0074B54A VoxelAni 0x5    0074B54F OK        VoxelAnimTypeExtHook.cpp:54 
+0074B51B VoxelAni 0x5    0074B520 OK        VoxelAnimTypeExtHook.cpp:55 
+0074B4F0 VoxelAni 0x5    0074B4F5 OK        VoxelAnimTypeExtHook.cpp:56 
+0075D1A9 WarheadT 0x7    0075D1B0 OK        WarheadTypeExtHook.cpp:12 
+0075E5C8 WarheadT 0x6    0075E5CE OK        WarheadTypeExtHook.cpp:23 
+0075E2C0 WarheadT 0x5    0075E2C5 OK        WarheadTypeExtHook.cpp:32 
+0075E0C0 WarheadT 0x8    0075E0C8 OK        WarheadTypeExtHook.cpp:33 
+0075E2AE WarheadT 0x7    0075E2B5 NO        WarheadTypeExtHook.cpp:43 addr+size 非指令头!!
+0075E39C WarheadT 0x5    0075E3A1 NO        WarheadTypeExtHook.cpp:50 addr+size 非指令头!!
+0075DEAF WarheadT 0x5    0075DEB4 OK        WarheadTypeExtHook.cpp:57 
+0075DEA0 WarheadT 0x5    0075DEA5 OK        WarheadTypeExtHook.cpp:58 
+0048A551 WarheadT 0x6    0048A557 OK        WarheadTypeExtHook.cpp:71 
+006FD446 TechnoCl 0x7    006FD44D OK        WeaponExtHook.cpp:34 
+006FF08B TechnoCl 0x6    006FF091 OK        WeaponExtHook.cpp:66 
+006FF15F TechnoCl 0x6    006FF165 OK        WeaponExtHook.cpp:86 
+006FD70D TechnoCl 0x6    006FD713 OK        WeaponExtHook.cpp:103 
+006FD514 TechnoCl 0x7    006FD51B OK        WeaponExtHook.cpp:104 
+006FD38D TechnoCl 0x7    006FD394 OK        WeaponExtHook.cpp:105 
+006FF43F TechnoCl 0x6    006FF445 OK        WeaponExtHook.cpp:134 
+006FF660 TechnoCl 0x6    006FF666 OK        WeaponExtHook.cpp:153 
+00771EE9 WeaponTy 0x5    00771EEE OK        WeaponTypeExtHook.cpp:10 
+0077311D WeaponTy 0x6    00773123 OK        WeaponTypeExtHook.cpp:21 
+00772EB0 WeaponTy 0x5    00772EB5 OK        WeaponTypeExtHook.cpp:30 
+00772CD0 WeaponTy 0x7    00772CD7 OK        WeaponTypeExtHook.cpp:31 
+00772EA6 WeaponTy 0x6    00772EAC NO        WeaponTypeExtHook.cpp:41 addr+size 非指令头!!
+00772F8C WeaponTy 0x5    00772F91 NO        WeaponTypeExtHook.cpp:48 addr+size 非指令头!!
+007729C7 WeaponTy 0x5    007729CC OK        WeaponTypeExtHook.cpp:55 
+007729D6 WeaponTy 0x5    007729DB OK        WeaponTypeExtHook.cpp:56 
+007729B0 WeaponTy 0x5    007729B5 OK        WeaponTypeExtHook.cpp:57 
+
+总计 430 个 Hook；疑似问题 27 个
+   [BAD] 0x004228D2 AnimClass_CTOR size=0x5  AnimExtHook.cpp:28  addr+size 非指令头!!
+   [BAD] 0x004253A2 AnimClass_Load_Suffix size=0x7  AnimExtHook.cpp:74  addr+size 非指令头!!
+   [BAD] 0x0042898A AnimTypeClass_Save_Suffix size=0x3  AnimTypeExtHook.cpp:47  addr+size 非指令头!!
+   [BAD] 0x004664BA BulletClass_CTOR size=0x5  BulletExtHook.cpp:27  addr+size 非指令头!!
+   [BAD] 0x0046AF9E BulletClass_Load_Suffix size=0x7  BulletExtHook.cpp:66  addr+size 非指令头!!
+   [BAD] 0x0046AFC4 BulletClass_Save_Suffix size=0x5  BulletExtHook.cpp:73  addr+size 非指令头!!
+   [BAD] 0x0046BDD9 BulletTypeClass_CTOR size=0x5  BulletTypeExtHook.cpp:10  addr+size 非指令头!!
+   [BAD] 0x0046C722 BulletTypeClass_Load_Suffix size=0x4  BulletTypeExtHook.cpp:41  addr+size 非指令头!!
+   [BAD] 0x0046C74A BulletTypeClass_Save_Suffix size=0x3  BulletTypeExtHook.cpp:48  addr+size 非指令头!!
+   [BAD] 0x0055B719 LogicClass_Update_Late size=0x5  GeneralHook.cpp:114  addr+size 非指令头!!
+   [BAD] 0x005046DE HouseClass_Save_Suffix size=0x7  HouseExtHook.cpp:55  addr+size 非指令头!!
+   [BAD] 0x0067E42E SaveGameInStream_End size=0xD  SaveGameHook.cpp:55  addr+size 非指令头!!
+   [BAD] 0x006CE6F6 SuperWeaponTypeClass_CTOR size=0x5  SuperWeaponTypeHook.cpp:10  addr+size 非指令头!!
+   [BAD] 0x006CE8EA SuperWeaponTypeClass_Save_Suffix size=0x3  SuperWeaponTypeHook.cpp:46  addr+size 非指令头!!
+   [BAD] 0x0070C249 TechnoClass_Load_Suffix size=0x5  TechnoExtHook.cpp:75  addr+size 非指令头!!
+   [BAD] 0x0070C264 TechnoClass_Save_Suffix size=0x5  TechnoExtHook.cpp:82  addr+size 非指令头!!
+   [BAD] 0x00717094 TechnoTypeClass_Save_Suffix size=0x5  TechnoTypeExtHook.cpp:48  addr+size 非指令头!!
+   [BAD] 0x0071DBC0 TerrainTypeClass_CTOR size=0x7  TerrainTypeExtHook.cpp:10  addr+size 非指令头!!
+   [BAD] 0x0071E235 TerrainTypeClass_Load_Suffix size=0x5  TerrainTypeExtHook.cpp:45  addr+size 非指令头!!
+   [BAD] 0x0074A9FB VoxelAnimClass_Load_Suffix size=0x7  VoxelAnimExtHook.cpp:44  addr+size 非指令头!!
+   [BAD] 0x0074AA24 VoxelAnimClass_Save_Suffix size=0x5  VoxelAnimExtHook.cpp:50  addr+size 非指令头!!
+   [BAD] 0x0074B8C2 VoxelAnimTypeClass_Load_Suffix size=0x5  VoxelAnimTypeExtHook.cpp:40  addr+size 非指令头!!
+   [BAD] 0x0074B8EA VoxelAnimTypeClass_Save_Suffix size=0x5  VoxelAnimTypeExtHook.cpp:46  addr+size 非指令头!!
+   [BAD] 0x0075E2AE WarheadTypeClass_Load_Suffix size=0x7  WarheadTypeExtHook.cpp:43  addr+size 非指令头!!
+   [BAD] 0x0075E39C WarheadTypeClass_Save_Suffix size=0x5  WarheadTypeExtHook.cpp:50  addr+size 非指令头!!
+   [BAD] 0x00772EA6 WeaponTypeClass_Load_Suffix size=0x6  WeaponTypeExtHook.cpp:41  addr+size 非指令头!!
+   [BAD] 0x00772F8C WeaponTypeClass_Save_Suffix size=0x5  WeaponTypeExtHook.cpp:48  addr+size 非指令头!!
+
+==============================================================================================================
+### B. 热点 Hook 反汇编
+==============================================================================================================
+--------------------------------------------------------------------------------------------------------------
+### Hook 0x6F36DB   所在函数: TechnoClass_SelectWeapon  [0x6F3330 - 0x6F3816]
+  0x006F36CA  jnz     short @@14                          
+  0x006F36CC  pop     edi                                 
+  0x006F36CD  pop     esi                                 
+  0x006F36CE  pop     ebp                                 
+  0x006F36CF  mov     eax, 1                              
+  0x006F36D4  pop     ebx                                 
+  0x006F36D5  add     esp, 8                              
+  0x006F36D8  retn    4                                   
+  0x006F36DB  test    ebp, ebp                              <<<< HOOK 点
+  0x006F36DD  jz      @@19                                
+  0x006F36E3  mov     eax, [ebp+0]                        
+  0x006F36E6  mov     ecx, ebp                            
+  0x006F36E8  call    dword ptr [eax+84h]                 
+  0x006F36EE  mov     edx, [esp+18h+weap2_]               
+  0x006F36F2  mov     ecx, [eax+9Ch]                      
+  0x006F36F8  mov     eax, [edx+WeaponTypeClass.Warhead]  
+  [该函数体未直接调用随机数]
+
+--------------------------------------------------------------------------------------------------------------
+### Hook 0x6FC339   所在函数: W?Can_Fire$:TechnoClass$n.x(li)$FireErrorType$$  [0x6FC0B0 - 0x6FCD38]
+  0x006FC320  mov     edx, [esi]                          
+  0x006FC322  push    eax; a2                             
+  0x006FC323  mov     ecx, esi; this                      
+  0x006FC325  call    [edx+vt_TechnoClass.GetWeapon] ; TechnoClass_GetWeapon
+  0x006FC32B  mov     edi, [eax]                          
+  0x006FC32D  test    edi, edi                            
+  0x006FC32F  mov     [esp+20h+var_10], edi               
+  0x006FC333  jz      loc_6FCD29                          
+  0x006FC339  mov     al, [edi+14Fh]                        <<<< HOOK 点
+  0x006FC33F  test    al, al                              
+  0x006FC341  jz      short loc_6FC356                    
+  0x006FC343  mov     ecx, [esi+21Ch]; this               
+  0x006FC349  call    IonStormClass::Is_Active            
+  0x006FC34E  test    al, al                              
+  0x006FC350  jnz     loc_6FCD29                          
+  0x006FC356  mov     al, [edi+142h]                      
+  [该函数体未直接调用随机数]
+
+--------------------------------------------------------------------------------------------------------------
+### Hook 0x6FDD50   所在函数: TechnoClass_Fire  [0x6FDD50 - 0x6FF94F]
+  0x006FDD32  add     esp, 8                              
+  0x006FDD35  retn    8                                   
+  0x006FDD38  xor     eax, eax                            
+  0x006FDD3A  pop     edi                                 
+  0x006FDD3B  pop     esi                                 
+  0x006FDD3C  add     esp, 8                              
+  0x006FDD3F  retn    8                                   
+  0x006FDD42  db 0Eh dup(90h)                             
+  0x006FDD50  push    ebp                                   <<<< HOOK 点
+  0x006FDD51  mov     ebp, esp                            
+  0x006FDD53  and     esp, not 7                          
+  0x006FDD56  sub     esp, 0A4h                           
+  0x006FDD5C  push    ebx                                 
+  0x006FDD5D  push    this; a7                            
+  0x006FDD5E  mov     this, ecx                           
+  0x006FDD60  push    edi; a6                             
+  0x006FDD61  mov     ecx, [ebp+idxWeapon]                
+  0x006FDD64  mov     eax, [this]                         
+  0x006FDD66  push    ecx; slot                           
+  0x006FDD67  mov     ecx, this; this                     
+  0x006FDD69  call    [eax+vt_TechnoClass.GetWeapon]      
+  0x006FDD6F  mov     ebx, [eax]                          
+  [该函数体直接调用随机数] 
+     0x006FE0D2 -> _ZN12Random2ClassclEii
+     0x006FE717 -> _ZN12Random2ClassclEii
+     0x006FE756 -> _ZN12Random2ClassclEii
+     0x006FE81C -> _ZN12Random2ClassclEii
+     0x006FE838 -> _ZN12Random2ClassclEii
+
+--------------------------------------------------------------------------------------------------------------
+### Hook 0x6F9039   所在函数: W?Greatest_Threat$:TechnoClass$n.x($ThreatType$$)l  [0x6F8DF0 - 0x6F9DAF]
+  0x006F9020  mov     [esp+6Ch+wanteddistance], edi       
+  0x006F9024  push    ebp; idxWeapon                      
+  0x006F9025  mov     ecx, esi; this                      
+  0x006F9027  call    TechnoClass::Combat_Damage; arg = -1
+  0x006F902C  test    eax, eax                            
+  0x006F902E  jge     short loc_6F9042                    
+  0x006F9030  cmp     [esi+_MissionClass.m.currentMission], 5
+  0x006F9037  jnz     short loc_6F9042                    
+  0x006F9039  mov     edi, 200h                             <<<< HOOK 点
+  0x006F903E  mov     [esp+6Ch+wanteddistance], edi       
+  0x006F9042  mov     eax, edi                            
+  0x006F9044  cdq                                         
+  0x006F9045  and     edx, 0FFh                           
+  0x006F904B  add     eax, edx                            
+  0x006F904D  sar     eax, 8                              
+  0x006F9050  test    edi, edi                            
+  0x006F9052  mov     [esp+6Ch+var_34], eax               
+  0x006F9056  jnz     loc_6F9148                          
+  [该函数体未直接调用随机数]
+
+--------------------------------------------------------------------------------------------------------------
+### Hook 0x7012DF   所在函数: TechnoClass_168  [0x7012C0 - 0x70139D]
+  0x007012C8  mov     eax, [esi]                          
+  0x007012CA  push    ecx                                 
+  0x007012CB  mov     ecx, esi                            
+  0x007012CD  call    dword ptr [eax+3F8h]                
+  0x007012D3  mov     eax, [eax]                          
+  0x007012D5  test    eax, eax                            
+  0x007012D7  jz      loc_701396                          
+  0x007012DD  mov     edx, [esi]                          
+  0x007012DF  mov     ebx, [eax+0B4h]                       <<<< HOOK 点
+  0x007012E5  mov     ecx, esi                            
+  0x007012E7  call    dword ptr [edx+84h]                 
+  0x007012ED  mov     cl, [eax+_TechnoTypeClass.t.OpenTopped]
+  0x007012F3  test    cl, cl                              
+  0x007012F5  jz      loc_70138F                          
+  0x007012FB  push    ebp                                 
+  0x007012FC  lea     ebp, [esi+114h]                     
+  [该函数体未直接调用随机数]
+
+--------------------------------------------------------------------------------------------------------------
+### Hook 0x6F72E3   所在函数: TechnoClass_IsCloseEnoughToTarget  [0x6F7220 - 0x6F7660]
+  0x006F72C6  add     edi, ecx                            
+  0x006F72C8  mov     al, [esi+82h]                       
+  0x006F72CE  test    al, al                              
+  0x006F72D0  jz      short loc_6F72E3                    
+  0x006F72D2  mov     edx, RulesData                      
+  0x006F72D8  mov     eax, [edx+(RulesClass+0F5Ch)]       
+  0x006F72DE  shl     eax, 8                              
+  0x006F72E1  add     edi, eax                            
+  0x006F72E3  mov     eax, [ebx+0A0h]                       <<<< HOOK 点
+  0x006F72E9  mov     ebx, edi                            
+  0x006F72EB  mov     dword ptr [esp+38h+a2+4], eax       
+  0x006F72EF  mov     cl, [eax+297h]                      
+  0x006F72F5  test    cl, cl                              
+  0x006F72F7  jz      short loc_6F7308                    
+  0x006F72F9  mov     ecx, [ebp+tgt]                      
+  0x006F72FC  push    ecx; tgt                            
+  0x006F72FD  mov     ecx, esi; this                      
+  0x006F72FF  call    TechnoClass_GetElevationRangeBonus  
+  [该函数体未直接调用随机数]
+
+--------------------------------------------------------------------------------------------------------------
+### Hook 0x6FF29E   所在函数: TechnoClass_Fire  [0x6FDD50 - 0x6FF94F]
+  0x006FF288  push    eax; idxWeapon                      
+  0x006FF289  call    [edx+vt_TechnoClass.GetROF]         
+  0x006FF28F  mov     cl, [this+_TechnoClass.t.Berzerk]   
+  0x006FF295  test    cl, cl                              
+  0x006FF297  jz      short loc_6FF29E                    
+  0x006FF299  cdq                                         
+  0x006FF29A  sub     eax, edx                            
+  0x006FF29C  sar     eax, 1                              
+  0x006FF29E  mov     [this+_TechnoClass.t.ROF], eax        <<<< HOOK 点
+  0x006FF2A4  mov     ecx, Frame                          
+  0x006FF2AA  lea     edx, [this+_TechnoClass.t.ROFTimer] 
+  0x006FF2B0  xor     edi, edi                            
+  0x006FF2B2  mov     [edx], ecx                          
+  0x006FF2B4  mov     ecx, [esp+0B0h+wat.Z]               
+  0x006FF2B8  mov     [edx+4], ecx                        
+  0x006FF2BB  mov     [edx+8], eax                        
+  [该函数体直接调用随机数] 
+     0x006FE0D2 -> _ZN12Random2ClassclEii
+     0x006FE717 -> _ZN12Random2ClassclEii
+     0x006FE756 -> _ZN12Random2ClassclEii
+     0x006FE81C -> _ZN12Random2ClassclEii
+     0x006FE838 -> _ZN12Random2ClassclEii
+
+--------------------------------------------------------------------------------------------------------------
+### Hook 0x6F9E50   所在函数: TechnoClass_Update  [0x6F9E50 - 0x6FB005]
+  0x006F9E2B  mov     ecx, esi                            
+  0x006F9E2D  call    dword ptr [edx+84h]                 
+  0x006F9E33  mov     eax, [eax+_ObjectTypeClass.o.BodyVXL]; MainVoxLib
+  0x006F9E39  pop     esi                                 
+  0x006F9E3A  cmp     byte ptr [eax], 0                   
+  0x006F9E3D  setz    al                                  
+  0x006F9E40  retn                                        
+  0x006F9E41  db 0Fh dup(90h)                             
+  0x006F9E50  sub     esp, 68h                              <<<< HOOK 点
+  0x006F9E53  push    ebx                                 
+  0x006F9E54  push    ebp                                 
+  0x006F9E55  push    esi                                 
+  0x006F9E56  mov     esi, ecx                            
+  0x006F9E58  xor     ebp, ebp                            
+  0x006F9E5A  push    edi                                 
+  0x006F9E5B  mov     al, [esi+431h]                      
+  0x006F9E61  test    al, al                              
+  0x006F9E63  jz      short loc_6F9E6C                    
+  0x006F9E65  mov     byte ptr [esi+431h], 0              
+  0x006F9E6C  mov     eax, [esi+_TechnoClass.vt]          
+  0x006F9E6E  mov     ecx, esi; this                      
+  [该函数体直接调用随机数] 
+     0x006FAE24 -> _ZN12Random2ClassclEii
+     0x006FAEB3 -> _ZN12Random2ClassclEii
+
+--------------------------------------------------------------------------------------------------------------
+### Hook 0x6FAF7A   所在函数: TechnoClass_Update  [0x6F9E50 - 0x6FB005]
+  0x006FAF52  mov     ecx, esi                            
+  0x006FAF54  call    BuildingClass_PingMore              
+  0x006FAF59  mov     edx, [esi+size _TechnoClass+_TechnoClass.vt]
+  0x006FAF5F  mov     al, [edx+BuildingTypeClass.Radar]   
+  0x006FAF65  test    al, al                              
+  0x006FAF67  jz      return                              
+  0x006FAF6D  mov     eax, [esi+_TechnoClass.t.OwningPlayer]
+  0x006FAF73  mov     [eax+HouseClass_old.IHouse._.RadarOutage], 1
+  0x006FAF7A  pop     edi                                   <<<< HOOK 点
+  0x006FAF7B  pop     esi                                 
+  0x006FAF7C  pop     ebp                                 
+  0x006FAF7D  pop     ebx                                 
+  0x006FAF7E  add     esp, 68h                            
+  0x006FAF81  retn                                        
+  0x006FAF82  test    esi, esi                            
+  0x006FAF84  jz      short return                        
+  0x006FAF86  mov     cl, [esi+_TechnoClass.t.r.m.o.a.derivationFlags]
+  0x006FAF89  shr     cl, 2                               
+  0x006FAF8C  and     cl, 1; this                         
+  0x006FAF8F  mov     [esp+13h], cl                       
+  0x006FAF93  jz      short return                        
+  0x006FAF95  mov     eax, [esi+_FootClass.f.Locomotion]  
+  [该函数体直接调用随机数] 
+     0x006FAE24 -> _ZN12Random2ClassclEii
+     0x006FAEB3 -> _ZN12Random2ClassclEii
+
+--------------------------------------------------------------------------------------------------------------
+### Hook 0x6FAFFD   所在函数: TechnoClass_Update  [0x6F9E50 - 0x6FB005]
+  0x006FAFDE  mov     edx, [eax+AnimClass.AnimationType]  
+  0x006FAFE4  cmp     edx, [edi+(RulesClass.IonBlast+155Ch)]
+  0x006FAFEA  jnz     short next_emp_anims                
+  0x006FAFEC  mov     [eax+AnimClass.RemainingLoops], 0   
+  0x006FAFF3  mov     eax, vec_Anims.length               
+  0x006FAFF8  inc     ecx                                 
+  0x006FAFF9  cmp     ecx, eax                            
+  0x006FAFFB  jl      short loop_emp_anims                
+  0x006FAFFD  pop     edi                                   <<<< HOOK 点
+  0x006FAFFE  pop     esi                                 
+  0x006FAFFF  pop     ebp                                 
+  0x006FB000  pop     ebx                                 
+  0x006FB001  add     esp, 68h                            
+  0x006FB004  retn                                        
+  0x006FB005  db 0Bh dup(90h)                             
+  0x006FB010  push    esi                                 
+  0x006FB011  mov     esi, ecx                            
+  0x006FB013  push    edi                                 
+  0x006FB014  mov     eax, [esi]                          
+  0x006FB016  call    [eax+vt_TechnoClass.r.m.o.GetTechnoType] ; TechnoClass_84; TechnoClass_GetTechnoType
+  0x006FB01C  mov     eax, [eax+_TechnoTypeClass.t.Ammo]  
+  [该函数体直接调用随机数] 
+     0x006FAE24 -> _ZN12Random2ClassclEii
+     0x006FAEB3 -> _ZN12Random2ClassclEii
+
+--------------------------------------------------------------------------------------------------------------
+### Hook 0x5F45A0   所在函数: W?Select$:ObjectClass$n()i  [0x5F4520 - 0x5F4725]
+  0x005F4590  call    dword ptr [eax+1D4h]                
+  0x005F4596  test    al, al                              
+  0x005F4598  jz      short loc_5F45A0                    
+  0x005F459A  pop     edi                                 
+  0x005F459B  xor     al, al                              
+  0x005F459D  pop     esi                                 
+  0x005F459E  pop     ecx                                 
+  0x005F459F  retn                                        
+  0x005F45A0  mov     eax, ptr_BuildingTypeClass_ToPlace    <<<< HOOK 点
+  0x005F45A5  test    eax, eax                            
+  0x005F45A7  jz      short loc_5F45AF                    
+  0x005F45A9  pop     edi                                 
+  0x005F45AA  xor     al, al                              
+  0x005F45AC  pop     esi                                 
+  0x005F45AD  pop     ecx                                 
+  0x005F45AE  retn                                        
+  0x005F45AF  mov     eax, v_CurrentObjects.__.ActiveCount
+  0x005F45B4  test    eax, eax                            
+  0x005F45B6  jle     short loc_5F45FD                    
+  0x005F45B8  mov     edx, [esi]                          
+  0x005F45BA  push    ebx                                 
+  0x005F45BB  mov     ecx, esi                            
+  0x005F45BD  call    dword ptr [edx+3Ch]                 
+  [该函数体未直接调用随机数]
+
+--------------------------------------------------------------------------------------------------------------
+### Hook 0x6F6CA0   所在函数: W?Unlimbo$:TechnoClass$n(ul$DirType$$)i  [0x6F6CA0 - 0x6F6F33]
+  0x006F6C87  mov     [esi+4D4h], bl                      
+  0x006F6C8D  mov     [esi+4D8h], ebx                     
+  0x006F6C93  mov     ecx, esi                            
+  0x006F6C95  call    RadioClass::Limbo                   
+  0x006F6C9A  pop     esi                                 
+  0x006F6C9B  pop     ebx                                 
+  0x006F6C9C  add     esp, 0Ch                            
+  0x006F6C9F  retn                                        
+  0x006F6CA0  mov     eax, dword ptr [esp+a3.X]             <<<< HOOK 点
+  0x006F6CA4  sub     esp, 18h                            
+  0x006F6CA7  push    esi                                 
+  0x006F6CA8  push    edi                                 
+  0x006F6CA9  mov     edi, dword ptr [esp+20h+where.X]    
+  0x006F6CAD  push    eax; a3                             
+  0x006F6CAE  mov     esi, ecx                            
+  0x006F6CB0  push    edi; xyz                            
+  0x006F6CB1  call    ObjectClass::Unlimbo                
+  0x006F6CB6  test    al, al                              
+  0x006F6CB8  jz      loc_6F6F29                          
+  0x006F6CBE  mov     eax, [edi]                          
+  [该函数体未直接调用随机数]
+
+--------------------------------------------------------------------------------------------------------------
+### Hook 0x6F42ED   所在函数: TechnoClass_Init  [0x6F3F40 - 0x6F42F9]
+  0x006F42C2  mov     [esi+_TechnoClass.t.Barrel.Travel], ecx
+  0x006F42C8  mov     edx, [eax+4]                        
+  0x006F42CB  mov     [esi+_TechnoClass.t.Barrel.CompressFrames], edx
+  0x006F42D1  mov     ecx, [eax+8]                        
+  0x006F42D4  mov     [esi+_TechnoClass.t.Barrel.HoldFrames], ecx
+  0x006F42DA  mov     edx, [eax+0Ch]                      
+  0x006F42DD  mov     [esi+_TechnoClass.t.Barrel.RecoverFrames], edx
+  0x006F42E3  mov     [esi+_TechnoClass.t.field_498], 1   
+  0x006F42ED  mov     [esi+_TechnoClass.t.field_49C], 0     <<<< HOOK 点
+  0x006F42F7  pop     esi                                 
+  0x006F42F8  retn                                        
+  0x006F42F9  db 7 dup(90h)                               
+  0x006F4300  push    ebx                                 
+  0x006F4301  push    ebp                                 
+  0x006F4302  mov     ebp, [esp+8+arg_0]                  
+  0x006F4306  push    esi                                 
+  0x006F4307  push    edi                                 
+  0x006F4308  mov     esi, ecx                            
+  0x006F430A  push    ebp                                 
+  0x006F430B  call    RadioClass_LoadTables               
+  [该函数体未直接调用随机数]
+
+--------------------------------------------------------------------------------------------------------------
+### Hook 0x6F3260   所在函数: TechnoClass_CTOR  [0x6F2B40 - 0x6F3269]
+  0x006F323A  mov     ecx, 8                              
+  0x006F323F  xor     eax, eax                            
+  0x006F3241  mov     [esi+_TechnoClass.t.OriginalOwner], edx
+  0x006F3247  rep stosd                                   
+  0x006F3249  mov     eax, Scenario                       
+  0x006F324E  lea     ecx, [eax+218h]                     
+  0x006F3254  call    Random2Class::operator()            
+  0x006F3259  mov     [esi+3C8h], ax                      
+  0x006F3260  mov     eax, esi                              <<<< HOOK 点
+  0x006F3262  pop     edi                                 
+  0x006F3263  pop     esi                                 
+  0x006F3264  pop     ebp                                 
+  0x006F3265  pop     ebx                                 
+  0x006F3266  retn    4                                   
+  0x006F3269  db 7 dup(90h)                               
+  0x006F3270  mov     eax, [ecx]                          
+  0x006F3272  jmp     dword ptr [eax+88h]; ObjectClass_GetType
+  0x006F3278  db 8 dup(90h)                               
+  [该函数体直接调用随机数] 
+     0x006F3254 -> _ZN12Random2ClassclEv
+
+--------------------------------------------------------------------------------------------------------------
+### Hook 0x6F9B7E   所在函数: W?Greatest_Threat$:TechnoClass$n.x($ThreatType$$)l  [0x6F8DF0 - 0x6F9DAF]
+  0x006F9B66  pop     ebp                                 
+  0x006F9B67  pop     ebx                                 
+  0x006F9B68  add     esp, 5Ch                            
+  0x006F9B6B  retn    0Ch                                 
+  0x006F9B6E  mov     al, byte ptr [esp+6Ch+newTargetFlags]
+  0x006F9B72  mov     bl, [esp+6Ch+arg_8]                 
+  0x006F9B76  test    al, 4                               
+  0x006F9B78  jz      loc_6F9C56                          
+  0x006F9B7E  mov     eax, vec_Aircrafts.length             <<<< HOOK 点
+  0x006F9B83  xor     ebp, ebp                            
+  0x006F9B85  test    eax, eax                            
+  0x006F9B87  jle     loc_6F9C56                          
+  0x006F9B8D  mov     edx, vec_Aircrafts.data             
+  0x006F9B93  mov     ecx, [esi+21Ch]; this               
+  0x006F9B99  mov     edi, [edx+ebp*4]                    
+  0x006F9B9C  mov     [esp+6Ch+position], 0               
+  [该函数体未直接调用随机数]
+
+==============================================================================================================
+### C. 关键判定函数是否吃随机数
+==============================================================================================================
+TechnoClass::Greatest_Threat  实际函数名=W?Greatest_Threat$:TechnoClass$n.x($ThreatType$$)l  是否直接调用随机数=否
+TechnoClass::SelectWeapon 区  实际函数名=TechnoClass_SelectWeapon  是否直接调用随机数=否
+
+==============================================================================================================
+### D. XrefsTo 热点 Hook
+==============================================================================================================
+--- 0x6F36DB ---
+   来自 0x006F367B (TechnoClass_SelectWeapon)
+   来自 0x006F3699 (TechnoClass_SelectWeapon)
+   来自 0x006F36AD (TechnoClass_SelectWeapon)
+   来自 0x006F36B8 (TechnoClass_SelectWeapon)
+   来自 0x006F36CA (TechnoClass_SelectWeapon)
+--- 0x6FC339 ---
+   来自 0x006FC333 (W?Can_Fire$:TechnoClass$n.x(li)$FireErrorType$$)
+--- 0x6FDD50 ---
+   来自 0x00415F12 (W?Fire_At$:AircraftClass$n(li)pn$BulletClass$$)
+   来自 0x0051DF77 (InfantryClass_Fire)
+   来自 0x007413CE (UnitClass_Fire)
+   来自 0x007E4288 ()
+   来自 0x007E8C94 ()
+   来自 0x007F4960 ()
+--- 0x6F9039 ---
+   来自 0x006F9037 (W?Greatest_Threat$:TechnoClass$n.x($ThreatType$$)l)
+--- 0x7012DF ---
+   来自 0x007012DD (TechnoClass_168)
+--- 0x6F72E3 ---
+   来自 0x006F72E1 (TechnoClass_IsCloseEnoughToTarget)
+   来自 0x006F72D0 (TechnoClass_IsCloseEnoughToTarget)
+--- 0x6FF29E ---
+   来自 0x006FF29C (TechnoClass_Fire)
+   来自 0x006FF297 (TechnoClass_Fire)
+--- 0x6F9E50 ---
+   来自 0x0043FE56 (BuildingClass_Update)
+   来自 0x004DA539 (W?AI$:FootClass$n()v)
+   来自 0x007F4960 ()
+--- 0x6FAF7A ---
+   来自 0x006FAF73 (TechnoClass_Update)
+--- 0x6FAFFD ---
+   来自 0x006FAFFB (TechnoClass_Update)
+   来自 0x006FA244 (TechnoClass_Update)
+   来自 0x006FA73D (TechnoClass_Update)
+   来自 0x006FAF15 (TechnoClass_Update)
+   来自 0x006FAF24 (TechnoClass_Update)
+   来自 0x006FAF38 (TechnoClass_Update)
+   来自 0x006FAF4C (TechnoClass_Update)
+   来自 0x006FAF67 (TechnoClass_Update)
+   来自 0x006FAF84 (TechnoClass_Update)
+   来自 0x006FAF93 (TechnoClass_Update)
+   来自 0x006FAFC2 (TechnoClass_Update)
+--- 0x5F45A0 ---
+   来自 0x005F4576 (W?Select$:ObjectClass$n()i)
+   来自 0x005F458A (W?Select$:ObjectClass$n()i)
+   来自 0x005F4598 (W?Select$:ObjectClass$n()i)
+--- 0x6F6CA0 ---
+   来自 0x00440B0F (W?Unlimbo$:BuildingClass$n(ul$DirType$$)i)
+   来自 0x004D717F (FootClass_Put)
+   来自 0x007F4960 ()
+--- 0x6F42ED ---
+   来自 0x006F42E3 (TechnoClass_Init)
+--- 0x6F3260 ---
+   来自 0x006F3259 (TechnoClass_CTOR)
+--- 0x6F9B7E ---
+   来自 0x006F9B78 (W?Greatest_Threat$:TechnoClass$n.x($ThreatType$$)l)

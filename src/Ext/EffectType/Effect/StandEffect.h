@@ -47,6 +47,7 @@ public:
 		_lastLocationMark = {};
 		_isMoving = false;
 		_walkRateTimer = {};
+		_masterDeleted = false;
 
 	}
 
@@ -118,6 +119,13 @@ private:
 	void UpdateStateBullet();
 	void UpdateStateTechno(bool masterIsDead);
 
+	// 主身处于沉没/坠落动画且替身应保留（RemoveAtSinking=false）时为真。
+	// 此时 Kratos 的 IsDead() 会因 IsSinking/IsCrashing 把主身与替身误判为死亡，
+	// 各处门控必须放行，否则替身的位置/姿态同步会在整个沉没动画期间停摆。
+	// pStand 为空或 _masterDeleted（主身已 UnInit，pTechno 悬空）时恒为 false，
+	// 门控正常早退 —— 放行后的代码会对空/悬空指针解引用（沉船 C0000005 的成因）。
+	bool MasterGoingDown();
+
 	void RemoveStandIllegalTarget();
 
 	bool masterIsRocket = false;
@@ -131,4 +139,7 @@ private:
 	LocationMark _lastLocationMark{};
 	bool _isMoving = false;
 	CDTimerClass _walkRateTimer{};
+	// 主身已触发 ObjectUnInitEvent（即将/已被引擎删除）。瞬态标志，不参与存档：
+	// 若存档时主身尚在，读档后主身必然存在，标志复位为 false 是正确语义。
+	bool _masterDeleted = false;
 };

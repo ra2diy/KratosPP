@@ -1,0 +1,171 @@
+############ A. 目标 vtable ############
+  TechnoClass    vtable = (未找到)
+  FootClass      vtable = (未找到)
+  ObjectClass    vtable = (未找到)
+  AnimClass      vtable = (未找到)
+  UnitClass      vtable = (未找到)
+  InfantryClass  vtable = (未找到)
+  AircraftClass  vtable = (未找到)
+  BuildingClass  vtable = (未找到)
+
+############ B. LocomotionClass::ILocomotion::Draw_Matrix (0x55A730) ############
+== LocomotionClass_ILocomotion_DrawMatrix  0x0055A730..0x0055A7CF ==
+   0055A730: 83 EC 34 56 57 8D 4C 24  | sub     esp, 34h
+   0055A733: 56 57 8D 4C 24 0C E8 22  | push    esi
+   0055A734: 57 8D 4C 24 0C E8 22 41  | push    edi
+   0055A735: 8D 4C 24 0C E8 22 41 05  | lea     ecx, [esp+3Ch+this]
+   0055A739: E8 22 41 05 00 8B 7C 24  | call    Matrix3D::Matrix3D
+   0055A73E: 8B 7C 24 40 8D 44 24 08  | mov     edi, dword ptr [esp+3Ch+arg.X]
+   0055A742: 8D 44 24 08 50 8B 4F 08  | lea     eax, [esp+3Ch+a2]
+   0055A746: 50 8B 4F 08 81 C1 88 03  | push    eax; arg
+   0055A747: 8B 4F 08 81 C1 88 03 00  | mov     ecx, [edi+8]
+   0055A74A: 81 C1 88 03 00 00 E8 7B  | add     ecx, 388h; Facing
+   0055A750: E8 7B EC F6 FF 8B 08 C1  | call    Desired_Facing256
+   0055A755: 8B 08 C1 E9 0A 41 D1 E9  | mov     ecx, [eax]
+   0055A757: C1 E9 0A 41 D1 E9 83 E1  | shr     ecx, 0Ah
+   0055A75A: 41 D1 E9 83 E1 1F 83 E9  | inc     ecx
+   0055A75B: D1 E9 83 E1 1F 83 E9 08  | shr     ecx, 1
+   0055A75D: 83 E1 1F 83 E9 08 89 4C  | and     ecx, 1Fh
+   0055A760: 83 E9 08 89 4C 24 40 51  | sub     ecx, 8
+   0055A763: 89 4C 24 40 51 DB 44 24  | mov     dword ptr [esp+3Ch+arg.X], ecx
+   0055A767: 51 DB 44 24 44 8D 4C 24  | push    ecx; float
+   0055A768: DB 44 24 44 8D 4C 24 10  | fild    dword ptr [esp+40h+arg.X]
+   0055A76C: 8D 4C 24 10 DC 0D 08 44  | lea     ecx, [esp+40h+this]; this
+   0055A770: DC 0D 08 44 7E 00 D9 1C  | fmul    ds:dbl_7E4408
+   0055A776: D9 1C 24 E8 22 4A 05 00  | fstp    [esp+40h+var_40]; a2
+   0055A779: E8 22 4A 05 00 8B 74 24  | call    Matrix3D_5AF1A0
+   0055A77E: 8B 74 24 48 85 F6 74 30  | mov     esi, [esp+3Ch+arg_8]
+   0055A782: 85 F6 74 30 8B 06 83 F8  | test    esi, esi
+   0055A784: 74 30 8B 06 83 F8 FF 74  | jz      short loc_55A7B6
+   0055A786: 8B 06 83 F8 FF 74 29 C1  | mov     eax, [esi]
+   0055A788: 83 F8 FF 74 29 C1 E0 05  | cmp     eax, 0FFFFFFFFh
+   0055A78B: 74 29 C1 E0 05 89 06 8B  | jz      short loc_55A7B6
+   0055A78D: C1 E0 05 89 06 8B 4F 08  | shl     eax, 5
+   0055A790: 89 06 8B 4F 08 8D 54 24  | mov     [esi], eax
+   0055A792: 8B 4F 08 8D 54 24 40 81  | mov     ecx, [edi+8]
+   0055A795: 8D 54 24 40 81 C1 88 03  | lea     edx, [esp+3Ch+arg]; arg
+   0055A799: 81 C1 88 03 00 00 52 E8  | add     ecx, 388h; Facing
+   0055A79F: 52 E8 2B EC F6 FF 8B 00  | push    edx; arg
+   0055A7A0: E8 2B EC F6 FF 8B 00 8B  | call    Desired_Facing256
+   0055A7A5: 8B 00 8B 0E C1 E8 0A 40  | mov     eax, [eax]
+   0055A7A7: 8B 0E C1 E8 0A 40 D1 E8  | mov     ecx, [esi]
+   0055A7A9: C1 E8 0A 40 D1 E8 83 E0  | shr     eax, 0Ah
+   0055A7AC: 40 D1 E8 83 E0 1F 0B C8  | inc     eax
+   0055A7AD: D1 E8 83 E0 1F 0B C8 89  | shr     eax, 1
+   0055A7AF: 83 E0 1F 0B C8 89 0E 8B  | and     eax, 1Fh
+   0055A7B2: 0B C8 89 0E 8B 44 24 44  | or      ecx, eax
+   0055A7B4: 89 0E 8B 44 24 44 B9 0C  | mov     [esi], ecx
+   0055A7B6: 8B 44 24 44 B9 0C 00 00  | mov     eax, [esp+3Ch+arg_4]
+   0055A7BA: B9 0C 00 00 00 8D 74 24  | mov     ecx, 0Ch
+   0055A7BF: 8D 74 24 0C 8B F8 F3 A5  | lea     esi, [esp+3Ch+this]
+   0055A7C3: 8B F8 F3 A5 5F 5E 83 C4  | mov     edi, eax
+   0055A7C5: F3 A5 5F 5E 83 C4 34 C2  | rep movsd
+   0055A7C7: 5F 5E 83 C4 34 C2 0C 00  | pop     edi
+   0055A7C8: 5E 83 C4 34 C2 0C 00 90  | pop     esi
+   0055A7C9: 83 C4 34 C2 0C 00 90 83  | add     esp, 34h
+   0055A7CC: C2 0C 00 90 83 EC 74 53  | retn    0Ch
+
+############ B2. LocomotionClass_ILocomotion_ZAdjust / TiltPitchAI ############
+== loco_0055AB90  0x0055AB90..0x0055AB93 ==
+   0055AB90: C2 04 00 90 90 90 90 90  | retn    4
+
+== loco_0055ABA0  0x0055ABA0..0x0055ABA5 ==
+   0055ABA0: 33 C0 C2 04 00 90 90 90  | xor     eax, eax
+   0055ABA2: C2 04 00 90 90 90 90 90  | retn    4
+
+############ C. FootClass::Crash 0x4DEC80..0x4DED60 ############
+== FootClass_Crash  0x004DEC60..0x004DED70 ==
+   004DEC60: 07 5F B0 01 5E C2 04 00  | jnz     short loc_4DEC68
+   004DEC61: 5F B0 01 5E C2 04 00 8A  | pop     edi
+   004DEC62: B0 01 5E C2 04 00 8A 86  | mov     al, 1
+   004DEC64: 5E C2 04 00 8A 86 AD 06  | pop     esi
+   004DEC65: C2 04 00 8A 86 AD 06 00  | retn    4
+   004DEC68: 8A 86 AD 06 00 00 84 C0  | mov     al, [esi+AircraftTypeClass.t.DeployToLand]
+   004DEC6E: 84 C0 75 07 C7 46 6C 00  | test    al, al
+   004DEC70: 75 07 C7 46 6C 00 00 00  | jnz     short loc_4DEC79
+   004DEC72: C7 46 6C 00 00 00 00 8B  | mov     dword ptr [esi+6Ch], 0
+   004DEC79: 8B 16 6A 03 8B CE C6 86  | mov     edx, [esi]
+   004DEC7B: 6A 03 8B CE C6 86 25 04  | push    rcExit; eRadioCommands
+   004DEC7D: 8B CE C6 86 25 04 00 00  | mov     ecx, esi; _TechnoClass *
+   004DEC7F: C6 86 25 04 00 00 01 FF  | mov     byte ptr [esi+425h], 1
+   004DEC86: FF 92 74 02 00 00 8B 06  | call    [edx+vt_TechnoClass.r.Radio_CommandFirstDocked]
+   004DEC8C: 8B 06 8B CE FF 90 A0 03  | mov     eax, [esi]
+   004DEC8E: 8B CE FF 90 A0 03 00 00  | mov     ecx, esi
+   004DEC90: FF 90 A0 03 00 00 57 8B  | call    dword ptr [eax+3A0h]
+   004DEC96: 57 8B CE E8 12 90 22 00  | push    edi; wat
+   004DEC97: 8B CE E8 12 90 22 00 8B  | mov     ecx, esi; this
+   004DEC99: E8 12 90 22 00 8B 16 8B  | call    TechnoClass::Kill_Cargo
+   004DEC9E: 8B 16 8B CE FF 52 2C 83  | mov     edx, [esi]
+   004DECA0: 8B CE FF 52 2C 83 F8 0F  | mov     ecx, esi
+   004DECA2: FF 52 2C 83 F8 0F 0F 84  | call    dword ptr [edx+2Ch]
+   004DECA5: 83 F8 0F 0F 84 9D 00 00  | cmp     eax, 0Fh
+   004DECA8: 0F 84 9D 00 00 00 A1 AC  | jz      loc_4DED4B
+   004DECAE: A1 AC E7 A8 00 85 C0 0F  | mov     eax, ScenarioInit
+   004DECB3: 85 C0 0F 85 90 00 00 00  | test    eax, eax
+   004DECB5: 0F 85 90 00 00 00 A1 30  | jnz     loc_4DED4B
+   004DECBB: A1 30 B2 A8 00 68 FE FF  | mov     eax, Scenario
+   004DECC0: 68 FE FF FF 7F 6A 00 8D  | push    7FFFFFFEh; max
+   004DECC5: 6A 00 8D 88 18 02 00 00  | push    0; min
+   004DECC7: 8D 88 18 02 00 00 E8 0E  | lea     ecx, [eax+218h]; this
+   004DECCD: E8 0E DB 17 00 89 44 24  | call    Random2Class::operator(); (0 : 2147483646)
+   004DECD2: 89 44 24 0C 6A 01 DB 44  | mov     [esp+0Ch], eax
+   004DECD6: 6A 01 DB 44 24 10 6A 00  | push    1; max
+   004DECD8: DB 44 24 10 6A 00 DC 0D  | fild    dword ptr [esp+10h]
+   004DECDC: 6A 00 DC 0D 70 35 7E 00  | push    0; min
+   004DECDE: DC 0D 70 35 7E 00 DC 0D  | fmul    ds:inverse_2147483646; 1/0x7FFFFFFF
+   004DECE4: DC 0D 80 92 7E 00 DC 05  | fmul    ds:dbl_7E9280; 0.15
+   004DECEA: DC 05 60 38 7E 00 D9 9E  | fadd    ds:num_0_1____0; 0.1
+>> 004DECF0: D9 9E 30 03 00 00 8B 0D  | fstp    dword ptr [esi+330h]
+   004DECF6: 8B 0D 30 B2 A8 00 81 C1  | mov     ecx, Scenario
+   004DECFC: 81 C1 18 02 00 00 E8 D9  | add     ecx, 218h; this
+   004DED02: E8 D9 DA 17 00 85 C0 75  | call    Random2Class::operator(); (0 : 1)
+   004DED07: 85 C0 75 0E D9 86 30 03  | test    eax, eax
+   004DED09: 75 0E D9 86 30 03 00 00  | jnz     short loc_4DED19
+>> 004DED0B: D9 86 30 03 00 00 D9 E0  | fld     dword ptr [esi+330h]
+   004DED11: D9 E0 D9 9E 30 03 00 00  | fchs
+>> 004DED13: D9 9E 30 03 00 00 8B 15  | fstp    dword ptr [esi+330h]
+   004DED19: 8B 15 30 B2 A8 00 68 FE  | mov     edx, Scenario
+   004DED1F: 68 FE FF FF 7F 6A 00 8D  | push    7FFFFFFEh; max
+   004DED24: 6A 00 8D 8A 18 02 00 00  | push    0; min
+   004DED26: 8D 8A 18 02 00 00 E8 AF  | lea     ecx, [edx+218h]; this
+   004DED2C: E8 AF DA 17 00 89 44 24  | call    Random2Class::operator(); (0 : 2147483646)
+   004DED31: 89 44 24 0C DB 44 24 0C  | mov     [esp+0Ch], eax
+   004DED35: DB 44 24 0C DC 0D 70 35  | fild    dword ptr [esp+0Ch]
+   004DED39: DC 0D 70 35 7E 00 DC 0D  | fmul    ds:inverse_2147483646; 1/0x7FFFFFFF
+   004DED3F: DC 0D 60 38 7E 00 D9 9E  | fmul    ds:num_0_1____0; 0.1
+   004DED45: D9 9E 34 03 00 00 32 D2  | fstp    dword ptr [esi+334h]
+   004DED4B: 32 D2 8B CE E8 7C 6B 24  | xor     dl, dl
+   004DED4D: 8B CE E8 7C 6B 24 00 5F  | mov     ecx, esi
+   004DED4F: E8 7C 6B 24 00 5F B0 01  | call    Detach
+   004DED54: 5F B0 01 5E C2 04 00 5F  | pop     edi
+   004DED55: B0 01 5E C2 04 00 5F 32  | mov     al, 1
+   004DED57: 5E C2 04 00 5F 32 C0 5E  | pop     esi
+   004DED58: C2 04 00 5F 32 C0 5E C2  | retn    4
+   004DED5B: 5F 32 C0 5E C2 04 00 90  | pop     edi
+   004DED5C: 32 C0 5E C2 04 00 90 90  | xor     al, al
+   004DED5E: 5E C2 04 00 90 90 90 90  | pop     esi
+   004DED5F: C2 04 00 90 90 90 90 90  | retn    4
+   004DED62: 90 90 90 90 90 90 90 90  | db 0Eh dup(90h)
+
+############ D. IonBlast 的倾斜写法（对照，0x53D290..0x53D2E0） ############
+== IonBlast_sinking_tilt  0x0053D290..0x0053D2E0 ==
+   0053D290: DC 0D 98 C0 7E 00 DC 4C  | fmul    ds:dbl_7EC098
+   0053D296: DC 4C 24 30 DC A4 24 B8  | fmul    [esp+0C8h+var_98]
+   0053D29A: DC A4 24 B8 00 00 00 DD  | fsub    [esp+0C8h+var_10]
+   0053D2A1: DD 44 24 30 DC 4C 24 30  | fld     [esp+0C8h+var_98]
+   0053D2A5: DC 4C 24 30 DE F9 D9 44  | fmul    [esp+0C8h+var_98]
+   0053D2A9: DE F9 D9 44 24 24 D8 C9  | fdivp   st(1), st
+   0053D2AB: D9 44 24 24 D8 C9 DC 0D  | fld     dword ptr [esp+0C8h+var_A8+4]
+   0053D2AF: D8 C9 DC 0D 40 C0 7E 00  | fmul    st, st(1)
+   0053D2B1: DC 0D 40 C0 7E 00 D9 9E  | fmul    ds:dbl_7EC040
+>> 0053D2B7: D9 9E 28 03 00 00 D9 44  | fstp    dword ptr [esi+328h]
+   0053D2BD: D9 44 24 10 D8 C9 DC 0D  | fld     [esp+0C8h+coords]
+   0053D2C1: D8 C9 DC 0D 40 C0 7E 00  | fmul    st, st(1)
+   0053D2C3: DC 0D 40 C0 7E 00 D9 E0  | fmul    ds:dbl_7EC040
+   0053D2C9: D9 E0 D9 9E 2C 03 00 00  | fchs
+>> 0053D2CB: D9 9E 2C 03 00 00 DD D8  | fstp    dword ptr [esi+32Ch]
+   0053D2D1: DD D8 8B 76 30 85 F6 0F  | fstp    st
+   0053D2D3: 8B 76 30 85 F6 0F 85 A0  | mov     esi, [esi+30h]
+   0053D2D6: 85 F6 0F 85 A0 FB FF FF  | test    esi, esi
+   0053D2D8: 0F 85 A0 FB FF FF 8B 7C  | jnz     loc_53CE7E
+   0053D2DE: 8B 7C 24 5C 47 83 FF 04  | mov     edi, [esp+0C8h+var_6C]

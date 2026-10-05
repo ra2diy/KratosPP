@@ -1,0 +1,121 @@
+======================================================================================================================
+### TechnoClass::Greatest_Threat (0x6F8DF0) 序言 —— ESI 是否 = this
+func: W?Greatest_Threat$:TechnoClass$n.x($ThreatType$$)l [006F8DF0-006F9DAF]
+----------------------------------------------------------------------------------------------------------------------
+   006F8DF0  sub     esp, 5Ch
+   006F8DF3  mov     edx, TargetScan
+   006F8DF9  push    ebx
+   006F8DFA  push    ebp
+   006F8DFB  push    esi
+   006F8DFC  push    edi
+   006F8DFD  xor     edi, edi
+   006F8DFF  or      ebp, 0FFFFFFFFh
+   006F8E02  mov     esi, ecx
+   006F8E04  inc     edx
+   006F8E05  mov     [esp+6Ch+BestTarget], edi
+   006F8E09  mov     TargetScan, edx
+   006F8E0F  mov     eax, [esi]
+   006F8E11  mov     [esp+6Ch+BestThreat], ebp
+   006F8E15  mov     [esp+6Ch+wat], ebp
+   006F8E19  call    dword ptr [eax+84h]
+   006F8E1F  mov     cl, [eax+_TechnoTypeClass.t.NoAutoFire]
+   006F8E25  test    cl, cl
+   006F8E27  jz      short loc_6F8E44
+   006F8E29  mov     ecx, [esi+21Ch]; this
+   006F8E2F  call    HouseClass::Is_Human
+   006F8E34  test    al, al
+   006F8E36  jz      short loc_6F8E44
+   006F8E38  pop     edi
+   006F8E39  pop     esi
+   006F8E3A  pop     ebp
+
+======================================================================================================================
+### 0x6F9039 之前的上下文（进入条件）
+func: W?Greatest_Threat$:TechnoClass$n.x($ThreatType$$)l [006F8DF0-006F9DAF]
+----------------------------------------------------------------------------------------------------------------------
+   006F8FB0  mov     byte ptr [esp+6Ch+var_5C+3], 0
+   006F8FB3  cmp     ecx, edi
+   006F8FB5  jz      short loc_6F8FDC
+   006F8FB7  mov     edx, [ecx]
+   006F8FB9  call    dword ptr [edx+84h]
+   006F8FBF  mov     cl, [eax+_TechnoTypeClass.t.OpenTopped]
+   006F8FC5  test    cl, cl
+   006F8FC7  jz      short loc_6F8FDC
+   006F8FC9  mov     eax, [esi+_TechnoClass.t.Transporter]
+   006F8FCF  cmp     [eax+_TechnoClass.t.MindControlledBy], edi
+   006F8FD5  jz      short loc_6F8FDC
+   006F8FD7  mov     byte ptr [esp+6Ch+var_5C+3], 1
+   006F8FDC  mov     al, byte ptr [esp+6Ch+projFlags]
+   006F8FE0  test    al, 3
+   006F8FE2  jz      loc_6F9B6E
+   006F8FE8  xor     edi, edi
+   006F8FEA  test    al, 1
+   006F8FEC  mov     [esp+6Ch+wanteddistance], edi
+   006F8FF0  jz      short loc_6F8FF7
+   006F8FF2  mov     edx, [esi]
+   006F8FF4  push    edi
+   006F8FF5  jmp     short loc_6F9016
+
+======================================================================================================================
+### FootClass::Greatest_Threat (0x4D9920) 序言
+func: W?Greatest_Threat$:FootClass$n.x($ThreatType$$)l [004D9920-004D995F]
+----------------------------------------------------------------------------------------------------------------------
+   004D9920  push    esi
+   004D9921  mov     esi, ecx
+   004D9923  mov     al, [esi+688h]
+   004D9929  test    al, al
+   004D992B  mov     eax, [esp+4+projFlags]
+   004D992F  jz      short loc_4D9935
+   004D9931  and     al, not 2
+   004D9933  or      al, 1
+   004D9935  mov     ecx, dword ptr [esp+4+a4]
+   004D9939  mov     edx, [esp+4+curThreat]
+   004D993D  push    ecx; a4
+   004D993E  push    edx; curThreat
+   004D993F  push    eax; projFlags
+   004D9940  mov     ecx, esi; this
+   004D9942  call    TechnoClass::Greatest_Threat
+   004D9947  mov     cl, [esi+688h]
+
+======================================================================================================================
+### LogicClass_Update (0x55AFB0) 起点
+func: LogicClass_Update [0055AFB0-0055B71D]
+----------------------------------------------------------------------------------------------------------------------
+   0055AFB0  sub     esp, 28h
+   0055AFB3  mov     edx, dword_ABCD40
+   0055AFB9  mov     [esp+28h+var_28], ecx
+   0055AFBD  mov     ecx, vec_Tags_0x10.length
+   0055AFC3  push    ebx
+   0055AFC4  push    ebp
+   0055AFC5  push    esi
+   0055AFC6  inc     edx
+   0055AFC7  xor     eax, eax
+   0055AFC9  or      ebx, 0FFFFFFFFh
+   0055AFCC  push    edi
+   0055AFCD  mov     edi, Scenario
+
+======================================================================================================================
+### LocomotionClass::In_Which_Layer (0x75C7E0) 的直接引用 / vtable 归属
+======================================================================================================================
+  vtable 引用 @ 007F6A6C (.rdata)
+  共 1 处 vtable 引用（0 表示不在静态 vtable，或 vtable 为运行时构造）
+
+======================================================================================================================
+### 关键字段确认
+======================================================================================================================
+--- WalkLoco::In_Which_Layer
+    0x0075C7E0 +0: 0x000002B8
+    0x0075C7E0 +1: 0x00000002
+    0x0075C7E0 +2: 0xC2000000
+    0x0075C7E0 +3: 0x04C20000
+    0x0075C7E0 +4: 0x0004C200
+    0x0075C7E0 +5: 0x900004C2
+
+--- FootClass::AI cmp [esi+90h],bl
+    0x004DA87A +0: 0x00909E38
+    0x004DA87A +1: 0x0000909E
+    0x004DA87A +2: 0x00000090
+    0x004DA87A +3: 0x0F000000
+    0x004DA87A +4: 0x840F0000
+    0x004DA87A +5: 0x7A840F00
+

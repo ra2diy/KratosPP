@@ -1,0 +1,778 @@
+
+  bytes   pages size description
+--------- ----- ---- --------------------------------------------
+ 93945856 11468 8192 allocating memory for b-tree...
+ 31367168  3829 8192 allocating memory for virtual array...
+   262144    32 8192 allocating memory for name pointers...
+-----------------------------------------------------------------
+125575168            total memory allocated
+
+Loading processor module D:\Workspace\ra2mod\platform\IDA_Pro_v8.3_Portable\procs\pc.dll for metapc...Initializing processor module metapc...OK
+Loading type libraries...
+Autoanalysis subsystem has been initialized.
+Database for file '' has been loaded.
+Hex-Rays Decompiler plugin has been loaded (v8.3.0.230608)
+  License: 57-0000-0000-00 Hex-Rays SA (32767 users)
+  The hotkeys are F5: decompile, Ctrl-F5: decompile all.
+
+  Please check the Edit/Plugins menu for more information.
+================================================================================
+Findcrypt v0.2 by David BERARD, 2017
+Findcrypt search shortcut key is Ctrl-Alt-F
+Global rules in D:\Workspace\ra2mod\platform\IDA_Pro_v8.3_Portable\plugins\findcrypt3.rules
+User-defined rules in C:\Users\chris\AppData\Roaming\Hex-Rays\IDA Pro\plugins\findcrypt-yara/*.rules
+================================================================================
+Hex-rays version 8.3.0.230608 has been detected, gooMBA plugin ready to use
+
+ IDA Strong Charset Code View 0.3 
+ Show Strong Charset View Use 'shift' 
+ Auto Set Default 8bit Decode to CP-ACP True.
+ IDA Strong Charset Code View Plugin By 微笑一刀 
+
+==================================================================================================================================
+### 全部 430 个 Hook 按所在引擎函数归类
+==================================================================================================================================
+HOOKADDR   HOOKNAME                                       CONTAINING_FUNC                                FUNCSTART   FILE:LINE
+004101F0   AbstractClass_DTOR                             AbstractClass_DTOR                             004101F0  PointerExpireHook.cpp:25
+004147F9   AircraftClass_Draw_Shadow_SkipPhobos           AircraftClass_Draw                             004144B0  AircraftExtHook.cpp:62
+00414876   TechnoClass_DrawShadow                         AircraftClass_Draw                             004144B0  AircraftExtHook.cpp:89
+00414C27   AircraftClass_Update_SkipCreateChronoSparkleAn AircraftClass_Update                           00414BB0  StandExtHook.cpp:473
+00414CF2   TechnoClass_WarpUpdate                         AircraftClass_Update                           00414BB0  TechnoExtHook.cpp:168
+004181CF   AircraftClass_Mission_Attack_FlyToPostion      AircraftClass_Mi_Attack                        00417FE0  AircraftExtHook.cpp:426
+004183D3   AircraftClass_Mission_Attack4_HoverFireMove    AircraftClass_Mi_Attack                        00417FE0  AircraftExtHook.cpp:486
+00418478   AircraftClass_Mission_Attack_Fire_Imcoming_0   AircraftClass_Mi_Attack                        00417FE0  AircraftExtHook.cpp:322
+004184FC   AircraftClass_Mission_Attack_CheckROF          AircraftClass_Mi_Attack                        00417FE0  AircraftExtHook.cpp:443
+00418506   AircraftClass_Mission_Attack_FireDone          AircraftClass_Mi_Attack                        00417FE0  AircraftExtHook.cpp:451
+00418572   AircraftClass_Mission_Attack_4to5              AircraftClass_Mi_Attack                        00417FE0  AircraftExtHook.cpp:458
+00418680   AircraftClass_Mission_Attack5_HoverFireMove_Fi AircraftClass_Mi_Attack                        00417FE0  AircraftExtHook.cpp:516
+004186B6   AircraftClass_Mission_Attack5_HoverFireTwice   AircraftClass_Mi_Attack                        00417FE0  AircraftExtHook.cpp:476
+004186D7   AircraftClass_Mission_Attack_Fire_Imcoming_1   AircraftClass_Mi_Attack                        00417FE0  AircraftExtHook.cpp:336
+00418743   AircraftClass_Mission_Attack5_HoverFireMove_Fi AircraftClass_Mi_Attack                        00417FE0  AircraftExtHook.cpp:501
+00418792   AircraftClass_Mission_Attack5_HoverFireMove_Fi AircraftClass_Mi_Attack                        00417FE0  AircraftExtHook.cpp:531
+00418826   AircraftClass_Mission_Attack_Fire_Imcoming_2   AircraftClass_Mi_Attack                        00417FE0  AircraftExtHook.cpp:350
+00418935   AircraftClass_Mission_Attack_Fire_Imcoming_3   AircraftClass_Mi_Attack                        00417FE0  AircraftExtHook.cpp:364
+00418A44   AircraftClass_Mission_Attack_Fire_Imcoming_4   AircraftClass_Mi_Attack                        00417FE0  AircraftExtHook.cpp:378
+00418B40   AircraftClass_Mission_Attack_Fire_Imcoming_5   AircraftClass_Mi_Attack                        00417FE0  AircraftExtHook.cpp:392
+0041A697   AircraftClass_Mission_Guard_NoTarget_Enter     AircraftClass_Mi_Guard                         0041A5C0  AircraftExtHook.cpp:272
+0041A96C   AircraftClass_Mission_GuardArea_NoTarget_Enter AircraftClass_Mi_AreaGuard                     0041A940  AircraftExtHook.cpp:285
+0041B760   IFlyControl_Landing_Direction                  AircraftClass_FlasherClass_LandingDirection    0041B760  AircraftExtHook.cpp:254
+0041D604   AirstrikeClass_PointerGotInvalid_ResetForTarge AirstrikeClass_PointerGotInvalid               0041D540  AirstrikeExtHook.cpp:213
+0041D97B   AirstrikeClass_Setup_SkipBuildingCheck         AirstrikeClass_Fire                            0041D860  AirstrikeExtHook.cpp:71
+0041D994   AirstrikeClass_Setup_SetToTarget               AirstrikeClass_Fire                            0041D860  AirstrikeExtHook.cpp:126
+0041DA52   AirstrikeClass_ResetTarget_OriginalTarget      AirstrikeClass_SetNewTarget                    0041DA20  AirstrikeExtHook.cpp:88
+0041DA68   AirstrikeClass_Reset_Stopwhat_SkipBuildingChec AirstrikeClass_SetNewTarget                    0041DA20  AirstrikeExtHook.cpp:141
+0041DA80   AirstrikeClass_ResetTarget_NewTarget           AirstrikeClass_SetNewTarget                    0041DA20  AirstrikeExtHook.cpp:98
+0041DA88   AirstrikeClass_Reset_Startwhat_SkipBuildingChe AirstrikeClass_SetNewTarget                    0041DA20  AirstrikeExtHook.cpp:156
+0041DAA4   AirstrikeClass_ResetTarget_ResetForOldTarget   AirstrikeClass_SetNewTarget                    0041DA20  AirstrikeExtHook.cpp:108
+0041DAD4   AirstrikeClass_Reset                           AirstrikeClass_SetNewTarget                    0041DA20  AirstrikeExtHook.cpp:166
+0041DBD4   AirstrikeClass_ClearTarget                     AirstrikeClass_RemoveAmmo                      0041DB40  AirstrikeExtHook.cpp:180
+0041DC10   AirstrikeClass_ResetTarget_SetToTarget         AirstrikeClass_RemoveAmmo                      0041DB40  AirstrikeExtHook.cpp:200
+00422126   AnimClass_CTOR                                 W?$ct:AnimClass$n($AnimType$$ulucuc)_          00421EA0  AnimExtHook.cpp:26
+00422707   AnimClass_CTOR                                 W?$ct:AnimClass$n($AnimType$$ulucuc)_          00421EA0  AnimExtHook.cpp:27
+004228D2   AnimClass_CTOR                                 AnimClass_CTOR2                                00422720  AnimExtHook.cpp:28
+00422967   AnimClass_DTOR                                 AnimClass_DTOR                                 004228E0  AnimExtHook.cpp:39
+0042312A   AnimClass_Draw_Remap                           AnimClass_Draw                                 00422CA0  AnimExtHook.cpp:171
+00423136   AnimClass_Draw_Remap2                          AnimClass_Draw                                 00422CA0  AnimExtHook.cpp:181
+00423630   AnimClass_Draw_Colour                          AnimClass_Draw                                 00422CA0  AnimExtHook.cpp:263
+00423991   AnimClass_Bounce_Remap                         AnimClass_AnimExtras                           00423930  AnimExtHook.cpp:202
+00423AC0   AnimClass_Update                               AnimClass_Update                               00423AC0  AnimExtHook.cpp:91
+00423CD5   AnimClass_Extras_HitWater                      AnimClass_Update                               00423AC0  AnimExtHook.cpp:326
+00423E75   AnimClass_Extras_Remap                         AnimClass_Update                               00423AC0  AnimExtHook.cpp:191
+00423E7B   AnimClass_Extras_Explosion                     AnimClass_Update                               00423AC0  AnimExtHook.cpp:310
+00423F8C   AnimClass_Spawn_Remap                          AnimClass_Update                               00423AC0  AnimExtHook.cpp:216
+00424298   AnimClass_Done                                 AnimClass_Update                               00423AC0  AnimExtHook.cpp:138
+0042429E   AnimClass_UpdateEnd                            AnimClass_Update                               00423AC0  AnimExtHook.cpp:104
+004242E1   AnimClass_Trailer_Remap                        AnimClass_Update                               00423AC0  AnimExtHook.cpp:230
+0042437E   AnimClass_UpdateEnd                            AnimClass_Update                               00423AC0  AnimExtHook.cpp:105
+004243A6   AnimClass_UpdateEnd                            AnimClass_Update                               00423AC0  AnimExtHook.cpp:106
+00424513   AnimClass_Update_Explosion                     AnimClass_Update                               00423AC0  AnimExtHook.cpp:296
+00424567   AnimClass_UpdateEnd                            AnimClass_Update                               00423AC0  AnimExtHook.cpp:107
+004246DC   AnimClass_UpdateEnd                            AnimClass_Update                               00423AC0  AnimExtHook.cpp:108
+00424785   AnimClass_Loop                                 AnimClass_Update                               00423AC0  AnimExtHook.cpp:124
+004247EB   AnimClass_UpdateEnd                            AnimClass_Update                               00423AC0  AnimExtHook.cpp:110
+004247F3   AnimClass_Done                                 AnimClass_Update                               00423AC0  AnimExtHook.cpp:137
+00424807   AnimClass_Next                                 AnimClass_Update                               00423AC0  AnimExtHook.cpp:151
+0042492A   AnimClass_UpdateEnd                            AnimClass_Update                               00423AC0  AnimExtHook.cpp:111
+00424B1B   AnimClass_UpdateEnd                            AnimClass_Update                               00423AC0  AnimExtHook.cpp:113
+00424B29   AnimClass_UpdateEnd                            AnimClass_Update                               00423AC0  AnimExtHook.cpp:112
+00424B42   AnimClass_UpdateEnd                            AnimClass_Update                               00423AC0  AnimExtHook.cpp:109
+00425280   AnimClass_SaveLoad_Prefix                      AnimClass_Load                                 00425280  AnimExtHook.cpp:62
+00425358   AnimClass_Load_Suffix                          AnimClass_Load                                 00425280  AnimExtHook.cpp:75
+00425391   AnimClass_Load_Suffix                          AnimClass_Load                                 00425280  AnimExtHook.cpp:73
+004253A2   AnimClass_Load_Suffix                          AnimClass_Load                                 00425280  AnimExtHook.cpp:74
+004253B0   AnimClass_SaveLoad_Prefix                      AnimClass_Save                                 004253B0  AnimExtHook.cpp:63
+004253FF   AnimClass_Save_Suffix                          AnimClass_Save                                 004253B0  AnimExtHook.cpp:81
+00426598   AnimClass_SDDTOR                               AnimClass_SDDTOR                               00426590  AnimExtHook.cpp:49
+0042784B   AnimTypeClass_CTOR                             AnimTypeClass_CTOR                             00427530  AnimTypeExtHook.cpp:10
+004287DC   AnimTypeClass_LoadFromINI                      AnimTypeClass_LoadFromINI                      00427D00  AnimTypeExtHook.cpp:54
+004287E9   AnimTypeClass_LoadFromINI                      AnimTypeClass_LoadFromINI                      00427D00  AnimTypeExtHook.cpp:53
+00428800   AnimTypeClass_SaveLoad_Prefix                  AnimTypeClass_Load                             00428800  AnimTypeExtHook.cpp:30
+0042892C   AnimTypeClass_Load_Suffix                      AnimTypeClass_Load                             00428800  AnimTypeExtHook.cpp:40
+00428958   AnimTypeClass_Load_Suffix                      AnimTypeClass_Load                             00428800  AnimTypeExtHook.cpp:41
+00428970   AnimTypeClass_SaveLoad_Prefix                  AnimTypeClass_Save                             00428970  AnimTypeExtHook.cpp:29
+0042898A   AnimTypeClass_Save_Suffix                      AnimTypeClass_Save                             00428970  AnimTypeExtHook.cpp:47
+00428EA8   AnimTypeClass_SDDTOR                           AnimTypeClass_SDDTOR                           00428EA0  AnimTypeExtHook.cpp:21
+0043D390   BuildingClass_DrawSHP_LaserTargetColor_Skip    BuildingClass_114                              0043D290  AirstrikeExtHook.cpp:499
+0043DC2A   BuildingClass_DrawVXL_LaserTargetColor_Skip    BuildingClass_4E4                              0043DA80  AirstrikeExtHook.cpp:523
+0043F9E0   BuildingClass_Mark_Airstrike                   BuildingClass_124                              0043F180  AirstrikeExtHook.cpp:434
+00440406   BuildingClass_Update_SkipCreateChronoSparkleAn BuildingClass_Update                           0043FB20  StandExtHook.cpp:485
+0044050C   BuildingClass_Update_SkipCreateChronoSparkleAn BuildingClass_Update                           0043FB20  StandExtHook.cpp:497
+0044055D   TechnoClass_WarpUpdate                         BuildingClass_Update                           0043FB20  TechnoExtHook.cpp:165
+00441A26   BuildingClass_Destroy_Explosion_Remap          BuildingClass_Destroy                          004415F0  BuildingExtHook.cpp:18
+00441B22   BuildingClass_Destroy_Exploding_Remap          BuildingClass_Destroy                          004415F0  BuildingExtHook.cpp:29
+00441D41   BuildingClass_Destroy_DestroyAnim_Remap        BuildingClass_Destroy                          004415F0  BuildingExtHook.cpp:40
+00448DF1   BuildingClass_SetOwningHouse_Airstrike         BuildingClass_Captured                         00448260  AirstrikeExtHook.cpp:447
+0044A04C   BuildingClass_Selling_TransferAE               BuildingClass_Mission_Deconstruction           00449C30  TechnoExtHook.cpp:1368
+0045197B   BuildingClass_UpdateAnim_SetOwner              BuildingClass_PlayAnim                         00451890  AnimExtHook.cpp:243
+00451ABC   BuildingClass_PlayAnim_Airstrike               BuildingClass_PlayAnim                         00451890  AirstrikeExtHook.cpp:460
+00452041   BuildingClass_452000_Airstrike                 sub_452000                                     00452000  AirstrikeExtHook.cpp:473
+00453E02   BuildingClass_Clear_Occupy_Spot_Skip           BuildingClass_F4                               00453DC0  BuildingExtHook.cpp:56
+00456E5A   BuildingClass_Flash_Airstrike                  W?Clicked_As_Target$:BuildingClass$n(i)v       00456E00  AirstrikeExtHook.cpp:486
+004664BA   BulletClass_CTOR                               BulletClass_CTOR                               00466380  BulletExtHook.cpp:27
+00466556   BulletClass_Init                               BulletClass_Initialize                         004664C0  BulletExtHook.cpp:84
+004665E9   BulletClass_DTOR                               BulletClass_DTOR                               00466560  BulletExtHook.cpp:40
+004666F7   BulletClass_Update                             BulletClass_Update                             004666E0  BulletExtHook.cpp:112
+00466781   BulletClass_UpdateEnd                          BulletClass_Update                             004666E0  BulletExtHook.cpp:126
+00466E18   BulletClass_CheckHight_UnderGround             BulletClass_Update                             004666E0  BulletExtHook.cpp:334
+0046745C   BulletClass_Update_ChangeVelocity              BulletClass_Update                             004666E0  BulletExtHook.cpp:294
+004677C7   BulletClass_Update_ChangeVelocity_Locked       BulletClass_Update                             004666E0  BulletExtHook.cpp:313
+00467E53   BulletClass_AI_PreDetonation_Vector            BulletClass_Update                             004666E0  BulletExtHook.cpp:361
+00467FEE   BulletClass_UpdateEnd                          BulletClass_Update                             004666E0  BulletExtHook.cpp:125
+004683E2   BulletClass_DrawSHP_Colour                     BulletClass_Draw                               00468090  BulletExtHook.cpp:247
+004683E7   BulletClass_DrawSHP_Bright                     BulletClass_Draw                               00468090  BulletExtHook.cpp:267
+00468B5D   BulletClass_Put                                BulletClass_SetMovement                        00468670  BulletExtHook.cpp:97
+004690C1   BulletClass_Detonate                           BulletClass_Fire                               004690B0  BulletExtHook.cpp:139
+00469A75   BulletClass_Detonate_GetHouse                  BulletClass_Fire                               004690B0  BulletExtHook.cpp:165
+00469C46   BulletClass_Detonate_WHAnim_Remap              BulletClass_Fire                               004690B0  BulletExtHook.cpp:184
+00469D5C   BulletClass_Detonate_WHVxlDebris_Remap         BulletClass_Fire                               004690B0  BulletExtHook.cpp:207
+00469EB4   BulletClass_Detonate_WHDebris_Remap            BulletClass_Fire                               004690B0  BulletExtHook.cpp:224
+0046AE70   BulletClass_SaveLoad_Prefix                    BulletClass_Load                               0046AE70  BulletExtHook.cpp:55
+0046AF97   BulletClass_Load_Suffix                        BulletClass_Load                               0046AE70  BulletExtHook.cpp:65
+0046AF9E   BulletClass_Load_Suffix                        BulletClass_Load                               0046AE70  BulletExtHook.cpp:66
+0046AFB0   BulletClass_SaveLoad_Prefix                    BulletClass_Save                               0046AFB0  BulletExtHook.cpp:54
+0046AFC4   BulletClass_Save_Suffix                        BulletClass_Save                               0046AFB0  BulletExtHook.cpp:73
+0046B201   BulletClass_DrawVXL_Colour                     BulletClass_DrawVXL                            0046B0C0  BulletExtHook.cpp:278
+0046BDD9   BulletTypeClass_CTOR                           BulletTypeClass_CTOR                           0046BBC0  BulletTypeExtHook.cpp:10
+0046C41C   BulletTypeClass_LoadFromINI                    BulletTypeClass_LoadFromINI                    0046BEE0  BulletTypeExtHook.cpp:56
+0046C429   BulletTypeClass_LoadFromINI                    BulletTypeClass_LoadFromINI                    0046BEE0  BulletTypeExtHook.cpp:55
+0046C6A0   BulletTypeClass_SaveLoad_Prefix                BulletTypeClass_Load                           0046C6A0  BulletTypeExtHook.cpp:31
+0046C722   BulletTypeClass_Load_Suffix                    BulletTypeClass_Load                           0046C6A0  BulletTypeExtHook.cpp:41
+0046C730   BulletTypeClass_SaveLoad_Prefix                BulletTypeClass_Save                           0046C730  BulletTypeExtHook.cpp:30
+0046C74A   BulletTypeClass_Save_Suffix                    BulletTypeClass_Save                           0046C730  BulletTypeExtHook.cpp:48
+0046C8B6   BulletTypeClass_SDDTOR                         BulletTypeClass_SDDTOR                         0046C890  BulletTypeExtHook.cpp:21
+00471D2E   CaptureManagerClass_Is_Controllable            CaptureManagerClass_CanCapture                 00471C90  TechnoExtHook.cpp:262
+00481C6C   CellClass_CrateBeingCollected_Armor1           W?Goodie_Check$:CellClass$n(pn$FootClass$$)i   00481A00  MapExtHook.cpp:106
+00481CE1   CellClass_CrateBeingCollected_Speed1           W?Goodie_Check$:CellClass$n(pn$FootClass$$)i   00481A00  MapExtHook.cpp:120
+00481D0E   CellClass_CrateBeingCollected_Firepower1       W?Goodie_Check$:CellClass$n(pn$FootClass$$)i   00481A00  MapExtHook.cpp:92
+00481D3D   CellClass_CrateBeingCollected_Cloak1           W?Goodie_Check$:CellClass$n(pn$FootClass$$)i   00481A00  MapExtHook.cpp:134
+00482E57   CellClass_CrateBeingCollected_Armor2           W?Goodie_Check$:CellClass$n(pn$FootClass$$)i   00481A00  MapExtHook.cpp:171
+0048303A   CellClass_CrateBeingCollected_Speed2           W?Goodie_Check$:CellClass$n(pn$FootClass$$)i   00481A00  MapExtHook.cpp:188
+00483226   CellClass_CrateBeingCollected_Firepower2       W?Goodie_Check$:CellClass$n(pn$FootClass$$)i   00481A00  MapExtHook.cpp:154
+00489280   MapClass_DamageArea                            Damage_At_Cell_Update_489280                   00489280  MapExtHook.cpp:24
+0048A551   WarheadTypeClass_AnimList_SplashList           SelectDamageAnimation                          0048A4F0  WarheadTypeExtHook.cpp:71
+004A904E   DisplayClass_Passes_Proximity_Check_MobileMCV  W?Passes_Proximity_Check$:DisplayClass$n.x(pnx 004A8EB0  MapExtHook.cpp:457
+004AE95E   DisplayClass_sub_4AE750_DisallowBuildingNonAtt sub_4AE750                                     004AE750  BuildingExtHook.cpp:90
+004B0521   LocomotionClass_Update_Ramp                    sub_4B0500                                     004B0500  TechnoExtHook.cpp:1020
+004B4820   DriveLocomotionClass_In_Which_Layer            sub_4B4820                                     004B4820  StandExtHook.cpp:449
+004C1E42   EBolt_CTOR                                     EBolt_CTOR                                     004C1E10  EBoltExtHook.cpp:23
+004C20BC   EBolt_Draw_Arcs                                EBolt_Draw                                     004C1F20  EBoltExtHook.cpp:110
+004C24C3   EBolt_DrawFirst_Color                          EBolt_Draw                                     004C1F20  EBoltExtHook.cpp:120
+004C25D0   EBolt_DrawSecond_Color                         EBolt_Draw                                     004C1F20  EBoltExtHook.cpp:130
+004C26D5   EBolt_DrawThird_Color                          EBolt_Draw                                     004C1F20  EBoltExtHook.cpp:140
+004C28B6   EBolt_Draw_Update                              EBolt_DrawAll                                  004C2830  EBoltExtHook.cpp:81
+004C2951   EBolt_DTOR                                     EBolt_DrawAll                                  004C2830  EBoltExtHook.cpp:31
+004C2AE7   EBolt_Fire_DisableParticle                     EBolt_Fire                                     004C2A60  EBoltExtHook.cpp:150
+004CCBB3   FlyLocomotionClass_Freeze                      sub_4CCB40                                     004CCB40  TechnoExtHook.cpp:1044
+004CDCFD   FlyLocomotionClass_MovingUpdate_HoverAttack    sub_4CD600                                     004CD600  AircraftExtHook.cpp:548
+004CF3C5   FlyLocomotionClass_4CEFB0                      sub_4CEFB0                                     004CEFB0  AircraftExtHook.cpp:230
+004CF3E3   FlyLocomotionClass_FlightLevel_ResetB          sub_4CEFB0                                     004CEFB0  AircraftExtHook.cpp:215
+004CF4C5   FlyLocomotionClass_FlightLevel_ResetA          sub_4CEFB0                                     004CEFB0  AircraftExtHook.cpp:194
+004CF780   FlyLocomotionClass_Draw_Matrix_Rolling         sub_4CF610                                     004CF610  AircraftExtHook.cpp:298
+004CF80D   FlyLocomotionClass_Draw_Matrix                 sub_4CF610                                     004CF610  AircraftExtHook.cpp:178
+004D94B0   FootClass_SetDestination_Stand                 FootClass_SetDestination                       004D94B0  StandExtHook.cpp:58
+004D9947   FootClass_Greatest_Threat_GetTarget            W?Greatest_Threat$:FootClass$n.x($ThreatType$$ 004D9920  StandExtHook.cpp:160
+004DA87A   FootClass_Update_UpdateLayer                   W?AI$:FootClass$n()v                           004DA530  StandExtHook.cpp:231
+004DB091   FootClass_GetZAdjustment                       FootClass_Get_ZAdjustment                      004DAFC0  StandExtHook.cpp:251
+004DB157   FootClass_DrawVoxel_Shadow_Carryall            FootClass_DrawVXLShadow                        004DB0D0  UnitExtHook.cpp:755
+004DDD66   FootClass_IsLandZoneClear_ReplaceHardcode      FootClass_550                                  004DDC60  AircraftExtHook.cpp:577
+004F4497   GScreenClass_Render                            GScreenClass_DrawOnTop                         004F4480  GScreenHook.cpp:21
+004F4583   GScreenClass_Render_Late                       GScreenClass_DrawOnTop                         004F4480  GScreenHook.cpp:27
+004F6532   HouseClass_CTOR                                HouseClass_CTOR                                004F54A0  HouseExtHook.cpp:16
+004F7371   HouseClass_DTOR                                HouseClass_DTOR                                004F7140  HouseExtHook.cpp:28
+0050114D   HouseClass_InitFromINI                         HouseClass_InitFromINI                         00500B40  HouseExtHook.cpp:62
+00503040   HouseClass_SaveLoad_Prefix                     HouseClass_Load                                00503040  HouseExtHook.cpp:38
+00504069   HouseClass_Load_Suffix                         HouseClass_Load                                00503040  HouseExtHook.cpp:48
+00504080   HouseClass_SaveLoad_Prefix                     HouseClass_Save                                00504080  HouseExtHook.cpp:37
+005046DE   HouseClass_Save_Suffix                         HouseClass_Save                                00504080  HouseExtHook.cpp:55
+00508EC6   HouseClass_RadarUpdate_Stand                   HouseClass_Radar_Activate                      00508DF0  StandExtHook.cpp:71
+00508F9B   HouseClass_SpySatUpdate_Stand                  HouseClass_SpySat_Update                       00508F60  StandExtHook.cpp:82
+00517100   HoverLocomotionClass_In_Which_Layer            sub_517100                                     00517100  StandExtHook.cpp:441
+005184F7   Infantry_ReceiveDamage_DeathAnim               InfantryClass_ReceiveDamage                    00517FA0  InfantryExtHook.cpp:28
+005194EF   InfantryClass_DrawIt_InAir_Shadow_Skip         InfantryClass_Draw                             00518F90  InfantryExtHook.cpp:17
+0051BB17   InfantryClass_Update_SkipCreateChronoSparkleAn InfantryClass_Update                           0051BAB0  StandExtHook.cpp:509
+0051BBDF   TechnoClass_WarpUpdate                         InfantryClass_Update                           0051BAB0  TechnoExtHook.cpp:166
+0051EAE0   InfantryClass_WhatAction_Cursor                W?What_Action$:InfantryClass$n.x(pnx$ObjectCla 0051E3B0  AirstrikeExtHook.cpp:33
+0051F5C0   Infantry_Mission_Hunt_Deploy                   InfantryClass_Hunt                             0051F540  InfantryExtHook.cpp:47
+0052BA60   YR_Boot                                        InitGame                                       0052BA60  GeneralHook.cpp:40
+0052F639   YR_CmdLineParse                                ProcessArguments                               0052F620  GeneralHook.cpp:45
+0053B233   IonStormClass_Dominator_Activate               PsyDom_Fire                                    0053B080  TechnoExtHook.cpp:274
+0054AED0   JumpjetLocomotionClass_Freeze                  JumpjetLocomotionClass_Process                 0054AEC0  TechnoExtHook.cpp:1071
+0054B1D1   JumpjetLocomotionClass_MoveTo                  sub_54B1C0                                     0054B1C0  TechnoExtHook.cpp:1056
+0054B8E9   JumpjetLocomotionClass_In_Which_Layer_Deviatio sub_54B8D0                                     0054B8D0  StandExtHook.cpp:458
+0054BC44   JumpjetLocomotionClass_Update_State1_DontTurnI sub_54BA30                                     0054BA30  TechnoExtHook.cpp:1190
+0054BE6D   JumpjetLocomotionClass_Update_State2_BalloonHo sub_54BD30                                     0054BD30  TechnoExtHook.cpp:1245
+0054BED4   JumpjetLocomotionClass_Hovering_DeployToLand   sub_54BD30                                     0054BD30  TechnoExtHook.cpp:1101
+0054BF53   JumpjetLocomotionClass_Update_State2_MarkDir   sub_54BD30                                     0054BD30  TechnoExtHook.cpp:1215
+0054C0BB   JumpjetLocomotionClass_Update_State3_DontTurnI jumpjet2                                       0054BFF0  TechnoExtHook.cpp:1282
+0054C0FC   JumpjetLocomotionClass_Update_State3_BalloonHo jumpjet2                                       0054BFF0  TechnoExtHook.cpp:1306
+0054C2DF   JumpjetLocomotionClass_Cruising_DeployToLand   jumpjet2                                       0054BFF0  TechnoExtHook.cpp:1118
+0054D600   JumpjetLocomotionClass_MovingUpdate_DontTurnIn sub_54D0F0                                     0054D0F0  TechnoExtHook.cpp:1137
+0054E478   KamikazeTrackerClass_Add                       Kamikaze_Append                                0054E3B0  SpawnManagerExtHook.cpp:312
+0054E51D   KamikazeContainer_Update_SetTargetBefore       KamikazeContainer_Update                       0054E4D0  SpawnManagerExtHook.cpp:339
+0054E524   KamikazeContainer_Update_SetTarget             KamikazeContainer_Update                       0054E4D0  SpawnManagerExtHook.cpp:348
+0054E540   KamikazeContainer_Update_SetTarget_Zero        KamikazeContainer_Update                       0054E4D0  SpawnManagerExtHook.cpp:363
+0054E56D   KamikazeContainer_Update_SetTargetAfter        KamikazeContainer_Update                       0054E4D0  SpawnManagerExtHook.cpp:370
+00550D1F   LaserDrawClass_DrawInHouseColor_Context_Set    LaserDrawClass_Draw_InHouseColor               005509F0  LaserDrawHook.cpp:19
+00550F47   LaserDrawClass_DrawInHouseColor_BetterDrawing  LaserDrawClass_Draw_InHouseColor               005509F0  LaserDrawHook.cpp:26
+0055AFB3   LogicClass_Update                              LogicClass_Update                              0055AFB0  GeneralHook.cpp:108
+0055B719   LogicClass_Update_Late                         LogicClass_Update                              0055AFB0  GeneralHook.cpp:114
+0055DBC3   MainLoop_ShortLayerClass                       W?Main_Loop$n()i                               0055D360  StandExtHook.cpp:225
+005B19D0   MechLocomotionClass_In_Which_Layer             sub_5B19D0                                     005B19D0  StandExtHook.cpp:433
+005F45A0   TechnoClass_Select                             W?Select$:ObjectClass$n()i                     005F4520  TechnoExtHook.cpp:477
+005F5498   ObjectClass_ReceiveDamage_RealDamage           ObjectClass_ReceiveDamage                      005F5390  TechnoExtHook.cpp:324
+005F65F1   ObjectClass_UnInit                             W?Detach$:ObjectClass$n(pn$ObjectClass$$)v     005F65F0  PointerExpireHook.cpp:32
+005F6B90   ObjectClass_InAir_SkipCheckIsOnMap             TechnoClass_InAir                              005F6B90  StandExtHook.cpp:44
+005F6BF7   ObjectClass_GetYSort                           ObjectClass_ReturnRealYSort                    005F6BD0  StandExtHook.cpp:328
+006297F0   ParasiteClass_GrappleUpdate_Anim_Remap         ParasiteClass_UpdateSquiddy                    006297F0  ParasiteExtHooks.cpp:29
+0062A13F   ParasiteClass_Update_Anim_Remap                ParasiteClass_Update                           00629FD0  ParasiteExtHooks.cpp:14
+00639DD8   PlanningManager_AllowAircraftsWaypoint         sub_639DA0                                     00639DA0  AircraftExtHook.cpp:23
+0065E97F   HouseClass_CreateAirstrike_SetTargetForUnit    HouseClass_CreateAirstrike                     0065E850  AirstrikeExtHook.cpp:230
+0065E997   Airstrike_Supported_Reinforcements_Put         HouseClass_CreateAirstrike                     0065E850  AirstrikeExtHook.cpp:263
+006622C0   RocketLocomotionClass_Process                  RocketLocomotionClass_ILocomotion_Process      006622C0  SpawnManagerExtHook.cpp:387
+006622E0   RocketLocomotionClass_Update_Freezing          RocketLocomotionClass_ILocomotion_Process      006622C0  TechnoExtHook.cpp:1342
+00662CAC   RocketLocomotionClass_Process_Step5_To_Lazy_4  RocketLocomotionClass_ILocomotion_Process      006622C0  SpawnManagerExtHook.cpp:409
+0066304F   RocketLocomotionClass_663030                   RocketLocomotionClass_DoStuff                  00663030  SpawnManagerExtHook.cpp:423
+0067CEF0   SaveGame_Start                                 Game_Save                                      0067CEF0  SaveGameHook.cpp:29
+0067D2F1   SaveGame_End                                   Game_Save                                      0067CEF0  SaveGameHook.cpp:38
+0067D300   SaveGameInStream_Start                         SaveGame                                       0067D300  SaveGameHook.cpp:47
+0067E42E   SaveGameInStream_End                           SaveGame                                       0067D300  SaveGameHook.cpp:55
+0067E440   LoadGame_Start                                 Game_Load                                      0067E440  SaveGameHook.cpp:63
+0067E720   LoadGame_End                                   Game_Load                                      0067E440  SaveGameHook.cpp:71
+0067E730   LoadGameInStream_Start                         LoadGame                                       0067E730  SaveGameHook.cpp:79
+0067F7C8   LoadGameInStream_End                           LoadGame                                       0067E730  SaveGameHook.cpp:88
+006851F0   Scenario_ClearClasses_Start                    Scenario_ClearClasses                          006851F0  GeneralHook.cpp:81
+00685659   Scenario_ClearClasses_End                      Scenario_ClearClasses                          006851F0  GeneralHook.cpp:88
+006875F3   Scenario_Start1                                INIClass_ReadScenario                          00686B20  GeneralHook.cpp:96
+0069251A   ScrollClass_ProcessClickCoords_VirtualUnit     ScrollClass_692300                             00692300  MapExtHook.cpp:219
+0069FC31   LocomotionClass_Update_Ramp                    sub_69FC10                                     0069FC10  TechnoExtHook.cpp:1021
+006A3E50   ShipLocomotionClass_In_Which_Layer             sub_6A3E50                                     006A3E50  StandExtHook.cpp:425
+006A70EB   SidebarClass_DrawIt                            SidebarClass_5F38C0                            006A70E0  GScreenHook.cpp:34
+006B6CDF   SpawnManagerClass_CreateSpawnNode              SpawnManagerClass_CTOR                         006B6C90  SpawnManagerExtHook.cpp:52
+006B6D4D   SpawnManagerClass_CreateSpawnNode_CreateAircra SpawnManagerClass_CTOR                         006B6C90  SpawnManagerExtHook.cpp:85
+006B7317   SpawnManagerClass_Update_MissileSpawn_SkipMovi SpawnManagerClass_Update                       006B7230  SpawnManagerExtHook.cpp:143
+006B743E   SpawnManagerClass_Update_PutSpawns             SpawnManagerClass_Update                       006B7230  SpawnManagerExtHook.cpp:171
+006B77B4   SpawnManagerClass_Update_Callback              SpawnManagerClass_Update                       006B7230  SpawnManagerExtHook.cpp:267
+006B78E4   SpawnManagerClass_Update_CreateAircraft        SpawnManagerClass_Update                       006B7230  SpawnManagerExtHook.cpp:114
+006B796A   SpawnManagerClass_Update_PutSpawns_FireOnce    SpawnManagerClass_Update                       006B7230  SpawnManagerExtHook.cpp:250
+006B7A32   SpawnManagerClass_Update_Add_Missile_Target    SpawnManagerClass_Update                       006B7230  SpawnManagerExtHook.cpp:278
+006CE6F6   SuperWeaponTypeClass_CTOR                      SuperWeaponTypeClass_CTOR                      006CE5B0  SuperWeaponTypeHook.cpp:10
+006CE800   SuperWeaponTypeClass_SaveLoad_Prefix           SuperWeaponTypeClass_Load                      006CE800  SuperWeaponTypeHook.cpp:30
+006CE8BE   SuperWeaponTypeClass_Load_Suffix               SuperWeaponTypeClass_Load                      006CE800  SuperWeaponTypeHook.cpp:40
+006CE8D0   SuperWeaponTypeClass_SaveLoad_Prefix           SuperWeaponTypeClass_Save                      006CE8D0  SuperWeaponTypeHook.cpp:29
+006CE8EA   SuperWeaponTypeClass_Save_Suffix               SuperWeaponTypeClass_Save                      006CE8D0  SuperWeaponTypeHook.cpp:46
+006CEE43   SuperWeaponTypeClass_LoadFromINI               SuperWeaponTypeClass_LoadFromINI               006CEA20  SuperWeaponTypeHook.cpp:53
+006CEE50   SuperWeaponTypeClass_LoadFromINI               SuperWeaponTypeClass_LoadFromINI               006CEA20  SuperWeaponTypeHook.cpp:52
+006CEFE0   SuperWeaponTypeClass_SDDTOR                    SuperWeaponTypeClass_SDDTOR                    006CEFE0  SuperWeaponTypeHook.cpp:21
+006D481D   TacticalClass_Draw_AirstrikeLaser_SkipBuilding TacticalClass_Draw                             006D3D10  AirstrikeExtHook.cpp:303
+006D5116   TacticalClass_Draw_Placement_Recheck           Tactical_Draw_It_6D5030                        006D5030  MapExtHook.cpp:263
+006DA3FF   TacticalClass_SelectAt_VirtualUnit             sub_6DA380                                     006DA380  MapExtHook.cpp:240
+006F3260   TechnoClass_CTOR                               TechnoClass_CTOR                               006F2B40  TechnoExtHook.cpp:36
+006F3477   TechnoClass_SelectWeapon_Airstrike             TechnoClass_SelectWeapon                       006F3330  AirstrikeExtHook.cpp:26
+006F348F   TechnoClass_WhatWeaponShouldIUse_Airstrike     TechnoClass_SelectWeapon                       006F3330  AirstrikeExtHook.cpp:39
+006F36DB   TechnoClass_SelectWeapon                       TechnoClass_SelectWeapon                       006F3330  TechnoExtHook.cpp:774
+006F37EB   TechnoClass_SelectWeapon_SecondaryCheckAA_Swit TechnoClass_SelectWeapon                       006F3330  TechnoExtHook.cpp:918
+006F3B5C   UnitClassClass_GetFLH_UnbindTurret             TechnoClass_GetFLH                             006F3AD0  UnitExtHook.cpp:66
+006F3D2F   UnitClassClass_GetFLH_OnTarget                 TechnoClass_GetFLH                             006F3AD0  UnitExtHook.cpp:88
+006F4222   TechnoClass_Init_PermaDisguise                 TechnoClass_Init                               006F3F40  UnitExtHook.cpp:130
+006F42ED   TechnoClass_Init                               TechnoClass_Init                               006F3F40  TechnoExtHook.cpp:93
+006F4500   TechnoClass_DTOR                               TechnoClass_DTOR                               006F4500  TechnoExtHook.cpp:49
+006F65D1   TechnoClass_DrawHealthBar_Building             TechnoClass_44C                                006F64A0  TechnoExtHook.cpp:447
+006F683C   TechnoClass_DrawHealthBar_Other                TechnoClass_44C                                006F64A0  TechnoExtHook.cpp:462
+006F6AC4   TechnoClass_Remove                             W?Limbo$:TechnoClass$n()i                      006F6AC0  TechnoExtHook.cpp:123
+006F6CA0   TechnoClass_Put                                W?Unlimbo$:TechnoClass$n(ul$DirType$$)i        006F6CA0  TechnoExtHook.cpp:106
+006F72E3   TechnoClass_In_Range                           TechnoClass_IsCloseEnoughToTarget              006F7220  TechnoExtHook.cpp:594
+006F9039   TechnoClass_Greatest_Threat_HealWeaponRange    W?Greatest_Threat$:TechnoClass$n.x($ThreatType 006F8DF0  TechnoExtHook.cpp:528
+006F9E50   TechnoClass_Update                             TechnoClass_Update                             006F9E50  TechnoExtHook.cpp:136
+006FA2A2   TechnoClass_Update_DrawBehind                  TechnoClass_Update                             006F9E50  StandExtHook.cpp:22
+006FA45D   TechnoClass_Update_NotHuman_ClearTarget_Stand  TechnoClass_Update                             006F9E50  StandExtHook.cpp:34
+006FAF7A   TechnoClass_UpdateEnd                          TechnoClass_Update                             006F9E50  TechnoExtHook.cpp:151
+006FAFFD   TechnoClass_UpdateEnd                          TechnoClass_Update                             006F9E50  TechnoExtHook.cpp:150
+006FC016   TechnoClass_Select_SkipVoice                   TechnoClass_14C                                006FBFA0  TechnoExtHook.cpp:628
+006FC339   TechnoClass_CanFire                            W?Can_Fire$:TechnoClass$n.x(li)$FireErrorType$ 006FC0B0  TechnoExtHook.cpp:402
+006FC749   TechnoClass_CanFire_WhichLayer_Stand           W?Can_Fire$:TechnoClass$n.x(li)$FireErrorType$ 006FC0B0  StandExtHook.cpp:93
+006FC833   TechnoClass_NavalTargeting                     W?Can_Fire$:TechnoClass$n.x(li)$FireErrorType$ 006FC0B0  TechnoExtHook.cpp:763
+006FCDBE   TechnoClass_SetTarget_Stand                    W?Assign_Target$:TechnoClass$n(l)v             006FCDB0  StandExtHook.cpp:141
+006FD38D   TechnoClass_DrawSth_DrawToInvisoFlakScatterLoc W?Electric_Zap$:TechnoClass$n(liulpnuc)i       006FD210  WeaponExtHook.cpp:105
+006FD446   TechnoClass_LaserZap_IsSingleColor             W?Electric_Zap$:TechnoClass$n(liulpnuc)i       006FD210  WeaponExtHook.cpp:34
+006FD494   TechnoClass_FireEBolt_SetWeaponData            TechnoClass_FireEBolt                          006FD460  EBoltExtHook.cpp:44
+006FD514   TechnoClass_DrawSth_DrawToInvisoFlakScatterLoc TechnoClass_FireEBolt                          006FD460  WeaponExtHook.cpp:104
+006FD70D   TechnoClass_DrawSth_DrawToInvisoFlakScatterLoc W?Radiation_Beam$:TechnoClass$n(liulpnuc)i     006FD620  WeaponExtHook.cpp:103
+006FDD50   TechnoClass_Fire                               TechnoClass_Fire                               006FDD50  TechnoExtHook.cpp:433
+006FDD61   TechnoClass_Fire_OverrideWeapon                TechnoClass_Fire                               006FDD50  TechnoExtHook.cpp:941
+006FF08B   TechnoClass_Fire_RecordBullet                  TechnoClass_Fire                               006FDD50  WeaponExtHook.cpp:66
+006FF15F   TechnoClass_FireAt_ObstacleCellSet             TechnoClass_Fire                               006FDD50  WeaponExtHook.cpp:86
+006FF29E   TechnoClass_Fire_ROFMultiplier                 TechnoClass_Fire                               006FDD50  TechnoExtHook.cpp:995
+006FF43F   TechnoClass_FireAt_TargetSet                   TechnoClass_Fire                               006FDD50  WeaponExtHook.cpp:134
+006FF660   TechnoClass_FireAt_ObstacleCellUnset           TechnoClass_Fire                               006FDD50  WeaponExtHook.cpp:153
+006FF66C   TechnoClass_Fire_DecreaseAmmo                  TechnoClass_Fire                               006FDD50  StandExtHook.cpp:121
+006FF8F1   TechnoClass_DeployFire                         TechnoClass_Fire                               006FDD50  UnitExtHook.cpp:24
+006FF923   TechnoClass_DeployFire_FireOnce                TechnoClass_Fire                               006FDD50  UnitExtHook.cpp:41
+00700E8B   TechnoClass_CanDeploy_Carryall_Drop            TechnoClass_314                                00700D50  UnitExtHook.cpp:562
+007012DF   TechnoClass_In_WeaponRange                     TechnoClass_168                                007012C0  TechnoExtHook.cpp:554
+007012DF   TechnoClass_In_WeaponRange_OpenTopped_Passenge TechnoClass_168                                007012C0  TechnoExtHook.cpp:574
+00701900   TechnoClass_ReceiveDamage                      TechnoClass_ReceiveDamage                      00701900  TechnoExtHook.cpp:217
+007019D8   TechnoClass_ReceiveDamage_At_Least1            TechnoClass_ReceiveDamage                      00701900  TechnoExtHook.cpp:242
+00701C08   TechnoClass_ReceiveDamage_Radiation            TechnoClass_ReceiveDamage                      00701900  TechnoExtHook.cpp:298
+00701C45   TechnoClass_ReceiveDamage_PsionicWeapons       TechnoClass_ReceiveDamage                      00701900  TechnoExtHook.cpp:287
+00701C78   TechnoClass_ReceiveDamage_Poison               TechnoClass_ReceiveDamage                      00701900  TechnoExtHook.cpp:309
+00701DFF   TechnoClass_ReceiveDamageEnd                   TechnoClass_ReceiveDamage                      00701900  TechnoExtHook.cpp:350
+00702050   TechnoClass_ReceiveDamage_Destroy              TechnoClass_ReceiveDamage                      00701900  TechnoExtHook.cpp:368
+00702299   TechnoClass_Destroy_VxlDebris_Remap            TechnoClass_ReceiveDamage                      00701900  TechnoExtHook.cpp:692
+007024B0   TechnoClass_Destroy_Debris_Remap2              TechnoClass_ReceiveDamage                      00701900  TechnoExtHook.cpp:744
+0070256C   TechnoClass_Destroy_Debris_Remap               TechnoClass_ReceiveDamage                      00701900  TechnoExtHook.cpp:728
+00702E9D   TechnoClass_RegisterDestruction                TechnoClass_RegisterDestruction                00702D40  TechnoExtHook.cpp:381
+00705860   TechnoClass_DrawAirstrikeFlare_SetContext      sub_705860                                     00705860  AirstrikeExtHook.cpp:370
+007058F6   TechnoClass_DrawAirstrikeFlare_LineColor       sub_705860                                     00705860  AirstrikeExtHook.cpp:380
+00705976   TechnoClass_Draw_AirstrikeLaser_LineColor      sub_705860                                     00705860  AirstrikeExtHook.cpp:327
+0070597A   TechnoClass_DrawAirstrikeFlare_DotColor        sub_705860                                     00705860  AirstrikeExtHook.cpp:408
+00705986   TechnoClass_Draw_AirstrikeLaser_PointColor     sub_705860                                     00705860  AirstrikeExtHook.cpp:352
+00706342   TechnoClass_DrawSHP_Tint_Airstrike             SHPClass_Draw                                  00705E00  AirstrikeExtHook.cpp:505
+007063FF   TechnoClass_DrawSHP_Colour                     SHPClass_Draw                                  00705E00  TechnoExtHook.cpp:653
+00706640   TechnoClass_DrawVXL_Colour_BuildingTurret      W?Remap_Table$:TechnoClass$n.x()pnxv           00706640  TechnoExtHook.cpp:666
+00706724   TechnoClass_Draw_VXL_Disguise_Blit_Flags       W?Remap_Table$:TechnoClass$n.x()pnxv           00706640  UnitExtHook.cpp:536
+0070679B   TechnoClass_DrawVXL_Tint_Airstrike             W?Remap_Table$:TechnoClass$n.x()pnxv           00706640  AirstrikeExtHook.cpp:529
+007067F1   TechnoClass_DrawVxl_DisableCache               W?Remap_Table$:TechnoClass$n.x()pnxv           00706640  TechnoExtHook.cpp:609
+00707323   TechnoClass_DrawShadow_SkipAircraftScale       TechnoClass_707280                             00707280  AircraftExtHook.cpp:81
+0070BF50   TechnoClass_SaveLoad_Prefix                    TechnoClass_Load                               0070BF50  TechnoExtHook.cpp:65
+0070C249   TechnoClass_Load_Suffix                        TechnoClass_Load                               0070BF50  TechnoExtHook.cpp:75
+0070C250   TechnoClass_SaveLoad_Prefix                    TechnoClass_Save                               0070C250  TechnoExtHook.cpp:64
+0070C264   TechnoClass_Save_Suffix                        TechnoClass_Save                               0070C250  TechnoExtHook.cpp:82
+0070D6B4   TechnoClass_Fire_DeathWeapon_OverrideWeapon    TechnoClass_FireDeathWeapon                    0070D690  TechnoExtHook.cpp:957
+0070D773   TechnoClass_Fire_DeathWeapon_OverrideWeapon_St TechnoClass_FireDeathWeapon                    0070D690  TechnoExtHook.cpp:973
+0070E92F   TechnoClass_Update_Airstrike_Tint_Timer        TechnoClass_UpdateTint_Airstrike               0070E920  AirstrikeExtHook.cpp:421
+0070EFD0   TechnoClass_IsUnderEMP_CantMove                TechnoClass_37C                                0070EFD0  TechnoExtHook.cpp:640
+00711835   TechnoTypeClass_CTOR                           TechnoTypeClass_CTOR                           00710AF0  TechnoTypeExtHook.cpp:10
+00711AE0   TechnoTypeClass_DTOR                           TechnoTypeClass_DTOR                           00711AE0  TechnoTypeExtHook.cpp:21
+00716123   TechnoTypeClass_LoadFromINI                    TechnoTypeClass_LoadFromINI                    00712170  TechnoTypeExtHook.cpp:56
+00716132   TechnoTypeClass_LoadFromINI                    TechnoTypeClass_LoadFromINI                    00712170  TechnoTypeExtHook.cpp:55
+007162F0   TechnoTypeClass_SaveLoad_Prefix                TechnoTypeClass_Load                           007162F0  TechnoTypeExtHook.cpp:31
+00716DAC   TechnoTypeClass_Load_Suffix                    TechnoTypeClass_Load                           007162F0  TechnoTypeExtHook.cpp:41
+00716DC0   TechnoTypeClass_SaveLoad_Prefix                TechnoTypeClass_Save                           00716DC0  TechnoTypeExtHook.cpp:30
+00717094   TechnoTypeClass_Save_Suffix                    TechnoTypeClass_Save                           00716DC0  TechnoTypeExtHook.cpp:48
+0071A88D   TemporalClass_Update                           TemporalClass_Update                           0071A760  TechnoExtHook.cpp:181
+0071A917   TemporalClass_Update_Eliminate                 TemporalClass_Update                           0071A760  TechnoExtHook.cpp:201
+0071BB2C   TerrainClass_TakeDamage_NowDead_Add            TerrainClass_ReceiveDamage                     0071B920  TerrainExtHook.cpp:14
+0071C94C   TerrainClass_Remove_PlayDestroyAnim            TerrainClass_D4                                0071C930  TerrainExtHook.cpp:13
+0071DBC0   TerrainTypeClass_CTOR                          TerrainTypeClass_CTOR                          0071DA80  TerrainTypeExtHook.cpp:10
+0071E0A6   TerrainTypeClass_LoadFromINI                   TerrainTypeClass_LoadFromINI                   0071DEA0  TerrainTypeExtHook.cpp:59
+0071E1D0   TerrainTypeClass_SaveLoad_Prefix               TerrainTypeClass_Load                          0071E1D0  TerrainTypeExtHook.cpp:34
+0071E235   TerrainTypeClass_Load_Suffix                   TerrainTypeClass_Load                          0071E1D0  TerrainTypeExtHook.cpp:45
+0071E240   TerrainTypeClass_SaveLoad_Prefix               TerrainTypeClass_Save                          0071E240  TerrainTypeExtHook.cpp:35
+0071E25A   TerrainTypeClass_Save_Suffix                   TerrainTypeClass_Save                          0071E240  TerrainTypeExtHook.cpp:52
+0071E364   TerrainTypeClass_SDDTOR                        TerrainTypeClass_SDDTOR                        0071E360  TerrainTypeExtHook.cpp:25
+007258D0   DetachThisFromAll                              W?Detach$n()v                                  007258D0  PointerExpireHook.cpp:41
+00730DEB   ObjectClass_GuardCommand                       GuardCommandClass_Execute                      00730D60  TechnoExtHook.cpp:495
+00730E56   ObjectClass_GuardCommand                       GuardCommandClass_Execute                      00730D60  TechnoExtHook.cpp:496
+00730EEB   ObjectClass_StopCommand                        StopCommandClass_Execute                       00730EA0  TechnoExtHook.cpp:512
+00736250   UnitClass_Update_SkipCreateChronoSparkleAnimOn UnitClass_Update                               007360C0  StandExtHook.cpp:521
+00736321   TechnoClass_WarpUpdate                         UnitClass_Update                               007360C0  TechnoExtHook.cpp:167
+00736A26   UnitClass_Rotation_SetTurretFacingToTarget_Ski sub_736990                                     00736990  UnitExtHook.cpp:260
+00736A95   UnitClass_Rotation_Update_Freezing_TurretSpins sub_736990                                     00736990  TechnoExtHook.cpp:1033
+00736B7E   UnitClass_Rotation_SetTurretFacing_Skip        sub_736990                                     00736990  UnitExtHook.cpp:322
+00736BBB   UnitClass_Rotation_SetTurretFacing_NoTargetAnd sub_736990                                     00736990  UnitExtHook.cpp:301
+00736BCA   UnitClass_Rotation_SetTurretFacing_NoTargetAnd sub_736990                                     00736990  UnitExtHook.cpp:280
+00738749   UnitClass_Destroy_Explosion_Remap              UnitClass_Destroy                              00738680  UnitExtHook.cpp:102
+00738801   UnitClass_Destroy_DestroyAnim_Remap            UnitClass_Destroy                              00738680  UnitExtHook.cpp:114
+007388FD   UnitClass_ActionClick_Carryall                 UnitClass_ClickedMission                       00738890  UnitExtHook.cpp:676
+00739971   UnitClass_TryToDeploy_TransferAE               UnitClass_Try_To_Deploy                        007393C0  TechnoExtHook.cpp:1353
+00739C7A   UnitClass_SimpleDeployer_Deployed              UnitClass_ToggleDeployState                    00739AC0  UnitExtHook.cpp:53
+0073B765   UnitClass_DrawVoxel_TurretFacing               UnitClass_DrawVXL                              0073B470  UnitExtHook.cpp:470
+0073B8DB   UnitClass_DrawVoxel_HasChargeTurret            UnitClass_DrawVXL                              0073B470  UnitExtHook.cpp:491
+0073BA53   UnitClass_DrawVoxel_HasChargeTurret2           UnitClass_DrawVXL                              0073B470  UnitExtHook.cpp:512
+0073BA78   UnitClass_DrawVoxel_TurretFacing               UnitClass_DrawVXL                              0073B470  UnitExtHook.cpp:471
+0073BC1D   UnitClass_DrawVoxel_HasChargeTurret2           UnitClass_DrawVXL                              0073B470  UnitExtHook.cpp:513
+0073BD8B   UnitClass_DrawVoxel_TurretFacing               UnitClass_DrawVXL                              0073B470  UnitExtHook.cpp:472
+0073BDA3   UnitClass_DrawVoxel_TurretFacing               UnitClass_DrawVXL                              0073B470  UnitExtHook.cpp:473
+0073BFA4   UnitClass_DrawVXL_Tint_Airstrike               UnitClass_DrawVXL                              0073B470  AirstrikeExtHook.cpp:548
+0073C15F   UnitClass_DrawVXL_Colour                       UnitClass_DrawVXL                              0073B470  TechnoExtHook.cpp:678
+0073C47A   UnitClass_DrawAsVXL_Shadow_SkipPhobos          UnitClass_DrawVXL                              0073B470  AircraftExtHook.cpp:42
+0073C485   UnitClass_Draw_Voxel_Shadow_WO_Skip            UnitClass_DrawVXL                              0073B470  UnitExtHook.cpp:543
+0073C4F8   TechnoClass_DrawShadow                         UnitClass_DrawVXL                              0073B470  AircraftExtHook.cpp:87
+0073C58E   TechnoClass_DrawShadow                         UnitClass_DrawVXL                              0073B470  AircraftExtHook.cpp:88
+0073C655   UnitClass_DrawSHP_TechnoType                   UnitClass_DrawSHP                              0073C5F0  UnitExtHook.cpp:409
+0073C69D   UnitClass_DrawSHP_TechnoType2                  UnitClass_DrawSHP                              0073C5F0  UnitExtHook.cpp:422
+0073C702   UnitClass_DrawSHP_TechnoType3                  UnitClass_DrawSHP                              0073C5F0  UnitExtHook.cpp:441
+0073C71D   UnitClass_DrawSHP_FacingDir                    UnitClass_DrawSHP                              0073C5F0  UnitExtHook.cpp:373
+0073C725   UnitClass_DrawSHP_HasTurret                    UnitClass_DrawSHP                              0073C5F0  UnitExtHook.cpp:454
+0073CD01   UnitClass_Draw_ChangeTurret_SHPIFV             UnitClass_DrawSHP                              0073C5F0  UnitExtHook.cpp:334
+0073CF16   UnitClass_Draw_It_Carryall_HightOffset         UnitClass_DrawAt                               0073CEC0  UnitExtHook.cpp:698
+0073D317   UnitClass_Draw_It                              UnitClass_DrawAt                               0073CEC0  UnitExtHook.cpp:723
+0073D6E6   UnitClass_Mission_Unload_Carryall_Drop         UnitClass_Unload                               0073D630  UnitExtHook.cpp:606
+0073D6EC   UnitClass_Mission_Unload_Carryall_Drop         UnitClass_Unload                               0073D630  UnitExtHook.cpp:607
+0073D6F8   UnitClass_Mission_Unload_Transporter           UnitClass_Unload                               0073D630  UnitExtHook.cpp:580
+0073FFF4   UnitClass_WhatAction_TransportHover            W?What_Action$:UnitClass$n.x(pnx$ObjectClass$$ 0073FD50  UnitExtHook.cpp:662
+0074000B   UnitClass_WhatAction_Carryall_Droping          W?What_Action$:UnitClass$n.x(pnx$ObjectClass$$ 0073FD50  UnitExtHook.cpp:650
+0074041B   UnitClass_WhatAction_Carryall_Lifting          W?What_Action$:UnitClass$n.x(pnx$ObjectClass$$ 0073FD50  UnitExtHook.cpp:629
+007466D8   UnitClass_Set_Disguise                         UnitClass_DisguiseAs                           00746670  UnitExtHook.cpp:204
+00746AFF   UnitClass_Disguise_Update_MoveToClear          UnitClass_UpdateDisguise                       007468C0  UnitExtHook.cpp:224
+00746B6D   UnitClass_Disguise_FullName                    UnitClass_GetUIName                            00746B20  UnitExtHook.cpp:236
+0074942E   VoxelAnimClass_CTOR                            VoxelAnimClass_CTOR                            007493B0  VoxelAnimExtHook.cpp:15
+00749951   VoxelAnimClass_CTOR                            VoxelAnimClass_DCTOR                           007498D0  VoxelAnimExtHook.cpp:14
+007499F1   VoxelAnimClass_DTOR                            sub_7499F0                                     007499F0  VoxelAnimExtHook.cpp:24
+0074A970   VoxelAnimClass_SaveLoad_Prefix                 VoxelAnimClass_Load                            0074A970  VoxelAnimExtHook.cpp:33
+0074A9FB   VoxelAnimClass_Load_Suffix                     VoxelAnimClass_Load                            0074A970  VoxelAnimExtHook.cpp:44
+0074AA10   VoxelAnimClass_SaveLoad_Prefix                 VoxelAnimClass_Save                            0074AA10  VoxelAnimExtHook.cpp:34
+0074AA24   VoxelAnimClass_Save_Suffix                     VoxelAnimClass_Save                            0074AA10  VoxelAnimExtHook.cpp:50
+0074AEB0   VoxelAnimTypeClass_CTOR                        VoxelAnimTypeClass_CTOR                        0074AD80  VoxelAnimTypeExtHook.cpp:10
+0074B4F0   VoxelAnimTypeClass_LoadFromINI                 VoxelAnimTypeClass_LoadFromINI                 0074B050  VoxelAnimTypeExtHook.cpp:56
+0074B51B   VoxelAnimTypeClass_LoadFromINI                 VoxelAnimTypeClass_LoadFromINI                 0074B050  VoxelAnimTypeExtHook.cpp:55
+0074B54A   VoxelAnimTypeClass_LoadFromINI                 VoxelAnimTypeClass_LoadFromINI                 0074B050  VoxelAnimTypeExtHook.cpp:54
+0074B561   VoxelAnimTypeClass_LoadFromINI                 VoxelAnimTypeClass_LoadFromINI                 0074B050  VoxelAnimTypeExtHook.cpp:53
+0074B607   VoxelAnimTypeClass_LoadFromINI                 VoxelAnimTypeClass_LoadFromINI                 0074B050  VoxelAnimTypeExtHook.cpp:52
+0074B810   VoxelAnimTypeClass_SaveLoad_Prefix             VoxelAnimTypeClass_Load                        0074B810  VoxelAnimTypeExtHook.cpp:29
+0074B8C2   VoxelAnimTypeClass_Load_Suffix                 VoxelAnimTypeClass_Load                        0074B810  VoxelAnimTypeExtHook.cpp:40
+0074B8D0   VoxelAnimTypeClass_SaveLoad_Prefix             VoxelAnimTypeClass_Save                        0074B8D0  VoxelAnimTypeExtHook.cpp:30
+0074B8EA   VoxelAnimTypeClass_Save_Suffix                 VoxelAnimTypeClass_Save                        0074B8D0  VoxelAnimTypeExtHook.cpp:46
+0074BA31   VoxelAnimTypeClass_DTOR                        VoxelAnimTypeClass_SDDTOR                      0074BA30  VoxelAnimTypeExtHook.cpp:21
+0075C7E0   WalkLocomotionClass_In_Which_Layer             LocomotionClass_ILocomotion_InWhichLayer       0075C7E0  StandExtHook.cpp:417
+0075D1A9   WarheadTypeClass_CTOR                          WarheadTypeClass_CTOR                          0075CEC0  WarheadTypeExtHook.cpp:12
+0075DEA0   WarheadTypeClass_LoadFromINI                   WarheadTypeClass_LoadFromINI                   0075D3A0  WarheadTypeExtHook.cpp:58
+0075DEAF   WarheadTypeClass_LoadFromINI                   WarheadTypeClass_LoadFromINI                   0075D3A0  WarheadTypeExtHook.cpp:57
+0075E0C0   WarheadTypeClass_SaveLoad_Prefix               WarheadTypeClass_Load                          0075E0C0  WarheadTypeExtHook.cpp:33
+0075E2AE   WarheadTypeClass_Load_Suffix                   WarheadTypeClass_Load                          0075E0C0  WarheadTypeExtHook.cpp:43
+0075E2C0   WarheadTypeClass_SaveLoad_Prefix               WarheadTypeClass_Save                          0075E2C0  WarheadTypeExtHook.cpp:32
+0075E39C   WarheadTypeClass_Save_Suffix                   WarheadTypeClass_Save                          0075E2C0  WarheadTypeExtHook.cpp:50
+0075E5C8   WarheadTypeClass_SDDTOR                        WarheadTypeClass_SDDTOR                        0075E510  WarheadTypeExtHook.cpp:23
+00771EE9   WeaponTypeClass_CTOR                           WeaponTypeClass_CTOR                           00771C70  WeaponTypeExtHook.cpp:10
+007729B0   WeaponTypeClass_LoadFromINI                    WeaponTypeClass_LoadFromINI                    00772080  WeaponTypeExtHook.cpp:57
+007729C7   WeaponTypeClass_LoadFromINI                    WeaponTypeClass_LoadFromINI                    00772080  WeaponTypeExtHook.cpp:55
+007729D6   WeaponTypeClass_LoadFromINI                    WeaponTypeClass_LoadFromINI                    00772080  WeaponTypeExtHook.cpp:56
+00772CD0   WeaponTypeClass_SaveLoad_Prefix                WeaponTypeClass_Load                           00772CD0  WeaponTypeExtHook.cpp:31
+00772EA6   WeaponTypeClass_Load_Suffix                    WeaponTypeClass_Load                           00772CD0  WeaponTypeExtHook.cpp:41
+00772EB0   WeaponTypeClass_SaveLoad_Prefix                WeaponTypeClass_Save                           00772EB0  WeaponTypeExtHook.cpp:30
+00772F8C   WeaponTypeClass_Save_Suffix                    WeaponTypeClass_Save                           00772EB0  WeaponTypeExtHook.cpp:48
+0077311D   WeaponTypeClass_SDDTOR                         WeaponTypeClass_SDDTOR                         007730F0  WeaponTypeExtHook.cpp:21
+007CD810   ExeRun                                         start                                          007CD80F  GeneralHook.cpp:57
+
+==================================================================================================================================
+### 按引擎函数聚合（Hook 数降序）
+==================================================================================================================================
+   START FUNC                                                       NHOOKS  HOOKS
+00423AC0 AnimClass_Update                                               21  423AC0, 423CD5, 423E75, 423E7B, 423F8C, 424298, 42429E, 4242E1, 42437E, 4243A6, 424513, 424567, 4246DC, 424785, 4247EB, 4247F3, 424807, 42492A, 424B1B, 424B29, 424B42
+00417FE0 AircraftClass_Mi_Attack                                        15  4181CF, 4183D3, 418478, 4184FC, 418506, 418572, 418680, 4186B6, 4186D7, 418743, 418792, 418826, 418935, 418A44, 418B40
+0073B470 UnitClass_DrawVXL                                              13  73B765, 73B8DB, 73BA53, 73BA78, 73BC1D, 73BD8B, 73BDA3, 73BFA4, 73C15F, 73C47A, 73C485, 73C4F8, 73C58E
+006FDD50 TechnoClass_Fire                                               10  6FDD50, 6FDD61, 6FF08B, 6FF15F, 6FF29E, 6FF43F, 6FF660, 6FF66C, 6FF8F1, 6FF923
+00701900 TechnoClass_ReceiveDamage                                      10  701900, 7019D8, 701C08, 701C45, 701C78, 701DFF, 702050, 702299, 7024B0, 70256C
+004666E0 BulletClass_Update                                              7  4666F7, 466781, 466E18, 46745C, 4677C7, 467E53, 467FEE
+00481A00 W?Goodie_Check$:CellClass$n(pn$FootClass$$)i                    7  481C6C, 481CE1, 481D0E, 481D3D, 482E57, 48303A, 483226
+0041DA20 AirstrikeClass_SetNewTarget                                     6  41DA52, 41DA68, 41DA80, 41DA88, 41DAA4, 41DAD4
+006B7230 SpawnManagerClass_Update                                        6  6B7317, 6B743E, 6B77B4, 6B78E4, 6B796A, 6B7A32
+0073C5F0 UnitClass_DrawSHP                                               6  73C655, 73C69D, 73C702, 73C71D, 73C725, 73CD01
+00705860 sub_705860                                                      5  705860, 7058F6, 705976, 70597A, 705986
+004690B0 BulletClass_Fire                                                5  4690C1, 469A75, 469C46, 469D5C, 469EB4
+006F9E50 TechnoClass_Update                                              5  6F9E50, 6FA2A2, 6FA45D, 6FAF7A, 6FAFFD
+00736990 sub_736990                                                      5  736A26, 736A95, 736B7E, 736BBB, 736BCA
+0074B050 VoxelAnimTypeClass_LoadFromINI                                  5  74B4F0, 74B51B, 74B54A, 74B561, 74B607
+006F3330 TechnoClass_SelectWeapon                                        4  6F3477, 6F348F, 6F36DB, 6F37EB
+00706640 W?Remap_Table$:TechnoClass$n.x()pnxv                            4  706640, 706724, 70679B, 7067F1
+00425280 AnimClass_Load                                                  4  425280, 425358, 425391, 4253A2
+004C1F20 EBolt_Draw                                                      4  4C20BC, 4C24C3, 4C25D0, 4C26D5
+0054E4D0 KamikazeContainer_Update                                        4  54E51D, 54E524, 54E540, 54E56D
+004CEFB0 sub_4CEFB0                                                      3  4CF3C5, 4CF3E3, 4CF4C5
+00422CA0 AnimClass_Draw                                                  3  42312A, 423136, 423630
+00428800 AnimTypeClass_Load                                              3  428800, 42892C, 428958
+004415F0 BuildingClass_Destroy                                           3  441A26, 441B22, 441D41
+0046AE70 BulletClass_Load                                                3  46AE70, 46AF97, 46AF9E
+006622C0 RocketLocomotionClass_ILocomotion_Process                       3  6622C0, 6622E0, 662CAC
+006FC0B0 W?Can_Fire$:TechnoClass$n.x(li)$FireErrorType$$                 3  6FC339, 6FC749, 6FC833
+0043FB20 BuildingClass_Update                                            3  440406, 44050C, 44055D
+0054BD30 sub_54BD30                                                      3  54BE6D, 54BED4, 54BF53
+0054BFF0 jumpjet2                                                        3  54C0BB, 54C0FC, 54C2DF
+0073D630 UnitClass_Unload                                                3  73D6E6, 73D6EC, 73D6F8
+0073FD50 W?What_Action$:UnitClass$n.x(pnx$ObjectClass$$)$ActionType      3  73FFF4, 74000B, 74041B
+00772080 WeaponTypeClass_LoadFromINI                                     3  7729B0, 7729C7, 7729D6
+004144B0 AircraftClass_Draw                                              2  4147F9, 414876
+004CF610 sub_4CF610                                                      2  4CF780, 4CF80D
+0041D860 AirstrikeClass_Fire                                             2  41D97B, 41D994
+0041DB40 AirstrikeClass_RemoveAmmo                                       2  41DBD4, 41DC10
+0065E850 HouseClass_CreateAirstrike                                      2  65E97F, 65E997
+00451890 BuildingClass_PlayAnim                                          2  45197B, 451ABC
+00705E00 SHPClass_Draw                                                   2  706342, 7063FF
+00421EA0 W?$ct:AnimClass$n($AnimType$$ulucuc)_                           2  422126, 422707
+004253B0 AnimClass_Save                                                  2  4253B0, 4253FF
+00428970 AnimTypeClass_Save                                              2  428970, 42898A
+00427D00 AnimTypeClass_LoadFromINI                                       2  4287DC, 4287E9
+0046AFB0 BulletClass_Save                                                2  46AFB0, 46AFC4
+00468090 BulletClass_Draw                                                2  4683E2, 4683E7
+0046C730 BulletTypeClass_Save                                            2  46C730, 46C74A
+0046C6A0 BulletTypeClass_Load                                            2  46C6A0, 46C722
+0046BEE0 BulletTypeClass_LoadFromINI                                     2  46C41C, 46C429
+004C2830 EBolt_DrawAll                                                   2  4C28B6, 4C2951
+006FD460 TechnoClass_FireEBolt                                           2  6FD494, 6FD514
+004F4480 GScreenClass_DrawOnTop                                          2  4F4497, 4F4583
+006851F0 Scenario_ClearClasses                                           2  6851F0, 685659
+0055AFB0 LogicClass_Update                                               2  55AFB3, 55B719
+00504080 HouseClass_Save                                                 2  504080, 5046DE
+00503040 HouseClass_Load                                                 2  503040, 504069
+005509F0 LaserDrawClass_Draw_InHouseColor                                2  550D1F, 550F47
+0067CEF0 Game_Save                                                       2  67CEF0, 67D2F1
+0067D300 SaveGame                                                        2  67D300, 67E42E
+0067E440 Game_Load                                                       2  67E440, 67E720
+0067E730 LoadGame                                                        2  67E730, 67F7C8
+006B6C90 SpawnManagerClass_CTOR                                          2  6B6CDF, 6B6D4D
+00414BB0 AircraftClass_Update                                            2  414C27, 414CF2
+0051BAB0 InfantryClass_Update                                            2  51BB17, 51BBDF
+007360C0 UnitClass_Update                                                2  736250, 736321
+006CE8D0 SuperWeaponTypeClass_Save                                       2  6CE8D0, 6CE8EA
+006CE800 SuperWeaponTypeClass_Load                                       2  6CE800, 6CE8BE
+006CEA20 SuperWeaponTypeClass_LoadFromINI                                2  6CEE43, 6CEE50
+0070C250 TechnoClass_Save                                                2  70C250, 70C264
+0070BF50 TechnoClass_Load                                                2  70BF50, 70C249
+006F3F40 TechnoClass_Init                                                2  6F4222, 6F42ED
+0071A760 TemporalClass_Update                                            2  71A88D, 71A917
+006F64A0 TechnoClass_44C                                                 2  6F65D1, 6F683C
+00730D60 GuardCommandClass_Execute                                       2  730DEB, 730E56
+007012C0 TechnoClass_168                                                 2  7012DF, 7012DF
+0070D690 TechnoClass_FireDeathWeapon                                     2  70D6B4, 70D773
+00716DC0 TechnoTypeClass_Save                                            2  716DC0, 717094
+007162F0 TechnoTypeClass_Load                                            2  7162F0, 716DAC
+00712170 TechnoTypeClass_LoadFromINI                                     2  716123, 716132
+0071E1D0 TerrainTypeClass_Load                                           2  71E1D0, 71E235
+0071E240 TerrainTypeClass_Save                                           2  71E240, 71E25A
+006F3AD0 TechnoClass_GetFLH                                              2  6F3B5C, 6F3D2F
+00738680 UnitClass_Destroy                                               2  738749, 738801
+0073CEC0 UnitClass_DrawAt                                                2  73CF16, 73D317
+0074A970 VoxelAnimClass_Load                                             2  74A970, 74A9FB
+0074AA10 VoxelAnimClass_Save                                             2  74AA10, 74AA24
+0074B810 VoxelAnimTypeClass_Load                                         2  74B810, 74B8C2
+0074B8D0 VoxelAnimTypeClass_Save                                         2  74B8D0, 74B8EA
+0075E2C0 WarheadTypeClass_Save                                           2  75E2C0, 75E39C
+0075E0C0 WarheadTypeClass_Load                                           2  75E0C0, 75E2AE
+0075D3A0 WarheadTypeClass_LoadFromINI                                    2  75DEA0, 75DEAF
+006FD210 W?Electric_Zap$:TechnoClass$n(liulpnuc)i                        2  6FD38D, 6FD446
+00772EB0 WeaponTypeClass_Save                                            2  772EB0, 772F8C
+00772CD0 WeaponTypeClass_Load                                            2  772CD0, 772EA6
+00639DA0 sub_639DA0                                                      1  639DD8
+00707280 TechnoClass_707280                                              1  707323
+0041B760 AircraftClass_FlasherClass_LandingDirection                     1  41B760
+0041A5C0 AircraftClass_Mi_Guard                                          1  41A697
+0041A940 AircraftClass_Mi_AreaGuard                                      1  41A96C
+004CD600 sub_4CD600                                                      1  4CDCFD
+004DDC60 FootClass_550                                                   1  4DDD66
+0051E3B0 W?What_Action$:InfantryClass$n.x(pnx$ObjectClass$$)$Action      1  51EAE0
+0041D540 AirstrikeClass_PointerGotInvalid                                1  41D604
+006D3D10 TacticalClass_Draw                                              1  6D481D
+0070E920 TechnoClass_UpdateTint_Airstrike                                1  70E92F
+0043F180 BuildingClass_124                                               1  43F9E0
+00448260 BuildingClass_Captured                                          1  448DF1
+00452000 sub_452000                                                      1  452041
+00456E00 W?Clicked_As_Target$:BuildingClass$n(i)v                        1  456E5A
+0043D290 BuildingClass_114                                               1  43D390
+0043DA80 BuildingClass_4E4                                               1  43DC2A
+00422720 AnimClass_CTOR2                                                 1  4228D2
+004228E0 AnimClass_DTOR                                                  1  422967
+00426590 AnimClass_SDDTOR                                                1  426598
+00423930 AnimClass_AnimExtras                                            1  423991
+00427530 AnimTypeClass_CTOR                                              1  42784B
+00428EA0 AnimTypeClass_SDDTOR                                            1  428EA8
+00453DC0 BuildingClass_F4                                                1  453E02
+004AE750 sub_4AE750                                                      1  4AE95E
+00466380 BulletClass_CTOR                                                1  4664BA
+00466560 BulletClass_DTOR                                                1  4665E9
+004664C0 BulletClass_Initialize                                          1  466556
+00468670 BulletClass_SetMovement                                         1  468B5D
+0046B0C0 BulletClass_DrawVXL                                             1  46B201
+0046BBC0 BulletTypeClass_CTOR                                            1  46BDD9
+0046C890 BulletTypeClass_SDDTOR                                          1  46C8B6
+004C1E10 EBolt_CTOR                                                      1  4C1E42
+004C2A60 EBolt_Fire                                                      1  4C2AE7
+006A70E0 SidebarClass_5F38C0                                             1  6A70EB
+0052BA60 InitGame                                                        1  52BA60
+0052F620 ProcessArguments                                                1  52F639
+007CD80F start                                                           1  7CD810
+00686B20 INIClass_ReadScenario                                           1  6875F3
+004F54A0 HouseClass_CTOR                                                 1  4F6532
+004F7140 HouseClass_DTOR                                                 1  4F7371
+00500B40 HouseClass_InitFromINI                                          1  50114D
+00518F90 InfantryClass_Draw                                              1  5194EF
+00517FA0 InfantryClass_ReceiveDamage                                     1  5184F7
+0051F540 InfantryClass_Hunt                                              1  51F5C0
+00489280 Damage_At_Cell_Update_489280                                    1  489280
+00692300 ScrollClass_692300                                              1  69251A
+006DA380 sub_6DA380                                                      1  6DA3FF
+006D5030 Tactical_Draw_It_6D5030                                         1  6D5116
+004A8EB0 W?Passes_Proximity_Check$:DisplayClass$n.x(pnx$ObjectTypeC      1  4A904E
+00629FD0 ParasiteClass_Update                                            1  62A13F
+006297F0 ParasiteClass_UpdateSquiddy                                     1  6297F0
+004101F0 AbstractClass_DTOR                                              1  4101F0
+005F65F0 W?Detach$:ObjectClass$n(pn$ObjectClass$$)v                      1  5F65F1
+007258D0 W?Detach$n()v                                                   1  7258D0
+0054E3B0 Kamikaze_Append                                                 1  54E478
+00663030 RocketLocomotionClass_DoStuff                                   1  66304F
+005F6B90 TechnoClass_InAir                                               1  5F6B90
+004D94B0 FootClass_SetDestination                                        1  4D94B0
+00508DF0 HouseClass_Radar_Activate                                       1  508EC6
+00508F60 HouseClass_SpySat_Update                                        1  508F9B
+006FCDB0 W?Assign_Target$:TechnoClass$n(l)v                              1  6FCDBE
+004D9920 W?Greatest_Threat$:FootClass$n.x($ThreatType$$)l                1  4D9947
+0055D360 W?Main_Loop$n()i                                                1  55DBC3
+004DA530 W?AI$:FootClass$n()v                                            1  4DA87A
+004DAFC0 FootClass_Get_ZAdjustment                                       1  4DB091
+005F6BD0 ObjectClass_ReturnRealYSort                                     1  5F6BF7
+0075C7E0 LocomotionClass_ILocomotion_InWhichLayer                        1  75C7E0
+006A3E50 sub_6A3E50                                                      1  6A3E50
+005B19D0 sub_5B19D0                                                      1  5B19D0
+00517100 sub_517100                                                      1  517100
+004B4820 sub_4B4820                                                      1  4B4820
+0054B8D0 sub_54B8D0                                                      1  54B8E9
+006CE5B0 SuperWeaponTypeClass_CTOR                                       1  6CE6F6
+006CEFE0 SuperWeaponTypeClass_SDDTOR                                     1  6CEFE0
+006F2B40 TechnoClass_CTOR                                                1  6F3260
+006F4500 TechnoClass_DTOR                                                1  6F4500
+006F6CA0 W?Unlimbo$:TechnoClass$n(ul$DirType$$)i                         1  6F6CA0
+006F6AC0 W?Limbo$:TechnoClass$n()i                                       1  6F6AC4
+00471C90 CaptureManagerClass_CanCapture                                  1  471D2E
+0053B080 PsyDom_Fire                                                     1  53B233
+005F5390 ObjectClass_ReceiveDamage                                       1  5F5498
+00702D40 TechnoClass_RegisterDestruction                                 1  702E9D
+005F4520 W?Select$:ObjectClass$n()i                                      1  5F45A0
+00730EA0 StopCommandClass_Execute                                        1  730EEB
+006F8DF0 W?Greatest_Threat$:TechnoClass$n.x($ThreatType$$)l              1  6F9039
+006F7220 TechnoClass_IsCloseEnoughToTarget                               1  6F72E3
+006FBFA0 TechnoClass_14C                                                 1  6FC016
+0070EFD0 TechnoClass_37C                                                 1  70EFD0
+004B0500 sub_4B0500                                                      1  4B0521
+0069FC10 sub_69FC10                                                      1  69FC31
+004CCB40 sub_4CCB40                                                      1  4CCBB3
+0054B1C0 sub_54B1C0                                                      1  54B1D1
+0054AEC0 JumpjetLocomotionClass_Process                                  1  54AED0
+0054D0F0 sub_54D0F0                                                      1  54D600
+0054BA30 sub_54BA30                                                      1  54BC44
+007393C0 UnitClass_Try_To_Deploy                                         1  739971
+00449C30 BuildingClass_Mission_Deconstruction                            1  44A04C
+00710AF0 TechnoTypeClass_CTOR                                            1  711835
+00711AE0 TechnoTypeClass_DTOR                                            1  711AE0
+0071C930 TerrainClass_D4                                                 1  71C94C
+0071B920 TerrainClass_ReceiveDamage                                      1  71BB2C
+0071DA80 TerrainTypeClass_CTOR                                           1  71DBC0
+0071E360 TerrainTypeClass_SDDTOR                                         1  71E364
+0071DEA0 TerrainTypeClass_LoadFromINI                                    1  71E0A6
+00739AC0 UnitClass_ToggleDeployState                                     1  739C7A
+00746670 UnitClass_DisguiseAs                                            1  7466D8
+007468C0 UnitClass_UpdateDisguise                                        1  746AFF
+00746B20 UnitClass_GetUIName                                             1  746B6D
+00700D50 TechnoClass_314                                                 1  700E8B
+00738890 UnitClass_ClickedMission                                        1  7388FD
+004DB0D0 FootClass_DrawVXLShadow                                         1  4DB157
+007498D0 VoxelAnimClass_DCTOR                                            1  749951
+007493B0 VoxelAnimClass_CTOR                                             1  74942E
+007499F0 sub_7499F0                                                      1  7499F1
+0074AD80 VoxelAnimTypeClass_CTOR                                         1  74AEB0
+0074BA30 VoxelAnimTypeClass_SDDTOR                                       1  74BA31
+0075CEC0 WarheadTypeClass_CTOR                                           1  75D1A9
+0075E510 WarheadTypeClass_SDDTOR                                         1  75E5C8
+0048A4F0 SelectDamageAnimation                                           1  48A551
+006FD620 W?Radiation_Beam$:TechnoClass$n(liulpnuc)i                      1  6FD70D
+00771C70 WeaponTypeClass_CTOR                                            1  771EE9
+007730F0 WeaponTypeClass_SDDTOR                                          1  77311D
+
+==================================================================================================================================
+### 每个含 Hook 的引擎函数的调用者（XrefsTo -> 调用者函数）
+==================================================================================================================================
+00423AC0 AnimClass_Update                                      <- sub_7E3354
+00417FE0 AircraftClass_Mi_Attack                               <- sub_7E24B4
+0073B470 UnitClass_DrawVXL                                     <- sub_73B46F, sub_7F61C4
+006FDD50 TechnoClass_Fire                                      <- InfantryClass_Fire, UnitClass_Fire, W?Fire_At$:AircraftClass$n(li)pn$BulletClass$$, sub_7E4288, sub_7E8C94, sub_7F4960
+00701900 TechnoClass_ReceiveDamage                             <- FootClass_ReceiveDamage, W?Take_Damage$:BuildingClass$n(rnii$WarheadType$$pn$TechnoClass$$i)$ResultType$$, sub_7F4960
+004666E0 BulletClass_Update                                    <- sub_7E46E4
+00481A00 W?Goodie_Check$:CellClass$n(pn$FootClass$$)i          <- DriveLocomotionClass_blah, ShipLocomotionClass_blah, TeleportLocomotionClass_ILocomotion_Process, sub_4B0C40, sub_4B0DF0, sub_4B0F20, sub_514F70, sub_54C550, sub_5B17B0, sub_6A0310, sub_6A04C0, sub_6A05F0
+0041DA20 AirstrikeClass_SetNewTarget                           <- AirstrikeClass_Start
+006B7230 SpawnManagerClass_Update                              <- sub_7F3650
+0073C5F0 UnitClass_DrawSHP                                     <- sub_7F61C8
+00705860 sub_705860                                            <- TacticalClass_Draw
+004690B0 BulletClass_Fire                                      <- BulletClass_Detonate, TechnoClass_FireDeathWeapon, sub_41BC30, sub_746100
+006F9E50 TechnoClass_Update                                    <- BuildingClass_Update, W?AI$:FootClass$n()v, sub_7F4960
+00736990 sub_736990                                            <- UnitClass_Update
+0074B050 VoxelAnimTypeClass_LoadFromINI                        <- sub_7F6548
+006F3330 TechnoClass_SelectWeapon                              <- InfantryClass_SelectWeapon, UnitClass_SelectWeapon, sub_7E2588, sub_7E41A0, sub_7E8C94, sub_7F4960
+00706640 W?Remap_Table$:TechnoClass$n.x()pnxv                  <- W?Remap_Table$:FootClass$n.x()pnxv, sub_7E26E8, sub_7E4300, sub_7E8C94, sub_7EB058, sub_7F4960, sub_7F60B4
+00425280 AnimClass_Load                                        <- sub_7E3354
+004C1F20 EBolt_Draw                                            <- EBolt_DrawAll, sub_4C2790
+0054E4D0 KamikazeContainer_Update                              <- LogicClass_Update
+004CEFB0 sub_4CEFB0                                            <- sub_4CCB40
+00422CA0 AnimClass_Draw                                        <- sub_7E3354
+00428800 AnimTypeClass_Load                                    <- sub_7E3608
+004415F0 BuildingClass_Destroy                                 <- sub_7E43A8
+0046AE70 BulletClass_Load                                      <- sub_7E46E4
+006622C0 RocketLocomotionClass_ILocomotion_Process             <- sub_7F0B1C
+006FC0B0 W?Can_Fire$:TechnoClass$n.x(li)$FireErrorType$$       <- AircraftClass_GetObjectActivityState, BuildingClass_GetObjectActivityState, InfantryClass_GetObjectActivityState, UnitClass_GetObjectActivityState, sub_7E8C94, sub_7F4960
+0043FB20 BuildingClass_Update                                  <- sub_7E3F18
+0054BD30 sub_54BD30                                            <- JumpjetLocomotionClass_Process
+0054BFF0 jumpjet2                                              <- JumpjetLocomotionClass_Process
+0073D630 UnitClass_Unload                                      <- sub_7F5EAC
+0073FD50 W?What_Action$:UnitClass$n.x(pnx$ObjectClass$$)$Acti  <- sub_7F5CE4
+00772080 WeaponTypeClass_LoadFromINI                           <- sub_7F73B8
+004144B0 AircraftClass_Draw                                    <- sub_7E23B8
+004CF610 sub_4CF610                                            <- sub_7E89F4
+0041D860 AirstrikeClass_Fire                                   <- AirstrikeClass_Start
+0041DB40 AirstrikeClass_RemoveAmmo                             <- AirstrikeClass_PointerGotInvalid, AirstrikeClass_SetNewTarget, W?Assign_Target$:TechnoClass$n(l)v
+0065E850 HouseClass_CreateAirstrike                            <- AirstrikeClass_Fire
+00451890 BuildingClass_PlayAnim                                <- BuildingClass_210, BuildingClass_28, BuildingClass_ClearBunker, BuildingClass_DestroyAllAnims, BuildingClass_EmptyBunker, BuildingClass_Mi_Repair, BuildingClass_PlaySomeAnim, BuildingClass_ProcessAnims, BuildingClass_ReceivedRadioCommand, BuildingClass_UndamageAllAnims, BuildingClass_Unload, BuildingClass_UpdateAnimsAndTurretAfterUpgrade
+00705E00 SHPClass_Draw                                         <- BuildingClass_114, BuildingClass_118, BuildingClass_4E4, FootClass_DrawSHP
+00421EA0 W?$ct:AnimClass$n($AnimType$$ulucuc)_                 <- ActionClass_DoExplosionAt, ActionClass_DoMeteorShower, ActionClass_DropFlare, ActionClass_FireIronCurtain, ActionClass_PlayAnimAt, AircraftClass_ReceiveDamage, AircraftClass_Update, AnimClass_AnimExtras, AnimClass_Update, BombClass_Detonate, BuildingClass_CreateDamageFires, BuildingClass_Destroy
+004253B0 AnimClass_Save                                        <- sub_7E3354
+00428970 AnimTypeClass_Save                                    <- sub_7E3608
+00427D00 AnimTypeClass_LoadFromINI                             <- sub_7E3608
+0046AFB0 BulletClass_Save                                      <- sub_7E46E4
+00468090 BulletClass_Draw                                      <- sub_7E46E4
+0046C730 BulletTypeClass_Save                                  <- sub_7E4948
+0046C6A0 BulletTypeClass_Load                                  <- sub_7E4948
+0046BEE0 BulletTypeClass_LoadFromINI                           <- sub_7E4948
+004C2830 EBolt_DrawAll                                         <- TacticalClass_Draw
+006FD460 TechnoClass_FireEBolt                                 <- BulletClass_Shrapnel, W?Electric_Bolt$:TechnoClass$n(liulpnuc)i
+004F4480 GScreenClass_DrawOnTop                                <- ChronoScreenEffect_Update, Networking_RespondToEvent, ScenarioClass_Pause, TActionClass_Execute, W?Main_Loop$n()i, sub_55E160, sub_5F0690, sub_648350, sub_648710, sub_685670, sub_685DC0, sub_6863E0
+006851F0 Scenario_ClearClasses                                 <- INIClass_ReadScenario, LoadGame, MapSeedClass_Generate_InitRandomMap
+0055AFB0 LogicClass_Update                                     <- W?Main_Loop$n()i
+00504080 HouseClass_Save                                       <- sub_7EA8A0
+00503040 HouseClass_Load                                       <- sub_7EA8A0
+005509F0 LaserDrawClass_Draw_InHouseColor                      <- LaserDrawClass_Draw
+0067CEF0 Game_Save                                             <- LoadOptionsClass_SaveMission, Networking_RespondToEvent, W?Main_Loop$n()i
+0067D300 SaveGame                                              <- Game_Save
+0067E440 Game_Load                                             <- LoadOptionsClass_LoadMission
+6F77B0: restored microcode from idb
+6F77B0: restored pseudocode from idb
+B0EB24: using guessed type int Bridge_Height_xxx;
+417FE0: restored microcode from idb
+417FE0: restored pseudocode from idb
+418246: inconsistent fpu stack
+4180F2: variable 'v13' is possibly undefined
+4182D1: variable 'v21' is possibly undefined
+4184C5: variable 'v85' is possibly undefined
+4184C5: variable 'v88' is possibly undefined
+418669: variable 'v42' is possibly undefined
+4186A0: variable 'v44' is possibly undefined
+4197C0: using guessed type _DWORD __stdcall sub_4197C0(_DWORD);
+481670: using guessed type _DWORD __stdcall CellClass_ScatterContent(_DWORD, _DWORD, _DWORD, char);
+5F3DB0: using guessed type _DWORD __stdcall ObjectClass_Get_Height_(_DWORD, _DWORD);
+417FE0: using guessed type char var_6C[8];
+417FE0: using guessed type char var_70[4];
+417FE0: using guessed type char var_2C[8];
+417FE0: using guessed type char var_7C[8];
+417FE0: using guessed type Point3D var_24;
+417FE0: using guessed type char var_38[12];
+417FE0: using guessed type char var_14[20];
+[Patching] Loaded v0.1.2 - (c) Markus Gaasedelen - 2022
+-----------------------------------------------------------------------------------------
+Python 3.11.7 (tags/v3.11.7:fa7a6f2, Dec  4 2023, 19:24:49) [MSC v.1937 64 bit (AMD64)] 
+IDAPython v7.4.0 final (serial 0) (c) The IDAPython Team <idapython@googlegroups.com>
+-----------------------------------------------------------------------------------------

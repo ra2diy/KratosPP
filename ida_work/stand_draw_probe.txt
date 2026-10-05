@@ -1,0 +1,214 @@
+
+################ DisplayClass::Submit  @004A9720 ################
+---- func 004A9720 - 004A976D ----
+  004A9720  push    esi                                     56 8B 74 24 08 85 F6 57
+  004A9721  mov     esi, [esp+4+anim]                       8B 74 24 08 85 F6 57 74
+  004A9725  test    esi, esi                                85 F6 57 74 3E 83 BE 94
+  004A9727  push    edi                                     57 74 3E 83 BE 94 00 00
+  004A9728  jz      short loc_4A9768                        74 3E 83 BE 94 00 00 00
+  004A972A  cmp     dword ptr [esi+94h], 0FFFFFFFFh         83 BE 94 00 00 00 FF 74
+  004A9731  jz      short loc_4A9739                        74 06 56 E8 37 00 00 00
+  004A9733  push    esi; a1                                 56 E8 37 00 00 00 8B 06
+  004A9734  call    DisplayClass::Remove                    E8 37 00 00 00 8B 06 8B
+  004A9739  mov     eax, [esi]                              8B 06 8B CE FF 50 78 8B
+  004A973B  mov     ecx, esi                                8B CE FF 50 78 8B F8 83
+  004A973D  call    dword ptr [eax+78h]                     FF 50 78 8B F8 83 FF FF
+  004A9740  mov     edi, eax                                8B F8 83 FF FF 74 21 83
+  004A9742  cmp     edi, 0FFFFFFFFh                         83 FF FF 74 21 83 FF 02
+  004A9745  jz      short loc_4A9768                        74 21 83 FF 02 8D 14 7F
+  004A9747  cmp     edi, 2                                  83 FF 02 8D 14 7F 0F 94
+  004A974A  lea     edx, [edi+edi*2]                        8D 14 7F 0F 94 C1 51 56
+  004A974D  setz    cl                                      0F 94 C1 51 56 8D 0C D5
+  004A9750  push    ecx; sortable                           51 56 8D 0C D5 60 03 8A
+  004A9751  push    esi; a2                                 56 8D 0C D5 60 03 8A 00
+  004A9752  lea     ecx, vec_ObjectsInLayers.vt[edx*8]; this  8D 0C D5 60 03 8A 00 E8
+  004A9759  call    MapClass_AddObjectToALayerX             E8 52 82 0A 00 84 C0 74
+  004A975E  test    al, al                                  84 C0 74 06 89 BE 94 00
+  004A9760  jz      short loc_4A9768                        74 06 89 BE 94 00 00 00
+  004A9762  mov     [esi+94h], edi                          89 BE 94 00 00 00 5F 5E
+  004A9768  pop     edi                                     5F 5E C2 04 00 90 90 90
+  004A9769  pop     esi                                     5E C2 04 00 90 90 90 56
+  004A976A  retn    4                                       C2 04 00 90 90 90 56 57
+  ...(total 28 instrs shown, func size 77)
+
+=== 0x4A9759 处指令: call    MapClass_AddObjectToALayerX
+=== call 目标 = MapClass_AddObjectToALayerX (0x5519B0)
+
+################ Layer insert primitive  @005519B0 ################
+---- func 005519B0 - 00551A2C ----
+  005519B0  mov     al, [esp+sortable]                      8A 44 24 08 56 84 C0 8B
+  005519B4  push    esi                                     56 84 C0 8B F1 74 14 8B
+  005519B5  test    al, al                                  84 C0 8B F1 74 14 8B 44
+  005519B7  mov     esi, ecx                                8B F1 74 14 8B 44 24 08
+  005519B9  jz      short loc_5519CF                        74 14 8B 44 24 08 50 E8
+  005519BB  mov     eax, [esp+4+a2]                         8B 44 24 08 50 E8 CB 00
+  005519BF  push    eax; a2                                 50 E8 CB 00 00 00 F7 D8
+  005519C0  call    MapClass_AddObjectToALayer              E8 CB 00 00 00 F7 D8 1B
+  005519C5  neg     eax                                     F7 D8 1B C0 5E F7 D8 C2
+  005519C7  sbb     eax, eax                                1B C0 5E F7 D8 C2 08 00
+  005519C9  pop     esi                                     5E F7 D8 C2 08 00 8B 4E
+  005519CA  neg     eax                                     F7 D8 C2 08 00 8B 4E 08
+  005519CC  retn    8                                       C2 08 00 8B 4E 08 8B 46
+  005519CF  mov     ecx, [esi+8]                            8B 4E 08 8B 46 10 3B C1
+  005519D2  mov     eax, [esi+10h]                          8B 46 10 3B C1 7C 31 8A
+  005519D5  cmp     eax, ecx                                3B C1 7C 31 8A 46 0D 84
+  005519D7  jl      short loc_551A0A                        7C 31 8A 46 0D 84 C0 75
+  005519D9  mov     al, [esi+0Dh]                           8A 46 0D 84 C0 75 04 85
+  005519DC  test    al, al                                  84 C0 75 04 85 C9 75 17
+  005519DE  jnz     short loc_5519E4                        75 04 85 C9 75 17 8B 46
+  005519E0  test    ecx, ecx                                85 C9 75 17 8B 46 14 85
+  005519E2  jnz     short loc_5519FB                        75 17 8B 46 14 85 C0 7E
+  005519E4  mov     eax, [esi+14h]                          8B 46 14 85 C0 7E 10 8B
+  005519E7  test    eax, eax                                85 C0 7E 10 8B 16 03 C1
+  005519E9  jle     short loc_5519FB                        7E 10 8B 16 03 C1 6A 00
+  005519EB  mov     edx, [esi]                              8B 16 03 C1 6A 00 50 8B
+  005519ED  add     eax, ecx                                03 C1 6A 00 50 8B CE FF
+  005519EF  push    0                                       6A 00 50 8B CE FF 52 08
+  005519F1  push    eax                                     50 8B CE FF 52 08 84 C0
+  005519F2  mov     ecx, esi                                8B CE FF 52 08 84 C0 75
+  005519F4  call    dword ptr [edx+8]                       FF 52 08 84 C0 75 0F 32
+  005519F7  test    al, al                                  84 C0 75 0F 32 C0 33 D2
+  005519F9  jnz     short loc_551A0A                        75 0F 32 C0 33 D2 84 C0
+  005519FB  xor     al, al                                  32 C0 33 D2 84 C0 0F 95
+  005519FD  xor     edx, edx                                33 D2 84 C0 0F 95 C2 8A
+  005519FF  test    al, al                                  84 C0 0F 95 C2 8A C2 5E
+  00551A01  setnz   dl                                      0F 95 C2 8A C2 5E C2 08
+  00551A04  mov     al, dl                                  8A C2 5E C2 08 00 8B 46
+  00551A06  pop     esi                                     5E C2 08 00 8B 46 10 8B
+  00551A07  retn    8                                       C2 08 00 8B 46 10 8B 56
+  00551A0A  mov     eax, [esi+10h]                          8B 46 10 8B 56 04 8D 48
+  00551A0D  mov     edx, [esi+4]                            8B 56 04 8D 48 01 89 4E
+  00551A10  lea     ecx, [eax+1]                            8D 48 01 89 4E 10 8B 4C
+  00551A13  mov     [esi+10h], ecx                          89 4E 10 8B 4C 24 08 89
+  00551A16  mov     ecx, [esp+4+a2]                         8B 4C 24 08 89 0C 82 B0
+  00551A1A  mov     [edx+eax*4], ecx                        89 0C 82 B0 01 33 D2 5E
+  00551A1D  mov     al, 1                                   B0 01 33 D2 5E 84 C0 0F
+  00551A1F  xor     edx, edx                                33 D2 5E 84 C0 0F 95 C2
+  00551A21  pop     esi                                     5E 84 C0 0F 95 C2 8A C2
+  00551A22  test    al, al                                  84 C0 0F 95 C2 8A C2 C2
+  00551A24  setnz   dl                                      0F 95 C2 8A C2 C2 08 00
+  00551A27  mov     al, dl                                  8A C2 C2 08 00 90 90 90
+  00551A29  retn    8                                       C2 08 00 90 90 90 90 51
+  ...(total 53 instrs shown, func size 124)
+
+---- 原语内部调用的子函数 ----
+  005519C0 -> 00551A90  MapClass_AddObjectToALayer
+
+################   sub of primitive  @00551A90 ################
+---- func 00551A90 - 00551B1C ----
+  00551A90  push    esi                                     56 8B F1 8B 4E 08 8B 46
+  00551A91  mov     esi, ecx                                8B F1 8B 4E 08 8B 46 10
+  00551A93  mov     ecx, [esi+8]                            8B 4E 08 8B 46 10 3B C1
+  00551A96  mov     eax, [esi+10h]                          8B 46 10 3B C1 7C 28 8A
+  00551A99  cmp     eax, ecx                                3B C1 7C 28 8A 46 0D 84
+  00551A9B  jl      short loc_551AC5                        7C 28 8A 46 0D 84 C0 75
+  00551A9D  mov     al, [esi+0Dh]                           8A 46 0D 84 C0 75 04 85
+  00551AA0  test    al, al                                  84 C0 75 04 85 C9 75 17
+  00551AA2  jnz     short loc_551AA8                        75 04 85 C9 75 17 8B 46
+  00551AA4  test    ecx, ecx                                85 C9 75 17 8B 46 14 85
+  00551AA6  jnz     short loc_551ABF                        75 17 8B 46 14 85 C0 7E
+  00551AA8  mov     eax, [esi+14h]                          8B 46 14 85 C0 7E 10 8B
+  00551AAB  test    eax, eax                                85 C0 7E 10 8B 16 03 C1
+  00551AAD  jle     short loc_551ABF                        7E 10 8B 16 03 C1 6A 00
+  00551AAF  mov     edx, [esi]                              8B 16 03 C1 6A 00 50 8B
+  00551AB1  add     eax, ecx                                03 C1 6A 00 50 8B CE FF
+  00551AB3  push    0                                       6A 00 50 8B CE FF 52 08
+  00551AB5  push    eax                                     50 8B CE FF 52 08 84 C0
+  00551AB6  mov     ecx, esi                                8B CE FF 52 08 84 C0 75
+  00551AB8  call    dword ptr [edx+8]                       FF 52 08 84 C0 75 06 33
+  00551ABB  test    al, al                                  84 C0 75 06 33 C0 5E C2
+  00551ABD  jnz     short loc_551AC5                        75 06 33 C0 5E C2 04 00
+  00551ABF  xor     eax, eax                                33 C0 5E C2 04 00 8B 46
+  00551AC1  pop     esi                                     5E C2 04 00 8B 46 10 53
+  00551AC2  retn    4                                       C2 04 00 8B 46 10 53 8B
+  00551AC5  mov     eax, [esi+10h]                          8B 46 10 53 8B 5C 24 0C
+  00551AC8  push    ebx                                     53 8B 5C 24 0C 57 33 FF
+  00551AC9  mov     ebx, [esp+8+a2]                         8B 5C 24 0C 57 33 FF 85
+  00551ACD  push    edi                                     57 33 FF 85 C0 7E 18 8B
+  00551ACE  xor     edi, edi                                33 FF 85 C0 7E 18 8B 46
+  00551AD0  test    eax, eax                                85 C0 7E 18 8B 46 04 53
+  00551AD2  jle     short loc_551AEC                        7E 18 8B 46 04 53 8B 0C
+  00551AD4  mov     eax, [esi+4]                            8B 46 04 53 8B 0C B8 E8
+  00551AD7  push    ebx; a2                                 53 8B 0C B8 E8 40 47 0A
+  00551AD8  mov     ecx, [eax+edi*4]; this                  8B 0C B8 E8 40 47 0A 00
+  00551ADB  call    ObjectClass_CompareYSortValues          E8 40 47 0A 00 84 C0 75
+  00551AE0  test    al, al                                  84 C0 75 08 8B 46 10 47
+  00551AE2  jnz     short loc_551AEC                        75 08 8B 46 10 47 3B F8
+  00551AE4  mov     eax, [esi+10h]                          8B 46 10 47 3B F8 7C E8
+  00551AE7  inc     edi                                     47 3B F8 7C E8 8B 46 10
+  00551AE8  cmp     edi, eax                                3B F8 7C E8 8B 46 10 48
+  00551AEA  jl      short loc_551AD4                        7C E8 8B 46 10 48 3B C7
+  00551AEC  mov     eax, [esi+10h]                          8B 46 10 48 3B C7 7C 10
+  00551AEF  dec     eax                                     48 3B C7 7C 10 8B 4E 04
+  00551AF0  cmp     eax, edi                                3B C7 7C 10 8B 4E 04 48
+  00551AF2  jl      short loc_551B04                        7C 10 8B 4E 04 48 3B C7
+  00551AF4  mov     ecx, [esi+4]                            8B 4E 04 48 3B C7 8B 54
+  00551AF7  dec     eax                                     48 3B C7 8B 54 81 04 89
+  00551AF8  cmp     eax, edi                                3B C7 8B 54 81 04 89 54
+  00551AFA  mov     edx, [ecx+eax*4+4]                      8B 54 81 04 89 54 81 08
+  00551AFE  mov     [ecx+eax*4+8], edx                      89 54 81 08 7D F0 8B 46
+  00551B02  jge     short loc_551AF4                        7D F0 8B 46 04 89 1C B8
+  00551B04  mov     eax, [esi+4]                            8B 46 04 89 1C B8 8B 46
+  00551B07  mov     [eax+edi*4], ebx                        89 1C B8 8B 46 10 40 5F
+  00551B0A  mov     eax, [esi+10h]                          8B 46 10 40 5F 89 46 10
+  00551B0D  inc     eax                                     40 5F 89 46 10 5B B8 01
+  00551B0E  pop     edi                                     5F 89 46 10 5B B8 01 00
+  00551B0F  mov     [esi+10h], eax                          89 46 10 5B B8 01 00 00
+  00551B12  pop     ebx                                     5B B8 01 00 00 00 5E C2
+  00551B13  mov     eax, 1                                  B8 01 00 00 00 5E C2 04
+  00551B18  pop     esi                                     5E C2 04 00 90 90 90 90
+  00551B19  retn    4                                       C2 04 00 90 90 90 90 53
+  ...(total 62 instrs shown, func size 140)
+
+################ ObjectClass::GetYSort (0x5F6BF7)  @005F6BF7 ################
+---- func 005F6BD0 - 005F6C06 ----
+  005F6BD0  sub     esp, 18h                                83 EC 18 56 8B F1 8D 4C
+  005F6BD3  push    esi                                     56 8B F1 8D 4C 24 04 57
+  005F6BD4  mov     esi, ecx                                8B F1 8D 4C 24 04 57 8B
+  005F6BD6  lea     ecx, [esp+1Ch+ptr]                      8D 4C 24 04 57 8B 06 51
+  005F6BDA  push    edi                                     57 8B 06 51 8B CE FF 90
+  005F6BDB  mov     eax, [esi]                              8B 06 51 8B CE FF 90 AC
+  005F6BDD  push    ecx; ptr                                51 8B CE FF 90 AC 00 00
+  005F6BDE  mov     ecx, esi; this                          8B CE FF 90 AC 00 00 00
+  005F6BE0  call    [eax+vt_AnimClass.o.GetCoords_]         FF 90 AC 00 00 00 8B 16
+  005F6BE6  mov     edx, [esi]                              8B 16 8B F8 8D 44 24 14
+  005F6BE8  mov     edi, eax                                8B F8 8D 44 24 14 8B CE
+  005F6BEA  lea     eax, [esp+20h+var_C]                    8D 44 24 14 8B CE 50 FF
+  005F6BEE  mov     ecx, esi; this                          8B CE 50 FF 92 AC 00 00
+  005F6BF0  push    eax; ptr                                50 FF 92 AC 00 00 00 8B
+  005F6BF1  call    [edx+vt_AnimClass.o.GetCoords_]         FF 92 AC 00 00 00 8B 4F
+  005F6BF7  mov     ecx, [edi+4]                            8B 4F 04 8B 10 03 CA 5F
+  005F6BFA  mov     edx, [eax]                              8B 10 03 CA 5F 8B C1 5E
+  005F6BFC  add     ecx, edx                                03 CA 5F 8B C1 5E 83 C4
+  005F6BFE  pop     edi                                     5F 8B C1 5E 83 C4 18 C3
+  005F6BFF  mov     eax, ecx                                8B C1 5E 83 C4 18 C3 90
+  005F6C01  pop     esi                                     5E 83 C4 18 C3 90 90 90
+  005F6C02  add     esp, 18h                                83 C4 18 C3 90 90 90 90
+  005F6C05  retn                                            C3 90 90 90 90 90 90 90
+  ...(total 23 instrs shown, func size 54)
+
+=== 0x5F6BF7 之前的指令（确认 *x/*y 来源）===
+---- function start = 005F6BD0 ----
+
+################ 调用 0x5F6BF7 的函数（含调用前后 12 条指令）################
+
+---- caller @00422BC3 : call    ObjectClass_ReturnRealYSort ----
+    00422BC0  push    esi
+    00422BC1  mov     esi, ecx
+    00422BC3  call    ObjectClass_ReturnRealYSort
+    00422BC8  mov     ecx, [esi+104h]
+    00422BCE  pop     esi
+    00422BCF  add     eax, ecx
+
+---- caller @00449413 : call    ObjectClass_ReturnRealYSort ----
+    00449410  push    esi
+    00449411  mov     esi, ecx
+    00449413  call    ObjectClass_ReturnRealYSort
+    00449418  mov     esi, [esi+520h]
+    0044941E  mov     cl, [esi+16C5h]
+    00449424  mov     dl, [esi+16B7h]
+
+################ 数据引用 0x5F6BF7（vtable 槽定位）################
+
+################ LayerClass::Sort sub_551A30 => vt[0xB8] ################
+  (0x551A4F / 0x551A5D 都是 call dword ptr [reg+0B8h])

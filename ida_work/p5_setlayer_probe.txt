@@ -1,0 +1,205 @@
+############ FootClass_SetLayer 0x4D3780 (完整) ############
+  004D3780  push    ecx
+  004D3781  push    esi
+  004D3782  push    edi
+  004D3783  mov     edi, [esp+0Ch+a2]
+  004D3787  mov     esi, ecx
+  004D3789  cmp     edi, 2
+  004D378C  jnz     short loc_4D3796
+  004D378E  pop     edi
+  004D378F  mov     al, 1
+  004D3791  pop     esi
+  004D3792  pop     ecx
+  004D3793  retn    4
+  004D3796  push    edi
+  004D3797  mov     ecx, esi
+  004D3799  call    TechnoClass::Mark
+  004D379E  test    al, al
+  004D37A0  jz      short loc_4D3802
+  004D37A2  mov     eax, [esi]
+  004D37A4  mov     ecx, esi
+  004D37A6  call    dword ptr [eax+78h]; GetLayer
+  004D37A9  cmp     eax, 2
+  004D37AC  jnz     short lct_NotOnGroundLayer
+  004D37AE  mov     edx, [esi]
+  004D37B0  lea     eax, [esp+0Ch+var_4]
+  004D37B4  push    eax
+  004D37B5  mov     ecx, esi
+  004D37B7  call    dword ptr [edx+1B8h]; GetCellStruct
+  004D37BD  mov     ecx, [eax]
+  004D37BF  mov     eax, edi
+  004D37C1  sub     eax, 0
+  004D37C4  mov     [esp+0Ch+a2], ecx
+  004D37C8  jz      short loc_4D37EA
+  004D37CA  dec     eax
+  004D37CB  jz      short loc_4D37D2
+  004D37CD  sub     eax, 2
+  004D37D0  jnz     short lct_NotOnGroundLayer
+  004D37D2  lea     edx, [esp+0Ch+a2]
+  004D37D6  push    esi; Content
+  004D37D7  push    edx; a2
+  004D37D8  mov     ecx, offset Map; this
+  004D37DD  call    MapClass::Place_Down
+  004D37E2  pop     edi
+  004D37E3  mov     al, 1
+  004D37E5  pop     esi
+  004D37E6  pop     ecx
+  004D37E7  retn    4
+  004D37EA  lea     eax, [esp+0Ch+a2]
+  004D37EE  push    esi; Content
+  004D37EF  push    eax; arg
+  004D37F0  mov     ecx, offset Map; this
+  004D37F5  call    MapClass::Pick_Up
+  004D37FA  pop     edi
+  004D37FB  mov     al, 1
+  004D37FD  pop     esi
+  004D37FE  pop     ecx
+  004D37FF  retn    4
+  004D3802  pop     edi
+  004D3803  xor     al, al
+  004D3805  pop     esi
+  004D3806  pop     ecx
+  004D3807  retn    4
+  004D380A  db 6 dup(90h)
+  004D3810  sub     esp, 14h
+  004D3813  push    ebx
+  004D3814  push    esi
+  004D3815  mov     esi, ecx
+  004D3817  mov     eax, [esi]
+  004D3819  call    dword ptr [eax+84h]
+  004D381F  mov     ebx, [eax+5B4h]
+  004D3825  cmp     ebx, 0FFFFFFFFh
+  004D3828  jnz     short loc_4D3834
+  004D382A  pop     esi
+  004D382B  mov     al, 1
+  004D382D  pop     ebx
+  004D382E  add     esp, 14h
+  004D3831  retn    4
+  004D3834  push    edi
+  004D3835  mov     edi, [esp+20h+a2]
+  004D3839  mov     eax, [edi]
+  004D383B  cdq
+  004D383C  and     edx, 0FFh
+  004D3842  add     eax, edx
+  004D3844  mov     ecx, eax
+  004D3846  mov     eax, [edi+4]
+  004D3849  cdq
+  004D384A  and     edx, 0FFh
+  004D3850  pop     edi
+  004D3851  add     eax, edx
+  004D3853  sar     ecx, 8
+  004D3856  sar     eax, 8
+  004D3859  cmp     cx, CurrentLocation.X
+  004D3860  mov     word ptr [esp+1Ch+a2], cx
+  004D3865  mov     word ptr [esp+1Ch+a2+2], ax
+  004D386A  mov     edx, [esp+1Ch+a2]
+  004D386E  mov     dword ptr [esp+1Ch+coords_cell.X], edx
+  004D3872  jnz     short loc_4D3887
+  004D3874  cmp     ax, CurrentLocation.Y
+  004D387B  jnz     short loc_4D3887
+  004D387D  pop     esi
+  004D387E  xor     al, al
+  004D3880  pop     ebx
+  004D3881  add     esp, 14h
+  004D3884  retn    4
+  004D3887  mov     eax, [esi]
+  004D3889  lea     ecx, [esp+1Ch+var_C]
+  004D388D  push    0
+  004D388F  push    ecx
+  004D3890  mov     ecx, esi
+  004D3892  call    dword ptr [eax+4Ch]
+  004D3895  mov     ecx, eax
+  004D3897  mov     eax, [ecx]
+  004D3899  cdq
+  004D389A  and     edx, 0FFh
+  004D38A0  add     eax, edx
+  004D38A2  sar     eax, 8
+  004D38A5  mov     word ptr [esp+1Ch+a2], ax
+  004D38AA  mov     eax, [ecx+4]
+
+############ 名字库：SetLayer / Submit / UpdatePlacement ############
+   004238B0  AnimClass_SetLayer
+   004666C0  BulletClass_SetLayer
+   004A9720  W?Submit$:DisplayClass$n(pnx$ObjectClass$$$LayerType$$)v
+   004D3780  FootClass_SetLayer
+   0062D6F0  ParticleClass_SetLayer
+   006B4BE0  SmudgeClass_SetLayer
+
+############ XrefsTo 0x4D3780 (FootClass_SetLayer) ############
+   from 007E23C8 type=1 in 
+   from 007E8C94 type=1 in 
+   from 007EB058 type=1 in 
+   from 007F5D94 type=1 in 
+
+############ DisplayClass::Submit 0x4A9720 (前 60 条) ############
+  004A9720  push    esi
+  004A9721  mov     esi, [esp+4+anim]
+  004A9725  test    esi, esi
+  004A9727  push    edi
+  004A9728  jz      short loc_4A9768
+  004A972A  cmp     dword ptr [esi+94h], 0FFFFFFFFh
+  004A9731  jz      short loc_4A9739
+  004A9733  push    esi; a1
+  004A9734  call    DisplayClass::Remove
+  004A9739  mov     eax, [esi]
+  004A973B  mov     ecx, esi
+  004A973D  call    dword ptr [eax+78h]
+  004A9740  mov     edi, eax
+  004A9742  cmp     edi, 0FFFFFFFFh
+  004A9745  jz      short loc_4A9768
+  004A9747  cmp     edi, 2
+  004A974A  lea     edx, [edi+edi*2]
+  004A974D  setz    cl
+  004A9750  push    ecx; sortable
+  004A9751  push    esi; a2
+  004A9752  lea     ecx, vec_ObjectsInLayers.vt[edx*8]; this
+  004A9759  call    MapClass_AddObjectToALayerX
+  004A975E  test    al, al
+  004A9760  jz      short loc_4A9768
+  004A9762  mov     [esi+94h], edi
+  004A9768  pop     edi
+  004A9769  pop     esi
+  004A976A  retn    4
+  004A976D  db 3 dup(90h)
+  004A9770  push    esi
+  004A9771  push    edi
+  004A9772  mov     edi, [esp+8+a1]
+  004A9776  test    edi, edi
+  004A9778  jz      loc_4A9836
+  004A977E  mov     eax, [edi+94h]
+  004A9784  cmp     eax, 0FFFFFFFFh
+  004A9787  jz      loc_4A9836
+  004A978D  lea     eax, [eax+eax*2]
+  004A9790  mov     [esp+8+a1], edi
+  004A9794  mov     edx, vec_ObjectsInLayers.vt[eax*8]
+  004A979B  lea     esi, vec_ObjectsInLayers.vt[eax*8]
+  004A97A2  lea     eax, [esp+8+a1]
+  004A97A6  mov     ecx, esi
+  004A97A8  push    eax
+  004A97A9  call    dword ptr [edx+10h]
+  004A97AC  cmp     eax, 0FFFFFFFFh
+  004A97AF  jz      short loc_4A97DC
+  004A97B1  mov     ecx, [esi+10h]
+  004A97B4  cmp     eax, ecx
+  004A97B6  jge     short loc_4A97DC
+  004A97B8  dec     ecx
+  004A97B9  cmp     eax, ecx
+  004A97BB  mov     [esi+10h], ecx
+  004A97BE  jge     short loc_4A97D2
+  004A97C0  mov     ecx, [esi+4]
+  004A97C3  inc     eax
+  004A97C4  mov     edx, [ecx+eax*4]
+  004A97C7  mov     [ecx+eax*4-4], edx
+  004A97CB  mov     ecx, [esi+10h]
+  004A97CE  cmp     eax, ecx
+  004A97D0  jl      short loc_4A97C0
+  004A97D2  mov     dword ptr [edi+94h], 0FFFFFFFFh
+  004A97DC  cmp     dword ptr [edi+94h], 0FFFFFFFFh
+  004A97E3  jz      short loc_4A9836
+  004A97E5  mov     esi, offset vec_ObjectsInLayers.length
+  004A97EA  mov     eax, [esi-10h]
+  004A97ED  lea     ecx, [esi-10h]
+  004A97F0  lea     edx, [esp+8+a1]
+  004A97F4  mov     [esp+8+a1], edi
+  004A97F8  push    edx
+  004A97F9  call    dword ptr [eax+10h]

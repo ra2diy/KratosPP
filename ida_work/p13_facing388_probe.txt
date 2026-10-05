@@ -1,0 +1,336 @@
+############ 1) 结构体成员：查找 offset 0x388 (及 0x370..0x3A0) ############
+   [struct] TechnoTypeClass
+      +0x360  field_360
+      +0x360  field_360
+      +0x360  field_360
+      +0x360  field_360
+      +0x364  field_364
+      +0x364  field_364
+      +0x364  field_364
+      +0x364  field_364
+      +0x368  field_368
+      +0x368  field_368
+      +0x368  field_368
+      +0x368  field_368
+      +0x36C  Weight
+      +0x36C  Weight
+      +0x36C  Weight
+      +0x36C  Weight
+      +0x36C  Weight
+      +0x36C  Weight
+      +0x36C  Weight
+      +0x36C  Weight
+      +0x374  PhysicalSize
+      +0x374  PhysicalSize
+      +0x374  PhysicalSize
+      +0x374  PhysicalSize
+      +0x374  PhysicalSize
+      +0x374  PhysicalSize
+      +0x374  PhysicalSize
+      +0x374  PhysicalSize
+      +0x37C  Size
+      +0x37C  Size
+      +0x37C  Size
+      +0x37C  Size
+      +0x37C  Size
+      +0x37C  Size
+      +0x37C  Size
+      +0x37C  Size
+      +0x384  SizeLimit
+      +0x384  SizeLimit
+      +0x384  SizeLimit
+      +0x384  SizeLimit
+      +0x384  SizeLimit
+      +0x384  SizeLimit
+      +0x384  SizeLimit
+      +0x384  SizeLimit
+      +0x38C  HoverAttack
+      +0x38D  field_38D
+      +0x38E  field_38E
+      +0x38F  field_38F
+      +0x390  VHPScan
+      +0x390  VHPScan
+      +0x390  VHPScan
+      +0x390  VHPScan
+      +0x394  field_394
+      +0x394  field_394
+      +0x394  field_394
+      +0x394  field_394
+      +0x398  field_398
+      +0x398  field_398
+      +0x398  field_398
+      +0x398  field_398
+      +0x39C  RollAngle
+      +0x39C  RollAngle
+      +0x39C  RollAngle
+      +0x39C  RollAngle
+      +0x39C  RollAngle
+      +0x39C  RollAngle
+      +0x39C  RollAngle
+      +0x39C  RollAngle
+      +0x3A4  PitchSpeed
+      +0x3A4  PitchSpeed
+      +0x3A4  PitchSpeed
+      +0x3A4  PitchSpeed
+      +0x3A4  PitchSpeed
+      +0x3A4  PitchSpeed
+      +0x3A4  PitchSpeed
+      +0x3A4  PitchSpeed
+   [struct] TechnoClass
+      +0x368  field_368
+      +0x368  field_368
+      +0x368  field_368
+      +0x368  field_368
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+   [struct] vt_TechnoClass
+      +0x360  VoiceSelect
+      +0x360  VoiceSelect
+      +0x360  VoiceSelect
+      +0x360  VoiceSelect
+      +0x364  VoiceCapture
+      +0x364  VoiceCapture
+      +0x364  VoiceCapture
+      +0x364  VoiceCapture
+      +0x368  VoiceMove
+      +0x368  VoiceMove
+      +0x368  VoiceMove
+      +0x368  VoiceMove
+      +0x36C  VoiceDeployState
+      +0x36C  VoiceDeployState
+      +0x36C  VoiceDeployState
+      +0x36C  VoiceDeployState
+      +0x370  VoiceAttack
+      +0x370  VoiceAttack
+      +0x370  VoiceAttack
+      +0x370  VoiceAttack
+      +0x374  Techno_374
+      +0x374  Techno_374
+      +0x374  Techno_374
+      +0x374  Techno_374
+      +0x378  ClickedMission
+      +0x378  ClickedMission
+      +0x378  ClickedMission
+      +0x378  ClickedMission
+      +0x37C  IsUnderEMP
+      +0x37C  IsUnderEMP
+      +0x37C  IsUnderEMP
+      +0x37C  IsUnderEMP
+      +0x380  IsParalysed
+      +0x380  IsParalysed
+      +0x380  IsParalysed
+      +0x380  IsParalysed
+      +0x384  Techno_384
+      +0x384  Techno_384
+      +0x384  Techno_384
+      +0x384  Techno_384
+      +0x388  Cheer
+      +0x388  Cheer
+      +0x388  Cheer
+      +0x388  Cheer
+      +0x38C  GetMaxSpeed
+      +0x38C  GetMaxSpeed
+      +0x38C  GetMaxSpeed
+      +0x38C  GetMaxSpeed
+      +0x390  SpendOneAmmo
+      +0x390  SpendOneAmmo
+      +0x390  SpendOneAmmo
+      +0x390  SpendOneAmmo
+      +0x394  Techno_394
+      +0x394  Techno_394
+      +0x394  Techno_394
+      +0x394  Techno_394
+      +0x398  CanDisguiseAs
+      +0x398  CanDisguiseAs
+      +0x398  CanDisguiseAs
+      +0x398  CanDisguiseAs
+      +0x39C  Techno_39C
+      +0x39C  Techno_39C
+      +0x39C  Techno_39C
+      +0x39C  Techno_39C
+      +0x3A0  Techno_3A0
+      +0x3A0  Techno_3A0
+      +0x3A0  Techno_3A0
+      +0x3A0  Techno_3A0
+      +0x3A4  ShouldFireCellInset
+      +0x3A4  ShouldFireCellInset
+      +0x3A4  ShouldFireCellInset
+      +0x3A4  ShouldFireCellInset
+      +0x3A8  IsCloseEnough
+      +0x3A8  IsCloseEnough
+      +0x3A8  IsCloseEnough
+      +0x3A8  IsCloseEnough
+
+############ 2) 全 .text 扫描：写入 [reg+388h] 的指令 ############
+   .text = 0x00401000..0x007E1000
+   00462769  mov     [ebp+1388h], al                         in BuildingTypeClass_LoadFromINI
+   00665B6A  mov     [esi+388h], edi                         in RulesClass_CTOR
+   006670DE  mov     [esi+1388h], edi                        in RulesClass_CTOR
+   写入/操作 [..+388h] 的指令共 3 条
+
+############ 3) 邻近字段 +0x384 / +0x38C #############
+   -- +384h] --
+      0048248D  lea     edx, [eax+384h]                         in W?Goodie_Check$:CellClass$n(pn$FootClass$$)i
+      00522C0D  call    dword ptr [eax+384h]                    in InfantryClass_388
+      00665B70  mov     [esi+384h], zer0                        in RulesClass_CTOR
+      007172A5  mov     eax, [esi+384h]                         in TechnoTypeClass_GetCRC
+   -- 384h] --
+      00462735  mov     ecx, [ebp+1384h]                        in BuildingTypeClass_LoadFromINI
+      0046274C  mov     [ebp+1384h], eax                        in BuildingTypeClass_LoadFromINI
+      0048248D  lea     edx, [eax+384h]                         in W?Goodie_Check$:CellClass$n(pn$FootClass$$)i
+      004F6A14  mov     eax, [eax+5384h]                        in HouseClass_IHouse_PowerDrain
+      004FF935  lea     eax, [ecx+5384h]; jumptable 004FF902 cases 6,7  in ?
+      004FF9FA  lea     eax, [edi+5384h]; jumptable 004FF9CF cases 6,7  in W?Active_Remove$:HouseClass$n(pnx$TechnoClass$$)v
+      00500951  lea     eax, [ecx+5384h]; jumptable 00500922 cases 6,7  in HouseClass_GetFactoryCounts
+      00502FC7  mov     eax, [esi+5384h]                        in HouseClass_GetCRC
+      00522C0D  call    dword ptr [eax+384h]                    in InfantryClass_388
+      00665B70  mov     [esi+384h], zer0                        in RulesClass_CTOR
+      006670E4  mov     [esi+1384h], zer0                       in RulesClass_CTOR
+      007172A5  mov     eax, [esi+384h]                         in TechnoTypeClass_GetCRC
+   -- +38Ch] --
+      004B10AC  call    dword ptr [edx+38Ch]                    in sub_4B0F20
+      004D985F  call    dword ptr [edx+38Ch]                    in sub_4D97A0
+      004D986E  call    dword ptr [eax+38Ch]                    in sub_4D97A0
+      004DB1C3  call    dword ptr [edx+38Ch]                    in FootClass_GetCurrentSpeed
+      007172BA  mov     edx, [esi+38Ch]                         in TechnoTypeClass_GetCRC
+   -- 38Ch] --
+      00445925  mov     edx, [eax+538Ch]                        in BuildingClass_Remove
+      0044592C  mov     [eax+538Ch], edx                        in BuildingClass_Remove
+      00445938  cmp     [eax+538Ch], ebx                        in BuildingClass_Remove
+      00445940  mov     [eax+538Ch], ebx                        in BuildingClass_Remove
+      00448AC2  dec     dword ptr [ebx+538Ch]                   in BuildingClass_Captured
+      004491EB  inc     dword ptr [eax+538Ch]                   in BuildingClass_Captured
+      00462805  lea     edx, [ebp+138Ch]                        in BuildingTypeClass_LoadFromINI
+      00462896  lea     edi, [ebp+138Ch]                        in BuildingTypeClass_LoadFromINI
+      00462930  lea     edi, [ebp+138Ch]                        in BuildingTypeClass_LoadFromINI
+      00462958  lea     edi, [ebp+138Ch]                        in BuildingTypeClass_LoadFromINI
+      004B10AC  call    dword ptr [edx+38Ch]                    in sub_4B0F20
+      004D985F  call    dword ptr [edx+38Ch]                    in sub_4D97A0
+      004D986E  call    dword ptr [eax+38Ch]                    in sub_4D97A0
+      004DB1C3  call    dword ptr [edx+38Ch]                    in FootClass_GetCurrentSpeed
+      00502FD5  mov     ecx, [esi+538Ch]                        in HouseClass_GetCRC
+   -- +380h] --
+      004AFD5E  call    dword ptr [edx+380h]                    in sub_4AFD40
+      004B2759  call    dword ptr [eax+380h]                    in DriveLocomotionClass_blah
+      004CCD00  call    dword ptr [edx+380h]                    in sub_4CCC80
+      004CF96E  call    dword ptr [edx+380h]                    in sub_4CF950
+      00514DB9  call    dword ptr [edx+380h]                    in sub_514D90
+      00514FD2  call    dword ptr [eax+380h]                    in sub_514F70
+      005B0099  call    dword ptr [edx+380h]                    in sub_5B0080
+      0069F46E  call    dword ptr [edx+380h]                    in sub_69F450
+      006A1DA9  call    dword ptr [edx+380h]                    in ShipLocomotionClass_blah
+      006FB775  call    dword ptr [eax+380h]                    in W?Cloaking_AI$:TechnoClass$n()v
+      006FC623  call    dword ptr [edx+380h]                    in W?Can_Fire$:TechnoClass$n.x(li)$FireErrorType$$
+      006FCCD5  call    dword ptr [edx+380h]                    in W?Can_Fire$:TechnoClass$n.x(li)$FireErrorType$$
+      00700C90  call    dword ptr [eax+380h]                    in TechnoClass_CanSetWaypoint
+      00709EA0  fld     qword ptr [eax+380h]                    in W?Draw_Pips$:TechnoClass$n.x(ii$WindowNumberType$$)v
+      00709EF5  fld     qword ptr [eax+380h]                    in W?Draw_Pips$:TechnoClass$n.x(ii$WindowNumberType$$)v
+   -- 380h] --
+      00462718  mov     eax, [ebp+1380h]                        in BuildingTypeClass_LoadFromINI
+      0046272F  mov     [ebp+1380h], eax                        in BuildingTypeClass_LoadFromINI
+      004AFD5E  call    dword ptr [edx+380h]                    in sub_4AFD40
+      004B2759  call    dword ptr [eax+380h]                    in DriveLocomotionClass_blah
+      004CCD00  call    dword ptr [edx+380h]                    in sub_4CCC80
+      004CF96E  call    dword ptr [edx+380h]                    in sub_4CF950
+      004F691D  mov     esi, [eax+5380h]                        in HouseClass_IPublicHouse_IsPowered
+      004F6A04  mov     eax, [eax+5380h]                        in HouseClass_IHouse_PowerOutput
+      004FF91A  lea     eax, [ecx+5380h]                        in ?
+      004FF9E2  lea     eax, [edi+5380h]                        in W?Active_Remove$:HouseClass$n(pnx$TechnoClass$$)v
+      004FFAB2  lea     eax, [edi+5380h]                        in W?Active_Add$:HouseClass$n(pnx$TechnoClass$$)v
+      00500939  lea     eax, [ecx+5380h]                        in HouseClass_GetFactoryCounts
+      00502FAB  mov     ecx, [esi+5380h]                        in HouseClass_GetCRC
+      00514DB9  call    dword ptr [edx+380h]                    in sub_514D90
+      00514FD2  call    dword ptr [eax+380h]                    in sub_514F70
+   -- +394h] --
+      0051A46E  call    dword ptr [edx+394h]                    in InfantryClass_UpdatePosition
+      00668489  mov     eax, [esi+394h]                         in RulesClass_DTOR
+      006684AA  mov     [esi+394h], ebx                         in RulesClass_DTOR
+      0073A740  call    dword ptr [edx+394h]                    in W?Per_Cell_Process$:UnitClass$n($PCPType$$)v
+      00770782  mov     edx, [esi+394h]                         in sub_770550
+   -- 394h] --
+      0051A46E  call    dword ptr [edx+394h]                    in InfantryClass_UpdatePosition
+      00668489  mov     eax, [esi+394h]                         in RulesClass_DTOR
+      006684AA  mov     [esi+394h], ebx                         in RulesClass_DTOR
+      00674DEA  mov     edx, [edi+1394h]                        in RulesClass_Save
+      006A6461  mov     [ebx+5394h], edi                        in SidebarClass_AddCameo
+      006A67D6  mov     dword ptr [edi+5394h], 0                in ?
+      006A68A4  mov     [edi+5394h], eax                        in ?
+      006A6EF3  mov     ecx, [edi+5394h]                        in SidebarClass_Draw
+      006A6F3E  mov     ecx, [edi+5394h]                        in SidebarClass_Draw
+      006A6F89  mov     ecx, [edi+5394h]                        in SidebarClass_Draw
+      006A77F4  mov     edx, [esi+5394h]                        in SidebarClass_MouseMove
+      006A77FB  mov     [esi+5394h], edx                        in SidebarClass_MouseMove
+      006A7818  mov     eax, [esi+5394h]                        in SidebarClass_MouseMove
+      006A781F  mov     [esi+5394h], eax                        in SidebarClass_MouseMove
+      006A782F  mov     [esi+5394h], eax                        in SidebarClass_MouseMove
+

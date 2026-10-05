@@ -217,6 +217,35 @@ void AnimStatus::OnUpdate()
 		{
 			pAnim->SetLocation(location);
 		}
+
+		// ★ AE 动画同层排序跟随（InAir 覆盖修复的第二环）：
+		//   引擎只有 Ground 层链表被每帧 LayerClass::Sort（0x55DBC8，全引擎唯一调用点），
+		//   Air/Top 层的绘制顺序 = Submit(0x4A9720) 顺序。AnimTypeClass::Layer 默认 Air(0x4276D4)，
+		//   动画与升空主身同在 Air 层链表，而主身每次换层重新 Submit 都追加到动画之后
+		//   —— 画在动画上面（"地面时动画覆盖主身，升空后被主身覆盖"）。
+		//   此处监视主身 LastLayer（ObjectClass+0x94），变化时重新 Submit 动画，
+		//   使动画重新追加到主身之后，恢复"覆盖在主身上"的顺序。
+		//   注意：这与 0x424CCA 的 AnimClass_InWhichLayer_FollowAttachOwner 是同一数据源
+		//   （LastLayer 只由 DisplayClass::Submit 写），两者分工见 AnimExtHook.cpp 的注释。
+		TechnoClass* pLayerOwner = nullptr;
+		if (CastToTechno(pAttachOwner, pLayerOwner) && pLayerOwner->IsAlive)
+		{
+			const int masterLayer = static_cast<int>(pLayerOwner->LastLayer);
+			if (masterLayer != _attachLayerCached)
+			{
+				_attachLayerCached = masterLayer;
+				// Flat=yes（平铺贴地、语义为"应被单位覆盖"）：跳过重提交。
+				// 实测（flat_probe 系列）：Flat(Type+0x369) 不参与归层（In_Which_Layer 0x424CB0 不读），
+				// 也不参与排序键（0x422BC0 只加 Type+0x340），其"垫底"效果正是靠
+				// "保持较早的 Submit 位置、被后提交的主身盖住"实现——即本 watcher 的默认不动作。
+				// 重提交尾插会把动画抬到主身之上，破坏 Flat 语义。
+				if (!pAnim->Type->Flat)
+				{
+					// YRpp 已封装 DisplayClass::Submit(0x4A9720)，经 Instance(0x87F7E8) 调用
+					DisplayClass::Instance->Submit(pAnim);
+				}
+			}
+		}
 	}
 	OnUpdate_Visibility();
 	OnUpdate_Damage();

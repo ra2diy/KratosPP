@@ -1,0 +1,567 @@
+############ 1) 结构体名字（含 Techno/Foot/Object/Facing） ############
+   VecTechnoRTTILinks                       size=0x14
+   Vec_TechnoClass                          size=0x8
+   DistributionObject                       size=0x8
+   _AbstractClass                           size=0x24
+   AbstractClass                            size=0x20
+   _AbstractTypeClass                       size=0x98
+   AbstractTypeClass                        size=0x94
+   _ObjectTypeClass                         size=0x294
+   ObjectTypeClass                          size=0x290
+   _TechnoTypeClass                         size=0xDFC
+   TechnoTypeClass                          size=0xDF8
+   vt_FoggedObjectClass                     size=0x64
+   FoggedObjectClass                        size=0x78
+   FacingStruct                             size=0x18
+   _ObjectClass                             size=0xA8
+   ObjectClass                              size=0xA4
+   _TechnoClass                             size=0x520
+   TechnoClass                              size=0x51C
+   _FootClass                               size=0x6BC
+   FootClass                                size=0x6B8
+   StartingTechnoStruct                     size=0x8
+   VectorTechnoType_long                    size=0x1C
+   VectorTechnoType                         size=0x14
+   vt_cAbstract                             size=0x60
+   vt_AbstractClass                         size=0x60
+   vt_ObjectClass                           size=0x1E8
+   vt_TechnoClass                           size=0x4D4
+   vt_FootClass                             size=0x554
+   vt_AbstractTypeClass                     size=0x6C
+   vt_ObjectTypeClass                       size=0xA0
+   vt_TechnoTypeClass                       size=0xC0
+   VectorPtrAbstractClass                   size=0x18
+   VectorPtrAbstractTypeClass               size=0x18
+   VectorPtrFootClass                       size=0x18
+   VectorPtrObjectClass                     size=0x18
+   VectorPtrObjectTypeClass                 size=0x18
+   vt_TechnoType                            size=0xC0
+   VectorPtrTechnoClass_short               size=0x10
+   VectorPtrTechnoClass                     size=0x18
+   VectorPtrTechnoTypeClass                 size=0x18
+   VectorPtrFoggedObjectClass               size=0x18
+   vt_Abstract                              size=0x60
+   vt_AbstractRTTI                          size=0x18
+   VectorPtrStartingTechnoStruct            size=0x18
+   VecDistributionObject                    size=0x18
+   DVec_TechnoClass                         size=0x18
+   RTTICompleteObjectLocator                size=0x14
+
+############ 2) TechnoClass / FootClass 结构体 0x320..0x3B0 ############
+   [TechnoClass] size=0x51C
+      +0x320  FiringWave
+      +0x320  FiringWave
+      +0x320  FiringWave
+      +0x320  FiringWave
+      +0x324  field_324
+      +0x324  field_324
+      +0x324  field_324
+      +0x324  field_324
+      +0x328  field_328
+      +0x328  field_328
+      +0x328  field_328
+      +0x328  field_328
+      +0x32C  field_32C
+      +0x32C  field_32C
+      +0x32C  field_32C
+      +0x32C  field_32C
+      +0x330  field_330
+      +0x330  field_330
+      +0x330  field_330
+      +0x330  field_330
+      +0x334  HijackerInfantryType
+      +0x334  HijackerInfantryType
+      +0x334  HijackerInfantryType
+      +0x334  HijackerInfantryType
+      +0x338  Tiberium1
+      +0x338  Tiberium1
+      +0x338  Tiberium1
+      +0x338  Tiberium1
+      +0x33C  Tiberium2
+      +0x33C  Tiberium2
+      +0x33C  Tiberium2
+      +0x33C  Tiberium2
+      +0x340  Tiberium3
+      +0x340  Tiberium3
+      +0x340  Tiberium3
+      +0x340  Tiberium3
+      +0x344  Tiberium4
+      +0x344  Tiberium4
+      +0x344  Tiberium4
+      +0x344  Tiberium4
+      +0x348  field_348
+      +0x348  field_348
+      +0x348  field_348
+      +0x348  field_348
+      +0x34C  UnloadTimerStruct
+      +0x34C  UnloadTimerStruct
+      +0x34C  UnloadTimerStruct
+      +0x34C  UnloadTimerStruct
+      +0x34C  UnloadTimerStruct
+      +0x34C  UnloadTimerStruct
+      +0x34C  UnloadTimerStruct
+      +0x34C  UnloadTimerStruct
+      +0x34C  UnloadTimerStruct
+      +0x34C  UnloadTimerStruct
+      +0x34C  UnloadTimerStruct
+      +0x34C  UnloadTimerStruct
+      +0x34C  UnloadTimerStruct
+      +0x34C  UnloadTimerStruct
+      +0x34C  UnloadTimerStruct
+      +0x34C  UnloadTimerStruct
+      +0x34C  UnloadTimerStruct
+      +0x34C  UnloadTimerStruct
+      +0x34C  UnloadTimerStruct
+      +0x34C  UnloadTimerStruct
+      +0x34C  UnloadTimerStruct
+      +0x34C  UnloadTimerStruct
+      +0x34C  UnloadTimerStruct
+      +0x34C  UnloadTimerStruct
+      +0x34C  UnloadTimerStruct
+      +0x34C  UnloadTimerStruct
+      +0x34C  UnloadTimerStruct
+      +0x34C  UnloadTimerStruct
+      +0x368  field_368
+      +0x368  field_368
+      +0x368  field_368
+      +0x368  field_368
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x36C  BarrelFacing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x384  Facing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+      +0x39C  TurretFacing
+   [_TechnoClass] size=0x520
+   [FootClass] size=0x6B8
+   [_FootClass] size=0x6BC
+   <TechnoClassClass 不存在>
+   [ObjectClass] size=0xA4
+   [_ObjectClass] size=0xA8
+
+############ 3) 全 .text：任何操作数里含 388h 的指令（TechnoClass 相关函数） ############
+   == ? ==
+      004FF911  lea     eax, [ecx+5388h]
+      00662036  add     ecx, 388h
+   == AircraftClass_FlasherClass_LandingDirection ==
+      0041B785  lea     ecx, [eax+388h]
+   == AircraftClass_Init ==
+      00413FD8  lea     edi, [esi+388h]
+   == AircraftClass_SaveToMapINIList ==
+      0041B00E  lea     ecx, [esi+388h]; Facing
+   == BuildingClass_210 ==
+      0044AEB8  lea     edi, [esi+388h]
+      0044B079  lea     ecx, [esi+388h]; Facing
+      0044B0AC  lea     ecx, [esi+388h]; Facing
+      0044B169  lea     ecx, [esi+388h]; Facing
+      0044B1A2  lea     ecx, [esi+388h]; Facing
+      0044B1F9  lea     ecx, [esi+388h]; Facing
+   == BuildingClass_244 ==
+      00449B0A  lea     ecx, [esi+388h]; Facing
+   == BuildingClass_2A8 ==
+      00445EE0  lea     ecx, [esi+388h]; Facing
+   == BuildingClass_308 ==
+      0044D7E2  lea     ecx, [esi+388h]; Facing
+      0044D828  lea     ecx, [esi+388h]; Facing
+   == BuildingClass_4E4 ==
+      0043DFCA  lea     esi, [ebp+388h]
+      0043E089  lea     ecx, [ebp+388h]; Facing
+      0043E210  lea     esi, [ebp+388h]
+      0043E4B5  lea     ecx, [ebp+388h]; Facing
+      0043E658  lea     ecx, [ebp+388h]; Facing
+   == BuildingClass_CreateFromINIList ==
+      0044FDF0  lea     ecx, [esi+388h]; Facing
+   == BuildingClass_EnableFencePost ==
+      0045317E  lea     ecx, [esi+388h]; Facing
+   == BuildingClass_Init ==
+      00442C9F  lea     ecx, [esi+388h]; Facing
+   == BuildingClass_ManageFencePost ==
+      00452B44  lea     ecx, [edi+388h]; Facing
+   == BuildingClass_Mission_Deconstruction ==
+      00449DA4  lea     ecx, [ebp+388h]; Facing
+      00449DF5  lea     ecx, [ebp+388h]; Facing
+      0044A4E3  lea     ecx, [ebp+388h]; Facing
+   == BuildingClass_PingLaserFencePost ==
+      00453504  lea     ecx, [edi+388h]; Facing
+      004536A8  lea     ecx, [edi+388h]; Facing
+   == BuildingClass_ProcessAnims ==
+      0045125E  lea     ecx, [esi+388h]; Facing
+   == BuildingClass_RegisterDestruction ==
+      00442F40  lea     ecx, [edi+388h]; Facing
+   == BuildingClass_SaveToMapINI ==
+      0044FF22  lea     ecx, [esi+388h]; Facing
+   == BuildingClass_Unload ==
+      0044D8E7  lea     ecx, [ebp+388h]; Facing
+   == BuildingLightClass_CTOR ==
+      0043595C  lea     ecx, [edx+388h]; Facing
+   == BuildingTypeClass_CTOR ==
+      0045DE12  mov     [esi+BuildingTypeClass.LightVisibility], 1388h
+   == BuildingTypeClass_LoadFromINI ==
+      00462752  mov     dl, [ebp+1388h]
+      00462769  mov     [ebp+1388h], al
+   == DialogFunc ==
+      005BC8C1  push    1388h; a2
+   == DriveLocomotionClass_blah ==
+      004B2A4F  add     ecx, 388h; Facing
+      004B2ADE  add     ecx, 388h; Facing
+      004B3410  add     ecx, 388h; Facing
+   == FootClass_CreateWake ==
+      00629EA1  add     ecx, 388h; Facing
+   == HouseClass_AllCheer ==
+      0050C8E9  call    dword ptr [edx+388h]
+   == HouseClass_GetCRC ==
+      00502FB9  mov     edx, [esi+5388h]
+   == HouseClass_GetFactoryCounts ==
+      00500931  lea     eax, [ecx+5388h]
+   == InfantryClass_CTOR ==
+      00517BBF  lea     ecx, [esi+388h]; Facing
+   == InfantryClass_SaveToMapINIList ==
+      0051FF91  lea     ecx, [esi+388h]; Facing
+   == InfantryClass_Scatter ==
+      0051D360  lea     ecx, [esi+388h]; Facing
+   == InfantryClass_StopMoving ==
+      0051DB4D  lea     ecx, [esi+388h]; Facing
+   == InfantryClass_UpdatePosition ==
+      0051A6D5  lea     ecx, [esi+388h]; Facing
+   == Init_ShowStartScreen ==
+      005315EE  add     eax, 1388h
+   == IonBlastClass_Update ==
+      0053D034  lea     ecx, [esi+388h]; Facing
+   == KamikazeContainer_Update ==
+      0054E535  lea     ecx, [esi+388h]; Facing
+   == Kamikaze_Append ==
+      0054E3FD  lea     ecx, [esi+388h]; Facing
+   == LocomotionClass_ILocomotion_DrawMatrix ==
+      0055A74A  add     ecx, 388h; Facing
+      0055A799  add     ecx, 388h; Facing
+   == LocomotionClass_ILocomotion_ShadowMatrix ==
+      0055A82E  add     ecx, 388h; Facing
+      0055A886  add     ecx, 388h; Facing
+   == MapClass_Init_CellRevealRelations ==
+      00564A64  mov     CellRevealRelations_table+388h, ecx
+   == MapClass_Init_CellSpread ==
+      00562CC9  mov     CellSpread_Table+388h, edx
+   == Multiplay_LogToSYNC_NOMPDEBUG ==
+      0064E344  lea     ebx, [edi+388h]
+      0064E5BB  lea     ebx, [edi+388h]
+      0064E902  lea     ebx, [edi+388h]
+      0064EAFF  lea     ebx, [edi+388h]
+   == Negotiate_Scenario_Transfer ==
+      00795CFF  push    1388h
+   == Networking_RespondToEvent ==
+      004C6E82  lea     eax, [esp+388h+var_2A0]
+      004C6FC9  mov     [esp+388h+var_34C.X], ax
+   == ParasiteClass_PointerGotInvalid ==
+      0062A341  add     ecx, 388h; Facing
+   == ParasiteClass_Update ==
+      0062A110  add     ecx, 388h; Facing
+   == Parasite_ExitUnit ==
+      0062A4C0  add     ecx, 388h; Facing
+      0062A4E5  add     ecx, 388h; Facing
+      0062A50A  add     ecx, 388h; Facing
+   == ParticleSystemClass_Update_Fire ==
+      0062FA2E  lea     ecx, [ebx+388h]; Facing
+      0062FAD9  lea     ecx, [ebx+388h]; Facing
+   == RocketLocomotionClass_DoStuff ==
+      0066312F  add     ecx, 388h; Facing
+   == RocketLocomotionClass_ILocomotion_DrawMatrix ==
+      0066348A  add     ecx, 388h; Facing
+      0066356F  add     ecx, 388h; Facing
+   == RocketLocomotionClass_ILocomotion_Process ==
+      00662C9C  add     ecx, 388h; Facing
+      00662E83  add     ecx, 388h; Facing
+   == RulesClass_CTOR ==
+      00665B6A  mov     [esi+388h], edi
+      006668F2  mov     dword ptr [esi+0DFCh], 1388h
+      00666E6A  mov     dword ptr [esi+1190h], 1388h
+      006670DE  mov     [esi+1388h], edi
+   == ShipLocomotionClass_blah ==
+      006A209F  add     ecx, 388h; Facing
+      006A212E  add     ecx, 388h; Facing
+      006A2A5F  add     ecx, 388h; Facing
+   == SlaveManagerClass_ReleaseSlaves ==
+      006B0BD1  call    dword ptr [edx+388h]
+   == Team_SetFacing ==
+      006EDCEC  lea     ecx, [esi+388h]; Facing
+   == TechnoClass_2A8 ==
+      004E0155  add     ecx, 388h; Facing
+   == TechnoClass_300 ==
+      006F3DE6  lea     ecx, [ebx+388h]; Facing
+   == TechnoClass_3D8 ==
+      0070B30F  lea     ecx, [esi+388h]; Facing
+   == TechnoClass_Fire ==
+      006FEACD  lea     ecx, [this+388h]; Facing
+   == TechnoClass_Get_ZAdjustment ==
+      0070457B  add     esi, 388h
+   == TechnoClass_PredictTargetCoords ==
+      0070BDBA  lea     ecx, [ebx+388h]; Facing
+   == TechnoTypeClass_GetCRC ==
+      007172C0  mov     eax, [esi+388h]
+   == TechnoTypeClass_LoadFromINI ==
+      007128F0  mov     edx, [esp+388h+var_360]
+      007128F4  lea     eax, [esp+388h+fallback]
+      00712923  mov     dword ptr [esp+388h+section], ecx
+      00712961  mov     dword ptr [esp+388h+section], ecx
+      00713F0E  lea     ecx, [esp+388h+a1]
+      007140BD  mov     eax, [esp+388h+var_360]
+      007140C1  lea     ecx, [esp+388h+a1]
+      007154F3  lea     eax, [esp+388h+a1]
+      00715577  mov     Rules_INI, [esp+388h+INI]
+      007157CA  lea     edx, [esp+388h+filename]
+      00715A13  lea     ecx, [esp+388h+filename]
+      00715AE0  lea     ecx, [esp+388h+filename]
+   == TeleportLocomotionClass_ILocomotion_7192C0 ==
+      007192D4  add     ecx, 388h; Facing
+   == Thread_Mouse_Create ==
+      007B85E0  push    1388h; dwMilliseconds
+   == UnitClass_DrawAt ==
+      0073D122  lea     ebp, [esi+388h]
+   == UnitClass_GetFacing ==
+      00746E61  add     ecx, 388h; Facing
+   == UnitClass_ReceiveDamage ==
+      007380C9  lea     ecx, [esi+388h]; Facing
+   == UnitClass_ReceivedRadioCommand ==
+      007376CE  lea     ecx, [esi+388h]; Facing
+   == UnitClass_SaveToMapINIList ==
+      007437A8  lea     ecx, [esi+388h]; Facing
+   == UnitClass_Scatter ==
+      00743B08  lea     edi, [ebp+388h]
+   == UnitClass_SetDestination ==
+      00741A05  lea     ecx, [ebp+388h]; Facing
+   == UnitClass_Try_To_Deploy ==
+      007395D2  lea     ecx, [ebp+388h]; Facing
+   == UnitClass_Unload ==
+      0073D8E0  lea     ecx, [esi+388h]; Facing
+   == VeinholeMonsterClass_Initialize2 ==
+      0074E1E8  mov     dword ptr [esp+3Ch], 1388h
+   == W?Active_Add$:HouseClass$n(pnx$TechnoClass$$)v ==
+      004FFAAA  lea     eax, [edi+5388h]
+   == W?Active_Remove$:HouseClass$n(pnx$TechnoClass$$)v ==
+      004FF9DA  lea     eax, [edi+5388h]
+   == W?Desired_Load_Dir$:UnitClass$n.x(pn$ObjectClass$$rns)$DirType$$ ==
+      00740B9F  lea     ecx, [edi+388h]; Facing
+      00740DCF  lea     ecx, [edi+388h]; Facing
+   == W?Firing_AI$:InfantryClass$n()v ==
+      0052091F  lea     ecx, [ebp+388h]; Facing
+   == W?Unlimbo$:TechnoClass$n(ul$DirType$$)i ==
+      006F6D9F  lea     ecx, [esi+388h]; Facing
+   == WalkLocomotionClass_ILocomotion_DoTurn ==
+      0075AE14  add     ecx, 388h; Facing
+   == WinMain ==
+      007B86ED  push    1388h; dwMilliseconds
+   == sub_402C70 ==
+      00402D9F  mov     dword ptr [ebx+150h], 1388h
+   == sub_403820 ==
+      00403845  mov     dword ptr [ecx+40h], 1388h
+   == sub_407780 ==
+      004077C2  push    1388h; dwMilliseconds
+   == sub_409FF0 ==
+      0040A055  push    1388h; dwMilliseconds
+   == sub_429830 ==
+      004298C9  lea     ecx, [edi+388h]; Facing
+   == sub_429A90 ==
+      00429C97  lea     ecx, [ebx+388h]; Facing
+   == sub_42ACF0 ==
+      0042AD35  lea     ecx, [esi+388h]; Facing
+   == sub_436A40 ==
+      00436A75  lea     ecx, [eax+388h]; Facing
+   == sub_43EE50 ==
+      0043EE70  lea     ecx, [esi+388h]; Facing
+   == sub_452BB0 ==
+      00452CFD  lea     ecx, [esi+388h]; Facing
+   == sub_453240 ==
+      00453286  lea     ecx, [ebp+388h]; Facing
+   == sub_458810 ==
+      0045886F  lea     ecx, [esi+388h]; Facing
+   == sub_458E50 ==
+      004590E4  lea     ecx, [ebp+388h]; Facing
+      0045921A  lea     ecx, [ebp+388h]; Facing
+   == sub_46D650 ==
+      0046D786  mov     eax, [esi-388h]
+   == sub_4B0500 ==
+      004B0775  add     ecx, 388h; Facing
+   == sub_4B0EF0 ==
+      004B0F04  add     ecx, 388h; Facing
+   == sub_4B0F20 ==
+      004B1ABB  add     ecx, 388h; Facing
+   == sub_4B6040 ==
+      004B618D  add     ecx, 388h; Facing
+   == sub_4CD600 ==
+      004CDA62  lea     ecx, [eax+388h]; Facing
+   == sub_4CE5A0 ==
+      004CE5D5  add     ecx, 388h; Facing
+      004CE5FB  add     ecx, 388h; Facing
+   == sub_4CE680 ==
+      004CE773  add     ecx, 388h
+      004CE804  add     ecx, 388h; Facing
+   == sub_4CEFB0 ==
+      004CF224  add     ecx, 388h; Facing
+      004CF285  add     ecx, 388h; Facing
+   == sub_4CF950 ==
+      004CFA1E  add     ecx, 388h; Facing
+   == sub_513F40 ==
+      00513FEA  add     ecx, 388h; Facing
+      00514042  add     ecx, 388h; Facing
+   == sub_514310 ==
+      00514AED  add     ecx, 388h; Facing
+      00514B13  add     ecx, 388h; Facing
+   == sub_515ED0 ==
+      005162A3  add     ecx, 388h; Facing
+   == sub_516370 ==
+      00516384  add     ecx, 388h; Facing
+   == sub_518D80 ==
+      00518F46  lea     ecx, [ebp+388h]; Facing
+   == sub_5355D0 ==
+      00535948  cmp     edi, 1388h
+   == sub_536350 ==
+      0053638E  cmp     edx, 1388h
+   == sub_53E1D0 ==
+      0053E32F  push    1388h; dwMilliseconds
+   == sub_54B6E0 ==
+      0054B6F4  add     ecx, 388h; Facing
+   == sub_54B980 ==
+      0054B9B2  add     ecx, 388h; Facing
+   == sub_54D0F0 ==
+      0054D68C  add     ecx, 388h; Facing
+   == sub_5B0170 ==
+      005B0184  add     ecx, 388h; Facing
+   == sub_5B01C0 ==
+      005B01D1  add     ecx, 388h; Facing
+      005B10FD  add     ecx, 388h; Facing
+      005B1530  add     ecx, 388h; Facing
+   == sub_5B19E0 ==
+      005B19E8  add     ecx, 388h; Facing
+   == sub_5E7920 ==
+      005E792A  push    1388h
+   == sub_5E7EB0 ==
+      005E812F  push    1388h
+   == sub_608070 ==
+      0060822B  cmp     eax, 1388h
+   == sub_610CA0 ==
+      006115EC  mov     ecx, [esp+388h+lpPrevWndFunc+2]
+      00612111  mov     [esp+388h+var_344+4], edi
+      00612119  mov     [esp+388h+Memory], edi
+      00612765  mov     [esp+388h+var_344+4], ebp
+      0061276D  mov     [esp+388h+Memory], ebp
+      006127F2  mov     [esp+388h+var_34C], esi
+   == sub_629720 ==
+      00629730  add     ecx, 388h; Facing
+   == sub_62AC30 ==
+      0062AD22  add     ecx, 388h; Facing
+   == sub_64DAB0 ==
+      0064DAED  lea     ecx, [eax+388h]; Facing
+      0064DB8F  lea     ecx, [edi+388h]; Facing
+      0064DC4D  lea     ecx, [eax+388h]; Facing
+   == sub_650A90 ==
+      00650D7E  lea     ecx, [edi+388h]; Facing
+      00650F53  lea     ecx, [edi+388h]; Facing
+      006511C1  lea     ecx, [edi+388h]; Facing
+      00651395  lea     ecx, [edi+388h]; Facing
+   == sub_6620F0 ==
+      0066213D  add     ecx, 388h; Facing
+   == sub_69F330 ==
+      0069F338  add     ecx, 388h; Facing
+   == sub_69FC10 ==
+      0069FE22  add     ecx, 388h; Facing
+   == sub_6A05C0 ==
+      006A05D4  add     ecx, 388h; Facing
+   == sub_6A05F0 ==
+      006A10F7  add     ecx, 388h; Facing
+   == sub_707759 ==
+      00707771  lea     ecx, [esi+388h]; Facing
+   == sub_7291F0 ==
+      007291F9  add     ecx, 388h; Facing
+      0072926F  add     ecx, 388h; Facing
+   == sub_729E50 ==
+      00729F11  add     ecx, 388h; Facing
+   == sub_72A0E0 ==
+      0072A0F4  add     ecx, 388h; Facing
+   == sub_7359F0 ==
+      0073609A  lea     ecx, [esi+388h]; Facing
+   == sub_736990 ==
+      00736A0E  lea     ecx, [esi+388h]; Facing
+      00736A66  lea     edi, [esi+388h]
+      00736BCF  lea     ecx, [esi+388h]; Facing
+   == sub_736DF0 ==
+      00736FF6  lea     edi, [esi+388h]
+   == sub_73F0A0 ==
+      0073F879  lea     ecx, [esi+388h]; Facing
+      0073F8E4  lea     ecx, [ebx+388h]; Facing
+      0073F8FD  lea     ecx, [esi+388h]; Facing
+   == sub_77DC90 ==
+      0077DDD1  push    1388h; dwMilliseconds
+   == sub_78A8F0 ==
+      0078A950  lea     eax, [esp+388h+Str2]
+   == sub_78F951 ==
+      007914FA  push    1388h; uElapse
+   == sub_796710 ==
+      0079691B  push    1388h
+   == sub_796960 ==
+      00796A39  push    1388h
+   共 145 个函数涉及 388h
+

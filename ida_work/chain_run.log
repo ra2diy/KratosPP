@@ -1,0 +1,9 @@
+=== 链式影响分析（序：Ares -> Kratos -> Phobos）===
+  必定掐断（全路径跳转，Phobos 永不执行）: 30
+  条件掐断（分支跳转，取决于门控/运行时）: 14
+  其中「故意接管」（名字/注释提到 Phobos）: 4
+  安全（全 return 0，Phobos 正常执行）: 92
+  无显式 return（等价续链）: 0
+  静态改写同址（Phobos 后写 => 覆盖 Kratos）: 8
+回填 docs/Hook地址冲突清单.md: D
+写出: ida_work/hook_chain.tsv

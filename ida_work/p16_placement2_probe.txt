@@ -1,0 +1,170 @@
+############ A) FootClass_UpdatePosition 的 a2!=2 分支 (0x4D8DFD..0x4D8F90) ############
+  004D8DFD  xor     ebx, ebx
+  004D8DFF  mov     eax, [esi+520h]
+  004D8E05  cmp     eax, 0FFFFFFFFh
+  004D8E08  jz      loc_4D8F1D
+  004D8E0E  mov     ecx, HouseClass_PlayerPtr
+  004D8E14  movsx   edx, byte ptr [esi+686h]
+  004D8E1B  mov     eax, [ecx+eax*4+210h]
+  004D8E22  push    edx; idx
+  004D8E23  mov     ecx, eax; this
+  004D8E25  call    WaypointPathClass_GetWaypoint
+  004D8E2A  mov     ecx, eax
+  004D8E2C  cmp     ecx, ebx
+  004D8E2E  jz      loc_4D8EE4
+  004D8E34  mov     eax, [ecx]
+  004D8E36  cdq
+  004D8E37  and     edx, 0FFh
+  004D8E3D  add     eax, edx
+  004D8E3F  sar     eax, 8
+  004D8E42  mov     word ptr [esp+40h+where], ax
+  004D8E47  mov     eax, [ecx+4]
+  004D8E4A  cdq
+  004D8E4B  and     edx, 0FFh
+  004D8E51  add     eax, edx
+  004D8E53  sar     eax, 8
+  004D8E56  mov     word ptr [esp+40h+where+2], ax
+  004D8E5B  mov     eax, dword_8809A4
+  004D8E60  mov     edx, [esp+40h+where]
+  004D8E64  cmp     eax, ecx
+  004D8E66  mov     [esp+40h+where], edx
+  004D8E6A  jnz     short loc_4D8EA0
+  004D8E6C  mov     eax, dword_8809A8
+  004D8E71  cdq
+  004D8E72  and     edx, 0FFh
+  004D8E78  add     eax, edx
+  004D8E7A  sar     eax, 8
+  004D8E7D  mov     word ptr [esp+40h+where], ax
+  004D8E82  mov     eax, dword_8809AC
+  004D8E87  cdq
+  004D8E88  and     edx, 0FFh
+  004D8E8E  add     eax, edx
+  004D8E90  sar     eax, 8
+  004D8E93  mov     word ptr [esp+40h+where+2], ax
+  004D8E98  mov     edx, [esp+40h+where]
+  004D8E9C  mov     [esp+40h+where], edx
+  004D8EA0  mov     ax, [esi+524h]
+  004D8EA7  add     ax, dx
+  004D8EAA  mov     dx, [esi+526h]
+  004D8EB1  add     dx, word ptr [esp+40h+where+2]
+  004D8EB6  cmp     ax, [esi+528h]
+  004D8EBD  jnz     short loc_4D8EC8
+  004D8EBF  cmp     dx, [esi+52Ah]
+  004D8EC6  jz      short loc_4D8F1D
+  004D8EC8  push    ecx; wpt
+  004D8EC9  mov     ecx, esi; this
+  004D8ECB  call    FootClass_ExecutePlanningWaypoint
+  004D8ED0  mov     edx, [esp+40h+a2]
+  004D8ED4  mov     ecx, esi; this
+  004D8ED6  push    edx; a2
+  004D8ED7  call    TechnoClass::Per_Cell_Process
+  004D8EDC  pop     esi
+  004D8EDD  pop     ebx
+  004D8EDE  add     esp, 38h
+  004D8EE1  retn    4
+  004D8EE4  mov     word ptr [esp+40h+where], bx
+  004D8EE9  mov     word ptr [esp+40h+where+2], bx
+  004D8EEE  mov     eax, [esp+40h+where]
+  004D8EF2  mov     word ptr [esp+40h+where], bx
+  004D8EF7  mov     word ptr [esp+40h+where+2], bx
+  004D8EFC  mov     ecx, [esp+40h+where]
+  004D8F00  mov     dword ptr [esi+520h], 0FFFFFFFFh
+  004D8F0A  mov     byte ptr [esi+686h], 0
+  004D8F11  mov     [esi+524h], eax
+  004D8F17  mov     [esi+528h], ecx
+  004D8F1D  mov     edx, [esp+40h+a2]
+  004D8F21  mov     ecx, esi; this
+  004D8F23  push    edx; a2
+  004D8F24  call    TechnoClass::Per_Cell_Process
+  004D8F29  pop     esi
+  004D8F2A  pop     ebx
+  004D8F2B  add     esp, 38h
+  004D8F2E  retn    4
+  004D8F31  db 0Fh dup(90h)
+  004D8F40  mov     edx, [esp+a2]
+  004D8F44  push    esi
+  004D8F45  push    edi
+  004D8F46  mov     edi, [esp+8+a4]
+  004D8F4A  mov     esi, ecx
+  004D8F4C  push    edi; a4
+  004D8F4D  mov     ecx, [esp+0Ch+a3]
+  004D8F51  mov     eax, [esi+5A4h]
+  004D8F57  push    ecx; a3
+  004D8F58  push    edx; a2
+  004D8F59  mov     ecx, esi; this
+  004D8F5B  mov     [esi+5A8h], eax
+  004D8F61  call    TechnoClass::Override_Mission
+  004D8F66  mov     eax, [esi]
+  004D8F68  push    1
+  004D8F6A  push    edi
+  004D8F6B  mov     ecx, esi
+  004D8F6D  call    dword ptr [eax+480h]
+  004D8F73  pop     edi
+  004D8F74  pop     esi
+  004D8F75  retn    0Ch
+  004D8F78  db 8 dup(90h)
+  004D8F80  push    esi
+  004D8F81  mov     esi, ecx
+  004D8F83  call    TechnoClass::Restore_Mission
+  004D8F88  test    al, al
+  004D8F8A  jz      short loc_4D8FA3
+  004D8F8C  mov     ecx, [esi+5A8h]
+   -- 调用 --
+      004D8E25 call -> 00763980  WaypointPathClass_GetWaypoint
+      004D8ECB call -> 004DC8C0  FootClass_ExecutePlanningWaypoint
+      004D8ED7 call -> 006F5090  W?Per_Cell_Process$:TechnoClass$n($PCPType$$)v
+      004D8F24 call -> 006F5090  W?Per_Cell_Process$:TechnoClass$n($PCPType$$)v
+      004D8F61 call -> 007013A0  W?Override_Mission$:TechnoClass$n($MissionType$$ll)v
+      004D8F6D call -> 00000480  
+      004D8F83 call -> 007013E0  W?Restore_Mission$:TechnoClass$n()i
+
+############ B) ObjectClass_UpdatePosition 0x4264B0 (基类默认) ############
+   end=0x004264B3 size=3
+  004264B0  retn    4
+   -- 调用 --
+
+############ C) 谁调用 UpdatePosition(+0x18C) —— 全 .text 扫描 call [reg+18Ch] ############
+   004B08A4  call    dword ptr [eax+18Ch]                   in sub_4B0500
+   004B1CFD  call    dword ptr [edx+18Ch]                   in sub_4B0F20
+   004B220F  call    dword ptr [edx+18Ch]                   in sub_4B0F20
+   005146CA  call    dword ptr [eax+18Ch]                   in sub_514310
+   00515A1C  call    dword ptr [edx+18Ch]                   in sub_514F70
+   0051BA9B  call    dword ptr [eax+18Ch]; spd = 0x94       in InfantryClass_UpdateInTunnel
+   0054C8F0  call    dword ptr [eax+18Ch]                   in sub_54C550
+   005B136C  call    dword ptr [edx+18Ch]                   in sub_5B01C0
+   005F3F8D  call    dword ptr [eax+18Ch]                   in ObjectClass_Update
+   0069FF6B  call    dword ptr [eax+18Ch]                   in sub_69FC10
+   006A1340  call    dword ptr [edx+18Ch]                   in sub_6A05F0
+   006A1852  call    dword ptr [edx+18Ch]                   in sub_6A05F0
+   0071971C  call    dword ptr [eax+18Ch]                   in TeleportLocomotionClass_ILocomotion_Process
+   00719ADE  call    dword ptr [edx+18Ch]                   in TeleportLocomotionClass_ILocomotion_Process
+   00729086  call    dword ptr [eax+18Ch]                   in sub_728E30
+   00729AF1  call    dword ptr [eax+18Ch]                   in ?
+   0073603F  call    dword ptr [edx+18Ch]                   in sub_7359F0
+   0075BE3C  call    dword ptr [eax+18Ch]                   in sub_75AEC0
+   共 18 处
+
+############ D) 谁调用 FootClass_UpdatePosition / ObjectClass_UpdatePosition ############
+   -- 0x004D85D0 --
+      from 0051A9FC type=17 in InfantryClass_UpdatePosition
+      from 0073A4FB type=17 in W?Per_Cell_Process$:UnitClass$n($PCPType$$)v
+      from 0073B0A0 type=17 in W?Per_Cell_Process$:UnitClass$n($PCPType$$)v
+      from 007E2430 type=1 in ?
+      from 007E8C94 type=1 in ?
+   -- 0x004264B0 --
+      from 007E3354 type=1 in ?
+      from 007E3AD0 type=1 in ?
+      from 007E46E4 type=1 in ?
+      from 007EC258 type=1 in ?
+      from 007EDCC0 type=1 in ?
+      from 007EF060 type=1 in ?
+      from 007EF3D4 type=1 in ?
+      from 007EF954 type=1 in ?
+      from 007EFB9C type=1 in ?
+      from 007F0508 type=1 in ?
+      from 007F32FC type=1 in ?
+      from 007F522C type=1 in ?
+      from 007F6318 type=1 in ?
+      from 007F66A8 type=1 in ?
+      from 007F6BF4 type=1 in ?
+

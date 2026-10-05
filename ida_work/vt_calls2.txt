@@ -1,0 +1,13 @@
+.text = 0x401000-0x7E1000
+=== indirect calls with displacement 0x140/0x144/0x148 ===
+  0x00447091  call dword ptr [edx+148h]   in BuildingClass_19C
+  0x004AE844  call [edx+vt_TechnoClass.r.m.o.Object_EvalAction]   in sub_4AE750
+  0x004AE8C4  call dword ptr [edx+140h]   in sub_4AE750
+  0x004AE927  call dword ptr [ebp+140h]   in sub_4AE750
+  0x004AE97C  call dword ptr [ebp+140h]   in sub_4AE750
+  0x004C739F  call dword ptr [edx+148h]   in Networking_RespondToEvent
+  0x004DCA93  call dword ptr [edx+144h]   in FootClass_ExecutePlanningWaypoint
+  0x004DCDCF  call dword ptr [eax+140h]   in FootClass_ExecutePlanningWaypoint
+  0x004DCDFF  call dword ptr [edx+140h]   in FootClass_ExecutePlanningWaypoint
+  0x0051A5D0  call dword ptr [ebx+148h]   in InfantryClass_UpdatePosition
+  0x005F5486  call [edx+vt_TechnoClass.r.m.o.BlinkDisguise]   in ObjectClass_ReceiveDamage

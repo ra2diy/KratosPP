@@ -1,0 +1,64 @@
+=== Resolve key hook functions ===
+  0x007388FD -> UnitClass_ClickedMission [0x738890-0x73890D]
+  0x0074041B -> W?What_Action$:UnitClass$n.x(pnx$ObjectClass$$)$ActionType$$ [0x73FD50-0x7404AA]
+  0x00730DEB -> GuardCommandClass_Execute [0x730D60-0x730E95]
+  0x00730E56 -> GuardCommandClass_Execute [0x730D60-0x730E95]
+  0x00730EEB -> StopCommandClass_Execute [0x730EA0-0x730F21]
+  0x00707000 -> TechnoClass_706ED0 [0x706ED0-0x70727A]
+
+=== Functions in 0x7F5000-0x7F7000 ===
+
+=== Disasm 0x7F5D70-0x7F5DD0 (ClickedMission caller) ===
+0x007F5D70  dd offset TechnoClass::Exit_Object
+0x007F5D74  dd offset sub_73B0B0
+0x007F5D78  dd offset TechnoClass_108
+0x007F5D7C  dd offset TechnoClass_GetPosition
+0x007F5D80  dd offset TechnoClass_DrawExtras
+0x007F5D84  dd offset UnitClass_DrawAt
+0x007F5D88  dd offset ObjectClass_Special_Draw_It
+0x007F5D8C  dd offset TechnoClass_11C
+0x007F5D90  dd offset TechnoClass_See
+0x007F5D94  dd offset FootClass_SetLayer
+0x007F5D98  dd offset TechnoClass_128
+0x007F5D9C  dd offset ObjectClass_12C
+0x007F5DA0  dd offset ObjectClass_DrawRadialIndicator
+0x007F5DA4  dd offset TechnoClass_134
+0x007F5DA8  dd offset FootClass_138
+0x007F5DAC  dd offset TechnoClass_CanBeSelectedNow
+0x007F5DB0  dd offset UnitClass_140
+0x007F5DB4  dd offset UnitClass_ClickedMission
+0x007F5DB8  dd offset TechnoClass_BlinkDisguise
+0x007F5DBC  dd offset TechnoClass_14C
+0x007F5DC0  dd offset ObjectClass_Deselect
+0x007F5DC4  dd offset FootClass_IronCurtain
+0x007F5DC8  dd offset TechnoClass_StopAirstrikeTimer
+0x007F5DCC  dd offset TechnoClass_StartAirstrikeTimer
+
+=== Disasm 0x7F5CA0-0x7F5D00 (What_Action caller) ===
+0x007F5CA0  dd offset UnitClass_GetSize
+0x007F5CA4  dd offset UnitClass_GetCRC
+0x007F5CA8  dd offset TechnoClass_38
+0x007F5CAC  dd offset TechnoClass_3C
+0x007F5CB0  dd offset AbstractClass_GetArrayIndex
+0x007F5CB4  dd offset TechnoClass_IsDead
+0x007F5CB8  dd offset ObjectClass::Center_Coord
+0x007F5CBC  dd offset FootClass_GetCoords_unknown1
+0x007F5CC0  dd offset TechnoClass_OnFloor
+0x007F5CC4  dd offset FootClass_InAir
+0x007F5CC8  dd offset AbstractClass_GetCoords_1arg
+0x007F5CCC  dd offset UnitClass_Update
+0x007F5CD0  dd offset TechnoClass_60
+0x007F5CD4  dd offset TechnoClass_64
+0x007F5CD8  dd offset FootClass::Visual_Character
+0x007F5CDC  dd offset FootClass_GetImage
+0x007F5CE0  dd offset UnitClass::What_Action
+0x007F5CE4  dd offset UnitClass::What_Action
+0x007F5CE8  dd offset FootClass_InWhichLayer
+0x007F5CEC  dd offset TechnoClass_NotSubmerged
+0x007F5CF0  dd offset UnitClass_IsARealVehicle
+0x007F5CF4  dd offset TechnoClass_84
+0x007F5CF8  dd offset UnitClass_GetType
+0x007F5CFC  dd offset TechnoClass_GetOwners
+
+Probe 0x7F5DB4 nearest enclosing func start = 0x7E01FB (sub_7E01FB)
+Probe 0x7F5CE4 nearest enclosing func start = 0x7E01FB (sub_7E01FB)

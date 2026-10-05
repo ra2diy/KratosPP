@@ -202,6 +202,12 @@ void StandEffect::UpdateStateBullet()
 
 void StandEffect::UpdateStateTechno(bool masterIsDead)
 {
+	// 主身已 UnInit：pTechno 悬空，任何读取都是未定义行为（防御性检查，
+	// 正常情况下主身销毁后本效果的派发源也已随之销毁，不会再进入这里）。
+	if (_masterDeleted || !pTechno)
+	{
+		return;
+	}
 	if (pTechno->IsSinking && Data->RemoveAtSinking)
 	{
 		ExplodesOrDisappear(true);
@@ -220,10 +226,44 @@ void StandEffect::UpdateStateTechno(bool masterIsDead)
 		pStand->SetOwningHouse(pTechno->Owner);
 	}
 	// synch state
-	pStand->IsSinking = pTechno->IsSinking;
-	pStand->unknown_3CA = pTechno->unknown_3CA;
+	// ★ 替身不得进入引擎的溺水状态（2026-10-05 沉船 C0000005 根因修复）：
+	// 同步 IsSinking/unknown_3CA 会让引擎把替身当成正在沉没的单位，
+	// 走自己的溺水终结逻辑（0x70B570 倾斜积分器每帧 ARF±0.01 与 SameTilter 竞态、
+	// 0x707140 沉没计深，到达删除深度即 UnInit 替身）。
+	// 替身随 FLH 锚点沉得比主身更深，会先于主身到达删除深度被引擎提前删除，
+	// 随后渲染/逻辑帧对 pStand 空指针解引用 —— 这就是沉船崩溃的直接原因。
+	// 替身的姿态由 SameTilter 单向驱动、位置由 FLH 锚点驱动，状态保持"正常存活"，
+	// 从创建到主身销毁全程由本效果管理（主身 UnInit 时的收尾见 OnTechnoDelete）。
+	pStand->IsSinking = false;
+	pStand->unknown_3CA = 0;
 	pStand->InLimbo = pTechno->InLimbo;
 	pStand->OnBridge = pTechno->OnBridge;
+	// ★ 主身沉没/坠落期间，替身应处于"死亡"状态（2026-10-05）：
+	// 不再同步 IsSinking 给替身（否则引擎会把它当溺水单位提前 UnInit，见上文），
+	// 改由这里显式进入"行为死亡"：清空目标、不同步任务、强制 Sleep，
+	// 只保留位置/姿态跟随。替身不在任何格子内（上方 UpdatePlacement(Remove) 保持
+	// IsOnMap=0），引擎的点选、自动索敌、溅射伤害均走格子枚举 ——
+	// 因此替身天然不可被选中、不可被索敌、不可被溅射伤害，加上此处的
+	// Sleep + 清目标即等价于旧 IsSinking 同步所提供的"死亡"语义。
+	if (MasterGoingDown())
+	{
+		ClearAllTarget(pStand);
+		onStopCommand = false;
+		pStand->QueueMission(Mission::Sleep, true);
+		return;
+	}
+	if (Data->SameTilter && !Data->IsTrain)
+	{
+		// Rocking*PerFrame 是「每帧步进量（角速度）」，不是角度（详见 OnGScreenRender 的说明）。
+		// 引擎的倾斜积分器 TechnoClass vt+0x41C(0x70B570) 每个逻辑帧都会跑一次
+		// （TechnoClass::Update 0x6FA236，IsVoxel 为真时）。
+		// 这里在逻辑帧也清零一次，保证即使某个渲染帧没有派发事件，
+		// 替身的倾斜也不会因引擎积分而漂移 —— 替身的角度只由主身单向驱动。
+		// 注意：这两个字段虽在 TechnoClass::GetCRC 里，但不在每帧锁步校验值
+		// sub_64DAB0 的哈希输入中（那里只有 Location.X/Y 与朝向），写常量 0 两端必然一致。
+		pStand->RockingForwardsPerFrame = 0.0f;
+		pStand->RockingSidewaysPerFrame = 0.0f;
+	}
 	if (pStand->Owner == pTechno->Owner)
 	{
 		// 同阵营限定
@@ -523,10 +563,21 @@ void StandEffect::UpdateLocation(LocationMark locationMark)
 
 void StandEffect::SetLocation(CoordStruct location)
 {
+	if (!pStand || !pTechno)
+	{
+		return;
+	}
 	pStand->SetLocation(location);
 	if (!Data->IsTrain && Data->SameMoving && Data->StickOnFloor
 		&& !pStand->GetTechnoType()->JumpJet
 		&& pTechno->GetHeight() <= 0
+		// 主身正在下沉 / 坠毁时不要强制贴地：此时主身的 Z 由沉没/坠落逻辑支配
+		// （引擎在 IsSinking 时每帧让 AngleRotatedForwards ±0.01 并持续下沉），
+		// 强行把替身压到所在格子的地面高度会让它与主身分离
+		// —— 典型现象：战列舰下沉时炮塔掉到水面、脱离船身。
+		// 该判据是「主身已同步状态」的纯函数，两端一致；
+		// 且 sub_64DAB0 的锁步校验只用 Location.X/Y（不用 Z），改 Z 不会造成失同步。
+		&& !pTechno->IsSinking && !pTechno->IsCrashing
 		)
 	{
 		pStand->SetHeight(0);
@@ -596,6 +647,21 @@ void StandEffect::OnTechnoDelete(EventSystem* sender, Event e, void* args)
 	{
 		pStand = nullptr;
 	}
+	else if (pTechno && args == pTechno)
+	{
+		// ★ 主身被引擎 UnInit（沉没/坠毁动画结束、被摧毁、变卖等）：
+		// 锚点消失，替身必须随之收尾。旧行为里替身靠被同步的 IsSinking
+		// 由引擎自行沉没删除；现在替身全程由本效果管理（不再进入引擎
+		// 溺水状态），若不在此显式移除，替身会以 Mark(Up)+Sleep 状态
+		// 残留在渲染层里永远漂浮在原地。
+		// peaceful=true：走替身自身的 DestroySelf 机制（与 ExplodesOrDisappear
+		// 其余调用点一致），不在主身 UnInit 的重入窗口里直接 UnInit。
+		_masterDeleted = true;
+		if (pStand)
+		{
+			ExplodesOrDisappear(true);
+		}
+	}
 }
 
 void StandEffect::ExtChanged()
@@ -630,9 +696,24 @@ void StandEffect::OnRecover()
 	OnStart();
 }
 
+bool StandEffect::MasterGoingDown()
+{
+	// ★ 两个防护缺一不可（2026-10-05 沉船 C0000005 修复）：
+	// 1) pStand 为空 —— 替身已被删除（无论何种原因）时必须返回 false，
+	//    让 IsAlive/OnGScreenRender/OnUpdate/OnWarpUpdate 的门控正常早退；
+	//    否则放行后的代码会对 pStand 空指针解引用（EAX=0 崩溃的直接成因）。
+	// 2) !_masterDeleted —— 主身已 UnInit，pTechno 是悬空指针，不得再读。
+	return pStand && !_masterDeleted && pTechno
+		&& !Data->RemoveAtSinking && (pTechno->IsSinking || pTechno->IsCrashing);
+}
+
 bool StandEffect::IsAlive()
 {
-	if (IsDead(pStand))
+	// 主身沉没/坠落期间替身被同步了 IsSinking/IsCrashing（UpdateStateTechno 第 246 行），
+	// IsDead()（Status.cpp:157 把 IsSinking/IsCrashing 视同死亡）会把替身误判为死亡。
+	// 若在此返回 false，AttachEffect 的渲染派发（OnGScreenRender 1471 行 ae->IsAlive()）
+	// 会把 UpdateStandLocation + OnGScreenRender 全部跳过 —— 沉没动画期间替身定位完全停摆。
+	if (IsDead(pStand) && !MasterGoingDown())
 	{
 		return _pause;
 	}
@@ -641,89 +722,109 @@ bool StandEffect::IsAlive()
 
 void StandEffect::OnGScreenRender(CoordStruct location)
 {
-	if (IsDead(pStand) || AE->OwnerIsDead())
+	// ★ 主身沉没/坠落期间不得早退：OwnerIsDead() 在主身血量归零（开始沉没）那一刻
+	//   即被 IsDead(pTechno)（把 IsSinking 视同死亡）置真并永久缓存；
+	//   替身自身也因被同步 IsSinking 而被 IsDead 误判。
+	//   若此处返回，替身的 Location 冻结在水面，之后替身靠引擎自身的
+	//   溺水逻辑各自下沉（与主身脱钩）—— 正是"三个对象都在水面各自下沉"的根源。
+	if ((IsDead(pStand) || AE->OwnerIsDead()) && !MasterGoingDown())
 	{
 		return;
 	}
-	if (!standIsBuilding && IsFoot())
+	if (standIsBuilding || !IsFoot() || Data->IsTrain || !Data->SameTilter)
 	{
-		// synch tilt
-		if (!Data->IsTrain)
-		{
-			if (Data->SameTilter)
-			{
-				// Stand same tilter
-				// rocker Squid capture ship
-				// pStand->AngleRotatedForwards = pMaster->AngleRotatedForwards;
-				// pStand->AngleRotatedSideways = pMaster->AngleRotatedSideways;
+		return;
+	}
 
-				if (Data->SameTilter)
-				{
-					float forwards = pTechno->AngleRotatedForwards;
-					float sideways = pTechno->AngleRotatedSideways;
-					float t = 0.0;
-					// 计算方向
-					switch (Data->Offset.Direction)
-					{
-					case 0: // 正前 N
-						break;
-					case 2: // 前右 NE
-						break;
-					case 4: // 正右 E
-						t = forwards;
-						forwards = -sideways;
-						sideways = t;
-						break;
-					case 6: // 右后 SE
-						break;
-					case 8: // 正后 S
-						sideways = -sideways;
-						break;
-					case 10: // 后左 SW
-					case 12: // 正左 W
-						t = forwards;
-						forwards = sideways;
-						sideways = -t;
-						break;
-					case 14: // 前左 NW
-						break;
-					}
-					pStand->AngleRotatedForwards = forwards;
-					pStand->AngleRotatedSideways = sideways;
-					pStand->RockingForwardsPerFrame = forwards;
-					pStand->RockingSidewaysPerFrame = sideways;
+	// ============================================================
+	// 同步倾斜（Tilt）
+	//
+	// 引擎模型（IDA 实证，gamemd 0x70B570 = TechnoClass 虚表槽 +0x41C）：
+	//   1) 每个逻辑帧，TechnoClass::Update(0x6F9E50) 会在 0x6FA228 判 IsVoxel()，
+	//      为真时在 0x6FA236 调用一次 vt+0x41C。⇒ 每个 voxel 单位每逻辑帧跑一次倾斜更新，
+	//      替身（自身也是 TechnoClass）当然也会跑。
+	//   2) 该函数在多个分支里都执行同一套「积分」（不变量）：
+	//          AngleRotatedSideways += RockingSidewaysPerFrame;   // 0x70B649 / 0x70B659
+	//          AngleRotatedForwards += RockingForwardsPerFrame;   // 0x70B65F / 0x70B66B
+	//      ⇒ Rocking*PerFrame 的语义是「每帧步进量（角速度）」，绝不是角度。
+	//   3) 这两个「角」随后被 locomotor 的 Draw_Matrix 消费（DriveLocomotionClass 的
+	//      vt+0x24 = 0x4AFF60；ShipLocomotionClass 的 0x69F670），所以倾斜是经由
+	//      Draw_Matrix 进入绘制矩阵的 —— 而 GetMatrix3D() 正是用它来解算替身 Offset，
+	//      也就是说 Offset 的位置本来就已跟随主身倾斜，不需要额外补偿。
+	//   4) 分支选择：IsSinking(0x3CD) → 每帧 AngleRotatedForwards ±= 0.01（按船头八分圆定符号）；
+	//      else IsCrashing(0x425) → 纯积分（非 BalloonHover 单位无回正，会无界累积）；
+	//      else 行走摇摆逻辑（RockingSidewaysPerFrame == 0 时会把 AngleRotated* 归零）。
+	//
+	// 因此这里唯一正确的事情是：
+	//   a) 把「角度」写进替身的 AngleRotated*；
+	//   b) 把替身自己的 Rocking*PerFrame 清零（★ 关键）。
+	// 绝不能把角度写进 Rocking*PerFrame —— 那等于命令替身「每帧再转这么多弧度」，
+	// 替身会在自己的积分器里把角度无界累积，典型症状：
+	//   · 主身移动/摇摆时替身画面抖动；
+	//   · 主身下沉（战列舰）时替身脱离船身，并「自己往一边倾斜」。
+	// ============================================================
+	float forwards = pTechno->AngleRotatedForwards;
+	float sideways = pTechno->AngleRotatedSideways;
 
-					// 同步 替身 与 JOJO 的地形角度
-					ILocomotion* masterLoco = abstract_cast<FootClass*, true>(pTechno)->Locomotor.get();
-					ILocomotion* standLoco = abstract_cast<FootClass*, true>(pStand)->Locomotor.get();
+	// 把主身（体坐标系）下的倾斜角旋转到替身（体坐标系）。
+	// 用两端的真实朝向差做一次二维旋转（rotZ），因此对
+	// Stand.Offset.Direction / Stand.Dir / Offset.IsOnTurret（炮塔联动）/ FreeDirection
+	// 全部成立，且自动覆盖全部 16 个方向（原实现是手写 8 分支，0/2/6/14 为空实现，
+	// 且 8 号方向漏了对 forwards 的取反）。
+	// 标定基准：旧代码 case 4/10/12 的行为与 theta = Direction*22.5° 完全等价。
+	double theta = pStand->PrimaryFacing.Current().GetRadian()
+		- pTechno->PrimaryFacing.Current().GetRadian();
+	while (theta > Math::Pi)
+	{
+		theta -= Math::TwoPi;
+	}
+	while (theta < -Math::Pi)
+	{
+		theta += Math::TwoPi;
+	}
+	if (theta != 0.0)
+	{
+		const double c = std::cos(theta);
+		const double s = std::sin(theta);
+		const float f = forwards;
+		const float sd = sideways;
+		forwards = static_cast<float>(f * c - sd * s);
+		sideways = static_cast<float>(f * s + sd * c);
+	}
 
-					DWORD previousRamp = 0;
-					DWORD currentRamp = 0;
+	pStand->AngleRotatedForwards = forwards;
+	pStand->AngleRotatedSideways = sideways;
+	// ★ 步进量必须为 0：由主身的角度单向驱动替身，禁止替身自己积分
+	pStand->RockingForwardsPerFrame = 0.0f;
+	pStand->RockingSidewaysPerFrame = 0.0f;
 
-					if (DriveLocomotionClass* pMasterDriveLoco = dynamic_cast<DriveLocomotionClass*>(masterLoco))
-					{
-						previousRamp = pMasterDriveLoco->PreviousRamp;
-						currentRamp = pMasterDriveLoco->CurrentRamp;
-					}
-					else if (ShipLocomotionClass* pMasterShipLoco = dynamic_cast<ShipLocomotionClass*>(masterLoco))
-					{
-						previousRamp = pMasterShipLoco->PreviousRamp;
-						currentRamp = pMasterShipLoco->CurrentRamp;
-					}
+	// 同步 替身 与 JOJO 的地形角度
+	ILocomotion* masterLoco = abstract_cast<FootClass*, true>(pTechno)->Locomotor.get();
+	ILocomotion* standLoco = abstract_cast<FootClass*, true>(pStand)->Locomotor.get();
 
-					if (DriveLocomotionClass* pStandDriveLoco = dynamic_cast<DriveLocomotionClass*>(standLoco))
-					{
-						pStandDriveLoco->PreviousRamp = previousRamp;
-						pStandDriveLoco->CurrentRamp = currentRamp;
-					}
-					else if (ShipLocomotionClass* pStandShipLoco = dynamic_cast<ShipLocomotionClass*>(standLoco))
-					{
-						pStandShipLoco->PreviousRamp = previousRamp;
-						pStandShipLoco->CurrentRamp = currentRamp;
-					}
-				}
-			}
-		}
+	DWORD previousRamp = 0;
+	DWORD currentRamp = 0;
+
+	if (DriveLocomotionClass* pMasterDriveLoco = dynamic_cast<DriveLocomotionClass*>(masterLoco))
+	{
+		previousRamp = pMasterDriveLoco->PreviousRamp;
+		currentRamp = pMasterDriveLoco->CurrentRamp;
+	}
+	else if (ShipLocomotionClass* pMasterShipLoco = dynamic_cast<ShipLocomotionClass*>(masterLoco))
+	{
+		previousRamp = pMasterShipLoco->PreviousRamp;
+		currentRamp = pMasterShipLoco->CurrentRamp;
+	}
+
+	if (DriveLocomotionClass* pStandDriveLoco = dynamic_cast<DriveLocomotionClass*>(standLoco))
+	{
+		pStandDriveLoco->PreviousRamp = previousRamp;
+		pStandDriveLoco->CurrentRamp = currentRamp;
+	}
+	else if (ShipLocomotionClass* pStandShipLoco = dynamic_cast<ShipLocomotionClass*>(standLoco))
+	{
+		pStandShipLoco->PreviousRamp = previousRamp;
+		pStandShipLoco->CurrentRamp = currentRamp;
 	}
 }
 
@@ -757,7 +858,7 @@ void StandEffect::OnRemove()
 
 void StandEffect::OnUpdate()
 {
-	if (IsDead(pStand))
+	if (IsDead(pStand) && !MasterGoingDown())
 	{
 		return;
 	}
@@ -773,7 +874,7 @@ void StandEffect::OnUpdate()
 
 void StandEffect::OnWarpUpdate()
 {
-	if (IsDead(pStand))
+	if (IsDead(pStand) && !MasterGoingDown())
 	{
 		return;
 	}

@@ -1,0 +1,515 @@
+############ LocomotionClass_ILocomotion_DrawMatrix (基类: facing->旋转矩阵) @ 0x0055A730  (size=159) ############
+  0055A730  sub     esp, 34h
+  0055A733  push    esi
+  0055A734  push    edi
+  0055A735  lea     ecx, [esp+3Ch+this]
+  0055A739  call    Matrix3D::Matrix3D
+  0055A73E  mov     edi, dword ptr [esp+3Ch+arg.X]
+  0055A742  lea     eax, [esp+3Ch+a2]
+  0055A746  push    eax; arg
+  0055A747  mov     ecx, [edi+8]
+  0055A74A  add     ecx, 388h; Facing
+  0055A750  call    Desired_Facing256
+  0055A755  mov     ecx, [eax]
+  0055A757  shr     ecx, 0Ah
+  0055A75A  inc     ecx
+  0055A75B  shr     ecx, 1
+  0055A75D  and     ecx, 1Fh
+  0055A760  sub     ecx, 8
+  0055A763  mov     dword ptr [esp+3Ch+arg.X], ecx
+  0055A767  push    ecx; float
+  0055A768  fild    dword ptr [esp+40h+arg.X]
+  0055A76C  lea     ecx, [esp+40h+this]; this
+  0055A770  fmul    ds:dbl_7E4408
+  0055A776  fstp    [esp+40h+var_40]; a2
+  0055A779  call    Matrix3D_5AF1A0
+  0055A77E  mov     esi, [esp+3Ch+arg_8]
+  0055A782  test    esi, esi
+  0055A784  jz      short loc_55A7B6
+  0055A786  mov     eax, [esi]
+  0055A788  cmp     eax, 0FFFFFFFFh
+  0055A78B  jz      short loc_55A7B6
+  0055A78D  shl     eax, 5
+  0055A790  mov     [esi], eax
+  0055A792  mov     ecx, [edi+8]
+  0055A795  lea     edx, [esp+3Ch+arg]; arg
+  0055A799  add     ecx, 388h; Facing
+  0055A79F  push    edx; arg
+  0055A7A0  call    Desired_Facing256
+  0055A7A5  mov     eax, [eax]
+  0055A7A7  mov     ecx, [esi]
+  0055A7A9  shr     eax, 0Ah
+  0055A7AC  inc     eax
+  0055A7AD  shr     eax, 1
+  0055A7AF  and     eax, 1Fh
+  0055A7B2  or      ecx, eax
+  0055A7B4  mov     [esi], ecx
+  0055A7B6  mov     eax, [esp+3Ch+arg_4]
+  0055A7BA  mov     ecx, 0Ch
+  0055A7BF  lea     esi, [esp+3Ch+this]
+  0055A7C3  mov     edi, eax
+  0055A7C5  rep movsd
+  0055A7C7  pop     edi
+  0055A7C8  pop     esi
+  0055A7C9  add     esp, 34h
+  0055A7CC  retn    0Ch
+   -- 调用/跳转 --
+      0055A739 call -> 005AE860  W?$ct:Matrix3D$n()_
+      0055A750 call -> 004C93D0  W?Desired_Facing256$n(iiii)$DirType$$
+      0055A779 call -> 005AF1A0  Matrix3D_5AF1A0
+      0055A7A0 call -> 004C93D0  W?Desired_Facing256$n(iiii)$DirType$$
+
+############ DriveLocomotionClass_ILocomotion_IsMoving @ 0x004AFB80  (size=150) ############
+  004AFB80  mov     eax, [esp+arg_0]
+  004AFB84  sub     esp, 0Ch
+  004AFB87  mov     ecx, [eax+30h]
+  004AFB8A  push    esi
+  004AFB8B  mov     esi, DriveLocomotionClass_Default_Pos.X
+  004AFB91  push    edi
+  004AFB92  cmp     ecx, esi
+  004AFB94  jnz     short loc_4AFBB0
+  004AFB96  mov     edx, DriveLocomotionClass_Default_Pos.Y
+  004AFB9C  mov     ecx, [eax+34h]
+  004AFB9F  cmp     ecx, edx
+  004AFBA1  jnz     short loc_4AFBB0
+  004AFBA3  mov     ecx, DriveLocomotionClass_Default_Pos.Z
+  004AFBA9  mov     edi, [eax+38h]
+  004AFBAC  cmp     edi, ecx
+  004AFBAE  jz      short loc_4AFBBA
+  004AFBB0  pop     edi
+  004AFBB1  mov     al, 1
+  004AFBB3  pop     esi
+  004AFBB4  add     esp, 0Ch
+  004AFBB7  retn    4
+  004AFBBA  cmp     [eax+3Ch], esi
+  004AFBBD  jnz     short loc_4AFBC9
+  004AFBBF  cmp     [eax+40h], edx
+  004AFBC2  jnz     short loc_4AFBC9
+  004AFBC4  cmp     [eax+44h], ecx
+  004AFBC7  jz      short loc_4AFC0C
+  004AFBC9  mov     ecx, [eax+8]
+  004AFBCC  add     ecx, 9Ch
+  004AFBD2  mov     esi, ecx
+  004AFBD4  mov     edx, [esi]
+  004AFBD6  mov     edi, [esi+4]
+  004AFBD9  mov     [esp+14h+var_8], edi
+  004AFBDD  mov     esi, [esi+8]
+  004AFBE0  mov     [esp+14h+var_4], esi
+  004AFBE4  mov     esi, [eax+3Ch]
+  004AFBE7  cmp     esi, edx
+  004AFBE9  jnz     short loc_4AFC02
+  004AFBEB  mov     edx, [ecx]
+  004AFBED  mov     [esp+14h+var_C], edx
+  004AFBF1  mov     edx, [ecx+4]
+  004AFBF4  mov     ecx, [ecx+8]
+  004AFBF7  mov     [esp+14h+var_4], ecx
+  004AFBFB  mov     ecx, [eax+40h]
+  004AFBFE  cmp     ecx, edx
+  004AFC00  jz      short loc_4AFC0C
+  004AFC02  pop     edi
+  004AFC03  mov     al, 1
+  004AFC05  pop     esi
+  004AFC06  add     esp, 0Ch
+  004AFC09  retn    4
+  004AFC0C  pop     edi
+  004AFC0D  xor     al, al
+  004AFC0F  pop     esi
+  004AFC10  add     esp, 0Ch
+  004AFC13  retn    4
+   -- 调用/跳转 --
+
+############ DriveLocomotionClass_ILocomotion_IsMovingNow @ 0x004AFC20  (size=103) ############
+  004AFC20  push    esi
+  004AFC21  mov     esi, [esp+4+arg_0]
+  004AFC25  mov     ecx, [esi+8]
+  004AFC28  add     ecx, _TechnoClass.t.Facing; Facing
+  004AFC2E  call    FacingStruct_IsReady
+  004AFC33  test    al, al
+  004AFC35  jz      short loc_4AFC3D
+  004AFC37  mov     al, 1
+  004AFC39  pop     esi
+  004AFC3A  retn    4
+  004AFC3D  mov     eax, [esi]
+  004AFC3F  push    esi; this
+  004AFC40  call    [eax+vt_ILocomotion_LocomotionClass.Is_Moving]
+  004AFC43  test    al, al
+  004AFC45  jz      short loc_4AFC81
+  004AFC47  mov     ecx, [esi+3Ch]
+  004AFC4A  mov     eax, DriveLocomotionClass_Default_Pos.X
+  004AFC4F  cmp     ecx, eax
+  004AFC51  jnz     short loc_4AFC6C
+  004AFC53  mov     edx, [esi+40h]
+  004AFC56  mov     eax, DriveLocomotionClass_Default_Pos.Y
+  004AFC5B  cmp     edx, eax
+  004AFC5D  jnz     short loc_4AFC6C
+  004AFC5F  mov     eax, [esi+44h]
+  004AFC62  mov     ecx, DriveLocomotionClass_Default_Pos.Z
+  004AFC68  cmp     eax, ecx
+  004AFC6A  jz      short loc_4AFC81
+  004AFC6C  mov     ecx, [esi+8]
+  004AFC6F  mov     edx, [ecx]
+  004AFC71  call    dword ptr [edx+538h]
+  004AFC77  test    eax, eax
+  004AFC79  jle     short loc_4AFC81
+  004AFC7B  mov     al, 1
+  004AFC7D  pop     esi
+  004AFC7E  retn    4
+  004AFC81  xor     al, al
+  004AFC83  pop     esi
+  004AFC84  retn    4
+   -- 调用/跳转 --
+      004AFC2E call -> 004C9480  FacingStruct_IsReady
+      004AFC40 call -> 00000010  
+      004AFC71 call -> 00000538  
+
+############ sub_4AFC90 @ 0x004AFC90  (size=36) ############
+  004AFC90  mov     eax, [esp+arg_0]
+  004AFC94  push    esi
+  004AFC95  mov     esi, [esp+4+arg_4]
+  004AFC99  push    edi
+  004AFC9A  mov     ecx, [eax+30h]
+  004AFC9D  mov     edx, [eax+34h]
+  004AFCA0  mov     eax, [eax+38h]
+  004AFCA3  mov     edi, esi
+  004AFCA5  mov     [edi], ecx
+  004AFCA7  mov     [edi+4], edx
+  004AFCAA  mov     [edi+8], eax
+  004AFCAD  mov     eax, esi
+  004AFCAF  pop     edi
+  004AFCB0  pop     esi
+  004AFCB1  retn    8
+   -- 调用/跳转 --
+
+############ sub_4AFCC0 @ 0x004AFCC0  (size=113) ############
+  004AFCC0  mov     eax, [esp+arg_0]
+  004AFCC4  mov     edx, DriveLocomotionClass_Default_Pos.X
+  004AFCCA  push    esi
+  004AFCCB  push    edi
+  004AFCCC  mov     ecx, [eax+3Ch]
+  004AFCCF  cmp     ecx, edx
+  004AFCD1  jnz     short loc_4AFCED
+  004AFCD3  mov     edx, [eax+40h]
+  004AFCD6  mov     ecx, DriveLocomotionClass_Default_Pos.Y
+  004AFCDC  cmp     edx, ecx
+  004AFCDE  jnz     short loc_4AFCED
+  004AFCE0  mov     ecx, [eax+44h]
+  004AFCE3  mov     edx, DriveLocomotionClass_Default_Pos.Z
+  004AFCE9  cmp     ecx, edx
+  004AFCEB  jz      short loc_4AFD0B
+  004AFCED  mov     esi, [esp+8+arg_4]
+  004AFCF1  mov     ecx, [eax+3Ch]
+  004AFCF4  mov     edx, [eax+40h]
+  004AFCF7  mov     eax, [eax+44h]
+  004AFCFA  mov     edi, esi
+  004AFCFC  mov     [edi], ecx
+  004AFCFE  mov     [edi+4], edx
+  004AFD01  mov     [edi+8], eax
+  004AFD04  mov     eax, esi
+  004AFD06  pop     edi
+  004AFD07  pop     esi
+  004AFD08  retn    8
+  004AFD0B  mov     edx, [eax+8]
+  004AFD0E  add     edx, 9Ch
+  004AFD14  mov     eax, edx
+  004AFD16  mov     ecx, [eax]
+  004AFD18  mov     edx, [eax+4]
+  004AFD1B  mov     esi, [eax+8]
+  004AFD1E  mov     eax, [esp+8+arg_4]
+  004AFD22  mov     edi, eax
+  004AFD24  mov     [edi], ecx
+  004AFD26  mov     [edi+4], edx
+  004AFD29  mov     [edi+8], esi
+  004AFD2C  pop     edi
+  004AFD2D  pop     esi
+  004AFD2E  retn    8
+   -- 调用/跳转 --
+
+############ sub_4AFD40 @ 0x004AFD40  (size=181) ############
+  004AFD40  push    esi
+  004AFD41  mov     esi, [esp+4+arg_0]
+  004AFD45  push    edi
+  004AFD46  mov     ecx, [esi+8]
+  004AFD49  mov     eax, [ecx]
+  004AFD4B  call    dword ptr [eax+37Ch]
+  004AFD51  test    al, al
+  004AFD53  jnz     loc_4AFDF0
+  004AFD59  mov     ecx, [esi+8]
+  004AFD5C  mov     edx, [ecx]
+  004AFD5E  call    dword ptr [edx+380h]
+  004AFD64  test    al, al
+  004AFD66  jnz     loc_4AFDF0
+  004AFD6C  mov     ecx, [esi+8]
+  004AFD6F  mov     eax, [ecx]
+  004AFD71  call    dword ptr [eax+1D4h]
+  004AFD77  test    al, al
+  004AFD79  jnz     short loc_4AFDF0
+  004AFD7B  mov     ecx, [esi+8]
+  004AFD7E  mov     edx, [ecx]
+  004AFD80  call    dword ptr [edx+1D8h]
+  004AFD86  test    al, al
+  004AFD88  jnz     short loc_4AFDF0
+  004AFD8A  mov     eax, [esp+8+a2.X]
+  004AFD8E  mov     ecx, [esp+8+a2.Y]
+  004AFD92  mov     edx, [esp+8+arg_C]
+  004AFD96  lea     edi, [esi+30h]
+  004AFD99  mov     [esi+30h], eax
+  004AFD9C  mov     [edi+4], ecx
+  004AFD9F  mov     [edi+8], edx
+  004AFDA2  mov     edi, DriveLocomotionClass_Default_Pos.X
+  004AFDA8  cmp     eax, edi
+  004AFDAA  jnz     short loc_4AFDBC
+  004AFDAC  cmp     ecx, DriveLocomotionClass_Default_Pos.Y
+  004AFDB2  jnz     short loc_4AFDBC
+  004AFDB4  cmp     edx, DriveLocomotionClass_Default_Pos.Z
+  004AFDBA  jz      short loc_4AFDF0
+  004AFDBC  mov     [esp+8+a2.X], eax
+  004AFDC0  lea     eax, [esp+8+a2]
+  004AFDC4  mov     [esp+8+a2.Y], ecx
+  004AFDC8  push    eax; a2
+  004AFDC9  mov     ecx, offset Map; this
+  004AFDCE  mov     [esp+0Ch+arg_C], edx
+  004AFDD2  call    MapClass_Get_Target_Cell
+  004AFDD7  mov     ecx, [eax+140h]
+  004AFDDD  test    ch, 1
+  004AFDE0  jz      short loc_4AFDF0
+  004AFDE2  mov     ecx, dword_8A07C4
+  004AFDE8  mov     eax, [esi+38h]
+  004AFDEB  add     eax, ecx
+  004AFDED  mov     [esi+38h], eax
+  004AFDF0  pop     edi
+  004AFDF1  pop     esi
+  004AFDF2  retn    10h
+   -- 调用/跳转 --
+      004AFD4B call -> 0000037C  
+      004AFD5E call -> 00000380  
+      004AFD71 call -> 000001D4  
+      004AFD80 call -> 000001D8  
+      004AFDD2 call -> 00565730  MapClass_Get_Target_Cell
+
+############ sub_4AFE00 @ 0x004AFE00  (size=200) ############
+  004AFE00  mov     ecx, DriveLocomotionClass_Default_Pos.X
+  004AFE06  push    esi
+  004AFE07  push    edi
+  004AFE08  mov     edi, [esp+8+arg_0]
+  004AFE0C  mov     eax, [edi+3Ch]
+  004AFE0F  cmp     eax, ecx
+  004AFE11  jnz     short loc_4AFE2B
+  004AFE13  mov     ecx, [edi+40h]
+  004AFE16  mov     eax, DriveLocomotionClass_Default_Pos.Y
+  004AFE1B  cmp     ecx, eax
+  004AFE1D  jnz     short loc_4AFE2B
+  004AFE1F  mov     edx, [edi+44h]
+  004AFE22  mov     eax, DriveLocomotionClass_Default_Pos.Z
+  004AFE27  cmp     edx, eax
+  004AFE29  jz      short loc_4AFE89
+  004AFE2B  mov     ecx, [edi+8]
+  004AFE2E  mov     eax, [ecx]
+  004AFE30  call    dword ptr [eax+84h]
+  004AFE36  mov     cl, [eax+UnitTypeClass.t.IsTrain]
+  004AFE3C  test    cl, cl
+  004AFE3E  jz      short loc_4AFE89
+  004AFE40  mov     eax, [edi+8]
+  004AFE43  mov     cl, [eax+UnitClass.HasFollowerCar]
+  004AFE49  test    cl, cl
+  004AFE4B  jnz     short loc_4AFE89
+  004AFE4D  mov     esi, [eax+UnitClass.FollowerCar]
+  004AFE53  test    esi, esi
+  004AFE55  jz      short loc_4AFE89
+  004AFE57  mov     eax, [esi+674h]
+  004AFE5D  test    eax, eax
+  004AFE5F  jnz     short loc_4AFE6B
+  004AFE61  push    80004003h; HRESULT
+  004AFE66  call    RaiseError
+  004AFE6B  mov     eax, [esi+674h]
+  004AFE71  push    eax; this
+  004AFE72  mov     ecx, [eax]
+  004AFE74  call    [ecx+vt_ILocomotion_LocomotionClass.Stop_Moving]
+  004AFE77  mov     esi, [esi+UnitClass.FollowerCar]
+  004AFE7D  test    esi, esi
+  004AFE7F  jz      short loc_4AFE89
+  004AFE81  cmp     esi, [esi+UnitClass.FollowerCar]
+  004AFE87  jnz     short loc_4AFE57
+  004AFE89  fld     qword ptr [edi+4Ch]
+  004AFE8C  fcomp   ds:dbl_7E6240
+  004AFE92  fnstsw  ax
+  004AFE94  test    ah, 1
+  004AFE97  jz      short loc_4AFE9E
+  004AFE99  fld     qword ptr [edi+4Ch]
+  004AFE9C  jmp     short loc_4AFEA4
+  004AFE9E  fld     ds:dbl_7E6240
+  004AFEA4  fstp    qword ptr [edi+4Ch]
+  004AFEA7  mov     edx, DriveLocomotionClass_Default_Pos.X
+  004AFEAD  add     edi, 30h ; '0'
+  004AFEB0  mov     [edi], edx
+  004AFEB2  mov     eax, DriveLocomotionClass_Default_Pos.Y
+  004AFEB7  mov     [edi+4], eax
+  004AFEBA  mov     ecx, DriveLocomotionClass_Default_Pos.Z
+  004AFEC0  mov     [edi+8], ecx
+  004AFEC3  pop     edi
+  004AFEC4  pop     esi
+  004AFEC5  retn    4
+   -- 调用/跳转 --
+      004AFE30 call -> 00000084  
+      004AFE66 call -> 007DC720  RaiseError
+      004AFE74 call -> 00000048  
+      004AFE9C jmp -> 004AFEA4  sub_4AFE00
+
+############ sub_4AFB40 @ 0x004AFB40  (size=53) ############
+  004AFB40  mov     eax, [esp+arg_0]
+  004AFB44  mov     ecx, [esp+arg_4]
+  004AFB48  sub     esp, 10h
+  004AFB4B  xor     edx, edx
+  004AFB4D  mov     [eax+1Ch], ecx
+  004AFB50  mov     [eax+18h], ecx
+  004AFB53  mov     ecx, Frame
+  004AFB59  push    esi
+  004AFB5A  xor     esi, esi
+  004AFB5C  add     eax, 20h ; ' '
+  004AFB5F  mov     [eax], ecx
+  004AFB61  mov     ecx, [esp+14h+var_C]
+  004AFB65  mov     [eax+4], ecx
+  004AFB68  mov     [eax+8], edx
+  004AFB6B  mov     [eax+0Ch], esi
+  004AFB6E  pop     esi
+  004AFB6F  add     esp, 10h
+  004AFB72  retn    8
+   -- 调用/跳转 --
+
+############ Draw_Matrix 尾部 0x4B023B..0x4B0402 (Frame 过渡混合段) ############
+  004B023B  mov     esi, [esi+18h]
+  004B023E  test    esi, esi
+  004B0240  jz      short loc_4B025D
+  004B0242  mov     edx, esi
+  004B0244  lea     ecx, [esp+230h+var_C0]
+  004B024B  call    sub_7559B0
+  004B0250  mov     ecx, 0Ch
+  004B0255  mov     esi, eax
+  004B0257  lea     edi, [esp+230h+var_210]
+  004B025B  rep movsd
+  004B025D  mov     ecx, 0Ch
+  004B0262  lea     esi, [esp+230h+var_210]
+  004B0266  lea     edi, [esp+230h+var_150]
+  004B026D  lea     edx, [esp+230h+var_180]
+  004B0274  rep movsd
+  004B0276  lea     ecx, [esp+230h+var_1B0]
+  004B027D  lea     eax, [esp+230h+var_150]
+  004B0284  push    ecx
+  004B0285  push    edx
+  004B0286  push    eax
+  004B0287  lea     edx, [esp+23Ch+var_1E0]
+  004B028B  lea     ecx, [esp+23Ch+var_F0]
+  004B0292  call    Matrix3D_Multiply_5AF980
+  004B0297  mov     edx, eax
+  004B0299  lea     ecx, [esp+238h+var_90]
+  004B02A0  call    Matrix3D_Multiply_5AF980
+  004B02A5  mov     edx, eax
+  004B02A7  lea     ecx, [esp+234h+var_120]
+  004B02AE  jmp     loc_4B03DA
+  004B02B3  mov     eax, [ebp+arg_8]
+  004B02B6  test    eax, eax
+  004B02B8  jz      short loc_4B02CD
+  004B02BA  mov     ecx, [eax]
+  004B02BC  cmp     ecx, 0FFFFFFFFh
+  004B02BF  jz      short loc_4B02CD
+  004B02C1  shl     ecx, 6
+  004B02C4  mov     [eax], ecx
+  004B02C6  mov     edx, [esi+18h]
+  004B02C9  add     edx, ecx
+  004B02CB  mov     [eax], edx
+  004B02CD  push    eax
+  004B02CE  lea     eax, [esp+234h+var_120]
+  004B02D5  push    eax
+  004B02D6  push    esi
+  004B02D7  call    LocomotionClass_ILocomotion_DrawMatrix
+  004B02DC  push    eax
+  004B02DD  lea     ecx, [esp+234h+var_150]
+  004B02E4  call    Matrix3DClass_5AE610
+  004B02E9  lea     ecx, [esp+230h+var_210]
+  004B02ED  call    Matrix3D::Matrix3D
+  004B02F2  mov     ebx, [esi+2Ch]
+  004B02F5  test    ebx, ebx
+  004B02F7  mov     [esp+230h+var_224], ebx
+  004B02FB  jz      loc_4B0390
+  004B0301  mov     edx, [esi+20h]
+  004B0304  mov     eax, [esi+28h]
+  004B0307  mov     edi, Frame
+  004B030D  cmp     edx, 0FFFFFFFFh
+  004B0310  jz      short loc_4B0320
+  004B0312  mov     ecx, edi
+  004B0314  sub     ecx, edx
+  004B0316  cmp     ecx, eax
+  004B0318  jge     short loc_4B031E
+  004B031A  sub     eax, ecx
+  004B031C  jmp     short loc_4B0320
+  004B031E  xor     eax, eax
+  004B0320  sub     ebx, eax
+  004B0322  mov     [esp+230h+var_220], ebx
+  004B0326  fild    [esp+230h+var_220]
+  004B032A  fidiv   [esp+230h+var_224]
+  004B032E  fcomp   ds:dbl1_0; 1.0
+  004B0334  fnstsw  ax
+  004B0336  test    ah, 1
+  004B0339  jz      short loc_4B0390
+  004B033B  mov     edx, [esi+2Ch]
+  004B033E  test    edx, edx
+  004B0340  mov     [esp+230h+var_224], edx
+  004B0344  jnz     short loc_4B034E
+  004B0346  fld     ds:dbl1_0; 1.0
+  004B034C  jmp     short loc_4B0375
+  004B034E  mov     ecx, [esi+20h]
+  004B0351  mov     eax, [esi+28h]
+  004B0354  cmp     ecx, 0FFFFFFFFh
+  004B0357  jz      short loc_4B0367
+  004B0359  sub     edi, ecx
+  004B035B  mov     ecx, edi
+  004B035D  cmp     ecx, eax
+  004B035F  jge     short loc_4B0365
+  004B0361  sub     eax, ecx
+  004B0363  jmp     short loc_4B0367
+  004B0365  xor     eax, eax
+  004B0367  sub     edx, eax
+  004B0369  mov     [esp+230h+var_220], edx
+  004B036D  fild    [esp+230h+var_220]
+  004B0371  fidiv   [esp+230h+var_224]
+  004B0375  mov     ecx, [esi+18h]
+  004B0378  mov     edx, [esi+1Ch]
+  004B037B  sub     esp, 8
+  004B037E  fstp    [esp+238h+var_238]
+  004B0381  push    ecx; int
+  004B0382  lea     ecx, [esp+23Ch+var_90]
+  004B0389  call    sub_755A40
+  004B038E  jmp     short loc_4B03A5
+  004B0390  mov     esi, [esi+18h]
+  004B0393  test    esi, esi
+  004B0395  jz      short loc_4B03B2
+  004B0397  mov     edx, esi
+  004B0399  lea     ecx, [esp+230h+var_F0]
+  004B03A0  call    sub_7559B0
+  004B03A5  mov     ecx, 0Ch
+  004B03AA  mov     esi, eax
+  004B03AC  lea     edi, [esp+230h+var_210]
+  004B03B0  rep movsd
+  004B03B2  mov     ecx, 0Ch
+  004B03B7  lea     esi, [esp+230h+var_210]
+  004B03BB  lea     edi, [esp+230h+var_180]
+  004B03C2  lea     edx, [esp+230h+var_150]
+  004B03C9  rep movsd
+  004B03CB  push    edx
+  004B03CC  lea     edx, [esp+234h+var_180]
+  004B03D3  lea     ecx, [esp+234h+var_C0]
+  004B03DA  call    Matrix3D_Multiply_5AF980
+  004B03DF  mov     ecx, 0Ch
+  004B03E4  mov     esi, eax
+  004B03E6  mov     eax, [ebp+arg_4]
+  004B03E9  lea     edi, [esp+230h+var_1E0]
+  004B03ED  rep movsd
+  004B03EF  mov     ecx, 0Ch
+  004B03F4  lea     esi, [esp+230h+var_1E0]
+  004B03F8  mov     edi, eax
+  004B03FA  rep movsd
+  004B03FC  pop     edi
+  004B03FD  pop     esi
+  004B03FE  pop     ebx
+  004B03FF  mov     esp, ebp
+  004B0401  pop     ebp
+

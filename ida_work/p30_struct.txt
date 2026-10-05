@@ -1,0 +1,67 @@
+### p30 struct layout ###
+==============================================================================================================
+[struct AbstractClass] id=0xff014731 size=32
+ERR AbstractClass AttributeError("'dyn_member_ref_array' object has no attribute 'id'")
+==============================================================================================================
+[struct _AbstractClass] id=0xff01fbcb size=36
+ERR _AbstractClass AttributeError("'dyn_member_ref_array' object has no attribute 'id'")
+==============================================================================================================
+[struct AbstractClass_] NOT FOUND
+==============================================================================================================
+[struct IAbstractClass] NOT FOUND
+==============================================================================================================
+[struct ObjectClass] id=0xff016046 size=164
+ERR ObjectClass AttributeError("'dyn_member_ref_array' object has no attribute 'id'")
+==============================================================================================================
+[struct _ObjectClass] id=0xff018e88 size=168
+ERR _ObjectClass AttributeError("'dyn_member_ref_array' object has no attribute 'id'")
+==============================================================================================================
+[struct TechnoClass] id=0xff016053 size=1308
+ERR TechnoClass AttributeError("'dyn_member_ref_array' object has no attribute 'id'")
+==============================================================================================================
+[struct _TechnoClass] id=0xff018e91 size=1312
+ERR _TechnoClass AttributeError("'dyn_member_ref_array' object has no attribute 'id'")
+==============================================================================================================
+[struct FootClass] id=0xff016055 size=1720
+ERR FootClass AttributeError("'dyn_member_ref_array' object has no attribute 'id'")
+==============================================================================================================
+[struct _FootClass] id=0xff018e94 size=1724
+ERR _FootClass AttributeError("'dyn_member_ref_array' object has no attribute 'id'")
+==============================================================================================================
+[GetCoords?] 0x005f65a0
+  0x005f65a0  mov     eax, [esp+a2]
+  0x005f65a4  add     ecx, 9Ch
+  0x005f65aa  push    esi
+  0x005f65ab  mov     edx, eax
+  0x005f65ad  mov     esi, [ecx]
+  0x005f65af  mov     [edx], esi
+  0x005f65b1  mov     esi, [ecx+4]
+  0x005f65b4  mov     [edx+4], esi
+  0x005f65b7  pop     esi
+  0x005f65b8  mov     ecx, [ecx+8]
+
+==============================================================================================================
+[ObjectClass::Mark head] 0x005f5850
+  0x005f5850  push    ebx
+  0x005f5851  push    esi
+  0x005f5852  mov     esi, ecx
+  0x005f5854  mov     al, [esi+81h]
+  0x005f585a  test    al, al
+  0x005f585c  jnz     loc_5F591D
+  0x005f5862  mov     ebx, [esp+8+idxLayer]
+  0x005f5866  cmp     ebx, 2
+  0x005f5869  jnz     short loc_5F5893
+  0x005f586b  mov     al, [esi+80h]
+  0x005f5871  test    al, al
+  0x005f5873  jnz     loc_5F591D
+
+==============================================================================================================
+[grep members containing 'Flags' or 'Locomotor']
+ERR grep AttributeError("'dyn_member_ref_array' object has no attribute 'id'")
+Traceback (most recent call last):
+  File "D:/Workspace/ra2mod/platform/KratosPP/ida_work/p30_struct.py", line 98, in <module>
+    mname = ida_struct.get_member_name(m.id) or ""
+                                       ^^^^
+AttributeError: 'dyn_member_ref_array' object has no attribute 'id'
+
+### DONE ###

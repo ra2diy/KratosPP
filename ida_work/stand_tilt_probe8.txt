@@ -1,0 +1,486 @@
+
+############ A. call [reg+0x34]  (GetCRC) 的全部调用点 ############
+   sub_4266D2 | 0x004266ee
+   sub_426790 | 0x004267a6
+   sub_4272A0 | 0x004272be
+   sub_431BC0 | 0x00431d47
+   BufferIOFileClass_OpenFile | 0x00431f91
+   sub_4325C0 | 0x004325e5
+   CCFileClass_OpenFile | 0x00473d1a
+   W?Load_Uncompress$n(rn$FileClass$$rn$BufferClass$$rn$2$pnv)l | 0x004a3b0e
+   sub_4A91B0 | 0x004a9232
+   sub_4A91B0 | 0x004a9284
+   W?Action$:TacticalClass$:DisplayClass$n(uirn$KeyNumType$$)i | 0x004aac6d
+   EBolt_Draw | 0x004c2627
+   W?AI_Fire_Sale$:HouseClass$n($UrgencyType$$)i | 0x004fdcef
+   sub_541370 | 0x00541397
+   sub_541480 | 0x005414a7
+   sub_5BD5C0 | 0x005bd6ee
+   sub_5F3540 | 0x005f3553
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x0064f8a0
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x0064f92d
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x0064f9ba
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x0064fa47
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x0064fad4
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x0064fb61
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x0064fbee
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x0064fc7b
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x0064fd08
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x0064fd95
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x0064fe22
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x0064feaf
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x0064ff3c
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x0064ffc9
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x00650056
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x006500e3
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x00650170
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x006501fd
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x0065028a
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x00650317
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x006503a4
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x00650431
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x006504be
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x0065054b
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x006505d8
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x00650665
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x006506f2
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x0065077f
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x0065080c
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x00650899
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x00650926
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x006509b3
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x00650a40
+   sub_652E50 | 0x00652e75
+   - | 0x0065963f
+   RadBeamClass_Draw | 0x0065993f
+   sub_659CA0 | 0x00659de7
+   RAMFileClass_ReadNextBytes | 0x0065c409
+   RawFileClass_OpenFile | 0x0065cb55
+   RawFileClass_FileSize | 0x0065d136
+   CCFileClass_Create | 0x0065d155
+   CCFileClass_Delete | 0x0065d195
+   sub_692F30 | 0x00692f5e
+   sub_6A7D70 | 0x006a7fd1
+   sub_6A7D70 | 0x006a7fe9
+   sub_6A7D70 | 0x006a800d
+   sub_6A7D70 | 0x006a806a
+   WinMain | 0x006be006
+   WinMain | 0x006be021
+   sub_6D04D0 | 0x006d04de
+   sub_6D04F0 | 0x006d05ed
+   TabClass_Draw | 0x006d0aba
+   - | 0x006d14fe
+   - | 0x006d15f7
+   sub_6D1610 | 0x006d1624
+   sub_6D1660 | 0x006d167f
+   sub_755DB0 | 0x00756480
+   sub_758A30 | 0x00758ab5
+   - | 0x00758b55
+   - | 0x007595a6
+   - | 0x00759648
+   sub_7A8260 | 0x007a8b80
+   ??1FilePipe@@UAE@XZ | 0x007ba43d
+   FileStraw_DTOR | 0x007ba5a9
+   sub_409880 | 0x0040995b
+   sub_40A50E | 0x0040a3c8
+   sub_411DF0 | 0x00411fa9
+   fptc | 0x00412472
+   CStreamClass_Clone | 0x004a3011
+   sub_4A4830 | 0x004a483a
+   sub_4BAF20 | 0x004baf28
+   sub_4BB620 | 0x004bb675
+   W?Visual_Character$:FootClass$n.x(ii)$VisualType$$ | 0x004da50a
+   HouseClass_Update_AI | 0x004fd8fe
+   sub_785EA0 | 0x00785f7d
+   sub_432050 | 0x0043228b
+   BufferIOFileClass_ReadNextBytes | 0x004324a0
+   CCFileClass_ReadNextBytes | 0x00473b6d
+   CCFileClass_ReadNextBytes | 0x00473b93
+   sub_4A5660 | 0x004a56ce
+   sub_4A91B0 | 0x004a91ef
+   DisplayClass_Help_Text | 0x004ae538
+   ScenarioClass_GenerateDropshipLoadout | 0x004b8faa
+   sub_4C16A0 | 0x004c17bf
+   EBolt_Draw | 0x004c2512
+   EBolt_Draw | 0x004c270d
+   HouseClass_UnitFromFactory | 0x004fb405
+   HouseClass_Update_AI | 0x004fd7b7
+   LaserDrawClass_Draw | 0x00550968
+   LaserDrawClass_Draw | 0x005509c7
+   LaserDrawClass_Draw_InHouseColor | 0x00550f21
+   LaserDrawClass_Draw_InHouseColor | 0x00550f44
+   LaserDrawClass_Draw_InHouseColor | 0x005512a7
+   sub_5BD5C0 | 0x005bd659
+   sub_5BD5C0 | 0x005bd704
+   sub_630310 | 0x00630961
+   sub_6475F0 | 0x0064771f
+   sub_6475F0 | 0x00647e6d
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x0064f30d
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x0064f39a
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x0064f427
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x0064f4b4
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x0064f541
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x0064f5ce
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x0064f65b
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x0064f6e8
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x0064f775
+   Multiplay_LogToSYNC_NOMPDEBUG | 0x0064f802
+   sub_652E50 | 0x00652e81
+   sub_65C4B0 | 0x0065c528
+   RawFileClass_ReadNextBytes | 0x0065cdbf
+   sub_65CDD0 | 0x0065cef2
+   CCFileClass_Create | 0x0065d17a
+   Game_GetCRC | 0x0067c72a
+   Game_GetCRC | 0x0067c752
+   Game_GetCRC | 0x0067c77a
+   Game_GetCRC | 0x0067c7a2
+   Game_GetCRC | 0x0067c7ca
+   Game_GetCRC | 0x0067c7f2
+   Game_GetCRC | 0x0067c81a
+   Game_GetCRC | 0x0067c842
+   Game_GetCRC | 0x0067c86a
+   Game_GetCRC | 0x0067c892
+   Game_GetCRC | 0x0067c8ba
+   Game_GetCRC | 0x0067c8e2
+   Game_GetCRC | 0x0067c90a
+   Game_GetCRC | 0x0067c932
+   Game_GetCRC | 0x0067c95a
+   Game_GetCRC | 0x0067c982
+   Game_GetCRC | 0x0067c9aa
+   Game_GetCRC | 0x0067c9d2
+   Game_GetCRC | 0x0067c9fa
+   Game_GetCRC | 0x0067ca22
+   Game_GetCRC | 0x0067ca4a
+   Game_GetCRC | 0x0067ca72
+   Game_GetCRC | 0x0067ca9a
+   Game_GetCRC | 0x0067cac2
+   Game_GetCRC | 0x0067caea
+   Game_GetCRC | 0x0067cb12
+   Game_GetCRC | 0x0067cb3a
+   Game_GetCRC | 0x0067cb62
+   Game_GetCRC | 0x0067cb8a
+   Game_GetCRC | 0x0067cbb2
+   Game_GetCRC | 0x0067cbda
+   Game_GetCRC | 0x0067cc02
+   Game_GetCRC | 0x0067cc2a
+   Game_GetCRC | 0x0067cc52
+   Game_GetCRC | 0x0067cc7a
+   Game_GetCRC | 0x0067cca2
+   Game_GetCRC | 0x0067ccca
+   Game_GetCRC | 0x0067ccf2
+   Game_GetCRC | 0x0067cd1a
+   Game_GetCRC | 0x0067cd42
+   Game_GetCRC | 0x0067cd6a
+   Game_GetCRC | 0x0067cd92
+   Game_GetCRC | 0x0067cdba
+   Game_GetCRC | 0x0067cde2
+   Game_GetCRC | 0x0067ce0a
+   Game_GetCRC | 0x0067ce32
+   Game_GetCRC | 0x0067ce5a
+   Game_GetCRC | 0x0067ce82
+   sub_6A7D70 | 0x006a7fdd
+   sub_6A7D70 | 0x006a7ff6
+   sub_6A7D70 | 0x006a8019
+   sub_6D04F0 | 0x006d05d6
+   sub_6D04F0 | 0x006d0656
+   TabClass_MouseMove | 0x006d0883
+   TabClass_MouseMove | 0x006d0932
+   - | 0x006d1515
+   sub_6D1660 | 0x006d1696
+   Tactical_Draw_It_6D5030 | 0x006d5068
+   sub_755DB0 | 0x00755f03
+   sub_755DB0 | 0x00755f4c
+   sub_755DB0 | 0x0075611b
+   sub_755DB0 | 0x00756402
+   - | 0x00758a24
+   - | 0x0075960b
+   sub_759FB0 | 0x0075a0cf
+   sub_75A120 | 0x0075a273
+   sub_7B05C0 | 0x007b0aed
+   sub_7BA450 | 0x007ba46f
+   LaserDrawClass_Draw | 0x005508f6
+   sub_4C1E70 | 0x004c1f10
+   sub_6DBB60 | 0x006dbcc7
+
+############ B. 可能的 CRC/同步采样函数名（含 CRC / Sync / LogToSync） ############
+   0x00410410  AbstractClass_GetCRC
+   0x00410be0  AbstractTypeClass_GetCRC
+   0x0041b610  AircraftClass_GetCRC
+   0x0041cdb0  AircraftTypeClass_GetCRC
+   0x0041d6e0  AirstrikeClass_GetCRC
+   0x0041e5e0  AITriggerTypeClass_GetCRC
+   0x00420da0  AlphaShapeClass_GetCRC
+   0x00425410  AnimClass_GetCRC
+   0x004289d0  AnimTypeClass_GetCRC
+   0x0042f180  BaseClass_GetCRC
+   0x00436f40  BuildingLightClass_GetCRC
+   0x00438a90  BombClass_GetCRC
+   0x0043a5d0  NeuronClass_GetCRC
+   0x00454260  BuildingClass_GetCRC
+   0x00464b30  BuildingTypeClass_GetCRC
+   0x0046c560  BulletTypeClass_GetCRC
+   0x0046cfc0  CampaignClass_GetCRC
+   0x004726f0  CaptureManagerClass_GetCRC
+   0x004a1c10  CRC_BYTE
+   0x004a1ca0  CRC_bool
+   0x004a1d30  CRC_WORD
+   0x004a1d50  CRC_DWORD
+   0x004a1d70  CRC_float
+   0x004a1d90  CRC_double
+   0x004a1db0  CRC_string
+   0x004a1de0  CRC_Calculate
+   0x004a7b80  DiskLaserClass_GetCRC
+   0x004c59a0  EMPulseClass_GetCRC
+   0x004ca430  FactoryClass_GetCRC
+   0x004d2810  FoggedObjectClass_GetCRC
+   0x004dbad0  FootClass_GetCRC
+   0x00502d60  HouseClass_GetCRC
+   0x00512170  HouseTypeClass_GetCRC
+   0x00521c90  InfantryClass_GetCRC
+   0x00524840  InfantryTypeClass_GetCRC
+   0x00537fc0  ??_GMultiplayerSyncCommandClass@@UAEPAXI@Z
+   0x00549b70  IsometricTileTypeClass_GetCRC
+   0x00555070  LightSourceClass_GetCRC
+   0x005b3970  MissionClass_GetCRC
+   0x005f6250  ObjectClass_GetCRC
+   0x005fea50  OverlayTypeClass_GetCRC
+   0x006294d0  ParasiteClass_GetCRC
+   0x00630100  ParticleSystemClass_GetCRC
+   0x00644700  ParticleSystemTypeClass_GetCRC
+   0x006454e0  ParticleTypeClass_GetCRC
+   0x0064dea0  Multiplay_LogToSYNC_NOMPDEBUG
+   0x006516f0  Multiplay_LogToSync_MPDEBUG
+   0x0065ab10  RadioClass_GetCRC
+   0x0065b3b0  RadSiteClass_GetCRC
+   0x0067c6e0  Game_GetCRC
+   0x0068b940  ScenarioClass_GetCRC
+   0x006914e0  ScriptClass_GetCRC
+   0x00691e00  ScriptTypeClass_GetCRC
+   0x006a4710  SideClass_GetCRC
+   0x006b10f0  SlaveManagerClass_GetCRC
+   0x006b57f0  SmudgeTypeClass_GetCRC
+   0x006b7de0  SpawnManagerClass_GetCRC
+   0x006ce020  SuperClass_GetCRC
+   0x006ce910  SuperWeaponTypeClass_GetCRC
+   0x006dc460  TacticalClass_GetCRC
+   0x006e3e50  TActionClass_GetCRC
+   0x006e56e0  TagClass_GetCRC
+   0x006e63e0  TagTypeClass_GetCRC
+   0x006e8750  TaskForceClass_GetCRC
+   0x006ec5a0  TeamClass_GetCRC
+   0x006f1c80  TeamTypeClass_GetCRC
+   0x0070c270  TechnoClass_GetCRC
+   0x007171a0  TechnoTypeClass_GetCRC
+   0x0071a650  TemporalClass_GetCRC
+   0x0071cf50  TerrainClass_GetCRC
+   0x0071e140  TerrainTypeClass_GetCRC
+   0x0071f820  EventClass_GetCRC
+   0x00721dc0  TiberiumClass_GetCRC
+   0x00726790  TriggerClass_GetCRC
+   0x00727b30  TriggerTypeClass_GetCRC
+   0x00728630  TubeClass_GetCRC
+   0x00744640  UnitClass_GetCRC
+   0x00747f70  UnitTypeClass_GetCRC
+   0x0074aa30  VoxelAnimClass_GetCRC
+   0x0074b690  VoxelAnimTypeClass_GetCRC
+   0x0075dec0  WarheadTypeClass_GetCRC
+   0x00763c00  WaypointPathClass_GetCRC
+   0x00772ae0  WeaponTypeClass_GetCRC
+   0x007b1bc0  WinsockInterfaceClass_SelectAsync
+   0x007b3890  UDPInterfaceClass_SelectAsync
+   0x007c89bc  WSAAsyncSelect
+   0x007e13e0  GetAsyncKeyState
+   0x007e156c  __imp_WSAAsyncSelect
+   0x007ebdec  ??_7MultiplayerSyncCommandClass@@6B@
+   0x008042a8  ??_R1A@?0A@A@MultiplayerSyncCommandClass@@8
+   0x008042c0  ??_R2MultiplayerSyncCommandClass@@8
+   0x008042d0  ??_R3MultiplayerSyncCommandClass@@8
+   0x008042e0  ??_R4MultiplayerSyncCommandClass@@6B@
+   0x0081d88c  aFrameSyncStallsD
+   0x0081f7b4  CRC_Table
+   0x00820af0  aFramesync
+   0x00826e98  ??_R0?AVMultiplayerSyncCommandClass@@@8
+   0x00827938  aExtrasynccheck
+   0x0082794c  GameSyncLogging
+   0x00827970  aTurnsExtraGameSyncLoggingOnOrOff_
+   0x008279c4  aExtraSyncInf_0
+   0x008279d8  aExtraSyncInfoO
+   0x008377dc  aSentFramesyncO
+   0x00837fa8  aEmPulseCrcs
+   0x00837fd8  aTiberiumCrcs
+   0x00838008  aSidesCrcs
+   0x00838038  aTubeCrcs
+   0x0083809c  aLightSourceCrc
+   0x008380d0  aOverlayTypeCrc
+   0x00838104  aSmudgeTypeCrcs
+   0x00838170  aBulletCrcs
+   0x00838244  aParticleCrcs
+   0x008382ac  aWeaponCrcs
+   0x008382dc  aWarheadCrcs
+   0x0083830c  aVoxelAnimCrcs
+   0x00838378  aFactoryCrcs
+   0x008383a8  aEventCrcs
+   0x008383d8  aActionCrcs
+   0x00838408  aTriggerCrcs
+   0x00838438  aTriggerTypeCrc
+   0x0083846c  aTagCrcs
+   0x00838498  aTagTypeCrcs
+   0x008384c8  aScriptCrcs
+   0x008384f8  aScriptTypeCrcs
+   0x0083852c  aTeamCrcs
+   0x00838558  aTeamTypeCrcs
+   0x0083858c  aTaskForceCrcs
+   0x008385c0  aAnimTypeCrcs
+   0x008385f4  aAnimCrcs
+   0x00838620  aAircraftCrcs
+   0x00838688  aBuildingCrcs
+   0x008386ec  aInfantryCrcs
+   0x00838754  aUnitCrcs
+   0x00838780  aUnitTypeCrcs
+   0x008387b4  aHouseCrcs
+   0x00838828  aIndexCrc
+   0x00838838  aHouseTypeCrcs
+   0x00838894  aCrcX
+   0x00838de0  aCrcDX
+   0x00838e40  aRa2Sync
+   0x00838e90  aWritingSyncDat
+   0x00838eb0  aSync01d_txt
+   0x00839168  aCrcDX_0
+   0x00839194  aSync01d_03d_tx
+   0x0083efdc  aPrintcrc
+   0x0083f040  aSyncbug
+   0x00845cb0  aFiringsyncfram
+   0x0084de68  aAsyncSelectF_0
+   0x0084dea4  aAsyncSelectFai
+   0x0084e3d0  aAsyncSelectF_1
+   0x00b04880  MPSYNCDEBUG
+
+############ C. Multiplay_LogToSync 相关函数的反汇编头部 ############
+  == LogToSync? 0x006516f0..0x00652061 ==
+     0x006516f0: sub     esp, 3A4h
+     0x006516f6: push    ebx
+     0x006516f7: push    esi
+     0x006516f8: push    edi
+     0x006516f9: mov     edi, ecx
+     0x006516fb: mov     ecx, HouseClass_PlayerPtr
+     0x00651701: mov     [esp+3B0h+var_384], edx
+     0x00651705: lea     eax, [edi+edi*2]
+     0x00651708: push    edi
+     0x00651709: mov     edx, [ecx+30h]
+     0x0065170c: mov     [esp+3B4h+var_39C], edi
+     0x00651710: shl     eax, 3
+     0x00651713: sub     eax, edi
+     0x00651715: push    edx
+     0x00651716: push    offset aSync01d_03d_tx; "SYNC%01d_%03d.TXT"
+     0x0065171b: lea     eax, [eax+eax*8]
+     0x0065171e: lea     ebx, ds:0AC6660h[eax*4]
+     0x00651725: lea     eax, [esp+3BCh+Filename]
+     0x0065172c: push    eax; char *
+     0x0065172d: mov     [esp+3C0h+var_38C], ebx
+     0x00651731: call    _sprintf
+     0x00651736: lea     ecx, [esp+3C0h+Filename]
+     0x0065173d: push    ecx
+     0x0065173e: push    offset aWritingSyncDat; "Writing sync data to file %s\n"
+     0x00651743: call    WWDebugString; Writing sync data to file %s
+     0x00651748: lea     edx, [esp+3C8h+Filename]
+     0x0065174f: push    offset aWt; "wt"
+     0x00651754: push    edx; char *
+     0x00651755: call    _fopen
+     0x0065175a: mov     esi, eax
+     0x0065175c: add     esp, 20h
+     0x0065175f: test    esi, esi
+     0x00651761: jnz     short loc_651782
+     0x00651763: push    eax
+     0x00651764: call    ds:GetLastError
+     0x0065176a: push    eax
+     0x0065176b: push    offset aErrorFailedToO; "Error - failed to open sync file for wr"...
+     0x00651770: call    WWDebugString; Error - failed to open sync file for writing. Error code %d - %s
+     0x00651775: add     esp, 0Ch
+     0x00651778: pop     edi
+  == LogToSync? 0x006516f0..0x00652061 ==
+     0x006516f0: sub     esp, 3A4h
+     0x006516f6: push    ebx
+     0x006516f7: push    esi
+     0x006516f8: push    edi
+     0x006516f9: mov     edi, ecx
+     0x006516fb: mov     ecx, HouseClass_PlayerPtr
+     0x00651701: mov     [esp+3B0h+var_384], edx
+     0x00651705: lea     eax, [edi+edi*2]
+     0x00651708: push    edi
+     0x00651709: mov     edx, [ecx+30h]
+     0x0065170c: mov     [esp+3B4h+var_39C], edi
+     0x00651710: shl     eax, 3
+     0x00651713: sub     eax, edi
+     0x00651715: push    edx
+     0x00651716: push    offset aSync01d_03d_tx; "SYNC%01d_%03d.TXT"
+     0x0065171b: lea     eax, [eax+eax*8]
+     0x0065171e: lea     ebx, ds:0AC6660h[eax*4]
+     0x00651725: lea     eax, [esp+3BCh+Filename]
+     0x0065172c: push    eax; char *
+     0x0065172d: mov     [esp+3C0h+var_38C], ebx
+     0x00651731: call    _sprintf
+     0x00651736: lea     ecx, [esp+3C0h+Filename]
+     0x0065173d: push    ecx
+     0x0065173e: push    offset aWritingSyncDat; "Writing sync data to file %s\n"
+     0x00651743: call    WWDebugString; Writing sync data to file %s
+     0x00651748: lea     edx, [esp+3C8h+Filename]
+     0x0065174f: push    offset aWt; "wt"
+     0x00651754: push    edx; char *
+     0x00651755: call    _fopen
+     0x0065175a: mov     esi, eax
+     0x0065175c: add     esp, 20h
+     0x0065175f: test    esi, esi
+     0x00651761: jnz     short loc_651782
+     0x00651763: push    eax
+     0x00651764: call    ds:GetLastError
+     0x0065176a: push    eax
+     0x0065176b: push    offset aErrorFailedToO; "Error - failed to open sync file for wr"...
+     0x00651770: call    WWDebugString; Error - failed to open sync file for writing. Error code %d - %s
+     0x00651775: add     esp, 0Ch
+     0x00651778: pop     edi
+  == LogToSync? 0x006516f0..0x00652061 ==
+     0x006516f0: sub     esp, 3A4h
+     0x006516f6: push    ebx
+     0x006516f7: push    esi
+     0x006516f8: push    edi
+     0x006516f9: mov     edi, ecx
+     0x006516fb: mov     ecx, HouseClass_PlayerPtr
+     0x00651701: mov     [esp+3B0h+var_384], edx
+     0x00651705: lea     eax, [edi+edi*2]
+     0x00651708: push    edi
+     0x00651709: mov     edx, [ecx+30h]
+     0x0065170c: mov     [esp+3B4h+var_39C], edi
+     0x00651710: shl     eax, 3
+     0x00651713: sub     eax, edi
+     0x00651715: push    edx
+     0x00651716: push    offset aSync01d_03d_tx; "SYNC%01d_%03d.TXT"
+     0x0065171b: lea     eax, [eax+eax*8]
+     0x0065171e: lea     ebx, ds:0AC6660h[eax*4]
+     0x00651725: lea     eax, [esp+3BCh+Filename]
+     0x0065172c: push    eax; char *
+     0x0065172d: mov     [esp+3C0h+var_38C], ebx
+     0x00651731: call    _sprintf
+     0x00651736: lea     ecx, [esp+3C0h+Filename]
+     0x0065173d: push    ecx
+     0x0065173e: push    offset aWritingSyncDat; "Writing sync data to file %s\n"
+     0x00651743: call    WWDebugString; Writing sync data to file %s
+     0x00651748: lea     edx, [esp+3C8h+Filename]
+     0x0065174f: push    offset aWt; "wt"
+     0x00651754: push    edx; char *
+     0x00651755: call    _fopen
+     0x0065175a: mov     esi, eax
+     0x0065175c: add     esp, 20h
+     0x0065175f: test    esi, esi
+     0x00651761: jnz     short loc_651782
+     0x00651763: push    eax
+     0x00651764: call    ds:GetLastError
+     0x0065176a: push    eax
+     0x0065176b: push    offset aErrorFailedToO; "Error - failed to open sync file for wr"...
+     0x00651770: call    WWDebugString; Error - failed to open sync file for writing. Error code %d - %s
+     0x00651775: add     esp, 0Ch
+     0x00651778: pop     edi
+
+############ D. 写 [reg+0x425] 的点（坠机/沉没标志） ############
+   FootClass_Crash | 0x004dec7f
+   FootClass_LetGoOfUnit | 0x0070ff25
+   sub_54C550 | 0x0054ca12

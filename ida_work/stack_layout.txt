@@ -1,0 +1,516 @@
+==============================================================================================================
+### TechnoClass::Can_Fire 序言+到Hook点  [0x6FC0B0 - 0x6FC360]
+==============================================================================================================
+函数: W?Can_Fire$:TechnoClass$n.x(li)$FireErrorType$$  0x6FC0B0 - 0x6FCD38
+  0x006FC0B0  sub     esp, 10h                              
+  0x006FC0B3  push    ebx                                   
+  0x006FC0B4  mov     ebx, [esp+14h+a2]                     
+  0x006FC0B8  push    ebp                                   
+  0x006FC0B9  push    esi                                   
+  0x006FC0BA  test    ebx, ebx                              
+  0x006FC0BC  push    edi                                   
+  0x006FC0BD  mov     esi, ecx                              
+  0x006FC0BF  jz      loc_6FC86A                            
+  0x006FC0C5  mov     eax, [esi+2DCh]                       
+  0x006FC0CB  test    eax, eax                              
+  0x006FC0CD  jnz     loc_6FC86A                            
+  0x006FC0D3  mov     eax, [esi]                            
+  0x006FC0D5  call    dword ptr [eax+1D8h]                  
+  0x006FC0DB  test    al, al                                
+  0x006FC0DD  jz      short loc_6FC0EE                      
+  0x006FC0DF  pop     edi                                   
+  0x006FC0E0  pop     esi                                   
+  0x006FC0E1  pop     ebp                                   
+  0x006FC0E2  mov     eax, 3                                
+  0x006FC0E7  pop     ebx                                   
+  0x006FC0E8  add     esp, 10h                              
+  0x006FC0EB  retn    0Ch                                   
+  0x006FC0EE  cmp     [esi+2ACh], ebx                       
+  0x006FC0F4  jnz     short loc_6FC105                      
+  0x006FC0F6  pop     edi                                   
+  0x006FC0F7  pop     esi                                   
+  0x006FC0F8  pop     ebp                                   
+  0x006FC0F9  mov     eax, 3                                
+  0x006FC0FE  pop     ebx                                   
+  0x006FC0FF  add     esp, 10h                              
+  0x006FC102  retn    0Ch                                   
+  0x006FC105  mov     edx, [esi]                            
+  0x006FC107  mov     ecx, esi                              
+  0x006FC109  call    dword ptr [edx+1D4h]                  
+  0x006FC10F  test    al, al                                
+  0x006FC111  jnz     loc_6FC86A                            
+  0x006FC117  mov     al, [esi+1C8h]                        
+  0x006FC11D  test    al, al                                
+  0x006FC11F  jnz     loc_6FC86A                            
+  0x006FC125  mov     al, [esi+3CDh]                        
+  0x006FC12B  test    al, al                                
+  0x006FC12D  jnz     loc_6FC86A                            
+  0x006FC133  cmp     ebx, [esi+1CCh]                       
+  0x006FC139  jz      loc_6FC86A                            
+  0x006FC13F  cmp     ebx, [esi+11Ch]                       
+  0x006FC145  jz      loc_6FC86A                            
+  0x006FC14B  mov     eax, [esi]                            
+  0x006FC14D  mov     ecx, esi                              
+  0x006FC14F  call    dword ptr [eax+1DCh]                  
+  0x006FC155  test    al, al                                
+  0x006FC157  jz      short loc_6FC177                      
+  0x006FC159  mov     eax, [esi+274h]                       
+  0x006FC15F  test    eax, eax                              
+  0x006FC161  jz      short loc_6FC177                      
+  0x006FC163  cmp     ebx, [eax+28h]                        
+  0x006FC166  jnz     short loc_6FC177                      
+  0x006FC168  pop     edi                                   
+  0x006FC169  pop     esi                                   
+  0x006FC16A  pop     ebp                                   
+  0x006FC16B  mov     eax, 3                                
+  0x006FC170  pop     ebx                                   
+  0x006FC171  add     esp, 10h                              
+  0x006FC174  retn    0Ch                                   
+  0x006FC177  mov     cl, [ebx+14h]                         
+  0x006FC17A  mov     edx, [ebx]                            
+  0x006FC17C  and     cl, 1                                 
+  0x006FC17F  lea     eax, [esp+20h+var_C]                  
+  0x006FC183  neg     cl                                    
+  0x006FC185  sbb     ecx, ecx                              
+  0x006FC187  push    eax                                   
+  0x006FC188  and     ecx, ebx                              
+  0x006FC18A  mov     ebp, ecx                              
+  0x006FC18C  mov     ecx, ebx                              
+  0x006FC18E  call    dword ptr [edx+48h]                   
+  0x006FC191  push    eax; a2                               
+  0x006FC192  mov     ecx, offset Map; this                 
+  0x006FC197  call    MapClass_Get_Target_Cell              
+  0x006FC19C  test    esi, esi                              
+  0x006FC19E  mov     edi, eax                              
+  0x006FC1A0  jz      short loc_6FC1B6                      
+  0x006FC1A2  test    byte ptr [esi+14h], 4                 
+  0x006FC1A6  jz      short loc_6FC1B6                      
+  0x006FC1A8  mov     al, [esi+_FootClass.f.field_6A9]      
+  0x006FC1AE  test    al, al                                
+  0x006FC1B0  jnz     loc_6FC86A                            
+  0x006FC1B6  test    ebp, ebp                              
+  0x006FC1B8  jz      loc_6FC2D2                            
+  0x006FC1BE  mov     al, [ebp+81h]                         
+  0x006FC1C4  test    al, al                                
+  0x006FC1C6  jnz     loc_6FC86A                            
+  0x006FC1CC  mov     al, [esi+298h]                        
+  0x006FC1D2  test    al, al                                
+  0x006FC1D4  jz      short loc_6FC1EF                      
+  0x006FC1D6  mov     edx, [ebp+0]                          
+  0x006FC1D9  mov     ecx, ebp                              
+  0x006FC1DB  call    dword ptr [edx+84h]                   
+  0x006FC1E1  mov     cl, [eax+_TechnoTypeClass.t.BerserkFriendly]
+  0x006FC1E7  test    cl, cl                                
+  0x006FC1E9  jnz     loc_6FC86A                            
+  0x006FC1EF  mov     eax, [esi]                            
+  0x006FC1F1  mov     ecx, esi                              
+  0x006FC1F3  call    dword ptr [eax+84h]                   
+  0x006FC1F9  mov     cl, [eax+_TechnoTypeClass.t.Natural]  
+  0x006FC1FF  test    cl, cl                                
+  0x006FC201  jz      short loc_6FC21C                      
+  0x006FC203  mov     edx, [ebp+0]                          
+  0x006FC206  mov     ecx, ebp                              
+  0x006FC208  call    dword ptr [edx+84h]                   
+  0x006FC20E  mov     cl, [eax+_TechnoTypeClass.t.Unnatural]
+  0x006FC214  test    cl, cl                                
+  0x006FC216  jnz     loc_6FC86A                            
+  0x006FC21C  mov     al, [ebp+27Ch]                        
+  0x006FC222  test    al, al                                
+  0x006FC224  jnz     loc_6FC86A                            
+  0x006FC22A  mov     eax, [esi+21Ch]                       
+  0x006FC230  mov     cl, [eax+1ECh]                        
+  0x006FC236  test    cl, cl                                
+  0x006FC238  jnz     short loc_6FC24D                      
+  0x006FC23A  mov     edx, [ebp+0]                          
+  0x006FC23D  mov     ecx, ebp                              
+  0x006FC23F  call    dword ptr [edx+160h]                  
+  0x006FC245  test    al, al                                
+  0x006FC247  jnz     loc_6FC86A                            
+  0x006FC24D  mov     ecx, [esi+21Ch]                       
+  0x006FC253  mov     eax, [ebp+0]                          
+  0x006FC256  push    ecx                                   
+  0x006FC257  push    1                                     
+  0x006FC259  mov     ecx, ebp                              
+  0x006FC25B  call    dword ptr [eax+68h]                   
+  0x006FC25E  cmp     eax, 5                                
+  0x006FC261  jnz     short loc_6FC2A3                      
+  0x006FC263  mov     edx, [esi+21Ch]                       
+  0x006FC269  mov     ecx, edi; this                        
+  0x006FC26B  mov     eax, [edx+30h]                        
+  0x006FC26E  push    eax; a2                               
+  0x006FC26F  call    CellClass_Sensors_HasHouse            
+  0x006FC274  test    al, al                                
+  0x006FC276  jnz     short loc_6FC2A3                      
+  0x006FC278  push    0FFFFFFFFh; idxWeapon                 
+  0x006FC27A  mov     ecx, esi; this                        
+  0x006FC27C  call    TechnoClass::Combat_Damage; arg = -1  
+  0x006FC281  test    eax, eax                              
+  0x006FC283  jg      loc_6FCD29                            
+  0x006FC289  mov     ecx, [esi+21Ch]                       
+  0x006FC28F  push    ecx; h2                               
+  0x006FC290  mov     ecx, [ebp+21Ch]; this                 
+  0x006FC296  call    HouseClass::Is_Ally                   
+  0x006FC29B  test    al, al                                
+  0x006FC29D  jz      loc_6FCD29                            
+  0x006FC2A3  mov     al, [ebp+418h]                        
+  0x006FC2A9  test    al, al                                
+  0x006FC2AB  jz      short loc_6FC2D2                      
+  0x006FC2AD  mov     edx, [ebp+0]                          
+  0x006FC2B0  mov     ecx, ebp                              
+  0x006FC2B2  call    dword ptr [edx+84h]                   
+  0x006FC2B8  mov     cl, [eax+_TechnoTypeClass.t.BalloonHover]
+  0x006FC2BE  test    cl, cl                                
+  0x006FC2C0  jz      short loc_6FC2D2                      
+  0x006FC2C2  mov     eax, [ebp+0]                          
+  0x006FC2C5  mov     ecx, ebp                              
+  0x006FC2C7  call    dword ptr [eax+54h]                   
+  0x006FC2CA  test    al, al                                
+  0x006FC2CC  jz      loc_6FC86A                            
+  0x006FC2D2  mov     al, [esi+8Dh]                         
+  0x006FC2D8  test    al, al                                
+  0x006FC2DA  jnz     loc_6FC86A                            
+  0x006FC2E0  mov     edx, [esi]                            
+  0x006FC2E2  mov     ecx, esi                              
+  0x006FC2E4  call    dword ptr [edx+37Ch]                  
+  0x006FC2EA  test    al, al                                
+  0x006FC2EC  jz      short loc_6FC31C                      
+  0x006FC2EE  mov     eax, [esi]                            
+  0x006FC2F0  mov     ecx, esi                              
+  0x006FC2F2  call    dword ptr [eax+2Ch]                   
+  0x006FC2F5  cmp     eax, 1                                
+  0x006FC2F8  jnz     loc_6FCD29                            
+  0x006FC2FE  mov     eax, [esi+6C4h]                       
+  0x006FC304  mov     cl, [eax+0E19h]                       
+  0x006FC30A  test    cl, cl                                
+  0x006FC30C  jnz     short loc_6FC31C                      
+  0x006FC30E  mov     cl, [eax+0E18h]                       
+  0x006FC314  test    cl, cl                                
+  0x006FC316  jz      loc_6FCD29                            
+  0x006FC31C  mov     eax, [esp+20h+idx]                    
+  0x006FC320  mov     edx, [esi]                            
+  0x006FC322  push    eax; a2                               
+  0x006FC323  mov     ecx, esi; this                        
+  0x006FC325  call    [edx+vt_TechnoClass.GetWeapon] ; TechnoClass_GetWeapon
+  0x006FC32B  mov     edi, [eax]                            
+  0x006FC32D  test    edi, edi                              
+  0x006FC32F  mov     [esp+20h+var_10], edi                 
+  0x006FC333  jz      loc_6FCD29                            
+  0x006FC339  mov     al, [edi+14Fh]                           <<<<<< HOOK 点
+  0x006FC33F  test    al, al                                
+  0x006FC341  jz      short loc_6FC356                      
+  0x006FC343  mov     ecx, [esi+21Ch]; this                 
+  0x006FC349  call    IonStormClass::Is_Active              
+  0x006FC34E  test    al, al                                
+  0x006FC350  jnz     loc_6FCD29                            
+  0x006FC356  mov     al, [edi+142h]                        
+  0x006FC35C  test    al, al                                
+  0x006FC35E  jz      short loc_6FC393                      
+
+==============================================================================================================
+### TechnoClass::SelectWeapon 序言  [0x6F3330 - 0x6F3400]
+==============================================================================================================
+函数: TechnoClass_SelectWeapon  0x6F3330 - 0x6F3816
+  0x006F3330  sub     esp, 8                                
+  0x006F3333  push    ebx                                   
+  0x006F3334  push    ebp                                   
+  0x006F3335  push    esi                                   
+  0x006F3336  mov     esi, ecx                              
+  0x006F3338  push    edi                                   
+  0x006F3339  mov     eax, [esi]                            
+  0x006F333B  call    dword ptr [eax+84h]                   
+  0x006F3341  mov     ecx, eax; this                        
+  0x006F3343  call    TechnoTypeClass_IsTurretChanger       
+  0x006F3348  test    al, al                                
+  0x006F334A  jz      short @@1                             
+  0x006F334C  mov     edx, [esi]                            
+  0x006F334E  mov     ecx, esi                              
+  0x006F3350  call    dword ptr [edx+84h]                   
+  0x006F3356  mov     cl, [eax+_TechnoTypeClass.t.IsGattling]
+  0x006F335C  test    cl, cl                                
+  0x006F335E  jnz     short @@1                             
+  0x006F3360  mov     esi, [esi+_TechnoClass.t.CurrentTurretNumber]
+  0x006F3366  pop     edi                                   
+  0x006F3367  mov     eax, esi                              
+  0x006F3369  inc     eax                                   
+  0x006F336A  neg     eax                                   
+  0x006F336C  sbb     eax, eax                              
+  0x006F336E  and     eax, esi                              
+  0x006F3370  pop     esi                                   
+  0x006F3371  pop     ebp                                   
+  0x006F3372  pop     ebx                                   
+  0x006F3373  add     esp, 8                                
+  0x006F3376  retn    4                                     
+  0x006F3379  mov     eax, [esi]                            
+  0x006F337B  mov     ecx, esi; this                        
+  0x006F337D  call    [eax+vt_TechnoClass.CanOccupyFire]    
+  0x006F3383  test    al, al                                
+  0x006F3385  jnz     @@19                                  
+  0x006F338B  mov     edx, [esi]                            
+  0x006F338D  push    1; slot                               
+  0x006F338F  mov     ecx, esi; this                        
+  0x006F3391  call    [edx+vt_TechnoClass.GetWeapon]        
+  0x006F3397  mov     edi, [eax]                            
+  0x006F3399  test    edi, edi                              
+  0x006F339B  mov     [esp+18h+weap2_], edi                 
+  0x006F339F  jz      @@19                                  
+  0x006F33A5  mov     eax, [esi]                            
+  0x006F33A7  push    0; slot                               
+  0x006F33A9  mov     ecx, esi; this                        
+  0x006F33AB  call    [eax+vt_TechnoClass.GetWeapon]        
+  0x006F33B1  mov     ebx, [eax]                            
+  0x006F33B3  test    ebx, ebx                              
+  0x006F33B5  mov     [esp+18h+weap1_], ebx                 
+  0x006F33B9  jz      @@19                                  
+  0x006F33BF  mov     al, [edi+WeaponTypeClass.NeverUse]    
+  0x006F33C5  test    al, al                                
+  0x006F33C7  jnz     @@19                                  
+  0x006F33CD  mov     edi, [esp+18h+target]                 
+  0x006F33D1  test    edi, edi                              
+  0x006F33D3  jz      @@19                                  
+  0x006F33D9  mov     al, [esi+_ObjectClass.o.InOpenTopped] 
+  0x006F33DF  test    al, al                                
+  0x006F33E1  jz      short @@2                             
+  0x006F33E3  mov     edx, [esi]                            
+  0x006F33E5  mov     ecx, esi                              
+  0x006F33E7  call    dword ptr [edx+84h]                   
+  0x006F33ED  cmp     [eax+_TechnoTypeClass.t.OpenTransportWeapon], 0FFFFFFFFh
+  0x006F33F4  jz      short @@2                             
+  0x006F33F6  mov     eax, [esi]                            
+  0x006F33F8  mov     ecx, esi; this                        
+  0x006F33FA  call    [eax+vt_TechnoClass.r.m.o.GetTechnoType]
+
+==============================================================================================================
+### TechnoClass::SelectWeapon 中段  [0x6F3400 - 0x6F3480]
+==============================================================================================================
+函数: TechnoClass_SelectWeapon  0x6F3330 - 0x6F3816
+  0x006F3400  mov     eax, [eax+_TechnoTypeClass.t.OpenTransportWeapon]
+  0x006F3406  pop     edi                                   
+  0x006F3407  pop     esi                                   
+  0x006F3408  pop     ebp                                   
+  0x006F3409  pop     ebx                                   
+  0x006F340A  add     esp, 8                                
+  0x006F340D  retn    4                                     
+  0x006F3410  mov     cl, [edi+_TechnoClass.t.r.m.o.a.derivationFlags]
+  0x006F3413  mov     edx, [esi]                            
+  0x006F3415  and     cl, 1                                 
+  0x006F3418  neg     cl                                    
+  0x006F341A  sbb     ecx, ecx                              
+  0x006F341C  and     ecx, edi                              
+  0x006F341E  mov     ebp, ecx                              
+  0x006F3420  mov     ecx, esi                              
+  0x006F3422  call    dword ptr [edx+84h]                   
+  0x006F3428  mov     cl, [eax+_TechnoTypeClass.t.IsGattling]
+  0x006F342E  test    cl, cl                                
+  0x006F3430  jz      short @@4                             
+  0x006F3432  mov     eax, [esp+18h+weap2_]                 
+  0x006F3436  mov     esi, [esi+_TechnoClass.t.CurrentGattlingStage]
+  0x006F343C  mov     ecx, [eax+WeaponTypeClass.Projectile] 
+  0x006F3442  mov     al, [ecx+BulletTypeClass.AA]          
+  0x006F3448  test    al, al                                
+  0x006F344A  jz      short @@3                             
+  0x006F344C  test    ebp, ebp                              
+  0x006F344E  jz      short @@3                             
+  0x006F3450  mov     edx, [ebp+0]                          
+  0x006F3453  mov     ecx, ebp; this                        
+  0x006F3455  call    [edx+vt_TechnoClass.r.m.o.a.InAir]    
+  0x006F3458  test    al, al                                
+  0x006F345A  jz      short @@3                             
+  0x006F345C  lea     eax, [esi+esi+1]                      
+  0x006F3460  pop     edi                                   
+  0x006F3461  pop     esi                                   
+  0x006F3462  pop     ebp                                   
+  0x006F3463  pop     ebx                                   
+  0x006F3464  add     esp, 8                                
+  0x006F3467  retn    4                                     
+  0x006F346A  lea     eax, [esi+esi]                        
+  0x006F346D  pop     edi                                   
+  0x006F346E  pop     esi                                   
+  0x006F346F  pop     ebp                                   
+  0x006F3470  pop     ebx                                   
+  0x006F3471  add     esp, 8                                
+  0x006F3474  retn    4                                     
+  0x006F3477  mov     eax, [esp+18h+weap2_]                 
+  0x006F347B  mov     ecx, [eax+WeaponTypeClass.Warhead]    
+
+==============================================================================================================
+### ObjectClass::Select 序言+到Hook点  [0x5F4520 - 0x5F45B0]
+==============================================================================================================
+函数: W?Select$:ObjectClass$n()i  0x5F4520 - 0x5F4725
+  0x005F4520  push    ecx                                   
+  0x005F4521  mov     al, Debug_Map                         
+  0x005F4526  push    esi                                   
+  0x005F4527  test    al, al                                
+  0x005F4529  push    edi                                   
+  0x005F452A  mov     esi, ecx                              
+  0x005F452C  jnz     short loc_5F4554                      
+  0x005F452E  mov     al, [esi+_ObjectClass.o.InLimbo]      
+  0x005F4534  test    al, al                                
+  0x005F4536  jnz     short loc_5F454E                      
+  0x005F4538  mov     al, [esi+_ObjectClass.o.Selected]     
+  0x005F453E  test    al, al                                
+  0x005F4540  jnz     short loc_5F454E                      
+  0x005F4542  mov     eax, [esi]                            
+  0x005F4544  call    dword ptr [eax+138h]                  
+  0x005F454A  test    al, al                                
+  0x005F454C  jnz     short loc_5F4554                      
+  0x005F454E  pop     edi                                   
+  0x005F454F  xor     al, al                                
+  0x005F4551  pop     esi                                   
+  0x005F4552  pop     ecx                                   
+  0x005F4553  retn                                          
+  0x005F4554  mov     ecx, esi; this                        
+  0x005F4556  call    Is_Techno                             
+  0x005F455B  mov     edi, eax                              
+  0x005F455D  mov     al, Debug_Map                         
+  0x005F4562  test    al, al                                
+  0x005F4564  jnz     short loc_5F4588                      
+  0x005F4566  mov     edx, [esi]                            
+  0x005F4568  mov     ecx, esi                              
+  0x005F456A  call    dword ptr [edx+0A0h]                  
+  0x005F4570  test    al, al                                
+  0x005F4572  jz      short loc_5F4588                      
+  0x005F4574  test    edi, edi                              
+  0x005F4576  jz      short loc_5F45A0                      
+  0x005F4578  mov     al, [edi+3D4h]                        
+  0x005F457E  test    al, al                                
+  0x005F4580  jz      short loc_5F4588                      
+  0x005F4582  pop     edi                                   
+  0x005F4583  xor     al, al                                
+  0x005F4585  pop     esi                                   
+  0x005F4586  pop     ecx                                   
+  0x005F4587  retn                                          
+  0x005F4588  test    edi, edi                              
+  0x005F458A  jz      short loc_5F45A0                      
+  0x005F458C  mov     eax, [edi]                            
+  0x005F458E  mov     ecx, edi                              
+  0x005F4590  call    dword ptr [eax+1D4h]                  
+  0x005F4596  test    al, al                                
+  0x005F4598  jz      short loc_5F45A0                      
+  0x005F459A  pop     edi                                   
+  0x005F459B  xor     al, al                                
+  0x005F459D  pop     esi                                   
+  0x005F459E  pop     ecx                                   
+  0x005F459F  retn                                          
+  0x005F45A0  mov     eax, ptr_BuildingTypeClass_ToPlace       <<<<<< HOOK 点
+  0x005F45A5  test    eax, eax                              
+  0x005F45A7  jz      short loc_5F45AF                      
+  0x005F45A9  pop     edi                                   
+  0x005F45AA  xor     al, al                                
+  0x005F45AC  pop     esi                                   
+  0x005F45AD  pop     ecx                                   
+  0x005F45AE  retn                                          
+  0x005F45AF  mov     eax, v_CurrentObjects.__.ActiveCount  
+
+==============================================================================================================
+### LogicClass_Update_Late Hook 0x55B719 附近  [0x55B710 - 0x55B760]
+==============================================================================================================
+函数: LogicClass_Update  0x55AFB0 - 0x55B71D
+  0x0055B710  push    eax; void *                           
+  0x0055B711  call    delete                                
+  0x0055B716  add     esp, 4                                
+  0x0055B719  add     esp, 28h                                 <<<<<< HOOK 点
+  0x0055B71C  retn                                          
+  0x0055B71D  db 3 dup(90h)                                 
+  0x0055B720  sub     esp, 10h                              
+  0x0055B723  push    ebx                                   
+  0x0055B724  mov     ebx, RulesData                        
+  0x0055B72A  push    ebp                                   
+  0x0055B72B  push    esi                                   
+  0x0055B72C  mov     al, [ebx+17F0h]                       
+  0x0055B732  push    edi                                   
+  0x0055B733  test    al, al                                
+  0x0055B735  mov     ebp, ecx                              
+  0x0055B737  jz      short loc_55B7A6                      
+  0x0055B739  fld     qword ptr [ebx+1640h]                 
+  0x0055B73F  fcomp   ds:double_0                           
+  0x0055B745  fnstsw  ax                                    
+  0x0055B747  test    ah, 40h                               
+  0x0055B74A  jnz     short loc_55B7A6                      
+  0x0055B74C  mov     eax, Scenario                         
+  0x0055B751  mov     edi, Frame                            
+  0x0055B757  mov     edx, [eax+1218h]                      
+  0x0055B75D  lea     esi, [eax+1218h]                      
+
+==============================================================================================================
+### Can_Fire(0x6FC0B0-0x6FCD38) 全部栈引用
+==============================================================================================================
+  0x006FC0B4  mov     ebx, [esp+14h+a2]
+  0x006FC17F  lea     eax, [esp+20h+var_C]
+  0x006FC1BE  mov     al, [ebp+81h]
+  0x006FC1D6  mov     edx, [ebp+0]
+  0x006FC203  mov     edx, [ebp+0]
+  0x006FC21C  mov     al, [ebp+27Ch]
+  0x006FC23A  mov     edx, [ebp+0]
+  0x006FC253  mov     eax, [ebp+0]
+  0x006FC290  mov     ecx, [ebp+21Ch]; this
+  0x006FC2A3  mov     al, [ebp+418h]
+  0x006FC2AD  mov     edx, [ebp+0]
+  0x006FC2C2  mov     eax, [ebp+0]
+  0x006FC31C  mov     eax, [esp+20h+idx]
+  0x006FC32F  mov     [esp+20h+var_10], edi
+  0x006FC364  mov     ecx, [ebp+1D0h]
+  0x006FC37A  mov     edx, [ebp+0]
+  0x006FC397  mov     eax, [ebp+2E4h]
+  0x006FC3A1  mov     eax, [ebp+0]
+  0x006FC40C  mov     edx, [ebp+0]
+  0x006FC43D  mov     ecx, [ebp+2E4h]
+  0x006FC4EB  mov     edi, [esp+20h+var_10]
+  0x006FC564  mov     eax, [ebp+0]
+  0x006FC5E3  mov     eax, [ebp+0]
+  0x006FC663  mov     edx, [ebp+0]
+  0x006FC670  mov     eax, [ebp+0]
+  0x006FC689  mov     ecx, [esp+20h+idx]
+  0x006FC76A  mov     edx, [ebp+0]
+  0x006FC77E  mov     eax, [ebp+0]
+  0x006FC798  mov     edx, [ebp+0]
+  0x006FC7A6  mov     al, [ebp+8Ch]
+  0x006FC7B8  mov     ecx, [esp+20h+a2]
+  0x006FC7D0  mov     ecx, [esp+20h+a2]
+  0x006FC879  mov     ebx, [esp+20h+var_10]
+  0x006FC88D  mov     edi, [esp+20h+a2]
+  0x006FC8BE  mov     edi, [esp+20h+a2]
+  0x006FC8F5  mov     eax, [esp+20h+idx]
+  0x006FCB06  mov     edx, [ebp+0]
+  0x006FCB53  mov     edx, [ebp+0]
+  0x006FCB97  mov     eax, [ebp+38h]
+  0x006FCBB7  mov     eax, [ebp+_ObjectClass.o.IvanBomb]
+  0x006FCBCD  mov     al, [ebp+3CDh]
+  0x006FCBEC  mov     al, [ebp+8Ch]
+  0x006FCC2C  mov     eax, [ebp+0]
+  0x006FCC3B  mov     edx, [ebp+0]
+  0x006FCC6B  mov     [esp+20h+var_C], ecx
+  0x006FCC6F  mov     ecx, [ebp+0]
+  0x006FCC75  mov     [esp+20h+var_C], ecx
+  0x006FCC79  mov     [esp+20h+var_8], edx
+  0x006FCC7D  mov     edx, [ebp+4]
+  0x006FCC83  mov     [esp+20h+var_8], edx
+  0x006FCC8D  mov     ecx, [ebp+8]
+  0x006FCCEE  mov     al, byte ptr [esp+20h+what]
+  0x006FCCF6  mov     ecx, [esp+20h+idx]
+  0x006FCCFA  mov     edx, [esp+20h+a2]
+
+==============================================================================================================
+### SelectWeapon(0x6F3330-0x6F3816) 栈引用（前 60 条）
+==============================================================================================================
+  0x006F339B  mov     [esp+18h+weap2_], edi
+  0x006F33B5  mov     [esp+18h+weap1_], ebx
+  0x006F33CD  mov     edi, [esp+18h+target]
+  0x006F3432  mov     eax, [esp+18h+weap2_]
+  0x006F3450  mov     edx, [ebp+0]
+  0x006F3477  mov     eax, [esp+18h+weap2_]
+  0x006F353C  mov     edx, [ebp+0]
+  0x006F3558  mov     eax, [esp+18h+weap2_]
+  0x006F356A  mov     edx, [ebp+0]
+  0x006F35A8  mov     eax, [esp+18h+weap2_]
+  0x006F3615  mov     eax, [esp+18h+weap2_]
+  0x006F36E3  mov     eax, [ebp+0]
+  0x006F36EE  mov     edx, [esp+18h+weap2_]
+  0x006F3716  mov     edx, [ebp+0]
+  0x006F3721  mov     ecx, [esp+18h+weap1_]
+  0x006F3754  mov     eax, [ebp+0]
+  0x006F3767  mov     edx, [ebp+0]
+  0x006F3781  mov     eax, [ebp+0]
+  0x006F378F  mov     al, [ebp+8Ch]
+  0x006F37B9  mov     eax, [ebp+0]
+  0x006F37E7  mov     eax, [esp+18h+weap2_]
+  0x006F37FB  mov     edx, [ebp+0]

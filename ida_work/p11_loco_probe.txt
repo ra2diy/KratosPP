@@ -1,0 +1,1849 @@
+############ 1) 0x4AFF60 DriveLocomotionClass_Draw_Matrix ############
+   end = 0x004B0405 size=1189
+  004AFF60  push    ebp
+  004AFF61  mov     ebp, esp
+  004AFF63  and     esp, 0FFFFFFF8h
+  004AFF66  sub     esp, 224h
+  004AFF6C  push    ebx
+  004AFF6D  push    esi
+  004AFF6E  mov     esi, [ebp+arg_0]
+  004AFF71  push    edi
+  004AFF72  mov     edi, [esi+2Ch]
+  004AFF75  test    edi, edi
+  004AFF77  mov     [esp+230h+var_218], edi
+  004AFF7B  jnz     short loc_4AFF85
+  004AFF7D  fld     ds:dbl1_0; 1.0
+  004AFF83  jmp     short loc_4AFFB0
+  004AFF85  mov     edx, [esi+20h]
+  004AFF88  mov     eax, [esi+28h]
+  004AFF8B  cmp     edx, 0FFFFFFFFh
+  004AFF8E  jz      short loc_4AFFA2
+  004AFF90  mov     ecx, Frame
+  004AFF96  sub     ecx, edx
+  004AFF98  cmp     ecx, eax
+  004AFF9A  jge     short loc_4AFFA0
+  004AFF9C  sub     eax, ecx
+  004AFF9E  jmp     short loc_4AFFA2
+  004AFFA0  xor     eax, eax
+  004AFFA2  sub     edi, eax
+  004AFFA4  mov     [esp+230h+var_21C], edi
+  004AFFA8  fild    [esp+230h+var_21C]
+  004AFFAC  fidiv   [esp+230h+var_218]
+  004AFFB0  fcomp   ds:dbl1_0; 1.0
+  004AFFB6  fnstsw  ax
+  004AFFB8  test    ah, 40h
+  004AFFBB  jz      short loc_4AFFEE
+  004AFFBD  mov     ecx, [esi+8]
+  004AFFC0  fld     dword ptr [ecx+328h]
+  004AFFC6  fabs
+  004AFFC8  fcomp   ds:dbl_7E44E8
+  004AFFCE  fnstsw  ax
+  004AFFD0  test    ah, 1
+  004AFFD3  jz      short loc_4AFFEE
+  004AFFD5  fld     dword ptr [ecx+32Ch]
+  004AFFDB  fabs
+  004AFFDD  fcomp   ds:dbl_7E44E8
+  004AFFE3  fnstsw  ax
+  004AFFE5  test    ah, 1
+  004AFFE8  jnz     loc_4B02B3
+  004AFFEE  lea     ecx, [esp+230h+var_1E0]
+  004AFFF2  call    Matrix3D::Matrix3D
+  004AFFF7  lea     ecx, [esp+230h+var_1B0]
+  004AFFFE  call    Matrix3D::Matrix3D
+  004B0003  mov     ecx, [esi+8]
+  004B0006  mov     eax, [ecx]
+  004B0008  call    dword ptr [eax+84h]
+  004B000E  mov     ecx, [esi+8]
+  004B0011  fld     qword ptr [eax+360h]
+  004B0017  mov     edx, [ecx]
+  004B0019  fstp    [esp+230h+var_21C]
+  004B001D  call    dword ptr [edx+84h]
+  004B0023  fld     qword ptr [eax+368h]
+  004B0029  mov     eax, [esi+8]
+  004B002C  sub     esp, 8
+  004B002F  fstp    [esp+238h+var_218]
+  004B0033  fld     dword ptr [eax+32Ch]
+  004B0039  fstp    [esp+238h+var_238]; double
+  004B003C  call    float_cos
+  004B0041  mov     ecx, [esi+8]
+  004B0044  fstp    [esp+238h+var_224]
+  004B0048  fld     dword ptr [ecx+32Ch]
+  004B004E  fstp    [esp+238h+var_238]
+  004B0051  call    float_sin
+  004B0056  mov     edx, [esi+8]
+  004B0059  fstp    [esp+238h+var_214]
+  004B005D  fld     dword ptr [edx+328h]
+  004B0063  fstp    [esp+238h+var_238]; double
+  004B0066  call    float_cos
+  004B006B  mov     eax, [esi+8]
+  004B006E  fstp    [esp+238h+var_220]
+  004B0072  fld     dword ptr [eax+328h]
+  004B0078  fstp    [esp+238h+var_238]
+  004B007B  call    float_sin
+  004B0080  fabs
+  004B0082  fmul    [esp+238h+var_21C]
+  004B0086  fld     [esp+238h+var_214]
+  004B008A  fabs
+  004B008C  fmul    [esp+238h+var_218]
+  004B0090  add     esp, 8
+  004B0093  faddp   st(1), st
+  004B0095  call    Float_To_Int_Floor
+  004B009A  fld     [esp+230h+var_224]
+  004B009E  fmul    [esp+230h+var_218]
+  004B00A2  mov     [esp+230h+var_214], eax
+  004B00A6  call    Float_To_Int_Floor
+  004B00AB  mov     [esp+230h+var_224], eax
+  004B00AF  fild    [esp+230h+var_224]
+  004B00B3  fsubr   [esp+230h+var_218]
+  004B00B7  call    Float_To_Int_Floor
+  004B00BC  fld     [esp+230h+var_220]
+  004B00C0  fmul    [esp+230h+var_21C]
+  004B00C4  mov     edi, eax
+  004B00C6  mov     [esp+230h+var_218], edi
+  004B00CA  call    Float_To_Int_Floor
+  004B00CF  mov     [esp+230h+var_220], eax
+  004B00D3  fild    [esp+230h+var_220]
+  004B00D7  fsubr   [esp+230h+var_21C]
+  004B00DB  call    Float_To_Int_Floor
+  004B00E0  mov     ecx, [esi+8]
+  004B00E3  mov     edx, eax
+  004B00E5  mov     [esp+230h+var_21C], edx
+  004B00E9  fld     dword ptr [ecx+32Ch]
+  004B00EF  fcomp   ds:num_0_0; 0.0
+  004B00F5  fnstsw  ax
+  004B00F7  test    ah, 1
+  004B00FA  jz      short loc_4B0102
+  004B00FC  neg     edi
+  004B00FE  mov     [esp+230h+var_218], edi
+  004B0102  fld     dword ptr [ecx+328h]
+  004B0108  fcomp   ds:num_0_0; 0.0
+  004B010E  fnstsw  ax
+  004B0110  test    ah, 41h
+  004B0113  jnz     short loc_4B011B
+  004B0115  neg     edx
+  004B0117  mov     [esp+230h+var_21C], edx
+  004B011B  fild    [esp+230h+var_214]
+  004B011F  push    ecx; float
+  004B0120  lea     ecx, [esp+234h+var_1E0]
+  004B0124  fstp    dword ptr [esp+234h+var_238+4]
+  004B0127  call    sub_5AE9E0
+  004B012C  fild    [esp+230h+var_218]
+  004B0130  push    ecx; float
+  004B0131  lea     ecx, [esp+234h+var_1B0]
+  004B0138  fstp    dword ptr [esp+234h+var_238+4]
+  004B013B  call    Matrix3DClass_5AE980
+  004B0140  fild    [esp+230h+var_21C]
+  004B0144  push    ecx; float
+  004B0145  lea     ecx, [esp+234h+var_1B0]
+  004B014C  fstp    dword ptr [esp+234h+var_238+4]
+  004B014F  call    Matrix3DClass_5AE9B0
+  004B0154  mov     ecx, [esi+8]
+  004B0157  mov     edx, [ecx+328h]
+  004B015D  lea     ecx, [esp+230h+var_1B0]
+  004B0164  push    edx; float
+  004B0165  call    sub_5AEF60
+  004B016A  mov     eax, [esi+8]
+  004B016D  mov     ecx, [eax+32Ch]
+  004B0173  push    ecx; float
+  004B0174  lea     ecx, [esp+234h+var_1B0]
+  004B017B  call    sub_5AF080
+  004B0180  mov     eax, [ebp+arg_8]
+  004B0183  test    eax, eax
+  004B0185  jz      short loc_4B018D
+  004B0187  mov     dword ptr [eax], 0FFFFFFFFh
+  004B018D  lea     edx, [esp+230h+var_30]
+  004B0194  push    eax
+  004B0195  push    edx
+  004B0196  push    esi
+  004B0197  call    LocomotionClass_ILocomotion_DrawMatrix
+  004B019C  push    eax
+  004B019D  lea     ecx, [esp+234h+var_180]
+  004B01A4  call    Matrix3DClass_5AE610
+  004B01A9  lea     ecx, [esp+230h+var_210]
+  004B01AD  call    Matrix3D::Matrix3D
+  004B01B2  mov     ebx, [esi+2Ch]
+  004B01B5  lea     ecx, [esi+20h]; TimerStruct *
+  004B01B8  test    ebx, ebx
+  004B01BA  mov     [esp+230h+var_224], ebx
+  004B01BE  jz      short loc_4B023B
+  004B01C0  mov     edi, [ecx]
+  004B01C2  mov     eax, [ecx+8]
+  004B01C5  cmp     edi, 0FFFFFFFFh
+  004B01C8  jz      short loc_4B01DC
+  004B01CA  mov     edx, Frame
+  004B01D0  sub     edx, edi
+  004B01D2  cmp     edx, eax
+  004B01D4  jge     short loc_4B01DA
+  004B01D6  sub     eax, edx
+  004B01D8  jmp     short loc_4B01DC
+  004B01DA  xor     eax, eax
+  004B01DC  sub     ebx, eax
+  004B01DE  mov     [esp+230h+var_220], ebx
+  004B01E2  fild    [esp+230h+var_220]
+  004B01E6  fidiv   [esp+230h+var_224]
+  004B01EA  fcomp   ds:dbl1_0; 1.0
+  004B01F0  fnstsw  ax
+  004B01F2  test    ah, 1
+  004B01F5  jz      short loc_4B023B
+  004B01F7  mov     eax, [ecx+0Ch]
+  004B01FA  test    eax, eax
+  004B01FC  jnz     short loc_4B0206
+  004B01FE  fld     ds:dbl1_0; 1.0
+  004B0204  jmp     short loc_4B0220
+  004B0206  mov     edi, [ecx+0Ch]
+  004B0209  mov     [esp+230h+var_224], edi
+  004B020D  call    Timer_GetTimeLeft2
+  004B0212  sub     edi, eax
+  004B0214  mov     [esp+230h+var_220], edi
+  004B0218  fild    [esp+230h+var_220]
+  004B021C  fidiv   [esp+230h+var_224]
+  004B0220  mov     eax, [esi+18h]
+  004B0223  mov     edx, [esi+1Ch]
+  004B0226  sub     esp, 8
+  004B0229  lea     ecx, [esp+238h+var_60]
+  004B0230  fstp    [esp+238h+var_238]
+  004B0233  push    eax; int
+  004B0234  call    sub_755A40
+  004B0239  jmp     short loc_4B0250
+  004B023B  mov     esi, [esi+18h]
+  004B023E  test    esi, esi
+  004B0240  jz      short loc_4B025D
+  004B0242  mov     edx, esi
+  004B0244  lea     ecx, [esp+230h+var_C0]
+  004B024B  call    sub_7559B0
+  004B0250  mov     ecx, 0Ch
+  004B0255  mov     esi, eax
+  004B0257  lea     edi, [esp+230h+var_210]
+  004B025B  rep movsd
+  004B025D  mov     ecx, 0Ch
+  004B0262  lea     esi, [esp+230h+var_210]
+  004B0266  lea     edi, [esp+230h+var_150]
+  004B026D  lea     edx, [esp+230h+var_180]
+  004B0274  rep movsd
+  004B0276  lea     ecx, [esp+230h+var_1B0]
+  004B027D  lea     eax, [esp+230h+var_150]
+  004B0284  push    ecx
+  004B0285  push    edx
+  004B0286  push    eax
+  004B0287  lea     edx, [esp+23Ch+var_1E0]
+  004B028B  lea     ecx, [esp+23Ch+var_F0]
+  004B0292  call    Matrix3D_Multiply_5AF980
+  004B0297  mov     edx, eax
+  004B0299  lea     ecx, [esp+238h+var_90]
+  004B02A0  call    Matrix3D_Multiply_5AF980
+  004B02A5  mov     edx, eax
+  004B02A7  lea     ecx, [esp+234h+var_120]
+  004B02AE  jmp     loc_4B03DA
+  004B02B3  mov     eax, [ebp+arg_8]
+  004B02B6  test    eax, eax
+  004B02B8  jz      short loc_4B02CD
+  004B02BA  mov     ecx, [eax]
+  004B02BC  cmp     ecx, 0FFFFFFFFh
+  004B02BF  jz      short loc_4B02CD
+  004B02C1  shl     ecx, 6
+  004B02C4  mov     [eax], ecx
+  004B02C6  mov     edx, [esi+18h]
+  004B02C9  add     edx, ecx
+  004B02CB  mov     [eax], edx
+  004B02CD  push    eax
+  004B02CE  lea     eax, [esp+234h+var_120]
+  004B02D5  push    eax
+  004B02D6  push    esi
+  004B02D7  call    LocomotionClass_ILocomotion_DrawMatrix
+  004B02DC  push    eax
+  004B02DD  lea     ecx, [esp+234h+var_150]
+  004B02E4  call    Matrix3DClass_5AE610
+  004B02E9  lea     ecx, [esp+230h+var_210]
+  004B02ED  call    Matrix3D::Matrix3D
+  004B02F2  mov     ebx, [esi+2Ch]
+  004B02F5  test    ebx, ebx
+  004B02F7  mov     [esp+230h+var_224], ebx
+  004B02FB  jz      loc_4B0390
+  004B0301  mov     edx, [esi+20h]
+  004B0304  mov     eax, [esi+28h]
+  004B0307  mov     edi, Frame
+  004B030D  cmp     edx, 0FFFFFFFFh
+  004B0310  jz      short loc_4B0320
+  004B0312  mov     ecx, edi
+  004B0314  sub     ecx, edx
+  004B0316  cmp     ecx, eax
+  004B0318  jge     short loc_4B031E
+  004B031A  sub     eax, ecx
+  004B031C  jmp     short loc_4B0320
+  004B031E  xor     eax, eax
+  004B0320  sub     ebx, eax
+  004B0322  mov     [esp+230h+var_220], ebx
+  004B0326  fild    [esp+230h+var_220]
+  004B032A  fidiv   [esp+230h+var_224]
+  004B032E  fcomp   ds:dbl1_0; 1.0
+  004B0334  fnstsw  ax
+  004B0336  test    ah, 1
+  004B0339  jz      short loc_4B0390
+  004B033B  mov     edx, [esi+2Ch]
+  004B033E  test    edx, edx
+  004B0340  mov     [esp+230h+var_224], edx
+  004B0344  jnz     short loc_4B034E
+  004B0346  fld     ds:dbl1_0; 1.0
+  004B034C  jmp     short loc_4B0375
+  004B034E  mov     ecx, [esi+20h]
+  004B0351  mov     eax, [esi+28h]
+  004B0354  cmp     ecx, 0FFFFFFFFh
+  004B0357  jz      short loc_4B0367
+  004B0359  sub     edi, ecx
+  004B035B  mov     ecx, edi
+  004B035D  cmp     ecx, eax
+  004B035F  jge     short loc_4B0365
+  004B0361  sub     eax, ecx
+  004B0363  jmp     short loc_4B0367
+  004B0365  xor     eax, eax
+  004B0367  sub     edx, eax
+  004B0369  mov     [esp+230h+var_220], edx
+  004B036D  fild    [esp+230h+var_220]
+  004B0371  fidiv   [esp+230h+var_224]
+  004B0375  mov     ecx, [esi+18h]
+  004B0378  mov     edx, [esi+1Ch]
+  004B037B  sub     esp, 8
+  004B037E  fstp    [esp+238h+var_238]
+  004B0381  push    ecx; int
+  004B0382  lea     ecx, [esp+23Ch+var_90]
+  004B0389  call    sub_755A40
+  004B038E  jmp     short loc_4B03A5
+  004B0390  mov     esi, [esi+18h]
+  004B0393  test    esi, esi
+  004B0395  jz      short loc_4B03B2
+  004B0397  mov     edx, esi
+  004B0399  lea     ecx, [esp+230h+var_F0]
+  004B03A0  call    sub_7559B0
+  004B03A5  mov     ecx, 0Ch
+  004B03AA  mov     esi, eax
+  004B03AC  lea     edi, [esp+230h+var_210]
+  004B03B0  rep movsd
+  004B03B2  mov     ecx, 0Ch
+  004B03B7  lea     esi, [esp+230h+var_210]
+  004B03BB  lea     edi, [esp+230h+var_180]
+  004B03C2  lea     edx, [esp+230h+var_150]
+  004B03C9  rep movsd
+  004B03CB  push    edx
+  004B03CC  lea     edx, [esp+234h+var_180]
+  004B03D3  lea     ecx, [esp+234h+var_C0]
+  004B03DA  call    Matrix3D_Multiply_5AF980
+  004B03DF  mov     ecx, 0Ch
+  004B03E4  mov     esi, eax
+  004B03E6  mov     eax, [ebp+arg_4]
+  004B03E9  lea     edi, [esp+230h+var_1E0]
+  004B03ED  rep movsd
+  004B03EF  mov     ecx, 0Ch
+  004B03F4  lea     esi, [esp+230h+var_1E0]
+  004B03F8  mov     edi, eax
+  004B03FA  rep movsd
+  004B03FC  pop     edi
+  004B03FD  pop     esi
+  004B03FE  pop     ebx
+  004B03FF  mov     esp, ebp
+  004B0401  pop     ebp
+  004B0402  retn    0Ch
+   -- 调用 --
+      004AFF83 jmp -> 004AFFB0  sub_4AFF60
+      004AFF9E jmp -> 004AFFA2  sub_4AFF60
+      004AFFF2 call -> 005AE860  W?$ct:Matrix3D$n()_
+      004AFFFE call -> 005AE860  W?$ct:Matrix3D$n()_
+      004B0008 call -> 00000084  
+      004B001D call -> 00000084  
+      004B003C call -> 004CAD00  float_cos
+      004B0051 call -> 004CACB0  float_sin
+      004B0066 call -> 004CAD00  float_cos
+      004B007B call -> 004CACB0  float_sin
+      004B0095 call -> 007C5F00  W?Float_To_Int_Floor$n()i
+      004B00A6 call -> 007C5F00  W?Float_To_Int_Floor$n()i
+      004B00B7 call -> 007C5F00  W?Float_To_Int_Floor$n()i
+      004B00CA call -> 007C5F00  W?Float_To_Int_Floor$n()i
+      004B00DB call -> 007C5F00  W?Float_To_Int_Floor$n()i
+      004B0127 call -> 005AE9E0  sub_5AE9E0
+      004B013B call -> 005AE980  Matrix3DClass_5AE980
+      004B014F call -> 005AE9B0  Matrix3DClass_5AE9B0
+      004B0165 call -> 005AEF60  sub_5AEF60
+      004B017B call -> 005AF080  sub_5AF080
+      004B0197 call -> 0055A730  LocomotionClass_ILocomotion_DrawMatrix
+      004B01A4 call -> 005AE610  Matrix3DClass_5AE610
+      004B01AD call -> 005AE860  W?$ct:Matrix3D$n()_
+      004B01D8 jmp -> 004B01DC  sub_4AFF60
+      004B0204 jmp -> 004B0220  sub_4AFF60
+      004B020D call -> 004B4D70  Timer_GetTimeLeft2
+      004B0234 call -> 00755A40  sub_755A40
+      004B0239 jmp -> 004B0250  sub_4AFF60
+      004B024B call -> 007559B0  sub_7559B0
+      004B0292 call -> 005AF980  Matrix3D_Multiply_5AF980
+      004B02A0 call -> 005AF980  Matrix3D_Multiply_5AF980
+      004B02AE jmp -> 004B03DA  sub_4AFF60
+      004B02D7 call -> 0055A730  LocomotionClass_ILocomotion_DrawMatrix
+      004B02E4 call -> 005AE610  Matrix3DClass_5AE610
+      004B02ED call -> 005AE860  W?$ct:Matrix3D$n()_
+      004B031C jmp -> 004B0320  sub_4AFF60
+      004B034C jmp -> 004B0375  sub_4AFF60
+      004B0363 jmp -> 004B0367  sub_4AFF60
+      004B0389 call -> 00755A40  sub_755A40
+      004B038E jmp -> 004B03A5  sub_4AFF60
+      004B03A0 call -> 007559B0  sub_7559B0
+      004B03DA call -> 005AF980  Matrix3D_Multiply_5AF980
+
+############ 2) 指令 0x4AFF90 的操作数（Frame 全局）############
+   op0 type=1 value=0x00000001  | mov     ecx, Frame
+   op1 type=2 value=0x00A8ED84  | mov     ecx, Frame
+   op2 type=0 value=0x-0000001  | mov     ecx, Frame
+   Frame 疑似地址 = 0x00A8ED84  名称=W?Frame$nl
+   -- XrefsTo 0x00A8ED84 --
+      from 0041441C type=3 in AircraftClass_Put | mov     eax, Frame
+      from 00414C06 type=3 in AircraftClass_Update | mov     eax, Frame
+      from 00414E2D type=3 in AircraftClass_Update | test    byte ptr Frame, 3
+      from 00414F00 type=3 in AircraftClass_Update | mov     eax, Frame
+      from 00415E88 type=3 in AircraftClass_Paradrop | mov     eax, Frame
+      from 0041BF51 type=3 in TechnoClass_160 | mov     ecx, Frame
+      from 0041D809 type=3 in AirstrikeClass_CanFire | mov     eax, Frame
+      from 0041DCF2 type=3 in AirstrikeClass_RemoveNode | mov     edx, Frame
+      from 0041DD10 type=3 in sub_41DD10 | mov     eax, Frame
+      from 0041F126 type=3 in AITriggerTypeClass_IronCurtainPercentReady | mov     edx, Frame
+      from 0041F1D6 type=3 in AITriggerTypeClass_ChronospherePercentReady | mov     edx, Frame
+      from 00421EC4 type=3 in W?$ct:AnimClass$n($AnimType$$ulucuc)_ | mov     eax, Frame
+      from 00422213 type=3 in W?$ct:AnimClass$n($AnimType$$ulucuc)_ | mov     ecx, Frame
+      from 0042222B type=3 in W?$ct:AnimClass$n($AnimType$$ulucuc)_ | mov     ecx, Frame
+      from 0042273C type=3 in AnimClass_CTOR2 | mov     eax, Frame
+      from 00422CF5 type=3 in AnimClass_Draw | mov     ecx, Frame
+      from 004242D5 type=3 in AnimClass_Update | mov     eax, Frame
+      from 004244F5 type=3 in AnimClass_Update | mov     ecx, Frame
+      from 004248D7 type=3 in AnimClass_Update | mov     ecx, Frame
+      from 004248EF type=3 in AnimClass_Update | mov     ecx, Frame
+      from 00425683 type=3 in AnimClass_Update_FlamingGuy | mov     eax, Frame
+      from 004258AB type=3 in AnimClass_Update_FlamingGuy | mov     eax, Frame
+      from 00425BC7 type=3 in AnimClass_Update_FlamingGuy | mov     eax, Frame
+      from 00425CAA type=3 in AnimClass_Update_FlamingGuy | mov     edx, Frame
+      from 0042663A type=3 in FrameTimerClass_Get_Remaining | mov     ecx, Frame
+      from 004302AF type=3 in sub_430250 | mov     eax, Frame
+      from 00430650 type=3 in sub_430650 | mov     eax, Frame
+      from 00431712 type=3 in sub_431700 | mov     eax, Frame
+      from 004318AC type=3 in sub_431800 | mov     eax, Frame
+      from 00438A23 type=3 in BombClass_GetCurrentFrame | mov     edi, Frame
+      from 00438A77 type=3 in BombClass_TimeToBlow | mov     eax, Frame
+      from 00438F6F type=3 in BombListClass_Add | mov     ecx, Frame
+      from 0043A36D type=3 in NeuronClass_CTOR | mov     eax, Frame
+      from 0043A5DE type=3 in NeuronClass_GetCRC | mov     eax, Frame
+      from 0043A850 type=3 in sub_43A7E0 | mov     edx, Frame
+      from 0043B6A0 type=3 in sub_43B680 | mov     ecx, Frame
+      from 0043B762 type=3 in BuildingClass_CTOR | mov     edx, Frame
+      from 0043B7A1 type=3 in BuildingClass_CTOR | mov     ecx, Frame
+      from 0043B7CB type=3 in BuildingClass_CTOR | mov     edx, Frame
+      from 0043B801 type=3 in BuildingClass_CTOR | mov     ecx, Frame
+      from 0043B92B type=3 in BuildingClass_CTOR | mov     edx, Frame
+      from 0043FD38 type=3 in BuildingClass_Update | mov     ebx, Frame
+      from 0043FD71 type=3 in BuildingClass_Update | mov     ecx, Frame
+      from 0043FEEF type=3 in BuildingClass_Update | mov     ecx, Frame
+      from 0043FFE9 type=3 in BuildingClass_Update | mov     ecx, Frame
+      from 00440012 type=3 in BuildingClass_Update | mov     ecx, Frame
+      from 004400AB type=3 in BuildingClass_Update | mov     ecx, Frame
+      from 004401F0 type=3 in BuildingClass_Update | mov     ecx, Frame
+      from 0044040B type=3 in BuildingClass_Update | mov     eax, Frame
+      from 004404F1 type=3 in BuildingClass_Update | mov     eax, Frame
+      from 00441C58 type=3 in BuildingClass_Destroy | mov     eax, Frame
+      from 00441C76 type=3 in BuildingClass_Destroy | mov     eax, Frame
+      from 00441C8F type=3 in BuildingClass_Destroy | mov     eax, Frame
+      from 00442296 type=3 in W?Take_Damage$:BuildingClass$n(rnii$WarheadType$$pn$TechnoClass$$i)$ResultType$$ | mov     ecx, Frame
+      from 0044267C type=3 in W?Take_Damage$:BuildingClass$n(rnii$WarheadType$$pn$TechnoClass$$i)$ResultType$$ | mov     edx, Frame
+      from 00445FAF type=3 in W?Grand_Opening$:BuildingClass$n(i)v | mov     edx, Frame
+      from 00446448 type=3 in W?Grand_Opening$:BuildingClass$n(i)v | mov     edx, Frame
+      from 00447A85 type=3 in W?Begin_Mode$:BuildingClass$n($BStateType$$)v | mov     ecx, Frame
+      from 004482DB type=3 in BuildingClass_Captured | mov     eax, Frame
+      from 0044ACB8 type=3 in BuildingClass_FireLaser | mov     eax, Frame
+      from 0044B3BF type=3 in BuildingClass_210 | mov     eax, Frame
+      from 0044B8CB type=3 in BuildingClass_Mi_Repair | mov     ecx, Frame
+      from 0044BA22 type=3 in BuildingClass_Mi_Repair | mov     eax, Frame
+      from 0044BAD4 type=3 in BuildingClass_Mi_Repair | mov     ecx, Frame
+      from 0044BB84 type=3 in BuildingClass_Mi_Repair | mov     eax, Frame
+      from 0044BD12 type=3 in BuildingClass_Mi_Repair | mov     ecx, Frame
+      from 0044C584 type=3 in BuildingClass_Mi_Repair | mov     eax, Frame
+      from 0044E495 type=3 in BuildingClass_254 | mov     ecx, Frame
+      from 0044E5B7 type=3 in BuildingClass_254 | mov     ecx, Frame
+      from 0044E65F type=3 in BuildingClass_254 | mov     ecx, Frame
+      from 0044E6B6 type=3 in BuildingClass_254 | mov     ecx, Frame
+      from 00450126 type=3 in BuildingClass_Update_Factory | mov     ecx, Frame
+      from 004501D0 type=3 in BuildingClass_Update_Factory | mov     edi, Frame
+      from 004502AD type=3 in BuildingClass_Update_Factory | mov     edx, Frame
+      from 00450764 type=3 in BuildingClass_Update_Repair | mov     ecx, Frame
+      from 00450839 type=3 in BuildingClass_Update_Repair | mov     eax, Frame
+      from 00450A14 type=3 in BuildingClass_ProcessAnims | mov     eax, Frame
+      from 0045103B type=3 in BuildingClass_ProcessAnims | mov     eax, Frame
+      from 004512BD type=3 in BuildingClass_ProcessAnims | mov     ecx, Frame
+      from 004512E6 type=3 in BuildingClass_ProcessAnims | mov     ecx, Frame
+      from 0045427F type=3 in BuildingClass_GetCRC | mov     ecx, Frame
+      from 004542AA type=3 in BuildingClass_GetCRC | mov     ecx, Frame
+      from 00454345 type=3 in BuildingClass_GetCRC | mov     ecx, Frame
+      from 00454C3D type=3 in BuildingClass_UpdatePowered | mov     ecx, Frame
+      from 0045566A type=3 in BuildingClass_350 | mov     ecx, Frame
+      from 00456C17 type=3 in Draw_Radial | mov     ecx, Frame
+      from 00457CA6 type=3 in BuildingClass_154 | mov     eax, Frame
+      from 00458753 type=3 in _BuildingClass_GetCashMachineBonus_unused | mov     eax, Frame
+      from 0046683A type=3 in BulletClass_Update | mov     eax, Frame
+      from 0046699D type=3 in BulletClass_Update | mov     edx, Frame
+      from 00466BC5 type=3 in BulletClass_Update | mov     ecx, Frame
+      from 0046B646 type=3 in Timer_StartWithDuration | mov     ecx, Frame
+      from 00471DDC type=3 in CaptureManagerClass_CaptureUnit | mov     ecx, Frame
+      from 00471E40 type=3 in CaptureManagerClass_CaptureUnit | mov     eax, Frame
+      from 004721A3 type=3 in CaptureManagerClass_DrawLinks | mov     esi, Frame
+      from 00472679 type=3 in CaptureManagerClass_NeedsToDrawLinks | mov     ebx, Frame
+      from 004727D6 type=3 in CaptureManagerClass_Load | mov     ecx, Frame
+      from 0047282E type=3 in CaptureManagerClass_Load | mov     eax, Frame
+      from 0047F76B type=3 in CellClass_Draw_Overlay | mov     edx, Frame
+      from 0047F810 type=3 in CellClass_Draw_Overlay | mov     eax, Frame
+      from 0048E0DC type=3 in sub_48E0B0 | mov     eax, Frame
+      from 004A178F type=3 in W?Remove_It$:CrateClass$n()i | mov     ecx, Frame
+      from 004A1803 type=3 in W?Create_Crate$:CrateClass$n(s)i | mov     ecx, Frame
+      from 004A189F type=3 in W?Create_Crate$:CrateClass$n(s)i | mov     edi, Frame
+      from 004A18CF type=3 in W?Create_Crate$:CrateClass$n(s)i | mov     eax, Frame
+      from 004A2600 type=3 in sub_4A2600 | mov     eax, Frame
+      from 004A26BA type=3 in sub_4A2600 | mov     edx, Frame
+      from 004A50F2 type=3 in Struct43C_CTOR | mov     ecx, Frame
+      from 004A5171 type=3 in Struct43C_IsTimerFinished | mov     ecx, Frame
+      from 004A5218 type=3 in Struct43C_StartTimer11 | mov     ecx, Frame
+      from 004A5269 type=3 in W?Close_Door$:DoorClass$n(ii)i | mov     ecx, Frame
+      from 004A52A3 type=3 in Struct43C_Update | mov     edx, Frame
+      from 004A531C type=3 in Struct43C_RatioSpent | mov     ecx, Frame
+      from 004AF553 type=3 in DriveLocomotionClass_CTOR | mov     ecx, Frame
+      from 004AF9D6 type=3 in sub_4AF9B0 | mov     edi, Frame
+      from 004AFAC5 type=3 in sub_4AFAA0 | mov     ecx, Frame
+      from 004AFB14 type=3 in sub_4AFB00 | mov     eax, Frame
+      from 004AFB53 type=3 in sub_4AFB40 | mov     ecx, Frame
+      from 004AFEF3 type=3 in sub_4AFED0 | mov     edx, Frame
+      from 004AFF90 type=3 in sub_4AFF60 | mov     ecx, Frame
+      from 004B01CA type=3 in sub_4AFF60 | mov     edx, Frame
+      from 004B0307 type=3 in sub_4AFF60 | mov     edi, Frame
+      from 004B0437 type=3 in sub_4B0410 | mov     ecx, Frame
+      from 004B079D type=3 in sub_4B0500 | mov     eax, Frame
+      from 004B281F type=3 in DriveLocomotionClass_blah | mov     edi, Frame
+      from 004B3673 type=3 in DriveLocomotionClass_blah | mov     eax, Frame
+      from 004B3693 type=3 in DriveLocomotionClass_blah | mov     edi, Frame
+      from 004B372A type=3 in DriveLocomotionClass_blah | mov     eax, Frame
+      from 004B3A5F type=3 in DriveLocomotionClass_blah | mov     esi, Frame
+      from 004B3AEB type=3 in DriveLocomotionClass_blah | mov     eax, Frame
+      from 004B3C10 type=3 in DriveLocomotionClass_blah | mov     eax, Frame
+      from 004B425B type=3 in DriveLocomotionClass_blah | mov     eax, Frame
+      from 004B452E type=3 in DriveLocomotionClass_blah | mov     eax, Frame
+      from 004B4D7A type=3 in Timer_GetTimeLeft2 | mov     ecx, Frame
+      from 004B5EC4 type=3 in DropPodLocomotionClass_ILocomotion_Update | mov     eax, Frame
+      from 004B5F14 type=3 in DropPodLocomotionClass_ILocomotion_Update | mov     eax, Frame
+      from 004B69B2 type=3 in sub_4B69B0 | mov     ecx, Frame
+      from 004C52CA type=3 in EMPulseClass_CTOR | mov     edx, Frame
+      from 004C54BE type=3 in EMPulseClass_UpdateAll | mov     eax, Frame
+      from 004C54E6 type=3 in EMPulseClass_Initialize | mov     ecx, Frame
+      from 004C61CB type=3 in sub_4C6180 | mov     ecx, Frame
+      from 004C62B0 type=3 in ScenarioClass_ProceedToNextMission | mov     edx, Frame
+      from 004C62D5 type=3 in ScenarioClass_ProceedToNextMission | mov     ecx, Frame
+      from 004C6570 type=3 in sub_4C6570 | mov     eax, Frame
+      from 004C65B7 type=3 in sub_4C65A0 | mov     edx, Frame
+      from 004C65CA type=3 in sub_4C65A0 | mov     ecx, Frame
+      from 004C6623 type=3 in sub_4C65E0 | mov     edx, Frame
+      from 004C6638 type=3 in sub_4C65E0 | mov     eax, Frame
+      from 004C6694 type=3 in sub_4C6650 | mov     ecx, Frame
+      from 004C66AB type=3 in sub_4C6650 | mov     edx, Frame
+      from 004C66F1 type=3 in Networking_AddEvent_Noopt | mov     edx, Frame
+      from 004C6708 type=3 in Networking_AddEvent_Noopt | mov     eax, Frame
+      from 004C6758 type=3 in sub_4C6720 | mov     eax, Frame
+      from 004C676E type=3 in sub_4C6720 | mov     ecx, Frame
+      from 004C67D4 type=3 in Networking_AddEvent_Waypoints | mov     edx, Frame
+      from 004C67E9 type=3 in Networking_AddEvent_Waypoints | mov     eax, Frame
+      from 004C683B type=3 in Networking_AddEvent_Animation | mov     ecx, Frame
+      from 004C6851 type=3 in Networking_AddEvent_Animation | mov     edx, Frame
+      from 004C68BE type=3 in Networking_FillEvent | mov     edx, Frame
+      from 004C68D1 type=3 in Networking_FillEvent | mov     ecx, Frame
+      from 004C6944 type=3 in sub_4C68E0 | mov     eax, Frame
+      from 004C6959 type=3 in sub_4C68E0 | mov     ecx, Frame
+      from 004C69B6 type=3 in Networking_AddEvent_ProduceAbandonSuspend | mov     edx, Frame
+      from 004C69CD type=3 in Networking_AddEvent_ProduceAbandonSuspend | mov     eax, Frame
+      from 004C6A39 type=3 in sub_4C69E0 | mov     eax, Frame
+      from 004C6A4F type=3 in sub_4C69E0 | mov     ecx, Frame
+      from 004C6AB9 type=3 in sub_4C6A60 | mov     eax, Frame
+      from 004C6ACF type=3 in sub_4C6A60 | mov     ecx, Frame
+      from 004C6B39 type=3 in Networking_AddEvent_Place | mov     ecx, Frame
+      from 004C6B50 type=3 in Networking_AddEvent_Place | mov     edx, Frame
+      from 004C6BAB type=3 in Networking_AddEvent_SWPlace | mov     eax, Frame
+      from 004C6BC1 type=3 in Networking_AddEvent_SWPlace | mov     ecx, Frame
+      from 004C6C1F type=3 in sub_4C6BE0 | mov     ecx, Frame
+      from 004C6C36 type=3 in sub_4C6BE0 | mov     edx, Frame
+      from 004C6C85 type=3 in sub_4C6C50 | mov     ecx, Frame
+      from 004C6C9E type=3 in sub_4C6C50 | mov     edx, Frame
+      from 004C7903 type=3 in Networking_RespondToEvent | mov     ecx, Frame; case 0x12
+      from 004C7B73 type=3 in Networking_RespondToEvent | mov     eax, Frame; case 0x22
+      from 004C7CF5 type=3 in Networking_RespondToEvent | mov     eax, Frame; case 0x26
+      from 004C7D52 type=3 in Networking_RespondToEvent | mov     eax, Frame
+      from 004C7EEB type=3 in Networking_RespondToEvent | mov     eax, Frame
+      from 004C7F35 type=3 in Networking_RespondToEvent | mov     ecx, Frame; case 0x23
+      from 004C91CB type=3 in Facing_Default | mov     edx, Frame
+      from 004C91EB type=3 in FacingStruct_Init | mov     edx, Frame
+      from 004C9246 type=3 in W?Set_Desired$:FacingClass$n($DirType$$)i | mov     ebx, Frame
+      from 004C92C4 type=3 in W?Set_Desired$:FacingClass$n($DirType$$)i | mov     esi, Frame
+      from 004C934A type=3 in FacingStruct_SetFacing | mov     ecx, Frame
+      from 004C9389 type=3 in FacingStruct_SetFacing | mov     eax, Frame
+      from 004C93A9 type=3 in FacingStruct_SetFacing | mov     ecx, Frame
+      from 004C93E3 type=3 in W?Desired_Facing256$n(iiii)$DirType$$ | mov     edi, Frame
+      from 004C9492 type=3 in FacingStruct_IsReady | mov     ecx, Frame
+      from 004C94C3 type=3 in FacingStruct_IsSet | mov     edx, Frame
+      from 004C9503 type=3 in FacingStruct_IsDone | mov     edx, Frame
+      from 004C9543 type=3 in sub_4C9530 | mov     ebx, Frame
+      from 004C95E3 type=3 in sub_4C95D0 | mov     edi, Frame
+      from 004C98C4 type=3 in FactoryClass_CTOR | mov     eax, Frame
+      from 004C998C type=3 in FactoryClass_CTOR | mov     eax, Frame
+      from 004C9B8C type=3 in FactoryClass_Update | mov     ecx, Frame
+      from 004C9C0F type=3 in FactoryClass_Update | mov     eax, Frame
+      from 004C9D76 type=3 in FactoryClass_QueueProduction | mov     eax, Frame
+      from 004C9E33 type=3 in _sub_4C9E10_unused | mov     eax, Frame
+      from 004C9E78 type=3 in W?Suspend$:FactoryClass$n()i | mov     eax, Frame
+      from 004C9F20 type=3 in FactoryClass_Unsuspend | mov     eax, Frame
+      from 004C9F83 type=3 in FactoryClass_Unsuspend | mov     eax, Frame
+      from 004CA05B type=3 in W?Abandon$:FactoryClass$n()i | mov     eax, Frame
+      from 004CA1C6 type=3 in FactoryClass_CompletedProduction | mov     esi, Frame
+      from 004CA200 type=3 in FactoryClass_CompletedProduction | mov     esi, Frame
+      from 004CA430 type=3 in FactoryClass_GetCRC | mov     eax, Frame
+      from 004CF8D8 type=3 in sub_4CF830 | mov     eax, Frame
+      from 004D331A type=3 in FootClass_CTOR | mov     ecx, Frame
+      from 004D3332 type=3 in FootClass_CTOR | mov     edx, Frame
+      from 004D3344 type=3 in FootClass_CTOR | mov     eax, Frame
+      from 004D3355 type=3 in FootClass_CTOR | mov     ecx, Frame
+      from 004D33F6 type=3 in FootClass_CTOR | mov     ecx, Frame
+      from 004D3EB2 type=3 in sub_4D3920 | mov     eax, Frame
+      from 004D401C type=3 in sub_4D3920 | mov     esi, Frame
+      from 004D52B5 type=3 in FootClass_Guard | mov     ebx, Frame
+      from 004D73B2 type=3 in FootClass_ReceiveDamage | mov     eax, Frame
+      from 004D73E9 type=3 in FootClass_ReceiveDamage | mov     eax, Frame
+      from 004D91F1 type=3 in FootClass_ReceivedRadioCommand | mov     eax, Frame
+      from 004D95D3 type=3 in FootClass_SetDestination | mov     esi, Frame
+      from 004D96CF type=3 in FootClass_SetDestination | mov     eax, Frame
+      from 004D96F0 type=3 in FootClass_SetDestination | mov     eax, Frame
+      from 004DA554 type=3 in W?AI$:FootClass$n()v | mov     eax, Frame
+      from 004DA6D9 type=3 in W?AI$:FootClass$n()v | mov     ecx, Frame
+      from 004DA794 type=3 in W?AI$:FootClass$n()v | mov     eax, Frame
+      from 004DA7B0 type=3 in W?AI$:FootClass$n()v | mov     eax, Frame
+      from 004DA908 type=3 in W?AI$:FootClass$n()v | mov     eax, Frame
+      from 004DA983 type=3 in W?AI$:FootClass$n()v | mov     eax, Frame
+      from 004DADF5 type=3 in W?AI$:FootClass$n()v | mov     edx, Frame
+      from 004DBC30 type=3 in FootClass_GetCRC | mov     ecx, Frame
+      from 004DBC69 type=3 in FootClass_GetCRC | mov     ecx, Frame
+      from 004DC099 type=3 in FootClass_438 | mov     ecx, Frame
+      from 004DE781 type=3 in FootClass_IsParalysed | mov     ecx, Frame
+      from 004DEB48 type=3 in FootClass_IronCurtain | mov     ecx, Frame
+      from 004DEB73 type=3 in FootClass_IronCurtain | mov     eax, Frame
+      from 004E1102 type=3 in BulletClass_SubCTOR | mov     ecx, Frame
+      from 004E110F type=3 in BulletClass_SubCTOR | mov     edx, Frame
+      from 004E1145 type=3 in BulletSubClass_SetData | mov     eax, Frame
+      from 004E115B type=3 in BulletSubClass_SetData | mov     eax, Frame
+      from 004E1201 type=3 in sub_4E11F0 | mov     ecx, Frame
+      from 004F4BB0 type=3 in sub_4F4BB0 | test    byte ptr Frame, 1
+      from 004F5327 type=3 in HouseClass_LoadVectors | mov     ecx, Frame
+      from 004F57FC type=3 in HouseClass_CTOR | mov     ecx, Frame
+      from 004F580E type=3 in HouseClass_CTOR | mov     edx, Frame
+      from 004F5820 type=3 in HouseClass_CTOR | mov     eax, Frame
+      from 004F5831 type=3 in HouseClass_CTOR | mov     ecx, Frame
+      from 004F5843 type=3 in HouseClass_CTOR | mov     edx, Frame
+      from 004F5B39 type=3 in HouseClass_CTOR | mov     edx, Frame
+      from 004F5B9D type=3 in HouseClass_CTOR | mov     eax, Frame
+      from 004F5BAE type=3 in HouseClass_CTOR | mov     ecx, Frame
+      from 004F5CB8 type=3 in HouseClass_CTOR | mov     ecx, Frame
+      from 004F5CCA type=3 in HouseClass_CTOR | mov     edx, Frame
+      from 004F5CE1 type=3 in HouseClass_CTOR | mov     ecx, Frame
+      from 004F5CF3 type=3 in HouseClass_CTOR | mov     edx, Frame
+      from 004F5D05 type=3 in HouseClass_CTOR | mov     ecx, Frame
+      from 004F5D17 type=3 in HouseClass_CTOR | mov     edx, Frame
+      from 004F5D29 type=3 in HouseClass_CTOR | mov     ecx, Frame
+      from 004F636D type=3 in HouseClass_CTOR | mov     ecx, Frame
+      from 004F70F6 type=3 in W?Assign_Handicap$:HouseClass$n($DiffType$$)$2$ | mov     edi, Frame
+      from 004F8457 type=3 in HouseClass_Update | mov     edi, Frame
+      from 004F84A1 type=3 in HouseClass_Update | mov     ecx, Frame
+      from 004F84B4 type=3 in HouseClass_Update | mov     edx, Frame
+      from 004F8511 type=3 in HouseClass_Update | mov     eax, Frame
+      from 004F85E2 type=3 in HouseClass_Update | mov     eax, Frame
+      from 004F871D type=3 in HouseClass_Update | mov     eax, Frame
+      from 004F87DD type=3 in HouseClass_Update | mov     edx, Frame
+      from 004F8934 type=3 in HouseClass_Update | mov     eax, Frame
+      from 004F8A11 type=3 in HouseClass_Update | mov     ecx, Frame
+      from 004F8AC7 type=3 in HouseClass_Update | mov     eax, Frame
+      from 004F8B53 type=3 in HouseClass_Update | mov     ecx, Frame
+      from 004F8BD0 type=3 in HouseClass_Update | mov     ecx, Frame
+      from 004F8BEE type=3 in HouseClass_Update | mov     eax, Frame
+      from 004F8C44 type=3 in HouseClass_Update | mov     ecx, Frame
+      from 004F8D8D type=3 in HouseClass_Update | mov     ecx, Frame
+      from 004F8DE4 type=3 in HouseClass_Update | mov     ecx, Frame
+      from 004F8E00 type=3 in HouseClass_Update | mov     ecx, Frame
+      from 004F8EA0 type=3 in HouseClass_Update | cmp     Frame, ebp
+      from 004F8F87 type=3 in HouseClass_Update | mov     edx, Frame
+      from 004F8FCF type=3 in HouseClass_Update | mov     ecx, Frame
+      from 004F901C type=3 in HouseClass_Update | mov     ecx, Frame
+      from 004F9074 type=3 in HouseClass_Update | mov     eax, Frame
+      from 004F931D type=3 in HouseClass_Update | mov     edx, Frame
+      from 004FA6F1 type=3 in HouseClass_BeginProductionOf | mov     eax, Frame
+      from 004FB0C3 type=3 in HouseClass_SWDefendAgainst | mov     ecx, Frame
+      from 004FC332 type=3 in W?MPlayer_Defeated$:HouseClass$n()v | mov     eax, Frame
+      from 004FC9A9 type=3 in sub_4FC980 | mov     eax, Frame
+      from 004FCA31 type=3 in HouseClass_Win | mov     esi, Frame
+      from 004FCA71 type=3 in HouseClass_Win | mov     esi, Frame
+      from 004FCAEF type=3 in HouseClass_Win | mov     esi, Frame
+      from 004FCC1A type=3 in HouseClass_Lose | mov     esi, Frame
+      from 004FCC5A type=3 in HouseClass_Lose | mov     esi, Frame
+      from 004FCCD8 type=3 in HouseClass_Lose | mov     esi, Frame
+      from 004FCDE5 type=3 in HouseClass_EndScenario | mov     eax, Frame
+      from 004FD522 type=3 in HouseClass_Update_AI | mov     ecx, Frame
+      from 004FD810 type=3 in HouseClass_Update_AI | mov     ecx, Frame
+      from 004FD833 type=3 in HouseClass_Update_AI | mov     eax, Frame
+      from 004FE75E type=3 in W?AI_Building$:HouseClass$n()i | mov     ecx, Frame
+      from 00501119 type=3 in HouseClass_InitFromINI | mov     ecx, Frame
+      from 00502ECB type=3 in HouseClass_GetCRC | mov     ecx, Frame
+      from 00502EF6 type=3 in HouseClass_GetCRC | mov     ecx, Frame
+      from 00502F21 type=3 in HouseClass_GetCRC | mov     ecx, Frame
+      from 00508D61 type=3 in HouseClass_Update_Power | mov     ecx, Frame
+      from 00508E21 type=3 in HouseClass_Radar_Activate | mov     edx, Frame
+      from 00509A91 type=3 in HouseClass_Update_AI_TryFireSW | mov     ebp, Frame
+      from 00509F15 type=3 in ? | mov     edi, Frame
+      from 0050BC90 type=3 in HouseClass_CreatePowerOutage | mov     eax, Frame
+      from 0050BCD0 type=3 in HouseClass_RadarBlackout | mov     eax, Frame
+      from 0050CBD1 type=3 in HouseClass_Base_ShouldRebuildNow | mov     eax, Frame
+      from 0050DA2A type=3 in HouseClass_SetDefensiveCell | mov     edx, Frame
+      from 00513E14 type=3 in sub_513D20 | mov     ecx, Frame
+      from 00514A32 type=3 in sub_514310 | mov     eax, Frame
+      from 00515610 type=3 in sub_514F70 | mov     eax, Frame
+      from 005157DA type=3 in sub_514F70 | mov     eax, Frame
+      from 00515B54 type=3 in sub_514F70 | mov     eax, Frame
+      from 00515D4A type=3 in sub_514F70 | mov     eax, Frame
+      from 00515D6A type=3 in sub_514F70 | mov     edi, Frame
+      from 00515D99 type=3 in sub_514F70 | mov     edi, Frame
+      from 00516635 type=3 in sub_5164D0 | mov     edx, Frame
+      from 00516690 type=3 in sub_5164D0 | mov     ebx, Frame
+      from 005168D6 type=3 in sub_5164D0 | mov     ebp, Frame
+      from 00517A74 type=3 in InfantryClass_CTOR | mov     edx, Frame
+      from 0051A56A type=3 in InfantryClass_UpdatePosition | mov     ecx, Frame
+      from 0051A5DC type=3 in InfantryClass_UpdatePosition | mov     ebx, Frame
+      from 0051A62A type=3 in InfantryClass_UpdatePosition | mov     ecx, Frame
+      from 0051BAF6 type=3 in InfantryClass_Update | mov     eax, Frame
+      from 0051BF3E type=3 in InfantryClass_Update | mov     ecx, Frame
+      from 0051CE10 type=3 in InfantryClass_IdleAction | mov     edi, Frame
+      from 0051DA07 type=3 in InfantryClass_DoAction | mov     ecx, Frame
+      from 0051DA1F type=3 in InfantryClass_DoAction | mov     ecx, Frame
+      from 0052156B type=3 in InfantryClass_UpdateDeployment | mov     eax, Frame
+      from 00521CBD type=3 in InfantryClass_GetCRC | mov     ecx, Frame
+      from 0052DA08 type=2 in W?Select_Game$n(i)i | mov     Frame, ebx
+      from 0052DA3C type=3 in W?Select_Game$n(i)i | mov     esi, Frame
+      from 00539F93 type=3 in LightningStorm_Start | mov     edx, Frame
+      from 0053A6E3 type=3 in sub_53A6C0 | mov     eax, Frame
+      from 0053A72F type=3 in sub_53A6C0 | mov     eax, Frame
+      from 0053A91E type=3 in sub_53A6C0 | mov     esi, Frame
+      from 0053A963 type=3 in sub_53A6C0 | mov     esi, Frame
+      from 0053AB76 type=3 in sub_53AB70 | mov     eax, Frame
+      from 0053AC50 type=3 in sub_53AC50 | mov     eax, Frame
+      from 0053AF01 type=3 in PsyDom_Start | mov     eax, Frame
+      from 0053E7F4 type=3 in sub_53E770 | mov     ecx, Frame
+      from 0053EBB6 type=3 in sub_53E770 | mov     edx, Frame
+      from 00541C5C type=3 in sub_541820 | mov     ecx, Frame
+      from 00541F16 type=3 in sub_541820 | cmp     Frame, 8
+      from 00542064 type=3 in sub_541820 | mov     edx, Frame
+      from 00542842 type=3 in sub_542620 | mov     eax, Frame
+      from 0054E260 type=3 in Init_vec_Kamikazes | mov     eax, Frame
+      from 0054E285 type=3 in Init_vec_Kamikazes | mov     eax, Frame
+      from 0054E365 type=3 in sub_54E360 | mov     ecx, Frame
+      from 0054E396 type=3 in sub_54E360 | mov     ecx, Frame
+      from 0054E4DD type=3 in KamikazeContainer_Update | mov     esi, Frame
+      from 0054E728 type=3 in sub_54E6F0 | mov     eax, Frame
+      from 0054FE6F type=3 in LaserDrawClass_CTOR | mov     ecx, Frame
+      from 0054FF0A type=3 in LaserDrawClass_CTOR | mov     ecx, Frame
+      from 00550091 type=3 in ? | mov     ecx, Frame
+      from 005500B7 type=3 in ? | mov     ecx, Frame
+      from 0055017E type=3 in LaserDrawClass_UpdateAll | mov     ecx, Frame
+      from 005501A4 type=3 in LaserDrawClass_UpdateAll | mov     eax, Frame
+      from 0055B136 type=3 in LogicClass_Update | mov     ecx, Frame
+      from 0055B190 type=3 in LogicClass_Update | mov     ebp, Frame
+      from 0055B22E type=3 in LogicClass_Update | mov     edi, Frame
+      from 0055B294 type=3 in LogicClass_Update | mov     edi, Frame
+      from 0055B2BE type=3 in LogicClass_Update | mov     edi, Frame
+      from 0055B337 type=3 in LogicClass_Update | mov     edi, Frame
+      from 0055B3B3 type=3 in LogicClass_Update | mov     eax, Frame
+      from 0055B3D2 type=3 in LogicClass_Update | mov     esi, Frame
+      from 0055B409 type=3 in LogicClass_Update | mov     eax, Frame
+      from 0055B751 type=3 in ? | mov     edi, Frame
+      from 0055B7A6 type=3 in ? | mov     edi, Frame
+      from 0055CFD0 type=3 in sub_55CFD0 | mov     eax, Frame
+      from 0055D3BB type=3 in W?Main_Loop$n()i | mov     eax, Frame
+      from 0055D8C9 type=3 in W?Main_Loop$n()i | mov     eax, Frame
+      from 0055DE73 type=3 in W?Main_Loop$n()i | mov     edx, Frame
+      from 0055DE81 type=2 in W?Main_Loop$n()i | mov     Frame, edx
+      from 0055F2E5 type=3 in DrawMPDebug | mov     edx, Frame
+      from 00565A57 type=3 in MapClass_InitClear | mov     ecx, Frame
+      from 0056BC26 type=3 in W?Logic$:MapClass$n()v | mov     eax, Frame
+      from 0056E6A8 type=3 in W?Nearby_Location$:MapClass$n.x(s$SpeedType$$i$MZoneType$$)s | mov     eax, Frame
+      from 005B0259 type=3 in sub_5B01C0 | mov     ecx, Frame
+      from 005B0297 type=3 in sub_5B01C0 | mov     edx, Frame
+      from 005B0A13 type=3 in sub_5B01C0 | mov     eax, Frame
+      from 005B0BE4 type=3 in sub_5B01C0 | mov     eax, Frame
+      from 005B0C04 type=3 in sub_5B01C0 | mov     edi, Frame
+      from 005B0CA4 type=3 in sub_5B01C0 | mov     esi, Frame
+      from 005B0E43 type=3 in sub_5B01C0 | mov     eax, Frame
+      from 005B0F80 type=3 in sub_5B01C0 | mov     eax, Frame
+      from 005B2DD7 type=3 in MissionClass_CTOR | mov     ecx, Frame
+      from 005B3005 type=3 in TechnoClass_ForceMission | mov     eax, Frame
+      from 005B3016 type=3 in TechnoClass_ForceMission | mov     eax, Frame
+      from 005B3091 type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B30D2 type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B30F4 type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B3116 type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B3138 type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B315A type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B317C type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B319E type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B31C0 type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B31E2 type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B3204 type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B3226 type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B3248 type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B326A type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B328C type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B32AE type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B32D0 type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B32F2 type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B3314 type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B3336 type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B3358 type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B337A type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B339C type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B33BE type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B33E0 type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B3402 type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B3424 type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B3446 type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B3468 type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B348A type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B34AC type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B34CE type=3 in MissionClass_Update | mov     ecx, Frame
+      from 005B358F type=3 in TechnoClass_NextMission | mov     eax, Frame
+      from 005B35AE type=3 in TechnoClass_NextMission | mov     eax, Frame
+      from 005B39C7 type=3 in MissionClass_GetCRC | mov     ecx, Frame
+      from 005B3A31 type=3 in ? | mov     ecx, Frame
+      from 005B7329 type=2 in sub_5B7090 | mov     Frame, 0
+      from 005BB20C type=2 in ModemHost_StartGame | mov     Frame, ebp
+      from 005DA86A type=3 in Game_PlayerLeftMP | mov     eax, Frame
+      from 005E550F type=2 in Scenario_GuestReceiveOptions | mov     Frame, esi
+      from 005E747C type=2 in sub_5E7460 | mov     Frame, 0
+      from 005F4086 type=3 in ObjectClass_Update | mov     eax, Frame
+      from 00629218 type=3 in ParasiteClass_DCTOR | mov     eax, Frame
+      from 00629225 type=3 in ParasiteClass_DCTOR | mov     ecx, Frame
+      from 006292BB type=3 in ParasiteClass_CTOR | mov     eax, Frame
+      from 006292CC type=3 in ParasiteClass_CTOR | mov     ecx, Frame
+      from 006292F9 type=3 in ParasiteClass_CTOR | mov     ecx, Frame
+      from 00629310 type=3 in ParasiteClass_CTOR | mov     ecx, Frame
+      from 0062939D type=3 in ? | mov     ecx, Frame
+      from 006293AB type=3 in ? | mov     edx, Frame
+      from 006295DB type=3 in ParasiteClass_Load | mov     edx, Frame
+      from 006295EB type=3 in ParasiteClass_Load | mov     eax, Frame
+      from 0062979A type=3 in sub_629720 | mov     edx, Frame
+      from 0062986F type=3 in ParasiteClass_UpdateSquiddy | mov     eax, Frame
+      from 00629893 type=3 in ParasiteClass_UpdateSquiddy | mov     eax, Frame
+      from 00629CF8 type=3 in ParasiteClass_UpdateSquiddy | mov     eax, Frame
+      from 0062A05E type=3 in ParasiteClass_Update | mov     ebx, Frame
+      from 0062A074 type=3 in ParasiteClass_Update | mov     edx, Frame
+      from 0062A08D type=3 in ParasiteClass_Update | mov     eax, Frame
+      from 0062A2AE type=3 in ParasiteClass_PointerGotInvalid | mov     edx, Frame
+      from 0062A585 type=3 in Parasite_ExitUnit | mov     ecx, Frame
+      from 0062A7BF type=3 in Parasite_ExitUnit | mov     ecx, Frame
+      from 0062A872 type=3 in Parasite_ExitUnit | mov     eax, Frame
+      from 0062A8A6 type=3 in Parasite_ExitUnit | mov     eax, Frame
+      from 0062A9D8 type=3 in ParasiteClass_Infect | mov     eax, Frame
+      from 0062BD50 type=3 in ParticleClass_Update_Smoke | mov     al, byte ptr Frame
+      from 0062C18F type=3 in ParticleClass_Update_Smoke | mov     eax, Frame
+      from 0062C541 type=3 in ParticleClass_Update_Gas | mov     al, byte ptr Frame
+      from 0062D2A7 type=3 in ParticleClass_Update2_Smoke | mov     ebx, Frame
+      from 0062F070 type=3 in ParticleSystemClass_Update_Smoke | mov     eax, Frame
+      from 0062FBDD type=3 in ParticleSystemClass_Update_Fire | mov     ecx, Frame
+      from 006472BE type=3 in sub_647260 | mov     eax, Frame
+      from 00647321 type=3 in sub_647260 | mov     ecx, Frame
+      from 00647379 type=3 in sub_647260 | mov     ecx, Frame
+      from 00647615 type=3 in sub_6475F0 | mov     eax, Frame
+      from 00647689 type=3 in sub_6475F0 | mov     ecx, Frame
+      from 00647778 type=3 in sub_6475F0 | mov     edx, Frame
+      from 00647806 type=3 in sub_6475F0 | test    Frame, 7FFh
+      from 00647B44 type=3 in sub_6475F0 | mov     esi, Frame
+      from 00647BA7 type=3 in sub_6475F0 | mov     al, byte ptr Frame
+      from 00647DAD type=3 in sub_6475F0 | mov     ecx, Frame
+      from 00647EB6 type=3 in sub_6475F0 | mov     ecx, Frame
+      from 00647F45 type=3 in sub_6475F0 | mov     edx, Frame
+      from 00647F56 type=3 in sub_6475F0 | cmp     Frame, eax
+      from 00647FCF type=3 in sub_6475F0 | mov     edx, Frame
+      from 00647FEA type=3 in sub_6475F0 | cmp     Frame, ebx
+      from 006482C7 type=3 in sub_6475F0 | mov     esi, Frame
+      from 006485DA type=3 in sub_648350 | mov     eax, Frame
+      from 00648621 type=3 in sub_648350 | mov     eax, Frame
+      from 00649589 type=3 in sub_648710 | mov     edx, Frame
+      from 006495FD type=3 in sub_648710 | mov     eax, Frame
+      from 00649616 type=3 in sub_648710 | mov     eax, Frame
+      from 00649D16 type=3 in sub_649CA0 | mov     eax, Frame
+      from 00649D32 type=3 in sub_649CA0 | mov     eax, Frame
+      from 00649DFB type=3 in sub_649CA0 | mov     edx, Frame
+      from 00649F77 type=3 in sub_649CA0 | mov     edx, Frame
+      from 00649FDC type=3 in sub_649CA0 | mov     eax, Frame
+      from 0064A02F type=3 in sub_64A000 | mov     edx, Frame
+      from 0064A057 type=3 in sub_64A000 | mov     eax, Frame
+      from 0064A56F type=3 in sub_64A0C0 | mov     edx, Frame
+      from 0064B28C type=3 in sub_64B240 | mov     ecx, Frame
+      from 0064B579 type=3 in sub_64B4D0 | mov     eax, Frame
+      from 0064B5F3 type=3 in sub_64B4D0 | mov     edx, Frame
+      from 0064B6AF type=3 in sub_64B660 | mov     eax, Frame
+      from 0064B989 type=3 in sub_64B660 | mov     eax, Frame
+      from 0064B9A5 type=3 in sub_64B660 | mov     eax, Frame
+      from 0064BFAE type=3 in sub_64BDD0 | mov     edx, Frame
+      from 0064C157 type=3 in sub_64BDD0 | mov     edx, Frame
+      from 0064C266 type=3 in sub_64BDD0 | mov     eax, Frame
+      from 0064C4B2 type=3 in DoList | cmp     Frame, ecx
+      from 0064C55D type=3 in DoList | mov     esi, Frame
+      from 0064C607 type=3 in DoList | mov     edx, Frame
+      from 0064C67A type=3 in DoList | mov     eax, Frame
+      from 0064C68F type=3 in DoList | mov     eax, Frame
+      from 0064C887 type=3 in DoList | mov     edx, Frame
+      from 0064C929 type=3 in DoList | mov     edx, Frame
+      from 0064D99B type=3 in sub_64D990 | mov     esi, Frame
+      from 0064D9E1 type=3 in sub_64D9E0 | mov     edx, Frame
+      from 0064DA64 type=3 in sub_64D9E0 | mov     ecx, Frame
+      from 0064DE5A type=3 in sub_64DAB0 | mov     ecx, Frame
+      from 0064E013 type=3 in Multiplay_LogToSYNC_NOMPDEBUG | mov     eax, Frame
+      from 0064F213 type=3 in Multiplay_LogToSYNC_NOMPDEBUG | mov     ecx, Frame
+      from 0064F225 type=3 in Multiplay_LogToSYNC_NOMPDEBUG | mov     edx, Frame
+      from 00650AFA type=3 in sub_650A90 | mov     ecx, Frame
+      from 0065184E type=3 in Multiplay_LogToSync_MPDEBUG | mov     ecx, Frame
+      from 006520CB type=3 in sub_652070 | mov     edx, Frame
+      from 006521A5 type=3 in sub_652110 | mov     eax, Frame
+      from 006521C0 type=3 in Networking_AddEvent_Generic | mov     eax, Frame
+      from 00652231 type=3 in sub_652230 | mov     edx, Frame
+      from 00655FFC type=3 in sub_655C50 | mov     ecx, Frame
+      from 0065B1ED type=3 in RadSiteClass_CTOR | mov     ecx, Frame
+      from 0065B1F9 type=3 in RadSiteClass_CTOR | mov     edx, Frame
+      from 0065B2AD type=3 in ? | mov     ecx, Frame
+      from 0065B2BB type=3 in ? | mov     edx, Frame
+      from 0065B3F7 type=3 in RadSiteClass_Load | mov     edx, Frame
+      from 0065B407 type=3 in RadSiteClass_Load | mov     eax, Frame
+      from 0065B588 type=3 in RadSiteClass_Radiate | mov     edx, Frame
+      from 0065B5BC type=3 in RadSiteClass_Radiate | mov     ecx, Frame
+      from 0065B814 type=3 in RadSiteClass_Update | mov     edi, Frame
+      from 0065B83A type=3 in RadSiteClass_Update | mov     eax, Frame
+      from 0065B852 type=3 in RadSiteClass_Update | mov     edi, Frame
+      from 0065B8AF type=3 in RadSiteClass_Update | mov     eax, Frame
+      from 0065FBBD type=3 in RadarEventClass_CTOR | mov     eax, Frame
+      from 0065FBCC type=3 in RadarEventClass_CTOR | mov     ecx, Frame
+      from 0065FE23 type=3 in sub_65FE00 | mov     ecx, Frame
+      from 0065FEE4 type=3 in sub_65FE00 | mov     ecx, Frame
+      from 0065FEFC type=3 in sub_65FE00 | mov     ecx, Frame
+      from 00660020 type=3 in sub_660000 | mov     edx, Frame
+      from 006603D8 type=3 in sub_6603B0 | mov     ecx, Frame
+      from 00661EE6 type=3 in RocketLocomotionClass_CTOR | mov     edx, Frame
+      from 00661EF7 type=3 in RocketLocomotionClass_CTOR | mov     ecx, Frame
+      from 00662374 type=3 in RocketLocomotionClass_ILocomotion_Process | mov     ecx, Frame
+      from 006623F3 type=3 in RocketLocomotionClass_ILocomotion_Process | mov     eax, Frame
+      from 0066245A type=3 in RocketLocomotionClass_ILocomotion_Process | mov     ebx, Frame
+      from 006624AE type=3 in RocketLocomotionClass_ILocomotion_Process | mov     ecx, Frame
+      from 006624F0 type=3 in RocketLocomotionClass_ILocomotion_Process | mov     edi, Frame
+      from 0066257B type=3 in RocketLocomotionClass_ILocomotion_Process | mov     eax, Frame
+      from 00662593 type=3 in RocketLocomotionClass_ILocomotion_Process | mov     edi, Frame
+      from 00662688 type=3 in RocketLocomotionClass_ILocomotion_Process | mov     eax, Frame
+      from 0066275F type=3 in RocketLocomotionClass_ILocomotion_Process | mov     ebx, Frame
+      from 00662D90 type=3 in RocketLocomotionClass_ILocomotion_Process | mov     ecx, Frame
+      from 00662DFF type=3 in RocketLocomotionClass_ILocomotion_Process | mov     eax, Frame
+      from 0066335A type=3 in RocketLocomotionClass_ILocomotion_MoveTo | mov     edi, Frame
+      from 00663375 type=3 in RocketLocomotionClass_ILocomotion_MoveTo | mov     edi, Frame
+      from 00663435 type=3 in RocketLocomotionClass_Load | mov     ecx, Frame
+      from 006640EF type=3 in sub_6640E0 | mov     eax, Frame
+      from 0067CEA5 type=3 in Game_GetCRC | mov     edx, Frame
+      from 0067F819 type=1 in ExtraData0_Save | push    offset Frame
+      from 0067FA19 type=1 in LoadGame_slave1 | push    offset Frame
+      from 00683302 type=3 in ScenarioClass_Init | mov     eax, Frame
+      from 00683319 type=3 in ScenarioClass_Init | mov     ecx, Frame
+      from 0068332B type=3 in ScenarioClass_Init | mov     edx, Frame
+      from 0068333D type=3 in ScenarioClass_Init | mov     eax, Frame
+      from 0068334E type=3 in ScenarioClass_Init | mov     ecx, Frame
+      from 00683360 type=3 in ScenarioClass_Init | mov     edx, Frame
+      from 00683372 type=3 in ScenarioClass_Init | mov     eax, Frame
+      from 006836DE type=3 in ScenarioClass_CTOR | mov     ecx, Frame
+      from 006836F8 type=3 in ScenarioClass_CTOR | mov     edi, Frame
+      from 0068375F type=3 in ScenarioClass_CTOR | mov     eax, Frame
+      from 0068377C type=3 in ScenarioClass_CTOR | mov     eax, Frame
+      from 00683791 type=3 in ScenarioClass_CTOR | mov     eax, Frame
+      from 006837AC type=3 in ScenarioClass_CTOR | mov     eax, Frame
+      from 006837C7 type=3 in ScenarioClass_CTOR | mov     eax, Frame
+      from 006838B1 type=3 in ScenarioClass_CTOR | mov     eax, Frame
+      from 0068466B type=2 in W?Read_Scenario$n(pna)i | mov     Frame, esi
+      from 0068516D type=3 in ScenarioClass_InitMoreBuffers | mov     esi, Frame
+      from 00686765 type=2 in Read_Scenario_INI | mov     Frame, ebp
+      from 00686A0A type=3 in W?Remove_AI_Players$n()v | mov     ecx, Frame
+      from 0068BADE type=3 in ScenarioClass_GetCRC | mov     edx, Frame
+      from 0068BB09 type=3 in ScenarioClass_GetCRC | mov     ecx, Frame
+      from 0068BB34 type=3 in ScenarioClass_GetCRC | mov     ecx, Frame
+      from 0068BB5F type=3 in ScenarioClass_GetCRC | mov     ecx, Frame
+      from 0068BB8A type=3 in ScenarioClass_GetCRC | mov     ecx, Frame
+      from 0069BB06 type=3 in sub_69BAB0 | mov     edx, Frame
+      from 0069EC63 type=3 in ShipLocomotionClass_CTOR | mov     ecx, Frame
+      from 0069F0E6 type=3 in ? | mov     edi, Frame
+      from 0069F1D5 type=3 in ? | mov     ecx, Frame
+      from 0069F224 type=3 in ? | mov     eax, Frame
+      from 0069F263 type=3 in sub_69F250 | mov     ecx, Frame
+      from 0069F603 type=3 in ? | mov     edx, Frame
+      from 0069F6A0 type=3 in sub_69F670 | mov     ecx, Frame
+      from 0069F8DA type=3 in sub_69F670 | mov     edx, Frame
+      from 0069FA17 type=3 in sub_69F670 | mov     edi, Frame
+      from 0069FB47 type=3 in sub_69FB20 | mov     ecx, Frame
+      from 0069FE4A type=3 in sub_69FC10 | mov     edx, Frame
+      from 006A1E6F type=3 in ShipLocomotionClass_blah | mov     edi, Frame
+      from 006A2CC2 type=3 in ShipLocomotionClass_blah | mov     eax, Frame
+      from 006A2CE2 type=3 in ShipLocomotionClass_blah | mov     edi, Frame
+      from 006A2D79 type=3 in ShipLocomotionClass_blah | mov     eax, Frame
+      from 006A30AE type=3 in ShipLocomotionClass_blah | mov     esi, Frame
+      from 006A313A type=3 in ShipLocomotionClass_blah | mov     eax, Frame
+      from 006A325F type=3 in ShipLocomotionClass_blah | mov     eax, Frame
+      from 006A3887 type=3 in ShipLocomotionClass_blah | mov     eax, Frame
+      from 006A3B5A type=3 in ShipLocomotionClass_blah | mov     eax, Frame
+      from 006A4E7E type=3 in W?$ct:SidebarClass$n()_ | mov     eax, Frame
+      from 006A4FB0 type=3 in sub_6A4F20 | mov     ecx, Frame
+      from 006A5F01 type=3 in sub_6A5ED0 | mov     eax, Frame
+      from 006A6021 type=3 in sub_6A5F20 | mov     eax, Frame
+      from 006A6072 type=3 in sub_6A5F20 | mov     eax, Frame
+      from 006A6119 type=3 in MapClass_SetAircraftTab | mov     eax, Frame
+      from 006A76F1 type=3 in TabClass_Flash_Tabs6A76F0 | mov     esi, Frame
+      from 006A80AF type=3 in W?$ct:StripClass$:SidebarClass$n(rnx$InitClass$$)_ | mov     ecx, Frame
+      from 006A8121 type=3 in W?$ct:StripClass$:SidebarClass$n(rnx$InitClass$$)_ | mov     edi, Frame
+      from 006A81EF type=3 in W?Init_Clear$:StripClass$:SidebarClass$n()v | mov     ecx, Frame
+      from 006A87C3 type=3 in TabCameoListClass_AddCameo | mov     eax, Frame
+      from 006A8CBA type=3 in W?AI$:StripClass$:SidebarClass$n(rn$KeyNumType$$ii)i | mov     eax, Frame
+      from 006A8CD8 type=3 in W?AI$:StripClass$:SidebarClass$n(rn$KeyNumType$$ii)i | mov     eax, Frame
+      from 006A8CF8 type=3 in W?AI$:StripClass$:SidebarClass$n(rn$KeyNumType$$ii)i | mov     ecx, Frame
+      from 006A8E52 type=3 in W?AI$:StripClass$:SidebarClass$n(rn$KeyNumType$$ii)i | mov     esi, Frame
+      from 006A8FA2 type=3 in W?AI$:StripClass$:SidebarClass$n(rn$KeyNumType$$ii)i | mov     ecx, Frame
+      from 006A8FE7 type=3 in W?AI$:StripClass$:SidebarClass$n(rn$KeyNumType$$ii)i | mov     ecx, Frame
+      from 006A9008 type=3 in W?AI$:StripClass$:SidebarClass$n(rn$KeyNumType$$ii)i | mov     eax, Frame
+      from 006A9B59 type=3 in W?Draw_It$:StripClass$:SidebarClass$n(i)v | mov     eax, Frame
+      from 006AA951 type=3 in sub_6AA600 | mov     ecx, Frame
+      from 006AAA04 type=3 in sub_6AA600 | mov     eax, Frame
+      from 006AB5C6 type=3 in SidebarClass_ProcessCameoClick | mov     edx, Frame
+      from 006AB936 type=3 in SidebarClass_ProcessCameoClick | mov     eax, Frame
+      from 006AC701 type=3 in MapClass_FlashCameo | mov     ecx, Frame
+      from 006AC71A type=3 in MapClass_FlashCameo | mov     ecx, Frame
+      from 006AC75F type=3 in ? | mov     esi, Frame
+      from 006AC7CA type=3 in CameoClass_Empty | mov     edx, Frame
+      from 006AC879 type=3 in sub_6AC870 | mov     edx, Frame
+      from 006AF1D3 type=3 in SlaveManagerClass_CTOR | mov     eax, Frame
+      from 006AF22F type=3 in SlaveManagerClass_CTOR | mov     ecx, Frame
+      from 006AF27D type=3 in SlaveManagerClass_CTOR | mov     eax, Frame
+      from 006AF2DD type=3 in SlaveManagerClass_CTOR | mov     eax, Frame
+      from 006AF38F type=3 in SlaveManagerClass_DCTOR | mov     ecx, Frame
+      from 006AF3C5 type=3 in SlaveManagerClass_DCTOR | mov     ecx, Frame
+      from 006AF46D type=3 in ? | mov     ecx, Frame
+      from 006AF5F7 type=3 in SlaveManagerClass_Update | mov     edi, Frame
+      from 006AF698 type=3 in sub_6AF650 | mov     eax, Frame
+      from 006AF70C type=3 in sub_6AF6C0 | mov     eax, Frame
+      from 006AFBE1 type=3 in sub_6AF6C0 | mov     eax, Frame
+      from 006AFCCE type=3 in sub_6AF6C0 | mov     eax, Frame
+      from 006AFD07 type=3 in sub_6AF6C0 | mov     eax, Frame
+      from 006AFE6E type=3 in sub_6AFD60 | mov     edx, Frame
+      from 006AFEDA type=3 in sub_6AFD60 | mov     ecx, Frame
+      from 006AFF16 type=3 in sub_6AFD60 | mov     eax, Frame
+      from 006AFF5D type=3 in sub_6AFD60 | mov     eax, Frame
+      from 006B0054 type=3 in sub_6AFD60 | mov     eax, Frame
+      from 006B0A6D type=3 in SlaveManagerClass_LoseSlave | mov     edx, Frame
+      from 006B0ABA type=3 in ? | mov     edx, Frame
+      from 006B0C8B type=3 in sub_6B0C80 | mov     eax, Frame
+      from 006B0E84 type=3 in SlaveManagerClass_ExplicitHarvest | mov     ecx, Frame
+      from 006B1005 type=3 in SlaveManagerClass_ExplicitHarvest | mov     ecx, Frame
+      from 006B1075 type=3 in SlaveManagerClass_ShouldWakeUp | mov     edx, Frame
+      from 006B10DB type=3 in ? | mov     eax, Frame
+      from 006B123E type=3 in SlaveManagerClass_Load | mov     ecx, Frame
+      from 006B6CC0 type=3 in SpawnManagerClass_CTOR | mov     eax, Frame
+      from 006B6CCB type=3 in SpawnManagerClass_CTOR | mov     ecx, Frame
+      from 006B6D31 type=3 in SpawnManagerClass_CTOR | mov     eax, Frame
+      from 006B6DAA type=3 in SpawnManagerClass_CTOR | mov     eax, Frame
+      from 006B6E04 type=3 in SpawnManagerClass_CTOR | mov     eax, Frame
+      from 006B6E28 type=3 in SpawnManagerClass_CTOR | mov     eax, Frame
+      from 006B6ECB type=3 in SpawnManagerClass_DCTOR | mov     eax, Frame
+      from 006B6EDA type=3 in SpawnManagerClass_DCTOR | mov     ecx, Frame
+      from 006B6F0A type=3 in SpawnManagerClass_DCTOR | mov     eax, Frame
+      from 006B6F23 type=3 in SpawnManagerClass_DCTOR | mov     eax, Frame
+      from 006B6FCD type=3 in ? | mov     ecx, Frame
+      from 006B6FD9 type=3 in ? | mov     edx, Frame
+      from 006B718F type=3 in SpawnManagerClass_KillNodes | mov     eax, Frame
+      from 006B71CB type=3 in SpawnManagerClass_KillNodes | mov     eax, Frame
+      from 006B7200 type=3 in SpawnManagerClass_KillNodes | mov     eax, Frame
+      from 006B7239 type=3 in SpawnManagerClass_Update | mov     edi, Frame
+      from 006B72B8 type=3 in SpawnManagerClass_Update | mov     ecx, Frame
+      from 006B7398 type=3 in SpawnManagerClass_Update | mov     eax, Frame
+      from 006B761E type=3 in SpawnManagerClass_Update | mov     ecx, Frame
+      from 006B7819 type=3 in SpawnManagerClass_Update | mov     eax, Frame
+      from 006B7872 type=3 in SpawnManagerClass_Update | mov     ecx, Frame
+      from 006B78BD type=3 in SpawnManagerClass_Update | mov     ecx, Frame
+      from 006B7A3C type=3 in SpawnManagerClass_Update | mov     eax, Frame
+      from 006B7A7A type=3 in SpawnManagerClass_Update | mov     edx, Frame
+      from 006B7BF0 type=3 in SpawnManagerClass_CreateNode | mov     eax, Frame
+      from 006B7D0E type=3 in SpawnManagerClass_PointerGotInvalid | mov     ecx, Frame
+      from 006B7E36 type=3 in SpawnManagerClass_GetCRC | mov     ecx, Frame
+      from 006B7E5B type=3 in SpawnManagerClass_GetCRC | mov     ecx, Frame
+      from 006B7F4A type=3 in SpawnManagerClass_Load | mov     ecx, Frame
+      from 006B7FD4 type=3 in SpawnManagerClass_Load | mov     ecx, Frame
+      from 006C76A4 type=3 in GameCompletionRecords_Generate | mov     eax, Frame
+      from 006CAED6 type=3 in SuperClass_DCTOR | mov     edx, Frame
+      from 006CAFAD type=3 in SuperClass_CTOR | mov     ecx, Frame
+      from 006CB509 type=3 in sub_6CB4D0 | mov     edx, Frame
+      from 006CB52C type=3 in sub_6CB4D0 | mov     edx, Frame
+      from 006CB5AA type=3 in W?Enable$:SuperClass$n(iii)i | mov     eax, Frame
+      from 006CB65E type=3 in W?Enable$:SuperClass$n(iii)i | mov     ecx, Frame
+      from 006CB688 type=3 in W?Enable$:SuperClass$n(iii)i | mov     edi, Frame
+      from 006CB8C8 type=3 in SuperClass_StopPreclickAnim | mov     ecx, Frame
+      from 006CB8E2 type=3 in SuperClass_StopPreclickAnim | mov     eax, Frame
+      from 006CB979 type=3 in W?Discharged$:SuperClass$n(i)i | mov     edi, Frame
+      from 006CB9F5 type=3 in W?Discharged$:SuperClass$n(i)i | mov     ebp, Frame
+      from 006CBB79 type=3 in W?Discharged$:SuperClass$n(i)i | mov     eax, Frame
+      from 006CBBA6 type=3 in W?Discharged$:SuperClass$n(i)i | mov     edx, Frame
+      from 006CBC5C type=3 in W?Discharged$:SuperClass$n(i)i | mov     ecx, Frame
+      from 006CBC75 type=3 in W?Discharged$:SuperClass$n(i)i | mov     eax, Frame
+      from 006CBD5D type=3 in W?AI$:SuperClass$n(i)i | mov     ecx, Frame
+      from 006CBD9B type=3 in W?AI$:SuperClass$n(i)i | mov     eax, Frame
+      from 006CBE68 type=3 in W?AI$:SuperClass$n(i)i | mov     ecx, Frame; default
+      from 006CBF2B type=3 in W?Anim_Stage$:SuperClass$n.x()i | mov     eax, Frame
+      from 006CBFA0 type=3 in W?Anim_Stage$:SuperClass$n.x()i | mov     edx, Frame
+      from 006CC013 type=3 in W?Anim_Stage$:SuperClass$n.x()i | mov     edx, Frame
+      from 006CC0C2 type=3 in W?Suspend$:SuperClass$n(i)i | mov     ecx, Frame
+      from 006CC0CB type=3 in W?Suspend$:SuperClass$n(i)i | mov     eax, Frame
+      from 006CC17E type=3 in W?Suspend$:SuperClass$n(i)i | mov     ecx, Frame; default
+      from 006CC236 type=3 in SuperClass_SetSWCharge | mov     ecx, Frame
+      from 006CC23E type=3 in SuperClass_SetSWCharge | mov     ecx, Frame
+      from 006CC78F type=3 in W?Place_Special_Blast$:SuperClass$n($SpecialWeaponType$$s)i | mov     eax, Frame
+      from 006CE14C type=3 in SuperClass_Reset | mov     edx, Frame
+      from 006CE174 type=3 in SuperClass_Reset | mov     edx, Frame
+      from 006CE1DB type=3 in SuperClass_ShouldFlash | mov     eax, Frame
+      from 006CE290 type=3 in Timer_Stop | mov     edx, Frame
+      from 006CE2C5 type=3 in Timer_StartIfEmpty | mov     eax, Frame
+      from 006CFE47 type=3 in TabClass_CTOR | mov     eax, Frame
+      from 006CFE5A type=3 in TabClass_CTOR | mov     ecx, Frame
+      from 006D069C type=3 in TabClass_MouseMove | mov     ecx, Frame
+      from 006D0ED4 type=3 in MapClass_StopTimerWQ | mov     eax, Frame
+      from 006D255C type=3 in TacticalClass_Update | mov     ecx, Frame
+      from 006D26ED type=3 in TacticalClass_Update | mov     eax, Frame
+      from 006D4963 type=3 in TacticalClass_Draw | mov     eax, Frame
+      from 006D49EF type=3 in TacticalClass_Draw | mov     edx, Frame
+      from 006D4A1B type=3 in TacticalClass_Draw | mov     edx, Frame
+      from 006D4AAE type=3 in TacticalClass_Draw | mov     ecx, Frame
+      from 006DA7E9 type=3 in TacticalClass_RegisterCellAsVisible | mov     eax, Frame
+      from 006DA9D5 type=3 in Tactical_Draw_RallyPoint_Paths_6DA9D0 | mov     ebp, Frame
+      from 006DAD67 type=3 in TacticalClass_DrawWaypointPaths | mov     ebx, Frame
+      from 006DE432 type=3 in TActionClass_Execute | mov     ecx, Frame
+      from 006DE60D type=3 in TActionClass_Execute | mov     ecx, Frame
+      from 006E13B6 type=3 in sub_6E13A0 | mov     ecx, Frame
+      from 006E1406 type=3 in sub_6E13E0 | mov     ecx, Frame
+      from 006E1449 type=3 in sub_6E1440 | mov     ebx, Frame
+      from 006E14AE type=3 in sub_6E14A0 | mov     ebx, Frame
+      from 006E153C type=3 in sub_6E1530 | mov     edx, Frame
+      from 006E156B type=3 in sub_6E1530 | mov     ecx, Frame
+      from 006E50B1 type=3 in TagClass_DTOR | mov     ecx, Frame
+      from 006E8AC8 type=3 in TeamClass_CTOR | mov     eax, Frame
+      from 006E8AD3 type=3 in TeamClass_CTOR | mov     ecx, Frame
+      from 006E8ADF type=3 in TeamClass_CTOR | mov     edx, Frame
+      from 006E915E type=3 in TeamClass_Update | mov     ecx, Frame
+      from 006E92BC type=3 in TeamClass_Update | mov     eax, Frame
+      from 006E97D2 type=3 in TeamClass_Update | mov     eax, Frame
+      from 006EB59A type=3 in sub_6EB490 | mov     eax, Frame
+      from 006EC2BC type=3 in TeamClass_SuspendTeamsByPriority | mov     edi, Frame
+      from 006EC629 type=3 in TeamClass_GetCRC | mov     ecx, Frame
+      from 006EC64E type=3 in TeamClass_GetCRC | mov     ecx, Frame
+      from 006ECD59 type=3 in Team_PatrolToWaypoint | mov     eax, Frame
+      from 006ED782 type=3 in TeamClass_GuardAreaForX | mov     ecx, Frame
+      from 006ED7B2 type=3 in TeamClass_GuardAreaForX | mov     ecx, Frame
+      from 006EFDD4 type=3 in Team_IronCurtain | mov     eax, Frame
+      from 006F0091 type=3 in Team_ChronoSphereToStructure | mov     eax, Frame
+      from 006F0336 type=3 in Team_ChronoWarpToStructure | mov     eax, Frame
+      from 006F2AB0 type=3 in InitList_3010 | mov     eax, Frame
+      from 006F2B6A type=3 in TechnoClass_CTOR | mov     eax, Frame
+      from 006F2C0A type=3 in TechnoClass_CTOR | mov     ecx, Frame
+      from 006F2C1C type=3 in TechnoClass_CTOR | mov     edx, Frame
+      from 006F2C2E type=3 in TechnoClass_CTOR | mov     eax, Frame
+      from 006F2C43 type=3 in TechnoClass_CTOR | mov     ecx, Frame
+      from 006F2C55 type=3 in TechnoClass_CTOR | mov     edx, Frame
+      from 006F2C71 type=3 in TechnoClass_CTOR | mov     eax, Frame
+      from 006F2C82 type=3 in TechnoClass_CTOR | mov     ecx, Frame
+      from 006F2CBE type=3 in TechnoClass_CTOR | mov     edx, Frame
+      from 006F2CD0 type=3 in TechnoClass_CTOR | mov     eax, Frame
+      from 006F2CE7 type=3 in TechnoClass_CTOR | mov     ecx, Frame
+      from 006F2D33 type=3 in TechnoClass_CTOR | mov     eax, Frame
+      from 006F2D50 type=3 in TechnoClass_CTOR | mov     ecx, Frame
+      from 006F2E81 type=3 in TechnoClass_CTOR | mov     eax, Frame
+      from 006F2F07 type=3 in TechnoClass_CTOR | mov     ecx, Frame
+      from 006F3100 type=3 in TechnoClass_CTOR | mov     edx, Frame
+      from 006F4310 type=3 in TechnoClass_LoadTables | mov     eax, Frame
+      from 006F4323 type=3 in TechnoClass_LoadTables | mov     ecx, Frame
+      from 006F4341 type=3 in TechnoClass_LoadTables | mov     edx, Frame
+      from 006F4D80 type=3 in W?Receive_Message$:TechnoClass$n(pn$RadioClass$$$RadioMessageType$$rnl)$3$ | mov     ecx, Frame
+      from 006F5307 type=3 in TechnoClass_DrawExtras | mov     eax, Frame
+      from 006F84EF type=3 in W?Evaluate_Object$:TechnoClass$n.x($ThreatType$$iipnx$1$rnii)i | mov     ecx, Frame
+      from 006F9F7B type=3 in TechnoClass_Update | test    byte ptr Frame, 4
+      from 006FA167 type=3 in TechnoClass_Update | mov     eax, Frame
+      from 006FA47C type=3 in TechnoClass_Update | mov     ecx, Frame
+      from 006FA55D type=3 in TechnoClass_Update | mov     ecx, Frame
+      from 006FA66B type=3 in TechnoClass_Update | mov     ecx, Frame
+      from 006FA6B7 type=3 in TechnoClass_Update | mov     ecx, Frame
+      from 006FA7E2 type=3 in TechnoClass_Update | mov     eax, Frame
+      from 006FA8D6 type=3 in TechnoClass_Update | mov     eax, Frame
+      from 006FABD5 type=3 in TechnoClass_Update | mov     ecx, Frame
+      from 006FAC0C type=3 in TechnoClass_Update | mov     ecx, Frame
+      from 006FB042 type=3 in TechnoClass_Reload | mov     ecx, Frame
+      from 006FB0C3 type=3 in Techno_Update_Reloading | mov     ecx, Frame
+      from 006FB144 type=3 in Techno_Update_Reloading | mov     ecx, Frame
+      from 006FB85F type=3 in W?Cloaking_AI$:TechnoClass$n()v | mov     ecx, Frame
+      from 006FB920 type=3 in W?Cloaking_AI$:TechnoClass$n()v | mov     ecx, Frame
+      from 006FB9AC type=3 in W?Cloaking_AI$:TechnoClass$n()v | mov     eax, Frame
+      from 006FB9DD type=3 in W?Cloaking_AI$:TechnoClass$n()v | mov     edi, Frame
+      from 006FBA57 type=3 in W?Cloaking_AI$:TechnoClass$n()v | mov     eax, Frame
+      from 006FBAA2 type=3 in W?Cloaking_AI$:TechnoClass$n()v | mov     eax, Frame
+      from 006FBECF type=3 in TechnoClass_IsCloakedByOthers | mov     ecx, Frame
+      from 006FBF3C type=3 in TechnoClass_IsCloakedByOthers | mov     ecx, Frame
+      from 006FC960 type=3 in W?Can_Fire$:TechnoClass$n.x(li)$FireErrorType$$ | mov     ecx, Frame
+      from 006FCADB type=3 in W?Can_Fire$:TechnoClass$n.x(li)$FireErrorType$$ | mov     ecx, Frame
+      from 006FE4AA type=3 in TechnoClass_Fire | mov     ecx, Frame
+      from 006FF2A4 type=3 in TechnoClass_Fire | mov     ecx, Frame
+      from 006FF4B0 type=3 in TechnoClass_Fire | mov     eax, Frame
+      from 006FF73D type=3 in TechnoClass_Fire | mov     edx, Frame
+      from 006FF816 type=3 in TechnoClass_Fire | mov     ecx, Frame
+      from 006FFB9D type=3 in sub_6FF960 | mov     edx, Frame
+      from 00700298 type=3 in W?What_Action$:TechnoClass$n.x(pnx$ObjectClass$$)$ActionType$$ | mov     ecx, Frame
+      from 00700E13 type=3 in TechnoClass_314 | mov     ecx, Frame
+      from 00701F2B type=3 in TechnoClass_ReceiveDamage | mov     edx, Frame
+      from 00701F4C type=3 in TechnoClass_ReceiveDamage | mov     ecx, Frame
+      from 00701FAC type=3 in TechnoClass_ReceiveDamage | mov     eax, Frame
+      from 00702012 type=3 in TechnoClass_ReceiveDamage | mov     ecx, Frame
+      from 00703700 type=3 in TechnoClass_Uncloak | mov     ecx, Frame
+      from 007037B3 type=3 in TechnoClass_Cloak | mov     ecx, Frame
+      from 00704DB0 type=3 in sub_7049C0 | mov     ecx, Frame
+      from 007079E2 type=3 in TechnoClass_PointerGotInvalid | mov     ecx, Frame
+      from 00707A12 type=3 in TechnoClass_PointerGotInvalid | mov     ecx, Frame
+      from 00708182 type=3 in W?Base_Is_Attacked$:TechnoClass$n(pnx$1$)v | mov     ecx, Frame
+      from 00708783 type=3 in W?Base_Is_Attacked$:TechnoClass$n(pnx$1$)v | mov     esi, Frame
+      from 00709492 type=3 in sub_709480 | mov     eax, Frame
+      from 00709820 type=3 in W?Target_Something_Nearby$:TechnoClass$n($ThreatType$$)i | mov     eax, Frame
+      from 00709858 type=3 in W?Target_Something_Nearby$:TechnoClass$n($ThreatType$$)i | mov     edx, Frame
+      from 0070988E type=3 in W?Target_Something_Nearby$:TechnoClass$n($ThreatType$$)i | mov     edx, Frame
+      from 007099F1 type=3 in W?Is_Ready_To_Random_Animate$:TechnoClass$n.x()i | mov     ecx, Frame
+      from 0070A53D type=3 in W?Draw_Pips$:TechnoClass$n.x(ii$WindowNumberType$$)v | mov     eax, Frame
+      from 0070A5A9 type=3 in W?Draw_Pips$:TechnoClass$n.x(ii$WindowNumberType$$)v | mov     eax, Frame
+      from 0070BF11 type=3 in TechnoClass_NeedsToSelfHeal | mov     eax, Frame
+      from 0070C2C9 type=3 in TechnoClass_GetCRC | mov     ecx, Frame
+      from 0070C310 type=3 in TechnoClass_GetCRC | mov     ecx, Frame
+      from 0070C373 type=3 in TechnoClass_GetCRC | mov     ecx, Frame
+      from 0070C3AC type=3 in TechnoClass_GetCRC | mov     ecx, Frame
+      from 0070D150 type=3 in sub_70D150 | mov     eax, Frame
+      from 0070DBEA type=3 in TechnoClass_4A0 | mov     edi, Frame
+      from 0070E28F type=3 in TechnoClass_46C | mov     eax, Frame
+      from 0070E2B0 type=3 in TechnoClass_IronCurtain | mov     eax, Frame
+      from 0070E300 type=3 in TechnoClass_StartAirstrikeTimer | mov     eax, Frame
+      from 0070E340 type=3 in TechnoClass_StopAirstrikeTimer | mov     eax, Frame
+      from 0070E392 type=3 in BuildingClass_RGBModulate1 | mov     eax, Frame
+      from 0070E4C2 type=3 in BuildingClass_RGBModulate2 | mov     eax, Frame
+      from 0070E5DB type=3 in TechnoClass_UpdateTint_IronCurtain | mov     eax, Frame
+      from 0070E610 type=3 in TechnoClass_UpdateTint_IronCurtain | mov     edx, Frame
+      from 0070E630 type=3 in TechnoClass_UpdateTint_IronCurtain | mov     ecx, Frame
+      from 0070E664 type=3 in TechnoClass_UpdateTint_IronCurtain | mov     ecx, Frame
+      from 0070E699 type=3 in TechnoClass_UpdateTint_IronCurtain | mov     ecx, Frame
+      from 0070E6CB type=3 in TechnoClass_UpdateTint_IronCurtain | mov     edx, Frame
+      from 0070E6EB type=3 in TechnoClass_UpdateTint_IronCurtain | mov     ecx, Frame
+      from 0070E71F type=3 in TechnoClass_UpdateTint_IronCurtain | mov     edx, Frame
+      from 0070E73F type=3 in TechnoClass_UpdateTint_IronCurtain | mov     ecx, Frame
+      from 0070E773 type=3 in TechnoClass_UpdateTint_IronCurtain | mov     ecx, Frame
+      from 0070E7B7 type=3 in TechnoClass_UpdateTint_IronCurtain | mov     eax, Frame
+      from 0070E7ED type=3 in TechnoClass_UpdateTint_IronCurtain | mov     eax, Frame
+      from 0070E826 type=3 in TechnoClass_UpdateTint_IronCurtain | mov     edx, Frame
+      from 0070E846 type=3 in TechnoClass_UpdateTint_IronCurtain | mov     ecx, Frame
+      from 0070E87A type=3 in TechnoClass_UpdateTint_IronCurtain | mov     edx, Frame
+      from 0070E896 type=3 in TechnoClass_UpdateTint_IronCurtain | mov     ecx, Frame
+      from 0070E8C4 type=3 in TechnoClass_UpdateTint_IronCurtain | mov     ecx, Frame
+      from 0070E992 type=3 in TechnoClass_UpdateTint_Airstrike | mov     eax, Frame
+      from 0070E9C7 type=3 in TechnoClass_UpdateTint_Airstrike | mov     edx, Frame
+      from 0070E9E7 type=3 in TechnoClass_UpdateTint_Airstrike | mov     ecx, Frame
+      from 0070EA1B type=3 in TechnoClass_UpdateTint_Airstrike | mov     ecx, Frame
+      from 0070EA50 type=3 in TechnoClass_UpdateTint_Airstrike | mov     ecx, Frame
+      from 0070EA82 type=3 in TechnoClass_UpdateTint_Airstrike | mov     edx, Frame
+      from 0070EAA2 type=3 in TechnoClass_UpdateTint_Airstrike | mov     ecx, Frame
+      from 0070EAD6 type=3 in TechnoClass_UpdateTint_Airstrike | mov     edx, Frame
+      from 0070EAF6 type=3 in TechnoClass_UpdateTint_Airstrike | mov     ecx, Frame
+      from 0070EB2A type=3 in TechnoClass_UpdateTint_Airstrike | mov     ecx, Frame
+      from 0070EB70 type=3 in TechnoClass_UpdateTint_Airstrike | mov     eax, Frame
+      from 0070EBA6 type=3 in TechnoClass_UpdateTint_Airstrike | mov     eax, Frame
+      from 0070EBDF type=3 in TechnoClass_UpdateTint_Airstrike | mov     edx, Frame
+      from 0070EBFF type=3 in TechnoClass_UpdateTint_Airstrike | mov     ecx, Frame
+      from 0070EC33 type=3 in TechnoClass_UpdateTint_Airstrike | mov     edx, Frame
+      from 0070EC4F type=3 in TechnoClass_UpdateTint_Airstrike | mov     ecx, Frame
+      from 0070EC7D type=3 in TechnoClass_UpdateTint_Airstrike | mov     ecx, Frame
+      from 0070ED86 type=3 in TechnoClass_GetDisguiseFlags | mov     eax, Frame
+      from 0070EDBC type=3 in TechnoClass_GetDisguiseFlags | mov     eax, Frame
+      from 0070EE45 type=3 in TechnoClass_IsDisguisedAgainst | mov     ecx, Frame
+      from 0070EE87 type=3 in TechnoClass_IsDisguisedAgainst | mov     eax, Frame
+      from 0070F2BF type=3 in TechnoClass_DrawHidden | mov     cl, byte ptr Frame
+      from 0070F740 type=3 in sub_70F740 | mov     eax, Frame
+      from 0070F78B type=3 in InfantryClass_UpdateTargetingTimer | mov     ecx, Frame
+      from 0070F7BB type=3 in InfantryClass_UpdateTargetingTimer | mov     ecx, Frame
+      from 0070F7F1 type=3 in FootClass_UpdateTargetingTimer | mov     ecx, Frame
+      from 0071804F type=3 in TeleportLocomotionClass_CTOR | mov     ecx, Frame
+      from 007194B1 type=3 in TeleportLocomotionClass_ILocomotion_Process | mov     eax, Frame
+      from 007194DC type=3 in TeleportLocomotionClass_ILocomotion_Process | mov     ecx, Frame
+      from 00719507 type=3 in TeleportLocomotionClass_ILocomotion_Process | mov     ecx, Frame
+      from 00719527 type=3 in TeleportLocomotionClass_ILocomotion_Process | mov     edx, Frame
+      from 0071955D type=3 in TeleportLocomotionClass_ILocomotion_Process | mov     eax, Frame
+      from 007195A0 type=3 in TeleportLocomotionClass_ILocomotion_Process | mov     eax, Frame
+      from 007197D7 type=3 in TeleportLocomotionClass_ILocomotion_Process | mov     eax, Frame
+      from 00719B16 type=3 in TeleportLocomotionClass_ILocomotion_Process | mov     eax, Frame
+      from 00719C00 type=3 in sub_719BF0 | mov     ecx, Frame
+      from 00719CC9 type=3 in TeleportLocomotionClass_Load | mov     eax, Frame
+      from 0071A458 type=3 in TemporalClass_DCTOR | mov     eax, Frame
+      from 0071A4EC type=3 in TemporalClass_CTOR | mov     eax, Frame
+      from 0071A522 type=3 in TemporalClass_CTOR | mov     eax, Frame
+      from 0071BB00 type=3 in TerrainClass_ReceiveDamage | mov     eax, Frame
+      from 0071BBB0 type=3 in TerrainClass_CTOR | mov     eax, Frame
+      from 0071BC86 type=3 in TerrainClass_CTOR | mov     eax, Frame
+      from 0071BE0F type=3 in TerrainClass_DCTOR | mov     eax, Frame
+      from 0071C6FF type=3 in TerrainClass_17C | mov     eax, Frame
+      from 0071C7A4 type=3 in TerrainClass_Update | mov     ecx, Frame
+      from 0071C7F8 type=3 in TerrainClass_Update | mov     ecx, Frame
+      from 0071C884 type=3 in TerrainClass_Update | mov     eax, Frame
+      from 0071C8F5 type=3 in ? | mov     eax, Frame
+      from 0071EB28 type=3 in EventClass_HasOccured | mov     ecx, Frame; jumptable 0071E964 case 47
+      from 0071EC0D type=3 in EventClass_HasOccured | mov     ecx, Frame
+      from 0071EC41 type=3 in EventClass_HasOccured | mov     ecx, Frame
+      from 0072176A type=3 in TiberiumClass_CTOR | mov     ecx, Frame
+      from 00721794 type=3 in TiberiumClass_CTOR | mov     edx, Frame
+      from 007221EE type=3 in sub_7221B0 | mov     edx, Frame
+      from 0072220B type=3 in sub_7221B0 | mov     eax, Frame
+      from 00722B76 type=3 in sub_722AF0 | mov     edi, Frame
+      from 00722C87 type=3 in sub_722C40 | mov     edx, Frame
+      from 00722CBD type=3 in sub_722C40 | mov     edi, Frame
+      from 00723055 type=3 in sub_722F00 | mov     edi, Frame
+      from 00723616 type=3 in sub_7235A0 | mov     ecx, Frame
+      from 00725FBB type=3 in TriggerClass_CTOR | mov     ecx, Frame
+      from 00726422 type=3 in W?Reset$:TriggerClass$n.x(rn$TDEventClass$$)v | mov     ecx, Frame
+      from 00726475 type=3 in W?Reset$:TriggerClass$n.x(rn$TDEventClass$$)v | mov     ebx, Frame
+      from 007267EC type=3 in TriggerClass_GetCRC | mov     ecx, Frame
+      from 00728A2A type=3 in TunnelLocomotionClass_CTOR | mov     ecx, Frame
+      from 007292BF type=3 in sub_7291F0 | mov     ecx, Frame
+      from 0072938D type=3 in ? | mov     ecx, Frame
+      from 0072949B type=3 in ? | mov     edx, Frame
+      from 00729A65 type=3 in sub_7298F0 | mov     ecx, Frame
+      from 00729ABD type=3 in ? | mov     ecx, Frame
+      from 00729CC7 type=3 in sub_729B40 | mov     ecx, Frame
+      from 00729D1E type=3 in sub_729B40 | mov     ecx, Frame
+      from 00729D7C type=3 in sub_729B40 | mov     ecx, Frame
+      from 00729EE5 type=3 in sub_729E50 | mov     ecx, Frame
+      from 0072A177 type=3 in TunnelLocomotionClass_Load | mov     edx, Frame
+      from 00730F51 type=3 in CheerCommandClass_Execute | mov     eax, Frame
+      from 00730FCE type=3 in CheerCommandClass_Execute | mov     eax, Frame
+      from 00731350 type=3 in sub_7311C0 | mov     eax, Frame
+      from 007355C6 type=3 in UnitClass_CTOR | mov     eax, Frame
+      from 0073611A type=3 in UnitClass_Update | mov     edx, Frame
+      from 007361B3 type=3 in UnitClass_Update | mov     eax, Frame
+      from 0073622F type=3 in UnitClass_Update | mov     eax, Frame
+      from 00736518 type=3 in UnitClass_Update | test    byte ptr Frame, 3
+      from 0073671F type=3 in UnitClass_Update | test    byte ptr Frame, 0Fh
+      from 00736844 type=3 in UnitClass_Update | mov     ecx, Frame
+      from 00736B2F type=3 in sub_736990 | mov     ecx, Frame
+      from 00736CEB type=3 in W?Reload_AI$:UnitClass$n()v | mov     esi, Frame
+      from 00736F45 type=3 in sub_736DF0 | mov     eax, Frame
+      from 007371E9 type=3 in UnitClass_VisceroidWander | mov     eax, Frame
+      from 00737236 type=3 in UnitClass_VisceroidWander | mov     eax, Frame
+      from 00737C11 type=3 in UnitClass_Put | mov     eax, Frame
+      from 00737C52 type=3 in UnitClass_Put | mov     eax, Frame
+      from 00739C3E type=3 in UnitClass_ToggleDeployState | mov     ecx, Frame
+      from 00739E22 type=3 in UnitClass_ToggleSimpleDeploy | mov     ecx, Frame
+      from 0073A162 type=3 in W?Per_Cell_Process$:UnitClass$n($PCPType$$)v | mov     eax, Frame
+      from 0073ADFA type=3 in W?Per_Cell_Process$:UnitClass$n($PCPType$$)v | mov     ecx, Frame
+      from 0073D240 type=3 in UnitClass_DrawAt | mov     ebp, Frame
+      from 0073D3D7 type=3 in UnitClass_DrawAt | mov     eax, Frame
+      from 0073D426 type=3 in UnitClass_DrawAt | mov     ecx, Frame
+      from 0073D50E type=3 in UnitClass_Harvesting | mov     ecx, Frame
+      from 0073D5DB type=3 in UnitClass_Harvesting | mov     ecx, Frame
+      from 0073D604 type=3 in UnitClass_Harvesting | mov     eax, Frame
+      from 0073DFE0 type=3 in UnitClass_Unload | mov     eax, Frame
+      from 0073E884 type=3 in UnitClass_Harvest | mov     eax, Frame
+      from 0073E94B type=3 in UnitClass_Harvest | mov     ecx, Frame
+      from 00740830 type=3 in W?Mission_Guard$:UnitClass$n()i | mov     eax, Frame
+      from 00741452 type=3 in UnitClass_Fire | mov     eax, Frame
+      from 00744120 type=3 in UnitClass_AreaGuard | mov     eax, Frame
+      from 0074644E type=3 in UnitClass_ReceiveGunner | mov     ecx, Frame
+      from 0074649F type=3 in UnitClass_ReceiveGunner | mov     ecx, Frame
+      from 00746516 type=3 in UnitClass_RemoveGunner | mov     ecx, Frame
+      from 0074657A type=3 in UnitClass_RemoveGunner | mov     ecx, Frame
+      from 00746651 type=3 in ? | mov     eax, Frame
+      from 00746948 type=3 in UnitClass_UpdateDisguise | mov     ecx, Frame
+      from 00746A01 type=3 in UnitClass_UpdateDisguise | mov     ecx, Frame
+      from 00746A89 type=3 in UnitClass_UpdateDisguise | mov     eax, Frame
+      from 00746AE2 type=3 in UnitClass_UpdateDisguise | mov     eax, Frame
+      from 0074A720 type=3 in VoxelAnimClass_Update | mov     ecx, Frame
+      from 0074C42D type=3 in VeinholeMonsterClass_LoadTables | mov     ecx, Frame
+      from 0074C5DB type=3 in VeinholeMonsterClass_CTOR | mov     ecx, Frame
+      from 0074C611 type=3 in VeinholeMonsterClass_CTOR | mov     edx, Frame
+      from 0074C633 type=3 in VeinholeMonsterClass_CTOR | mov     eax, Frame
+      from 0074C79C type=3 in VeinholeMonsterClass_CTOR | mov     eax, Frame
+      from 0074CEE5 type=3 in VeinholeMonsterClass_Update | mov     ecx, Frame
+      from 0074CFCE type=3 in VeinholeMonsterClass_Update | mov     ecx, Frame
+      from 0074D19D type=3 in VeinholeMonsterClass_Update | mov     ecx, Frame
+      from 0074D26E type=3 in VeinholeMonsterClass_Update | mov     ecx, Frame
+      from 0074D29B type=3 in VeinholeMonsterClass_Update | mov     eax, Frame
+      from 0074D36C type=3 in VeinholeMonsterClass_Update | mov     ecx, Frame
+      from 0074D61E type=3 in VeinholeMonsterClass_ReceiveDamage | mov     eax, Frame
+      from 0074D9E4 type=3 in sub_74D7C0 | mov     ecx, Frame
+      from 0074F1F2 type=3 in Remove_Matching | mov     ecx, Frame
+      from 0075AF41 type=3 in sub_75AEC0 | mov     ecx, Frame
+      from 0075AF80 type=3 in sub_75AEC0 | mov     edx, Frame
+      from 0075B6FA type=3 in sub_75AEC0 | mov     eax, Frame
+      from 0075B8C6 type=3 in sub_75AEC0 | mov     eax, Frame
+      from 0075B8E6 type=3 in sub_75AEC0 | mov     edi, Frame
+      from 0075B984 type=3 in sub_75AEC0 | mov     edi, Frame
+      from 0075BA9F type=3 in sub_75AEC0 | mov     eax, Frame
+      from 0075BBEE type=3 in sub_75AEC0 | mov     eax, Frame
+      from 007774C1 type=3 in W?Focus_Restore$n()v | cmp     Frame, esi
+      from 007774F2 type=3 in W?Focus_Restore$n()v | cmp     Frame, esi
+      from 0077752A type=3 in W?Focus_Restore$n()v | cmp     Frame, esi
+      from 0077755B type=3 in W?Focus_Restore$n()v | cmp     Frame, esi
+      from 00795234 type=2 in sub_794BA0 | mov     Frame, 0
+      from 0079758C type=2 in sub_7970D0 | mov     Frame, eax
+
+############ 3) DriveLocomotionClass vtable 0x7E7EB0 ############
+   +0x000  [ 0] = 0x004B4D90  sub_4B4D90
+   +0x004  [ 1] = 0x004B4DA0  sub_4B4DA0
+   +0x008  [ 2] = 0x004B4DB0  sub_4B4DB0
+   +0x00C  [ 3] = 0x0055A710  LocomotionClass_ILocomotion_LinkToObject
+   +0x010  [ 4] = 0x004AFB80  DriveLocomotionClass_ILocomotion_IsMoving
+   +0x014  [ 5] = 0x004AFC90  sub_4AFC90
+   +0x018  [ 6] = 0x004AFCC0  sub_4AFCC0
+   +0x01C  [ 7] = 0x0055ABF0  LocomotionClass_ILocomotion_CanEnterCell
+   +0x020  [ 8] = 0x0055ABE0  LocomotionClass_ILocomotion_IsToHaveShadow
+   +0x024  [ 9] = 0x004AFF60  sub_4AFF60
+   +0x028  [10] = 0x004B0410  sub_4B0410
+   +0x02C  [11] = 0x0055ABD0  LocomotionClass_ILocomotion_DrawPoint
+   +0x030  [12] = 0x0055A8C0  LocomotionClass_ILocomotion_ShadowPoint
+   +0x034  [13] = 0x0055ABC0  LocomotionClass_ILocomotion_VisualCharacter
+   +0x038  [14] = 0x004B4870  sub_4B4870
+   +0x03C  [15] = 0x004B4880  sub_4B4880
+   +0x040  [16] = 0x004B0500  sub_4B0500
+   +0x044  [17] = 0x004AFD40  sub_4AFD40
+   +0x048  [18] = 0x004AFE00  sub_4AFE00
+   +0x04C  [19] = 0x004B0EF0  sub_4B0EF0
+   +0x050  [20] = 0x004B04D0  sub_4B04D0
+   +0x054  [21] = 0x0055AB90  LocomotionClass_ILocomotion_TiltPitchAI
+   +0x058  [22] = 0x0055A8F0  LocomotionClass_ILocomotion_PowerOn
+   +0x05C  [23] = 0x0055A910  LocomotionClass_ILocomotion_PowerOff
+   +0x060  [24] = 0x0055A930  LocomotionClass_ILocomotion_IsPowered
+   +0x064  [25] = 0x0055A940  LocomotionClass_ILocomotion_IsIonSensitive
+   +0x068  [26] = 0x0055AB70  LocomotionClass_ILocomotion_Push
+   +0x06C  [27] = 0x0055AB80  LocomotionClass_ILocomotion_Shove
+   +0x070  [28] = 0x004B0C40  sub_4B0C40
+   +0x074  [29] = 0x004B4820  sub_4B4820
+   +0x078  [30] = 0x0055AC00  LocomotionClass_ILocomotion_ForceImmediateDestination
+   +0x07C  [31] = 0x004AFB40  sub_4AFB40
+   +0x080  [32] = 0x004AFC20  DriveLocomotionClass_ILocomotion_IsMovingNow
+   +0x084  [33] = 0x0055AD10  LocomotionClass_ILocomotion_ApparentSpeed
+   +0x088  [34] = 0x0055ACF0  LocomotionClass_ILocomotion_DrawingCode
+   +0x08C  [35] = 0x0055AD00  LocomotionClass_ILocomotion_CanFire
+   +0x090  [36] = 0x004B4C60  LocomotionClass_ILocomotion_GetStatus
+   +0x094  [37] = 0x004B4C70  LocomotionClass_ILocomotion_AcquireHunterSeekerTarget
+   +0x098  [38] = 0x004B4C80  LocomotionClass_ILocomotion_IsSurfacing
+   +0x09C  [39] = 0x004B48D0  sub_4B48D0
+
+############ 4) 名字库：Locomotion / Facing / Track ############
+   0041C250  LocomotionClass_CreateInstance
+   0041C2E0  LocomotionClass_41C2E0
+   0045A050  LocomotionClass_AssureExists
+   0045A170  LocomotionClass_ppv_AddRef
+   0045AF20  LocomotionClass_FillVar
+   004AF540  DriveLocomotionClass_CTOR
+   004AF720  DriveLocomotionClass_QueryInterface
+   004AF780  DriveLocomotionClass_Load
+   004AF800  DriveLocomotionClass_Save
+   004AFB80  DriveLocomotionClass_ILocomotion_IsMoving
+   004AFC20  DriveLocomotionClass_ILocomotion_IsMovingNow
+   004B2630  DriveLocomotionClass_blah
+   004B4830  DriveLocomotionClass_GetClassID
+   004B4C30  LocomotionClass_IsDirty
+   004B4C50  LocomotionClass_ILocomotion_IsReallyMovingNow
+   004B4C60  LocomotionClass_ILocomotion_GetStatus
+   004B4C70  LocomotionClass_ILocomotion_AcquireHunterSeekerTarget
+   004B4C80  LocomotionClass_ILocomotion_IsSurfacing
+   004B4C90  LocomotionClass_ILocomotion_StopMovementAction
+   004B4CA0  LocomotionClass_ILocomotion_Lock
+   004B4CB0  DriveLocomotionClass_AddRef
+   004B4CC0  DriveLocomotionClass_Release
+   004B4CF0  DriveLocomotionClass_GetSize
+   004B4D00  DriveLocomotionClass_SDDTOR
+   004B5AB0  DpodLocomotionClass_CTOR
+   004B5B70  DropPodLocomotionClass_ILocomotion_Update
+   004B6200  DropPodLocomotionClass_GetClassID
+   004B6240  DropPodLocomotionClass_Load
+   004B62C0  DropPodLocomotionClass_Save
+   004B6470  DropPodLocomotionClass_QueryInterface
+   004B6610  LocomotionClass_ILocomotion_IsMovingNow
+   004B6620  LocomotionClass_ILocomotion_MarkAllOccupationBits
+   004B6630  LocomotionClass_ILocomotion_IsMovingHere
+   004B6640  LocomotionClass_ILocomotion_WillJumpTracks
+   004B6650  LocomotionClass_ILocomotion_Unlock
+   004B6660  LocomotionClass_ILocomotion_GetTrackNumber
+   004B6670  LocomotionClass_ILocomotion_GetTrackIndex
+   004B6680  LocomotionClass_ILocomotion_GetSpeedAccum
+   004B6690  LocomotionClass_ILocomotion_4B6690
+   004B66A0  DropPodLocomotionClass_AddRef
+   004B66B0  DropPodLocomotionClass_Release
+   004B66E0  DropPodLocomotionClass_GetSize
+   004B66F0  DropPodLocomotionClass_SDDTOR
+   004C9220  W?Set_Desired$:FacingClass$n($DirType$$)i
+   004CC9A0  FlyLocomotionClass_CTOR
+   004CFC80  FlyLocomotionClass_GetClassID
+   004CFCC0  FlyLocomotionClass_Load
+   004D0390  FlyLocomotionClass_GetSize
+   004D03A0  FlyLocomotionClass_SDDTOR
+   004D0510  LocomotionClass_ILocomotion_QueryInterface
+   004D0520  LocomotionClass_ILocomotion_AddRef
+   004D0530  LocomotionClass_ILocomotion_Release
+   00513C20  HoverLocomotionClass_CTOR
+   00514D10  HoverLocomotionClass_ILocomotion_GetCoords
+   00516BF0  HoverLocomotionClass_ILocomotion_PowerOff
+   00516C70  HoverLocomotionClass_ILocomotion_IsPowered
+   00517070  HoverLocomotionClass_GetClassID
+   005170B0  HoverLocomotionClass_Load
+   005172B0  HoverLocomotionClass_GetSize
+   005172C0  HoverLocomotionClass_SDDTOR
+   005172F0  ??_GLocomotionClass@@UAEPAXI@Z
+   005233A0  LocomotionClass_HandItOver
+   0054AC40  JumpjetLocomotionClass_CTOR
+   0054AEC0  JumpjetLocomotionClass_Process
+   0054B710  JumpjetLocomotionClass_GetClassID
+   0054B750  JumpjetLocomotionClass_Load
+   0054B7E0  JumpjetLocomotionClass_Save
+   0054D0D0  JumpjetLocomotionClass_Is_Moving_Now
+   0054DC60  JumpjetLocomotionClass_QueryInterface
+   0054DF50  JumpjetLocomotionClass_AddRef
+   0054DF60  JumpjetLocomotionClass_Release
+   0054DF90  JumpjetLocomotionClass_GetSize
+   0054DFA0  JumpjetLocomotionClass_SDDTOR
+   0055A6C0  LocomotionClass_CTOR
+   0055A6F0  ??1TunnelLocomotionClass@@UAE@XZ
+   0055A710  LocomotionClass_ILocomotion_LinkToObject
+   0055A730  LocomotionClass_ILocomotion_DrawMatrix
+   0055A7D0  LocomotionClass_ILocomotion_ShadowMatrix
+   0055A8C0  LocomotionClass_ILocomotion_ShadowPoint
+   0055A8F0  LocomotionClass_ILocomotion_PowerOn
+   0055A910  LocomotionClass_ILocomotion_PowerOff
+   0055A930  LocomotionClass_ILocomotion_IsPowered
+   0055A940  LocomotionClass_ILocomotion_IsIonSensitive
+   0055A950  LocomotionClass_AddRef
+   0055A970  LocomotionClass_Release
+   0055A9B0  LocomotionClass_QueryInterface
+   0055AA60  LocomotionClassClass_Save
+   0055AB40  LocomotionClass_GetMaxSize
+   0055AB70  LocomotionClass_ILocomotion_Push
+   0055AB80  LocomotionClass_ILocomotion_Shove
+   0055AB90  LocomotionClass_ILocomotion_TiltPitchAI
+   0055ABA0  LocomotionClass_ILocomotion_ZAdjust
+   0055ABB0  LocomotionClass_ILocomotion_ZGradient
+   0055ABC0  LocomotionClass_ILocomotion_VisualCharacter
+   0055ABD0  LocomotionClass_ILocomotion_DrawPoint
+   0055ABE0  LocomotionClass_ILocomotion_IsToHaveShadow
+   0055ABF0  LocomotionClass_ILocomotion_CanEnterCell
+   0055AC00  LocomotionClass_ILocomotion_ForceImmediateDestination
+   0055AC10  LocomotionClass_ILocomotion_ForceTrack
+   0055AC20  LocomotionClass_ILocomotion_Unlimbo
+   0055AC30  LocomotionClass_ILocomotion_DoTurn
+   0055AC40  LocomotionClass_ILocomotion_StopMoving
+   0055AC50  LocomotionClass_ILocomotion_MoveTo
+   0055AC60  LocomotionClass_ILocomotion_Process
+   0055AC70  LocomotionClass_ILocomotion_Destination
+   0055ACA0  LocomotionClass_ILocomotion_HeadToCoord
+   0055ACD0  LocomotionClass_ILocomotion_IsMoving
+   0055ACE0  LocomotionClass_ILocomotion_ForceNewSlope
+   0055ACF0  LocomotionClass_ILocomotion_DrawingCode
+   0055AD00  LocomotionClass_ILocomotion_CanFire
+   0055AD10  LocomotionClass_ILocomotion_ApparentSpeed
+   005AFEF0  MechLocomotionClass_CTOR
+   005B1960  MechLocomotionClass_GetClassID
+   005B19A0  MechLocomotionClass_Load
+   005B1B40  MechLocomotionClass_GetSize
+   005B1B50  MechLocomotionClass_SDDTOR
+   00661EC0  RocketLocomotionClass_CTOR
+   00661F50  RocketLocomotionClass_ILocomotion_IsMoving
+   00661F90  RocketLocomotionClass_ILocomotion_IsMovingNow
+   00661FB0  RocketLocomotionClass_ILocomotion_Destination
+   006622C0  RocketLocomotionClass_ILocomotion_Process
+   00663030  RocketLocomotionClass_DoStuff
+   006632E0  RocketLocomotionClass_ILocomotion_MoveTo
+   006633C0  RocketLocomotionClass_ILocomotion_StopMoving
+   006633D0  RocketLocomotionClass_GetClassID
+   00663410  RocketLocomotionClass_Load
+   00663460  RocketLocomotionClass_ILocomotion_InWhichLayer
+   00663470  RocketLocomotionClass_ILocomotion_DrawMatrix
+   006635B0  RocketLocomotionClass_GetSize
+   006635C0  RocketLocomotionClass_SDDTOR
+   0069EC50  ShipLocomotionClass_CTOR
+   0069EE30  ShipLocomotionClass_QueryInterface
+   0069EE90  ShipLocomotionClass_Load
+   0069EF10  ShipLocomotionClass_Save
+   006A1C80  ShipLocomotionClass_blah
+   006A3E60  ShipLocomotionClass_GetClassID
+   006A4260  ShipLocomotionClass_AddRef
+   006A4270  ShipLocomotionClass_Release
+   006A42A0  ShipLocomotionClass_GetSize
+   006A42B0  ShipLocomotionClass_SDDTOR
+   006CE270  LocomotionClass_ppv_AddRef2
+   00718000  TeleportLocomotionClass_CTOR
+   00718080  TeleportLocomotionClass_ILocomotion_718080
+   007180A0  TeleportLocomotionClass_ILocomotion_7180A0
+   00718100  TeleportLocomotionClass_ILocomotion_718100
+   00718230  TeleportLocomotionClass_ILocomotion_718230
+   007192C0  TeleportLocomotionClass_ILocomotion_7192C0
+   007192F0  TeleportLocomotionClass_ILocomotion_Process
+   00719C60  TeleportLocomotionClass_GetClassID
+   00719CA0  TeleportLocomotionClass_Load
+   00719D40  TeleportLocomotionClass_Save
+   00719E20  TeleportLocomotionClass_ILocomotion_719E20
+   00719E30  TeleportLocomotionClass_QueryInterface
+   0071A090  TeleportLocomotionClass_ILocomotion_71A090
+   0071A0E0  TeleportLocomotionClass_AddRef
+   0071A0F0  TeleportLocomotionClass_Release
+   0071A120  TeleportLocomotionClass_GetSize
+   0071A130  TeleportLocomotionClass_SDDTOR
+   0071A160  TeleportLocomotionClass_ILocomotion_71A160
+   0071A170  TeleportLocomotionClass_ILocomotion_71A170
+   0071A180  TeleportLocomotionClass_ILocomotion_71A180
+   00728A00  TunnelLocomotionClass_CTOR
+   0072A110  TunnelLocomotionClass_GetClassID
+   0072A150  TunnelLocomotionClass_Load
+   0072A200  TunnelLocomotionClass_GetSize
+   0072A210  ??_GTunnelLocomotionClass@@UAEPAXI@Z
+   0075AA90  WalkLocomotionClass_CTOR
+   0075AB30  WalkLocomotionClass_ILocomotion_IsMoving
+   0075AB40  WalkLocomotionClass_ILocomotion_IsMovingNow
+   0075ABA0  WalkLocomotionClass_ILocomotion_Destination
+   0075AC00  WalkLocomotionClass_ILocomotion_HeadToCoord
+   0075AC80  WalkLocomotionClass_ILocomotion_Process
+   0075ACB0  WalkLocomotionClass_ILocomotion_MoveTo
+   0075ADA0  WalkLocomotionClass_ILocomotion_StopMoving
+   0075AE00  WalkLocomotionClass_ILocomotion_DoTurn
+   0075AE30  WalkLocomotionClass_ILocomotion_ForceImmediateDestination
+   0075C640  WalkLocomotionClass_GetClassID
+   0075C680  WalkLocomotionClass_Load
+   0075C700  WalkLocomotionClass_Save
+   0075C7E0  LocomotionClass_ILocomotion_InWhichLayer
+   0075C7F0  WalkLocomotionClass_QueryInterface
+   0075C850  WalkLocomotionClass_IPiggyback_BeginPiggyback
+   0075C8A0  WalkLocomotionClass_IPiggyback_EndPiggyback
+   0075C8E0  WalkLocomotionClass_IPiggyback_IsOKToEnd
+   0075C920  WalkLocomotionClass_IPiggyback_PiggybackCLSID
+   0075CA30  WalkLocomotionClass_ILocomotion_MarkAllOccupationBits
+   0075CA80  WalkLocomotionClass_ILocomotion_IsMovingHere
+   0075CB20  WalkLocomotionClass_ILocomotion_IsReallyMovingNow
+   0075CB30  WalkLocomotionClass_ILocomotion_Lock
+   0075CB80  WalkLocomotionClass_AddRef
+   0075CB90  WalkLocomotionClass_Release
+   0075CBA0  WalkLocomotionClass_IPiggyback_IsPiggybacking
+   0075CBC0  WalkLocomotionClass_ILocomotion_StopMovementAction
+   0075CBD0  WalkLocomotionClass_GetSize
+   0075CBE0  WalkLocomotionClass_SDDTOR
+   0075CC30  WalkLocomotionClass_ILocomotion_QueryInterface
+   0075CC40  WalkLocomotionClass_ILocomotion_AddRef
+   0075CC50  WalkLocomotionClass_ILocomotion_Release
+   0075CC60  WalkLocomotionClass_IPiggyback_QueryInterface
+   0075CC70  WalkLocomotionClass_IPiggyback_AddRef
+   0075CC80  WalkLocomotionClass_IPiggyback_Release
+   007E7E8C  ??_7DriveLocomotionClass@@6BIPiggyback@@@
+   007E7EB0  ??_7DriveLocomotionClass@@6BILocomotion@@@
+   007E7F7C  ??_7DriveLocomotionClass@@6BDriveLocomotionClass@@@
+   007E8254  ??_7DropPodLocomotionClass@@6BIPiggyback@@@
+   007E8278  ??_7DropPodLocomotionClass@@6BILocomotion@@@
+   007E8344  ??_7DropPodLocomotionClass@@6BDropPodLocomotionClass@@@
+   007E89F4  ??_7FlyLocomotionClass@@6BILocomotion@@@
+   007E8AC0  ??_7FlyLocomotionClass@@6BFlyLocomotionClass@@@
+   007E9A30  CLSID_DriveLocomotionClass
+   007E9A40  CLSID_HoverLocomotionClass
+   007E9A50  CLSID_TunnelLocomotionClass
+   007E9A60  CLSID_WalkLocomotionClass
+   007E9A70  CLSID_DropPodLocomotionClass
+   007E9A80  CLSID_FlyLocomotionClass
+   007E9A90  CLSID_TeleportLocomotionClass
+   007E9AA0  CLSID_MechLocomotionClass
+   007E9AB0  CLSID_ShipLocomotionClass
+   007E9AC0  CLSID_JumpjetLocomotionClass
+   007E9AD0  CLSID_RocketLocomotionClass
+   007EACFC  ??_7HoverLocomotionClass@@6BILocomotion@@@
+   007EADC8  ??_7HoverLocomotionClass@@6BHoverLocomotionClass@@@
+   007EADF4  ??_7LocomotionClass@@6BILocomotion@@@
+   007EAEC0  ??_7LocomotionClass@@6BLocomotionClass@@@
+   007ECD44  ??_7JumpjetLocomotionClass@@6BIPiggyback@@@
+   007ECD68  ??_7JumpjetLocomotionClass@@6BILocomotion@@@
+   007ECE34  ??_7JumpjetLocomotionClass@@6BJumpjetLocomotionClass@@@
+   007EDB6C  ??_7MechLocomotionClass@@6BILocomotion@@@
+   007EDC38  ??_7MechLocomotionClass@@6BMechLocomotionClass@@@
+   007F0B1C  ??_7RocketLocomotionClass@@6BILocomotion@@@
+   007F0BE8  ??_7RocketLocomotionClass@@6BRocketLocomotionClass@@@
+   007F2D68  ??_7ShipLocomotionClass@@6BIPiggyback@@@
+   007F2D8C  ??_7ShipLocomotionClass@@6BILocomotion@@@
+   007F2E58  ??_7ShipLocomotionClass@@6BShipLocomotionClass@@@
+   007F3C78  ??_7?$TClassFactory@VDriveLocomotionClass@@@@6B@
+   007F3C90  ??_7?$TClassFactory@VJumpjetLocomotionClass@@@@6B@
+   007F3CA8  ??_7?$TClassFactory@VHoverLocomotionClass@@@@6B@
+   007F3CC0  ??_7?$TClassFactory@VRocketLocomotionClass@@@@6B@
+   007F3CD8  ??_7?$TClassFactory@VTunnelLocomotionClass@@@@6B@
+   007F3CF0  ??_7?$TClassFactory@VWalkLocomotionClass@@@@6B@
+   007F3D08  ??_7?$TClassFactory@VDropPodLocomotionClass@@@@6B@
+   007F3D20  ??_7?$TClassFactory@VFlyLocomotionClass@@@@6B@
+   007F3D38  ??_7?$TClassFactory@VTeleportLocomotionClass@@@@6B@
+   007F3D50  ??_7?$TClassFactory@VMechLocomotionClass@@@@6B@
+   007F3D68  ??_7?$TClassFactory@VShipLocomotionClass@@@@6B@
+   007F4FDC  ??_7TeleportLocomotionClass@@6BIPiggyback@@@
+   007F5000  ??_7TeleportLocomotionClass@@6BILocomotion@@@
+   007F50CC  ??_7TeleportLocomotionClass@@6BTeleportLocomotionClass@@@
+   007F5A24  ??_7TunnelLocomotionClass@@6BILocomotion@@@
+   007F5AF0  ??_7TunnelLocomotionClass@@6BTunnelLocomotionClass@@@
+   007F69D4  ??_7WalkLocomotionClass@@6BIPiggyback@@@
+   007F69F8  ??_7WalkLocomotionClass@@6BILocomotion@@@
+   007F6AC4  ??_7WalkLocomotionClass@@6BWalkLocomotionClass@@@
+   007FFDD0  ??_R4DriveLocomotionClass@@6BIPiggyback@@@
+   007FFDE8  ??_R4DriveLocomotionClass@@6BILocomotion@@@
+   007FFE48  ??_R1A@?0A@A@LocomotionClass@@8
+   007FFE60  ??_R1A@?0A@A@DriveLocomotionClass@@8
+   007FFE78  ??_R2DriveLocomotionClass@@8
+   007FFEA0  ??_R3DriveLocomotionClass@@8
+   007FFEB0  ??_R4DriveLocomotionClass@@6BDriveLocomotionClass@@@
+   00800028  ??_R4DropPodLocomotionClass@@6BIPiggyback@@@
+   00800040  ??_R4DropPodLocomotionClass@@6BILocomotion@@@
+   00800058  ??_R1A@?0A@A@DropPodLocomotionClass@@8
+   00800070  ??_R2DropPodLocomotionClass@@8
+   00800098  ??_R3DropPodLocomotionClass@@8
+   008000A8  ??_R4DropPodLocomotionClass@@6BDropPodLocomotionClass@@@
+   00800658  ??_R4FlyLocomotionClass@@6BILocomotion@@@
+   00800670  ??_R1A@?0A@A@FlyLocomotionClass@@8
+   00800688  ??_R2FlyLocomotionClass@@8
+   008006A8  ??_R3FlyLocomotionClass@@8
+   008006B8  ??_R4FlyLocomotionClass@@6BFlyLocomotionClass@@@
+   00803228  ??_R4HoverLocomotionClass@@6BILocomotion@@@
+   00803240  ??_R1A@?0A@A@HoverLocomotionClass@@8
+   00803258  ??_R2HoverLocomotionClass@@8
+   00803278  ??_R3HoverLocomotionClass@@8
+   00803288  ??_R4HoverLocomotionClass@@6BHoverLocomotionClass@@@
+   008032A0  ??_R4LocomotionClass@@6BILocomotion@@@
+   008032B8  ??_R2LocomotionClass@@8
+   008032D8  ??_R3LocomotionClass@@8
+   008032E8  ??_R4LocomotionClass@@6BLocomotionClass@@@
+   00804C70  ??_R4JumpjetLocomotionClass@@6BIPiggyback@@@
+   00804C88  ??_R4JumpjetLocomotionClass@@6BILocomotion@@@
+   00804CA0  ??_R1A@?0A@A@JumpjetLocomotionClass@@8
+   00804CB8  ??_R2JumpjetLocomotionClass@@8
+   00804CE0  ??_R3JumpjetLocomotionClass@@8
+   00804CF0  ??_R4JumpjetLocomotionClass@@6BJumpjetLocomotionClass@@@
+   00805C28  ??_R4MechLocomotionClass@@6BILocomotion@@@
+   00805C40  ??_R1A@?0A@A@MechLocomotionClass@@8
+   00805C58  ??_R2MechLocomotionClass@@8
+   00805C78  ??_R3MechLocomotionClass@@8
+   00805C88  ??_R4MechLocomotionClass@@6BMechLocomotionClass@@@
+   00808908  ??_R4RocketLocomotionClass@@6BILocomotion@@@
+   00808920  ??_R1A@?0A@A@RocketLocomotionClass@@8
+   00808938  ??_R2RocketLocomotionClass@@8
+   00808958  ??_R3RocketLocomotionClass@@8
+   00808968  ??_R4RocketLocomotionClass@@6BRocketLocomotionClass@@@
+   00809388  ??_R4ShipLocomotionClass@@6BIPiggyback@@@
+   008093A0  ??_R4ShipLocomotionClass@@6BILocomotion@@@
+   008093B8  ??_R1A@?0A@A@ShipLocomotionClass@@8
+   008093D0  ??_R2ShipLocomotionClass@@8
+   008093F8  ??_R3ShipLocomotionClass@@8
+   00809408  ??_R4ShipLocomotionClass@@6BShipLocomotionClass@@@
+   0080AD10  ??_R1A@?0A@A@?$TClassFactory@VDriveLocomotionClass@@@@8
+   0080AD28  ??_R2?$TClassFactory@VDriveLocomotionClass@@@@8
+   0080AD38  ??_R3?$TClassFactory@VDriveLocomotionClass@@@@8
+   0080AD48  ??_R4?$TClassFactory@VDriveLocomotionClass@@@@6B@
+   0080AD60  ??_R1A@?0A@A@?$TClassFactory@VJumpjetLocomotionClass@@@@8
+   0080AD78  ??_R2?$TClassFactory@VJumpjetLocomotionClass@@@@8
+   0080AD88  ??_R3?$TClassFactory@VJumpjetLocomotionClass@@@@8
+   0080AD98  ??_R4?$TClassFactory@VJumpjetLocomotionClass@@@@6B@
+   0080ADB0  ??_R1A@?0A@A@?$TClassFactory@VHoverLocomotionClass@@@@8
+   0080ADC8  ??_R2?$TClassFactory@VHoverLocomotionClass@@@@8
+   0080ADD8  ??_R3?$TClassFactory@VHoverLocomotionClass@@@@8
+   0080ADE8  ??_R4?$TClassFactory@VHoverLocomotionClass@@@@6B@
+   0080AE00  ??_R1A@?0A@A@?$TClassFactory@VRocketLocomotionClass@@@@8
+   0080AE18  ??_R2?$TClassFactory@VRocketLocomotionClass@@@@8
+   0080AE28  ??_R3?$TClassFactory@VRocketLocomotionClass@@@@8
+   0080AE38  ??_R4?$TClassFactory@VRocketLocomotionClass@@@@6B@
+   0080AE50  ??_R1A@?0A@A@?$TClassFactory@VTunnelLocomotionClass@@@@8
+   0080AE68  ??_R2?$TClassFactory@VTunnelLocomotionClass@@@@8
+   0080AE78  ??_R3?$TClassFactory@VTunnelLocomotionClass@@@@8
+   0080AE88  ??_R4?$TClassFactory@VTunnelLocomotionClass@@@@6B@
+   0080AEA0  ??_R1A@?0A@A@?$TClassFactory@VWalkLocomotionClass@@@@8
+   0080AEB8  ??_R2?$TClassFactory@VWalkLocomotionClass@@@@8
+   0080AEC8  ??_R3?$TClassFactory@VWalkLocomotionClass@@@@8
+   0080AED8  ??_R4?$TClassFactory@VWalkLocomotionClass@@@@6B@
+   0080AEF0  ??_R1A@?0A@A@?$TClassFactory@VDropPodLocomotionClass@@@@8
+   0080AF08  ??_R2?$TClassFactory@VDropPodLocomotionClass@@@@8
+   0080AF18  ??_R3?$TClassFactory@VDropPodLocomotionClass@@@@8
+   0080AF28  ??_R4?$TClassFactory@VDropPodLocomotionClass@@@@6B@
+   0080AF40  ??_R1A@?0A@A@?$TClassFactory@VFlyLocomotionClass@@@@8
+   0080AF58  ??_R2?$TClassFactory@VFlyLocomotionClass@@@@8
+   0080AF68  ??_R3?$TClassFactory@VFlyLocomotionClass@@@@8
+   0080AF78  ??_R4?$TClassFactory@VFlyLocomotionClass@@@@6B@
+   0080AF90  ??_R1A@?0A@A@?$TClassFactory@VTeleportLocomotionClass@@@@8
+   0080AFA8  ??_R2?$TClassFactory@VTeleportLocomotionClass@@@@8
+   0080AFB8  ??_R3?$TClassFactory@VTeleportLocomotionClass@@@@8
+   0080AFC8  ??_R4?$TClassFactory@VTeleportLocomotionClass@@@@6B@
+   0080AFE0  ??_R1A@?0A@A@?$TClassFactory@VMechLocomotionClass@@@@8
+   0080AFF8  ??_R2?$TClassFactory@VMechLocomotionClass@@@@8
+   0080B008  ??_R3?$TClassFactory@VMechLocomotionClass@@@@8
+   0080B018  ??_R4?$TClassFactory@VMechLocomotionClass@@@@6B@
+   0080B030  ??_R1A@?0A@A@?$TClassFactory@VShipLocomotionClass@@@@8
+   0080B048  ??_R2?$TClassFactory@VShipLocomotionClass@@@@8
+   0080B058  ??_R3?$TClassFactory@VShipLocomotionClass@@@@8
+   0080B068  ??_R4?$TClassFactory@VShipLocomotionClass@@@@6B@
+   0080C160  ??_R4TeleportLocomotionClass@@6BIPiggyback@@@
+   0080C178  ??_R4TeleportLocomotionClass@@6BILocomotion@@@
+   0080C190  ??_R1A@?0A@A@TeleportLocomotionClass@@8
+   0080C1A8  ??_R2TeleportLocomotionClass@@8
+   0080C1D0  ??_R3TeleportLocomotionClass@@8
+   0080C1E0  ??_R4TeleportLocomotionClass@@6BTeleportLocomotionClass@@@
+   0080CAE8  ??_R4TunnelLocomotionClass@@6BILocomotion@@@
+   0080CB00  ??_R1A@?0A@A@TunnelLocomotionClass@@8
+   0080CB18  ??_R2TunnelLocomotionClass@@8
+   0080CB38  ??_R3TunnelLocomotionClass@@8
+   0080CB48  ??_R4TunnelLocomotionClass@@6BTunnelLocomotionClass@@@
+   0080D228  ??_R4WalkLocomotionClass@@6BIPiggyback@@@
+   0080D240  ??_R4WalkLocomotionClass@@6BILocomotion@@@
+   0080D258  ??_R1A@?0A@A@WalkLocomotionClass@@8
+   0080D270  ??_R2WalkLocomotionClass@@8
+   0080D298  ??_R3WalkLocomotionClass@@8
+   0080D2A8  ??_R4WalkLocomotionClass@@6BWalkLocomotionClass@@@
+   00820228  ??_R0?AVLocomotionClass@@@8
+   00820248  ??_R0?AVDriveLocomotionClass@@@8
+   008202F8  ??_R0?AVDropPodLocomotionClass@@@8
+   008223E8  ??_R0?AVFlyLocomotionClass@@@8
+   008254B8  ??_R0?AVHoverLocomotionClass@@@8
+   00829648  ??_R0?AVJumpjetLocomotionClass@@@8
+   0082C228  ??_R0?AVMechLocomotionClass@@@8
+   008399C8  ??_R0?AVRocketLocomotionClass@@@8
+   0083F880  ??_R0?AVShipLocomotionClass@@@8
+   00841A18  ??_R0?AV?$TClassFactory@VDriveLocomotionClass@@@@@8
+   00841A50  ??_R0?AV?$TClassFactory@VJumpjetLocomotionClass@@@@@8
+   00841A88  ??_R0?AV?$TClassFactory@VHoverLocomotionClass@@@@@8
+   00841AC0  ??_R0?AV?$TClassFactory@VRocketLocomotionClass@@@@@8
+   00841AF8  ??_R0?AV?$TClassFactory@VTunnelLocomotionClass@@@@@8
+   00841B30  ??_R0?AV?$TClassFactory@VWalkLocomotionClass@@@@@8
+   00841B68  ??_R0?AV?$TClassFactory@VDropPodLocomotionClass@@@@@8
+   00841BA0  ??_R0?AV?$TClassFactory@VFlyLocomotionClass@@@@@8
+   00841BD8  ??_R0?AV?$TClassFactory@VTeleportLocomotionClass@@@@@8
+   00841C18  ??_R0?AV?$TClassFactory@VMechLocomotionClass@@@@@8
+   00841C50  ??_R0?AV?$TClassFactory@VShipLocomotionClass@@@@@8
+   00844538  ??_R0?AVTeleportLocomotionClass@@@8
+   00844AA0  ??_R0?AVTunnelLocomotionClass@@@8
+   00847BF0  ??_R0?AVWalkLocomotionClass@@@8
+   008A0790  DriveLocomotionClass_Default_Pos
+   008A0820  DpodLocomotionClass_Default_Pos
+   008B3C78  FlyLocomotionClass_Default_Pos
+   00A8F180  HoverLocomotionClass_Default_Pos
+   00ABC5A8  JumpjetLocomotionClass_Default_Pos
+   00ABEE10  MechLocomotionClass_Default_Pos
+   00B04E38  RocketLocomotionClass_Default_Pos
+   00B077F8  ShipLocomotionClass_Default_Pos
+   00B0EBF8  TeleportLocomotionClass_Default_Pos
+   00B0F910  TunnelLocomotionClass_Default_Pos
+   00B45BE8  WalkLocomotionClass_Default_Pos
+
+############ 5) 关键：FacingClass::Update / FootClass_Set_Coords 引用 ############
+   W?Update$:FacingClass$n(x)v -> 0xFFFFFFFF
+   W?Set_Current$:FacingClass$n(x)v -> 0xFFFFFFFF
+

@@ -1,0 +1,145 @@
+KIND	ADDR	KRATOS_NAME	KRATOS_LOC	KRATOS_RET	NONZERO	DELIBERATE
+HOOK	004147F9	AircraftClass_Draw_Shadow_SkipPhobos	Hooks/AircraftExtHook.cpp:62	BRANCH	0x4147FF,0x4148A5	Y
+HOOK	00418506	AircraftClass_Mission_Attack_FireDone	Hooks/AircraftExtHook.cpp:451	ZERO		
+HOOK	004186B6	AircraftClass_Mission_Attack5_HoverFireTwice	Hooks/AircraftExtHook.cpp:476	BRANCH	0x4186D7	
+HOOK	0041A96C	AircraftClass_Mission_GuardArea_NoTarget_Enter	Hooks/AircraftExtHook.cpp:285	BRANCH	0x41A97A	
+HOOK	0041AA80	AircraftClass_AssignDestination_SyncLog	Utilities/SyncLogging.cpp:345	ZERO		
+HOOK	0041BB30	AircraftClass_OverrideMission_SyncLog	Utilities/SyncLogging.cpp:391	ZERO		
+HOOK	0041D604	AirstrikeClass_PointerGotInvalid_ResetForTarget	Hooks/AirstrikeExtHook.cpp:213	ALLPATHS	SkipGameCode	
+HOOK	0041D97B	AirstrikeClass_Setup_SkipBuildingCheck	Hooks/AirstrikeExtHook.cpp:71	ALLPATHS	0x41D98B	
+HOOK	0041DA52	AirstrikeClass_ResetTarget_OriginalTarget	Hooks/AirstrikeExtHook.cpp:88	ALLPATHS	SkipGameCode	
+HOOK	0041DA80	AirstrikeClass_ResetTarget_NewTarget	Hooks/AirstrikeExtHook.cpp:98	ALLPATHS	SkipGameCode	
+HOOK	0041DAA4	AirstrikeClass_ResetTarget_ResetForOldTarget	Hooks/AirstrikeExtHook.cpp:108	ALLPATHS	SkipGameCode	
+HOOK	0041DAD4	AirstrikeClass_Reset	Hooks/AirstrikeExtHook.cpp:166	BRANCH	0x41DADA	
+HOOK	0041DBD4	AirstrikeClass_ClearTarget	Hooks/AirstrikeExtHook.cpp:180	ALLPATHS	clearTarget,resetTarget	
+HOOK	00422126	AnimClass_CTOR	Hooks/AnimExtHook.cpp:27	ZERO		
+HOOK	00422967	AnimClass_DTOR	Hooks/AnimExtHook.cpp:40	ZERO		
+HOOK	004242E1	AnimClass_Trailer_Remap	Hooks/AnimExtHook.cpp:231	BRANCH	0x424322	
+HOOK	00424807	AnimClass_Next	Hooks/AnimExtHook.cpp:152	ZERO		
+HOOK	0042784B	AnimTypeClass_CTOR	Hooks/AnimTypeExtHook.cpp:10	ZERO		
+HOOK	004287DC	AnimTypeClass_LoadFromINI	Hooks/AnimTypeExtHook.cpp:54	ZERO		
+HOOK	00428EA8	AnimTypeClass_SDDTOR	Hooks/AnimTypeExtHook.cpp:21	ZERO		
+HOOK	0043F9E0	BuildingClass_Mark_Airstrike	Hooks/AirstrikeExtHook.cpp:434	ALLPATHS	ContinueTintIntensity,NonAirstrike	
+HOOK	00443B90	BuildingClass_AssignTarget_SyncLog	Utilities/SyncLogging.cpp:318	ZERO		
+HOOK	00448DF1	BuildingClass_SetOwningHouse_Airstrike	Hooks/AirstrikeExtHook.cpp:447	ALLPATHS	ContinueTintIntensity,NonAirstrike	
+HOOK	00451ABC	BuildingClass_PlayAnim_Airstrike	Hooks/AirstrikeExtHook.cpp:460	ALLPATHS	ContinueTintIntensity,NonAirstrike	
+HOOK	00452041	BuildingClass_452000_Airstrike	Hooks/AirstrikeExtHook.cpp:473	ALLPATHS	ContinueTintIntensity,NonAirstrike	
+HOOK	00455D50	BuildingClass_AssignDestination_SyncLog	Utilities/SyncLogging.cpp:356	ZERO		
+HOOK	00456E5A	BuildingClass_Flash_Airstrike	Hooks/AirstrikeExtHook.cpp:486	ALLPATHS	ContinueTintIntensity,NonAirstrike	
+HOOK	004664BA	BulletClass_CTOR	Hooks/BulletExtHook.cpp:27	ZERO		
+HOOK	00466556	BulletClass_Init	Hooks/BulletExtHook.cpp:84	ZERO		
+HOOK	004665E9	BulletClass_DTOR	Hooks/BulletExtHook.cpp:40	ZERO		
+HOOK	004666F7	BulletClass_Update	Hooks/BulletExtHook.cpp:112	ZERO		
+HOOK	0046745C	BulletClass_Update_ChangeVelocity	Hooks/BulletExtHook.cpp:294	ZERO		
+HOOK	00467E53	BulletClass_AI_PreDetonation_Vector	Hooks/BulletExtHook.cpp:361	BRANCH	0x467FBA	
+HOOK	004690C1	BulletClass_Detonate	Hooks/BulletExtHook.cpp:139	BRANCH	0x46A2FB	
+HOOK	00469A75	BulletClass_Detonate_GetHouse	Hooks/BulletExtHook.cpp:165	ZERO		
+HOOK	00469C46	BulletClass_Detonate_WHAnim_Remap	Hooks/BulletExtHook.cpp:184	ALLPATHS	0x469C98	
+HOOK	0046BDD9	BulletTypeClass_CTOR	Hooks/BulletTypeExtHook.cpp:10	ZERO		
+HOOK	0046C41C	BulletTypeClass_LoadFromINI	Hooks/BulletTypeExtHook.cpp:56	ZERO		
+HOOK	0046C8B6	BulletTypeClass_SDDTOR	Hooks/BulletTypeExtHook.cpp:21	ZERO		
+HOOK	0048A551	WarheadTypeClass_AnimList_SplashList	Hooks/WarheadTypeExtHook.cpp:71	BRANCH	0x48A5AD	
+HOOK	004AE95E	DisplayClass_sub_4AE750_DisallowBuildingNonAttackPlanning	Hooks/BuildingExtHook.cpp:90	ALLPATHS	SkipGameCode	
+HOOK	004C1E42	EBolt_CTOR	Hooks/EBoltExtHook.cpp:23	ZERO		
+HOOK	004C20BC	EBolt_Draw_Arcs	Hooks/EBoltExtHook.cpp:110	ALLPATHS	plotIndex < arcCount ? DoLoop : Break	
+STATIC	004C24BE	0x4C24C3	Hooks/EBoltExtHook.cpp:119	JUMP:DEFINE_JUMP		
+HOOK	004C24C3	EBolt_DrawFirst_Color	Hooks/EBoltExtHook.cpp:120	ALLPATHS	0x4C24E4,0x4C2515	
+STATIC	004C25CB	0x4C25D0	Hooks/EBoltExtHook.cpp:129	JUMP:DEFINE_JUMP		
+HOOK	004C25D0	EBolt_DrawSecond_Color	Hooks/EBoltExtHook.cpp:130	ALLPATHS	0x4C25FD,0x4C262A	
+STATIC	004C26CF	0x4C26D5	Hooks/EBoltExtHook.cpp:139	JUMP:DEFINE_JUMP		
+HOOK	004C26D5	EBolt_DrawThird_Color	Hooks/EBoltExtHook.cpp:140	ALLPATHS	0x4C26EE,0x4C2710	
+HOOK	004C2951	EBolt_DTOR	Hooks/EBoltExtHook.cpp:31	ZERO		
+HOOK	004C9300	FacingClass_Set_SyncLog	Utilities/SyncLogging.cpp:295	ZERO		
+HOOK	004D8F40	FootClass_OverrideMission_SyncLog	Utilities/SyncLogging.cpp:402	ZERO		
+HOOK	004DDD66	FootClass_IsLandZoneClear_ReplaceHardcode	Hooks/AircraftExtHook.cpp:577	ALLPATHS	SkipGameCode	
+HOOK	004F4583	GScreenClass_Render_Late	Hooks/GScreenHook.cpp:27	ZERO		
+HOOK	004F6532	HouseClass_CTOR	Hooks/HouseExtHook.cpp:16	ZERO		
+HOOK	004F7371	HouseClass_DTOR	Hooks/HouseExtHook.cpp:28	ZERO		
+HOOK	0050114D	HouseClass_InitFromINI	Hooks/HouseExtHook.cpp:62	ZERO		
+HOOK	005194EF	InfantryClass_DrawIt_InAir_Shadow_Skip	Hooks/InfantryExtHook.cpp:17	BRANCH	0x51958A	
+HOOK	0051AA40	InfantryClass_AssignDestination_SyncLog	Utilities/SyncLogging.cpp:367	ZERO		
+HOOK	0051B1F0	InfantryClass_AssignTarget_SyncLog	Utilities/SyncLogging.cpp:307	ZERO		
+HOOK	0051EAE0	InfantryClass_WhatAction_Cursor	Hooks/AirstrikeExtHook.cpp:33	ALLPATHS	0x51EB06	
+HOOK	0052F639	YR_CmdLineParse	Hooks/GeneralHook.cpp:45	ZERO		
+HOOK	0054D600	JumpjetLocomotionClass_MovingUpdate_DontTurnInCell	Hooks/TechnoExtHook.cpp:1137	ZERO		Y
+HOOK	00550D1F	LaserDrawClass_DrawInHouseColor_Context_Set	Hooks/LaserDrawHook.cpp:19	ZERO		
+HOOK	00550F47	LaserDrawClass_DrawInHouseColor_BetterDrawing	Hooks/LaserDrawHook.cpp:26	ALLPATHS	0x550F9D	
+HOOK	0064736D	Queue_AI_WriteDesyncLog	Utilities/SyncLogging.cpp:245	ALLPATHS	0x647372	
+HOOK	0064CD11	ExecuteDoList_WriteDesyncLog	Utilities/SyncLogging.cpp:260	ZERO		
+HOOK	0065C7D0	Random2Class_Random_SyncLog	Utilities/SyncLogging.cpp:271	ZERO		
+HOOK	0065C88A	Random2Class_RandomRanged_SyncLog	Utilities/SyncLogging.cpp:281	ZERO		
+HOOK	0065E97F	HouseClass_CreateAirstrike_SetTargetForUnit	Hooks/AirstrikeExtHook.cpp:230	BRANCH	SkipGameCode	
+HOOK	0065E997	Airstrike_Supported_Reinforcements_Put	Hooks/AirstrikeExtHook.cpp:263	BRANCH	result ? SkipGameCode : SkipGameCodeNoSuccess	
+HOOK	0067CEF0	SaveGame_Start	Hooks/SaveGameHook.cpp:29	ZERO		
+HOOK	0067D04E	Game_Save_SavegameInformation	Extension.cpp:251	ZERO		
+HOOK	0067D32C	SaveGame_Ext	Extension.cpp:235	ZERO		
+HOOK	0067E826	LoadGame_Ext	Extension.cpp:243	ZERO		
+HOOK	0067FD9D	LoadOptionsClass_GetFileInfo	Extension.cpp:258	ZERO		
+HOOK	0067FDB1	LoadOptionsClass_GetFileInfo	Extension.cpp:259	ZERO		
+HOOK	00685659	Scenario_ClearClasses_End	Hooks/GeneralHook.cpp:88	ZERO		
+HOOK	006CE6F6	SuperWeaponTypeClass_CTOR	Hooks/SuperWeaponTypeHook.cpp:10	ZERO		
+HOOK	006CEE43	SuperWeaponTypeClass_LoadFromINI	Hooks/SuperWeaponTypeHook.cpp:53	ZERO		
+HOOK	006CEFE0	SuperWeaponTypeClass_SDDTOR	Hooks/SuperWeaponTypeHook.cpp:21	ZERO		
+STATIC	006D481D	TacticalClass_Draw_AirstrikeLaser_SkipBuildingCheck	Hooks/AirstrikeExtHook.cpp:303	HOOK:DEFINE_HOOK		
+HOOK	006F348F	TechnoClass_WhatWeaponShouldIUse_Airstrike	Hooks/AirstrikeExtHook.cpp:39	ALLPATHS	(pTargetTypeData->AllowAirstrike && (!pTargetType->ResourceDestination \|\| !pTargetType->ResourceGatherer)) ? Secondary : Primary,Primary,pTargetTypeData->AllowAirstrike ? Secondary : Primary	
+HOOK	006F36DB	TechnoClass_SelectWeapon	Hooks/TechnoExtHook.cpp:774	ALLPATHS	0x6F36E3,Primary,Secondary	Y
+HOOK	006F4500	TechnoClass_DTOR	Hooks/TechnoExtHook.cpp:49	ZERO		
+HOOK	006F65D1	TechnoClass_DrawHealthBar_Building	Hooks/TechnoExtHook.cpp:447	ZERO		
+HOOK	006F683C	TechnoClass_DrawHealthBar_Other	Hooks/TechnoExtHook.cpp:462	ZERO		
+HOOK	006F6AC4	TechnoClass_Remove	Hooks/TechnoExtHook.cpp:123	ZERO		
+HOOK	006F9039	TechnoClass_Greatest_Threat_HealWeaponRange	Hooks/TechnoExtHook.cpp:528	ALLPATHS	0x6F903E	
+HOOK	006F9B7E	TechnoClass_SelectAutoTarget_SyncLog	Utilities/SyncLogging.cpp:426	ZERO		
+HOOK	006F9E50	TechnoClass_Update	Hooks/TechnoExtHook.cpp:136	ZERO		
+HOOK	006FC339	TechnoClass_CanFire	Hooks/TechnoExtHook.cpp:402	BRANCH	0x6FCB7E,dw->Data.DisableWithTarget ? 0x6FC0DF : 0x6FCB7E	
+HOOK	006FC749	TechnoClass_CanFire_WhichLayer_Stand	Hooks/StandExtHook.cpp:93	ALLPATHS	inAir,onGround	
+HOOK	006FCDB0	TechnoClass_AssignTarget_SyncLog	Utilities/SyncLogging.cpp:329	ZERO		
+HOOK	006FD38D	TechnoClass_DrawSth_DrawToInvisoFlakScatterLocation	Hooks/WeaponExtHook.cpp:105	ZERO		
+HOOK	006FD446	TechnoClass_LaserZap_IsSingleColor	Hooks/WeaponExtHook.cpp:34	ZERO		
+HOOK	006FD494	TechnoClass_FireEBolt_SetWeaponData	Hooks/EBoltExtHook.cpp:44	ZERO		
+HOOK	006FD514	TechnoClass_DrawSth_DrawToInvisoFlakScatterLocation	Hooks/WeaponExtHook.cpp:104	ZERO		
+HOOK	006FD70D	TechnoClass_DrawSth_DrawToInvisoFlakScatterLocation	Hooks/WeaponExtHook.cpp:103	ZERO		
+HOOK	006FF08B	TechnoClass_Fire_RecordBullet	Hooks/WeaponExtHook.cpp:66	ZERO		
+HOOK	006FF15F	TechnoClass_FireAt_ObstacleCellSet	Hooks/WeaponExtHook.cpp:86	ZERO		
+HOOK	006FF29E	TechnoClass_Fire_ROFMultiplier	Hooks/TechnoExtHook.cpp:995	ZERO		
+HOOK	006FF43F	TechnoClass_FireAt_TargetSet	Hooks/WeaponExtHook.cpp:134	ZERO		
+HOOK	006FF660	TechnoClass_FireAt_ObstacleCellUnset	Hooks/WeaponExtHook.cpp:153	ZERO		
+HOOK	007013A0	TechnoClass_OverrideMission_SyncLog	Utilities/SyncLogging.cpp:413	ZERO		
+HOOK	00701900	TechnoClass_ReceiveDamage	Hooks/TechnoExtHook.cpp:217	ZERO		
+HOOK	007019D8	TechnoClass_ReceiveDamage_At_Least1	Hooks/TechnoExtHook.cpp:242	ALLPATHS	0x7019E3	
+HOOK	00701DFF	TechnoClass_ReceiveDamageEnd	Hooks/TechnoExtHook.cpp:350	ZERO		
+HOOK	00702050	TechnoClass_ReceiveDamage_Destroy	Hooks/TechnoExtHook.cpp:368	ZERO		
+HOOK	00702299	TechnoClass_Destroy_VxlDebris_Remap	Hooks/TechnoExtHook.cpp:692	BRANCH	0x7023E5	Y
+HOOK	00705860	TechnoClass_DrawAirstrikeFlare_SetContext	Hooks/AirstrikeExtHook.cpp:370	ZERO		
+HOOK	007058F6	TechnoClass_DrawAirstrikeFlare_LineColor	Hooks/AirstrikeExtHook.cpp:380	ALLPATHS	SkipGameCode	
+HOOK	0070597A	TechnoClass_DrawAirstrikeFlare_DotColor	Hooks/AirstrikeExtHook.cpp:408	ALLPATHS	SkipGameCode	
+HOOK	0070E92F	TechnoClass_Update_Airstrike_Tint_Timer	Hooks/AirstrikeExtHook.cpp:421	ALLPATHS	ContinueTintIntensity,NonAirstrike	
+HOOK	00711835	TechnoTypeClass_CTOR	Hooks/TechnoTypeExtHook.cpp:10	ZERO		
+HOOK	0071A88D	TemporalClass_Update	Hooks/TechnoExtHook.cpp:181	ALLPATHS	0x71A895,0x71AB08	
+HOOK	0071BB2C	TerrainClass_TakeDamage_NowDead_Add	Hooks/TerrainExtHook.cpp:14	ZERO		
+HOOK	0071DBC0	TerrainTypeClass_CTOR	Hooks/TerrainTypeExtHook.cpp:10	ZERO		
+HOOK	0071E0A6	TerrainTypeClass_LoadFromINI	Hooks/TerrainTypeExtHook.cpp:59	ZERO		
+HOOK	0071E364	TerrainTypeClass_SDDTOR	Hooks/TerrainTypeExtHook.cpp:25	ZERO		
+HOOK	007258D0	DetachThisFromAll	Hooks/PointerExpireHook.cpp:41	ZERO		
+HOOK	0073C47A	UnitClass_DrawAsVXL_Shadow_SkipPhobos	Hooks/AircraftExtHook.cpp:42	BRANCH	0x73C485,0x73C5C9	Y
+HOOK	00741970	UnitClass_AssignDestination_SyncLog	Utilities/SyncLogging.cpp:378	ZERO		
+HOOK	0074942E	VoxelAnimClass_CTOR	Hooks/VoxelAnimExtHook.cpp:15	ZERO		
+HOOK	007499F1	VoxelAnimClass_DTOR	Hooks/VoxelAnimExtHook.cpp:24	ZERO		
+HOOK	0074AEB0	VoxelAnimTypeClass_CTOR	Hooks/VoxelAnimTypeExtHook.cpp:10	ZERO		
+HOOK	0074B4F0	VoxelAnimTypeClass_LoadFromINI	Hooks/VoxelAnimTypeExtHook.cpp:56	ZERO		
+HOOK	0074B51B	VoxelAnimTypeClass_LoadFromINI	Hooks/VoxelAnimTypeExtHook.cpp:55	ZERO		
+HOOK	0074B54A	VoxelAnimTypeClass_LoadFromINI	Hooks/VoxelAnimTypeExtHook.cpp:54	ZERO		
+HOOK	0074B561	VoxelAnimTypeClass_LoadFromINI	Hooks/VoxelAnimTypeExtHook.cpp:53	ZERO		
+HOOK	0074B607	VoxelAnimTypeClass_LoadFromINI	Hooks/VoxelAnimTypeExtHook.cpp:52	ZERO		
+HOOK	0074BA31	VoxelAnimTypeClass_DTOR	Hooks/VoxelAnimTypeExtHook.cpp:21	ZERO		
+HOOK	0075D1A9	WarheadTypeClass_CTOR	Hooks/WarheadTypeExtHook.cpp:12	ZERO		
+HOOK	0075DEA0	WarheadTypeClass_LoadFromINI	Hooks/WarheadTypeExtHook.cpp:58	ZERO		
+HOOK	0075E5C8	WarheadTypeClass_SDDTOR	Hooks/WarheadTypeExtHook.cpp:23	ZERO		
+HOOK	00771EE9	WeaponTypeClass_CTOR	Hooks/WeaponTypeExtHook.cpp:10	ZERO		
+HOOK	007729B0	WeaponTypeClass_LoadFromINI	Hooks/WeaponTypeExtHook.cpp:57	ZERO		
+HOOK	007729C7	WeaponTypeClass_LoadFromINI	Hooks/WeaponTypeExtHook.cpp:55	ZERO		
+HOOK	0077311D	WeaponTypeClass_SDDTOR	Hooks/WeaponTypeExtHook.cpp:21	ZERO		
+HOOK	007CD810	ExeRun	Hooks/GeneralHook.cpp:57	ZERO		
+STATIC	007CD8EA	GET_OFFSET(_ExeTerminate)	Hooks/GeneralHook.cpp:79	JUMP:DEFINE_JUMP		
+STATIC	007E4610	BuildingTypeClass_CanUseWaypoint	Hooks/BuildingExtHook.cpp:88	JUMP:DEFINE_FUNCTION_JUMP		
+STATIC	00825F9B	DEFINE_PATCH	Utilities/Debug.cpp:97	PATCH:DEFINE_PATCH		
+STATIC	008332F4	DEFINE_PATCH	Utilities/Debug.cpp:102	PATCH:DEFINE_PATCH		

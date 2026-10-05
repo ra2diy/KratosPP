@@ -1,0 +1,1451 @@
+==============================================================================
+A  Tactical_Draw_All_6D8DB0 (0x6D8DB0) —— 层数组的绘制消费者
+==============================================================================
+
+################ Tactical_Draw_All_6D8DB0  @006D8DB0 ################
+---- func 006D8DB0 - 006D97C8  (size 2584) ----
+  006D8DB0  sub     esp, 0F0h
+  006D8DB6  push    ebx
+  006D8DB7  mov     ebx, rect_mouseclass_vp.R
+  006D8DBD  mov     eax, ebx
+  006D8DBF  push    ebp
+  006D8DC0  cdq
+  006D8DC1  sub     eax, edx
+  006D8DC3  push    esi
+  006D8DC4  mov     esi, [ecx+0B0h]
+  006D8DCA  mov     ebp, rect_mouseclass_vp.B
+  006D8DD0  sar     eax, 1
+  006D8DD2  add     eax, esi
+  006D8DD4  push    edi; dst
+  006D8DD5  mov     edi, [ecx+0B4h]
+  006D8DDB  mov     [esp+100h+var_E8], eax
+  006D8DDF  fild    [esp+100h+var_E8]
+  006D8DE3  mov     eax, edi
+  006D8DE5  mov     [esp+100h+var_EC], ebp
+  006D8DE9  sub     eax, ebp
+  006D8DEB  lea     ebp, [ecx+0DE4h]
+  006D8DF1  fstp    [esp+100h+this.X]
+  006D8DF5  mov     [esp+100h+var_E4], eax
+  006D8DF9  lea     ecx, [esp+100h+this]
+  006D8DFD  fild    [esp+100h+var_E4]
+  006D8E01  push    ecx; a3
+  006D8E02  mov     edx, ebp; EDX
+  006D8E04  lea     ecx, [esp+104h+a1]; a1
+  006D8E08  mov     [esp+104h+var_D8], 0
+  006D8E10  fstp    [esp+104h+this.Y]
+  006D8E14  call    Matrix3D_5AFB80
+  006D8E19  mov     edx, [eax]
+  006D8E1B  mov     [esp+100h+this.X], edx
+  006D8E1F  mov     ecx, [eax+4]
+  006D8E22  fld     [esp+100h+this.X]
+  006D8E26  mov     [esp+100h+this.Y], ecx
+  006D8E2A  mov     edx, [eax+8]
+  006D8E2D  mov     [esp+100h+var_D8], edx
+  006D8E31  call    Float_To_Int_Floor
+  006D8E36  fld     [esp+100h+this.Y]
+  006D8E3A  mov     [esp+100h+var_D0], eax
+  006D8E3E  call    Float_To_Int_Floor
+  006D8E43  mov     [esp+100h+var_CC], eax
+  006D8E47  lea     eax, [esi+ebx*2]
+  006D8E4A  mov     [esp+100h+var_E8], eax
+  006D8E4E  mov     eax, [esp+100h+var_EC]
+  006D8E52  fild    [esp+100h+var_E8]
+  006D8E56  cdq
+  006D8E57  sub     eax, edx
+  006D8E59  lea     ecx, [esp+100h+this]
+  006D8E5D  sar     eax, 1
+  006D8E5F  add     edi, eax
+  006D8E61  push    ecx; a3
+  006D8E62  fstp    [esp+104h+this.X]
+  006D8E66  mov     [esp+104h+var_E4], edi
+  006D8E6A  mov     edx, ebp; EDX
+  006D8E6C  fild    [esp+104h+var_E4]
+  006D8E70  lea     ecx, [esp+104h+a1]; a1
+  006D8E74  mov     [esp+104h+var_EC], edi
+  006D8E78  mov     [esp+104h+var_D8], 0
+  006D8E80  fstp    [esp+104h+this.Y]
+  006D8E84  call    Matrix3D_5AFB80
+  006D8E89  mov     edx, [eax]
+  006D8E8B  mov     [esp+100h+this.X], edx
+  006D8E8F  mov     ecx, [eax+4]
+  006D8E92  fld     [esp+100h+this.X]
+  006D8E96  mov     [esp+100h+this.Y], ecx
+  006D8E9A  mov     edx, [eax+8]
+  006D8E9D  mov     [esp+100h+var_D8], edx
+  006D8EA1  call    Float_To_Int_Floor
+  006D8EA6  sub     esi, ebx
+  006D8EA8  mov     edi, eax
+  006D8EAA  mov     eax, [esp+100h+var_EC]
+  006D8EAE  mov     [esp+100h+var_E8], esi
+  006D8EB2  fild    [esp+100h+var_E8]
+  006D8EB6  mov     [esp+100h+var_E4], eax
+  006D8EBA  fstp    [esp+100h+this.X]
+  006D8EBE  fild    [esp+100h+var_E4]
+  006D8EC2  lea     ecx, [esp+100h+this]
+  006D8EC6  mov     edx, ebp; EDX
+  006D8EC8  push    ecx; a3
+  006D8EC9  lea     ecx, [esp+104h+a1]; a1
+  006D8ECD  fstp    [esp+104h+this.Y]
+  006D8ED1  mov     [esp+104h+var_D8], 0
+  006D8ED9  call    Matrix3D_5AFB80
+  006D8EDE  mov     edx, [eax]
+  006D8EE0  mov     [esp+100h+this.X], edx
+  006D8EE4  mov     ecx, [eax+4]
+  006D8EE7  mov     [esp+100h+this.Y], ecx
+  006D8EEB  mov     edx, [eax+8]
+  006D8EEE  fld     [esp+100h+this.Y]
+  006D8EF2  mov     [esp+100h+var_D8], edx
+  006D8EF6  call    Float_To_Int_Floor
+  006D8EFB  mov     ebp, [esp+100h+var_D0]
+  006D8EFF  sub     edi, ebp
+  006D8F01  shl     edi, 1
+  006D8F03  mov     [esp+100h+var_A0], edi
+  006D8F07  mov     edi, [esp+100h+var_CC]
+  006D8F0B  sub     eax, edi
+  006D8F0D  shl     eax, 1
+  006D8F0F  mov     [esp+100h+var_9C], eax
+  006D8F13  xor     eax, eax
+  006D8F15  mov     [esp+100h+var_D4], eax
+  006D8F19  lea     ebx, [eax+eax*2]
+  006D8F1C  mov     [esp+100h+var_C8], 0
+  006D8F24  shl     ebx, 3
+  006D8F27  mov     [esp+100h+var_EC], ebx
+  006D8F2B  mov     ecx, vec_ObjectsInLayers.length[ebx]
+  006D8F31  test    ecx, ecx
+  006D8F33  jle     loc_6D9427
+  006D8F39  mov     eax, vec_ObjectsInLayers.data[ebx]
+  006D8F3F  mov     ecx, [esp+100h+var_C8]
+  006D8F43  mov     esi, [eax+ecx*4]
+  006D8F46  test    esi, esi
+  006D8F48  mov     byte ptr [esi+99h], 0
+  006D8F4F  jz      loc_6D9177
+  006D8F55  mov     al, [esi+14h]
+  006D8F58  mov     dl, al
+  006D8F5A  shr     dl, 2
+  006D8F5D  and     dl, 1
+  006D8F60  mov     [esp+100h+var_ED], dl
+  006D8F64  jz      loc_6D90A9
+  006D8F6A  lea     eax, [esi+9Ch]
+  006D8F70  mov     edx, eax
+  006D8F72  mov     eax, [edx]
+  006D8F74  mov     [esp+100h+loc], eax
+  006D8F78  cmp     eax, ebp
+  006D8F7A  mov     ecx, [edx+4]
+  006D8F7D  mov     [esp+100h+var_C0], ecx
+  006D8F81  mov     edx, [edx+8]
+  006D8F84  mov     [esp+100h+var_BC], edx
+  006D8F88  jl      loc_6D940C
+  006D8F8E  mov     edx, [esp+100h+var_A0]
+  006D8F92  add     edx, ebp
+  006D8F94  cmp     eax, edx
+  006D8F96  jge     loc_6D940C
+  006D8F9C  cmp     ecx, edi
+  006D8F9E  jl      loc_6D940C
+  006D8FA4  mov     eax, [esp+100h+var_9C]
+  006D8FA8  add     eax, edi
+  006D8FAA  cmp     ecx, eax
+  006D8FAC  jge     loc_6D940C
+  006D8FB2  mov     edx, [esi]
+  006D8FB4  lea     eax, [esp+100h+var_18]
+  006D8FBB  push    0
+  006D8FBD  push    eax
+  006D8FBE  mov     ecx, esi
+  006D8FC0  call    dword ptr [edx+4Ch]
+  006D8FC3  mov     ecx, Scenario
+  006D8FC9  mov     eax, [ecx]
+  006D8FCB  test    ah, 10h
+  006D8FCE  jz      short loc_6D8FE7
+  006D8FD0  lea     edx, [esp+100h+loc]
+  006D8FD4  mov     ecx, offset Map; this
+  006D8FD9  push    edx; loc
+  006D8FDA  call    MapClass_IsCellShrouded
+  006D8FDF  test    al, al
+  006D8FE1  jnz     loc_6D940C
+  006D8FE7  mov     eax, [esi]
+  006D8FE9  lea     ecx, [esp+100h+var_44.Z]
+  006D8FF0  push    ecx
+  006D8FF1  mov     ecx, esi
+  006D8FF3  call    dword ptr [eax+48h]
+  006D8FF6  mov     edi, TacticalMap
+  006D8FFC  lea     edx, [esp+100h+var_44]
+  006D9003  push    eax; a2
+  006D9004  push    edx; a1
+  006D9005  mov     ecx, edi
+  006D9007  call    sub_6D1F10
+  006D900C  mov     ecx, eax
+  006D900E  mov     eax, [ecx]
+  006D9010  mov     [esp+100h+var_E8], eax
+  006D9014  mov     ecx, [ecx+4]
+  006D9017  mov     [esp+100h+var_E4], ecx
+  006D901B  mov     edx, [edi+0B0h]
+  006D9021  mov     edi, [edi+0B4h]
+  006D9027  sub     eax, edx
+  006D9029  sub     ecx, edi
+  006D902B  cmp     eax, 0FFFFFE98h
+  006D9030  mov     [esp+100h+var_E8], eax
+  006D9034  mov     [esp+100h+var_E4], ecx
+  006D9038  jl      loc_6D9408
+  006D903E  mov     edx, dword_B0CE30
+  006D9044  add     edx, 168h
+  006D904A  cmp     eax, edx
+  006D904C  jg      loc_6D9408
+  006D9052  cmp     ecx, 0FFFFFF4Ch
+  006D9058  jl      loc_6D9408
+  006D905E  mov     eax, dword_B0CE34
+  006D9063  add     eax, 0B4h
+  006D9068  cmp     ecx, eax
+  006D906A  jg      loc_6D9408
+  006D9070  mov     edx, [esi]
+  006D9072  lea     eax, [esp+100h+var_E8]
+  006D9076  push    offset rect_mouseclass_vp
+  006D907B  push    eax
+  006D907C  mov     ecx, esi
+  006D907E  mov     byte ptr [esi+99h], 1
+  006D9085  call    dword ptr [edx+10Ch]
+  006D908B  mov     eax, [esp+100h+arg_0]
+  006D9092  mov     edx, [esi]
+  006D9094  push    0
+  006D9096  push    eax
+  006D9097  push    offset rect_mouseclass_vp
+  006D909C  mov     ecx, esi
+  006D909E  call    dword ptr [edx+104h]
+  006D90A4  jmp     loc_6D9408
+  006D90A9  and     al, 1
+  006D90AB  mov     [esp+100h+var_ED], al
+  006D90AF  jz      loc_6D9177
+  006D90B5  lea     ecx, [esi+9Ch]
+  006D90BB  mov     edx, ecx
+  006D90BD  mov     eax, [edx]
+  006D90BF  mov     [esp+100h+loc], eax
+  006D90C3  cmp     eax, ebp
+  006D90C5  mov     ecx, [edx+4]
+  006D90C8  mov     [esp+100h+var_C0], ecx
+  006D90CC  mov     edx, [edx+8]
+  006D90CF  mov     [esp+100h+var_BC], edx
+  006D90D3  jl      loc_6D940C
+  006D90D9  mov     edx, [esp+100h+var_A0]
+  006D90DD  add     edx, ebp
+  006D90DF  cmp     eax, edx
+  006D90E1  jge     loc_6D940C
+  006D90E7  cmp     ecx, edi
+  006D90E9  jl      loc_6D940C
+  006D90EF  mov     eax, [esp+100h+var_9C]
+  006D90F3  add     eax, edi
+  006D90F5  cmp     ecx, eax
+  006D90F7  jge     loc_6D940C
+  006D90FD  mov     edx, [esi]
+  006D90FF  lea     ecx, [esp+100h+dst]
+  006D9106  lea     eax, [esp+100h+var_24]
+  006D910D  push    ecx; dst
+  006D910E  push    eax
+  006D910F  mov     ecx, esi
+  006D9111  mov     byte ptr [esi+99h], 1
+  006D9118  call    dword ptr [edx+48h]
+  006D911B  mov     ecx, TacticalMap; this
+  006D9121  push    eax; src
+  006D9122  call    Tactical::Coord_To_Pixel
+  006D9127  test    al, al
+  006D9129  jz      short loc_6D9159
+  006D912B  mov     edx, [esi]
+  006D912D  lea     eax, [esp+100h+dst]
+  006D9134  push    offset rect_mouseclass_vp
+  006D9139  push    eax
+  006D913A  mov     ecx, esi
+  006D913C  call    [edx+vt_TechnoClass.r.m.o.Techno_10C]
+  006D9142  mov     edx, [esi]
+  006D9144  lea     eax, [esp+100h+dst]
+  006D914B  push    offset rect_mouseclass_vp
+  006D9150  push    eax
+  006D9151  mov     ecx, esi
+  006D9153  call    [edx+vt_TechnoClass.r.m.o.Techno_110]
+  006D9159  mov     edx, [esi]
+  006D915B  push    1
+  006D915D  mov     eax, [esp+104h+arg_0]
+  006D9164  mov     ecx, esi
+  006D9166  push    eax
+  006D9167  push    offset rect_mouseclass_vp
+  006D916C  call    dword ptr [edx+104h]
+  006D9172  jmp     loc_6D940C
+  006D9177  mov     edx, [esi]
+  006D9179  mov     ecx, esi
+  006D917B  call    dword ptr [edx+2Ch]
+  006D917E  cmp     eax, 4
+  006D9181  jnz     loc_6D9224
+  006D9187  mov     eax, [esi]
+  006D9189  lea     ecx, [esp+100h+var_C]
+  006D9190  push    ecx
+  006D9191  mov     ecx, esi
+  006D9193  call    dword ptr [eax+48h]
+  006D9196  mov     edx, eax
+  006D9198  mov     eax, [edx]
+  006D919A  mov     [esp+100h+loc], eax
+  006D919E  cmp     eax, ebp
+  006D91A0  mov     ecx, [edx+4]
+  006D91A3  mov     [esp+100h+var_C0], ecx
+  006D91A7  mov     edx, [edx+8]
+  006D91AA  mov     [esp+100h+var_BC], edx
+  006D91AE  jl      loc_6D940C
+  006D91B4  mov     edx, [esp+100h+var_A0]
+  006D91B8  add     edx, ebp
+  006D91BA  cmp     eax, edx
+  006D91BC  jge     loc_6D940C
+  006D91C2  cmp     ecx, edi
+  006D91C4  jl      loc_6D940C
+  006D91CA  mov     eax, [esp+100h+var_9C]
+  006D91CE  add     eax, edi
+  006D91D0  cmp     ecx, eax
+  006D91D2  jge     loc_6D940C
+  006D91D8  mov     al, [esi+118h]
+  006D91DE  mov     byte ptr [esi+99h], 1
+  006D91E5  test    al, al
+  006D91E7  jnz     short loc_6D921B
+  006D91E9  mov     ecx, [esi+0C8h]
+  006D91EF  mov     al, [ecx+374h]
+  006D91F5  test    al, al
+  006D91F7  jz      short loc_6D921B
+  006D91F9  mov     edx, [esi]
+  006D91FB  lea     eax, [esp+100h+var_30]
+  006D9202  push    eax
+  006D9203  mov     ecx, esi
+  006D9205  call    dword ptr [edx+48h]
+  006D9208  push    eax; loc
+  006D9209  mov     ecx, offset Map; this
+  006D920E  call    MapClass_IsCellShrouded
+  006D9213  test    al, al
+  006D9215  jnz     loc_6D940C
+  006D921B  mov     edx, [esi]
+  006D921D  push    0
+  006D921F  jmp     loc_6D915D
+  006D9224  cmp     eax, 24h ; '$'
+  006D9227  jnz     loc_6D92BC
+  006D922D  mov     ecx, [esi+0C8h]
+  006D9233  mov     al, [ecx+2B3h]
+  006D9239  test    al, al
+  006D923B  jnz     short loc_6D924B
+  006D923D  mov     al, [esi+0CDh]
+  006D9243  test    al, al
+  006D9245  jz      loc_6D940C
+  006D924B  lea     edx, [esi+9Ch]
+  006D9251  mov     eax, [esi+9Ch]
+  006D9257  mov     [esp+100h+loc], eax
+  006D925B  cmp     eax, ebp
+  006D925D  mov     ecx, [edx+4]
+  006D9260  mov     [esp+100h+var_C0], ecx
+  006D9264  mov     edx, [edx+8]
+  006D9267  mov     [esp+100h+var_BC], edx
+  006D926B  jl      loc_6D940C
+  006D9271  mov     edx, [esp+100h+var_A0]
+  006D9275  add     edx, ebp
+  006D9277  cmp     eax, edx
+  006D9279  jge     loc_6D940C
+  006D927F  cmp     ecx, edi
+  006D9281  jl      loc_6D940C
+  006D9287  mov     eax, [esp+100h+var_9C]
+  006D928B  add     eax, edi
+  006D928D  cmp     ecx, eax
+  006D928F  jge     loc_6D940C
+  006D9295  lea     ecx, [esp+100h+loc]
+  006D9299  push    ecx; loc
+  006D929A  mov     ecx, offset Map; this
+  006D929F  call    MapClass_IsCellShrouded
+  006D92A4  test    al, al
+  006D92A6  jnz     loc_6D940C
+  006D92AC  mov     edx, [esi]
+  006D92AE  mov     byte ptr [esi+99h], 1
+  006D92B5  push    0
+  006D92B7  jmp     loc_6D915D
+  006D92BC  lea     ecx, [esi+9Ch]
+  006D92C2  mov     edx, ecx
+  006D92C4  mov     eax, [edx]
+  006D92C6  mov     [esp+100h+loc], eax
+  006D92CA  cmp     eax, ebp
+  006D92CC  mov     ecx, [edx+4]
+  006D92CF  mov     [esp+100h+var_C0], ecx
+  006D92D3  mov     edx, [edx+8]
+  006D92D6  mov     [esp+100h+var_BC], edx
+  006D92DA  jl      loc_6D940C
+  006D92E0  mov     edx, [esp+100h+var_A0]
+  006D92E4  add     edx, ebp
+  006D92E6  cmp     eax, edx
+  006D92E8  jge     loc_6D940C
+  006D92EE  cmp     ecx, edi
+  006D92F0  jl      loc_6D940C
+  006D92F6  mov     eax, [esp+100h+var_9C]
+  006D92FA  add     eax, edi
+  006D92FC  cmp     ecx, eax
+  006D92FE  jge     loc_6D940C
+  006D9304  mov     edx, [esi]
+  006D9306  lea     eax, [esp+100h+var_5C]
+  006D930D  push    eax
+  006D930E  mov     ecx, esi
+  006D9310  call    dword ptr [edx+48h]
+  006D9313  mov     ebx, TacticalMap
+  006D9319  mov     edi, eax
+  006D931B  mov     ecx, [edi+4]
+  006D931E  mov     eax, [edi]
+  006D9320  push    ecx; Y
+  006D9321  push    eax; X
+  006D9322  lea     ecx, [esp+108h+a1]; this
+  006D9326  call    sub_6D1EB0
+  006D932B  mov     ecx, eax
+  006D932D  mov     eax, [ecx]
+  006D932F  mov     edx, [ecx+4]
+  006D9332  mov     ecx, [edi+8]; a1
+  006D9335  mov     [esp+100h+var_60], edx
+  006D933C  cdq
+  006D933D  and     edx, 0FFh
+  006D9343  add     eax, edx
+  006D9345  mov     ebp, eax
+  006D9347  sar     ebp, 8
+  006D934A  call    Draw_AdjustForBuildingZ
+  006D934F  mov     ecx, eax
+  006D9351  mov     eax, [esp+100h+var_60]
+  006D9358  cdq
+  006D9359  and     edx, 0FFh
+  006D935F  mov     [esp+100h+var_B0], ebp
+  006D9363  add     eax, edx
+  006D9365  sar     eax, 8
+  006D9368  sub     eax, ecx
+  006D936A  lea     ecx, [esp+100h+var_84]
+  006D936E  mov     [esp+100h+var_AC], eax
+  006D9372  mov     edx, [ebx+0B0h]
+  006D9378  mov     eax, [ebx+0B4h]
+  006D937E  push    ecx
+  006D937F  lea     ecx, [esp+104h+var_B0]
+  006D9383  mov     [esp+104h+var_84], edx
+  006D938A  mov     [esp+104h+var_80], eax
+  006D9391  call    sub_6DC4C0
+  006D9396  mov     eax, [esp+100h+var_B0]
+  006D939A  cmp     eax, 0FFFFFE98h
+  006D939F  jl      short loc_6D9400
+  006D93A1  mov     edx, dword_B0CE30
+  006D93A7  add     edx, 168h
+  006D93AD  cmp     eax, edx
+  006D93AF  jg      short loc_6D9400
+  006D93B1  mov     eax, [esp+100h+var_AC]
+  006D93B5  cmp     eax, 0FFFFFF4Ch
+  006D93BA  jl      short loc_6D9400
+  006D93BC  mov     ecx, dword_B0CE34
+  006D93C2  add     ecx, 0B4h
+  006D93C8  cmp     eax, ecx
+  006D93CA  jg      short loc_6D9400
+  006D93CC  mov     edx, [esi]
+  006D93CE  lea     eax, [esp+100h+var_B0]
+  006D93D2  push    offset rect_mouseclass_vp
+  006D93D7  push    eax
+  006D93D8  mov     ecx, esi
+  006D93DA  mov     byte ptr [esi+99h], 1
+  006D93E1  call    dword ptr [edx+10Ch]
+  006D93E7  mov     eax, [esp+100h+arg_0]
+  006D93EE  mov     edx, [esi]
+  006D93F0  push    0
+  006D93F2  push    eax
+  006D93F3  push    offset rect_mouseclass_vp
+  006D93F8  mov     ecx, esi
+  006D93FA  call    dword ptr [edx+104h]
+  006D9400  mov     ebx, [esp+100h+var_EC]
+  006D9404  mov     ebp, [esp+100h+var_D0]
+  006D9408  mov     edi, [esp+100h+var_CC]
+  006D940C  mov     eax, [esp+100h+var_C8]
+  006D9410  mov     ecx, vec_ObjectsInLayers.length[ebx]
+  006D9416  inc     eax
+  006D9417  cmp     eax, ecx
+  006D9419  mov     [esp+100h+var_C8], eax
+  006D941D  jl      loc_6D8F39
+  006D9423  mov     eax, [esp+100h+var_D4]
+  006D9427  cmp     eax, 2
+  006D942A  jnz     loc_6D95A1
+  006D9430  mov     edx, vec_Buildings.length
+  006D9436  xor     ecx, ecx
+  006D9438  test    edx, edx
+  006D943A  mov     [esp+100h+var_EC], ecx
+  006D943E  jle     loc_6D95A1
+  006D9444  mov     edx, vec_Buildings.vector
+  006D944A  mov     ebx, [edx+ecx*4]
+  006D944D  mov     al, [ebx+BuildingClass.t.r.m.o.field_6C]
+  006D9450  test    al, al
+  006D9452  jz      loc_6D9587
+  006D9458  mov     al, [ebx+BuildingClass.t.r.m.o.field_91]
+  006D945E  test    al, al
+  006D9460  jz      loc_6D9587
+  006D9466  mov     eax, [ebx]
+  006D9468  lea     ecx, [esp+100h+var_50]
+  006D946F  push    ecx
+  006D9470  mov     ecx, ebx
+  006D9472  call    dword ptr [eax+0ACh]
+  006D9478  mov     ebp, TacticalMap
+  006D947E  mov     edi, eax
+  006D9480  mov     ecx, [edi+4]
+  006D9483  mov     eax, [edi]
+  006D9485  push    ecx; Y
+  006D9486  push    eax; X
+  006D9487  lea     ecx, [esp+108h+this]; this
+  006D948B  call    sub_6D1EB0
+  006D9490  mov     edx, eax
+  006D9492  mov     eax, [edx]
+  006D9494  mov     ecx, [edx+4]
+  006D9497  cdq
+  006D9498  and     edx, 0FFh
+  006D949E  mov     [esp+100h+var_88], ecx
+  006D94A2  mov     ecx, [edi+8]; a1
+  006D94A5  add     eax, edx
+  006D94A7  mov     esi, eax
+  006D94A9  sar     esi, 8
+  006D94AC  call    Draw_AdjustForBuildingZ
+  006D94B1  mov     ecx, eax
+  006D94B3  mov     eax, [esp+100h+var_88]
+  006D94B7  cdq
+  006D94B8  and     edx, 0FFh
+  006D94BE  mov     [esp+100h+var_B8], esi
+  006D94C2  add     eax, edx
+  006D94C4  sar     eax, 8
+  006D94C7  sub     eax, ecx
+  006D94C9  mov     [esp+100h+var_B4], eax
+  006D94CD  mov     ecx, [ebp+0B0h]
+  006D94D3  mov     ebp, [ebp+0B4h]
+  006D94D9  sub     esi, ecx
+  006D94DB  sub     eax, ebp
+  006D94DD  cmp     esi, 0FFFFFE98h
+  006D94E3  mov     [esp+100h+var_B8], esi
+  006D94E7  mov     [esp+100h+var_B4], eax
+  006D94EB  jl      loc_6D957F
+  006D94F1  mov     edx, dword_B0CE30
+  006D94F7  add     edx, 168h
+  006D94FD  cmp     esi, edx
+  006D94FF  jg      short loc_6D957F
+  006D9501  cmp     eax, 0FFFFFF4Ch
+  006D9506  jl      short loc_6D957F
+  006D9508  mov     ecx, dword_B0CE34
+  006D950E  add     ecx, 0B4h
+  006D9514  cmp     eax, ecx
+  006D9516  jg      short loc_6D957F
+  006D9518  mov     edi, rect_mouseclass_vp.R
+  006D951E  mov     ecx, rect_mouseclass_vp.T
+  006D9524  mov     edx, rect_mouseclass_vp.L
+  006D952A  mov     [esp+100h+var_74], edi
+  006D9531  mov     edi, rect_mouseclass_vp.B
+  006D9537  cmp     ecx, ecx
+  006D9539  mov     [esp+100h+var_7C], ecx
+  006D9540  mov     [esp+100h+var_78], edx
+  006D9547  mov     [esp+100h+var_70], edi
+  006D954E  jle     short loc_6D9558
+  006D9550  sub     ecx, ecx
+  006D9552  add     esi, ecx
+  006D9554  mov     [esp+100h+var_B8], esi
+  006D9558  mov     ecx, [esp+100h+var_78]
+  006D955F  cmp     ecx, edx
+  006D9561  jle     short loc_6D956B
+  006D9563  sub     edx, ecx
+  006D9565  add     eax, edx
+  006D9567  mov     [esp+100h+var_B4], eax
+  006D956B  lea     edx, [esp+100h+var_7C]
+  006D9572  lea     eax, [esp+100h+var_B8]
+  006D9576  push    edx
+  006D9577  push    eax
+  006D9578  mov     ecx, ebx
+  006D957A  call    sub_43E7B0
+  006D957F  mov     ebp, [esp+100h+var_D0]
+  006D9583  mov     edi, [esp+100h+var_CC]
+  006D9587  mov     ecx, [esp+100h+var_EC]
+  006D958B  mov     eax, vec_Buildings.length
+  006D9590  inc     ecx
+  006D9591  cmp     ecx, eax
+  006D9593  mov     [esp+100h+var_EC], ecx
+  006D9597  jl      loc_6D9444
+  006D959D  mov     eax, [esp+100h+var_D4]
+  006D95A1  inc     eax
+  006D95A2  cmp     eax, 5
+  006D95A5  mov     [esp+100h+var_D4], eax
+  006D95A9  jl      loc_6D8F19
+  006D95AF  mov     ecx, offset vec_ObjectsInLayers.data
+  006D95B4  mov     [esp+100h+var_D4], ecx
+  006D95B8  mov     edx, [ecx+0Ch]
+  006D95BB  xor     eax, eax
+  006D95BD  test    edx, edx
+  006D95BF  mov     [esp+100h+var_D0], edx
+  006D95C3  mov     [esp+100h+var_C8], eax
+  006D95C7  jle     loc_6D97A8
+  006D95CD  mov     ecx, [ecx]
+  006D95CF  mov     ebx, [ecx+eax*4]
+  006D95D2  mov     al, [ebx+99h]
+  006D95D8  test    al, al
+  006D95DA  jz      loc_6D978F
+  006D95E0  test    ebx, ebx
+  006D95E2  jz      loc_6D978F
+  006D95E8  mov     al, [ebx+14h]
+  006D95EB  mov     dl, al
+  006D95ED  and     dl, 1
+  006D95F0  mov     [esp+100h+var_ED], dl
+  006D95F4  jz      loc_6D978F
+  006D95FA  shr     al, 2
+  006D95FD  and     al, 1
+  006D95FF  mov     [esp+100h+var_ED], al
+  006D9603  jz      short loc_6D966A
+  006D9605  mov     eax, [ebx]
+  006D9607  lea     ecx, [esp+100h+var_50]
+  006D960E  push    0
+  006D9610  push    ecx
+  006D9611  mov     ecx, ebx
+  006D9613  call    dword ptr [eax+4Ch]
+  006D9616  mov     eax, hWndParent
+  006D961B  test    eax, eax
+  006D961D  jz      short loc_6D966A
+  006D961F  mov     al, Debug_Map
+  006D9624  test    al, al
+  006D9626  jnz     short loc_6D966A
+  006D9628  mov     edx, Scenario
+  006D962E  mov     eax, [edx]
+  006D9630  test    ah, 10h
+  006D9633  jz      short loc_6D966A
+  006D9635  lea     eax, [ebx+9Ch]
+  006D963B  mov     ecx, [ebx+9Ch]
+  006D9641  mov     [esp+100h+a1], ecx
+  006D9645  lea     ecx, [esp+100h+a1]
+  006D9649  mov     edx, [eax+4]
+  006D964C  push    ecx; loc
+  006D964D  mov     ecx, offset Map; this
+  006D9652  mov     [esp+104h+var_94], edx
+  006D9656  mov     eax, [eax+8]
+  006D9659  mov     [esp+104h+var_90], eax
+  006D965D  call    MapClass_IsCellShrouded
+  006D9662  test    al, al
+  006D9664  jnz     loc_6D978F
+  006D966A  mov     edx, [ebx]
+  006D966C  lea     eax, [esp+100h+var_5C]
+  006D9673  push    eax
+  006D9674  mov     ecx, ebx
+  006D9676  call    dword ptr [edx+48h]
+  006D9679  mov     ebp, eax
+  006D967B  mov     [esp+100h+var_EC], 0
+  006D9683  mov     esi, [ebp+0]
+  006D9686  mov     ecx, [ebp+4]
+  006D9689  mov     [esp+100h+var_88], ecx
+  006D968D  mov     edi, [esp+100h+var_88]
+  006D9691  lea     eax, [esi+esi*2]
+  006D9694  mov     ebp, [ebp+8]
+  006D9697  mov     [esp+100h+var_B8], ebp
+  006D969B  lea     eax, [eax+eax*4]
+  006D969E  shl     eax, 2
+  006D96A1  cdq
+  006D96A2  sub     eax, edx
+  006D96A4  mov     ecx, eax
+  006D96A6  lea     eax, [esi+esi*2]
+  006D96A9  sar     ecx, 1
+  006D96AB  lea     eax, [eax+eax*4]
+  006D96AE  shl     eax, 1
+  006D96B0  cdq
+  006D96B1  sub     eax, edx
+  006D96B3  mov     esi, eax
+  006D96B5  mov     eax, edi
+  006D96B7  shl     eax, 4
+  006D96BA  sub     eax, edi
+  006D96BC  neg     eax
+  006D96BE  shl     eax, 2
+  006D96C1  cdq
+  006D96C2  sub     eax, edx
+  006D96C4  sar     eax, 1
+  006D96C6  add     ecx, eax
+  006D96C8  lea     eax, [edi+edi*2]
+  006D96CB  sar     esi, 1
+  006D96CD  lea     eax, [eax+eax*4]
+  006D96D0  mov     [esp+100h+this.X], ecx
+  006D96D4  shl     eax, 1
+  006D96D6  cdq
+  006D96D7  sub     eax, edx
+  006D96D9  sar     eax, 1
+  006D96DB  add     esi, eax
+  006D96DD  mov     eax, ecx
+  006D96DF  cdq
+  006D96E0  and     edx, 0FFh
+  006D96E6  add     eax, edx
+  006D96E8  mov     edi, eax
+  006D96EA  mov     eax, esi
+  006D96EC  cdq
+  006D96ED  and     edx, 0FFh
+  006D96F3  add     eax, edx
+  006D96F5  mov     esi, eax
+  006D96F7  sar     edi, 8
+  006D96FA  sar     esi, 8
+  006D96FD  cmp     ebp, 2D8h
+  006D9703  jl      short loc_6D970D
+  006D9705  mov     [esp+100h+var_EC], 1
+  006D970D  fild    [esp+100h+var_B8]
+  006D9711  fmul    dbl_B0CD48
+  006D9717  fiadd   [esp+100h+var_EC]
+  006D971B  fadd    ds:dbl0_5; 0.5
+  006D9721  call    Float_To_Int_Floor
+  006D9726  sub     esi, eax
+  006D9728  mov     eax, TacticalMap
+  006D972D  mov     [esp+100h+var_E8], edi
+  006D9731  mov     [esp+100h+var_E4], esi
+  006D9735  mov     ecx, [eax+0B0h]
+  006D973B  mov     eax, [eax+0B4h]
+  006D9741  sub     edi, ecx
+  006D9743  sub     esi, eax
+  006D9745  cmp     edi, 0FFFFFE98h
+  006D974B  mov     [esp+100h+var_E8], edi
+  006D974F  mov     [esp+100h+var_E4], esi
+  006D9753  jl      short loc_6D978F
+  006D9755  mov     edx, dword_B0CE30
+  006D975B  add     edx, 168h
+  006D9761  cmp     edi, edx
+  006D9763  jg      short loc_6D978F
+  006D9765  cmp     esi, 0FFFFFF4Ch
+  006D976B  jl      short loc_6D978F
+  006D976D  mov     eax, dword_B0CE34
+  006D9772  add     eax, 0B4h
+  006D9777  cmp     esi, eax
+  006D9779  jg      short loc_6D978F
+  006D977B  mov     edx, [ebx]
+  006D977D  lea     eax, [esp+100h+var_E8]
+  006D9781  push    offset rect_mouseclass_vp
+  006D9786  push    eax
+  006D9787  mov     ecx, ebx
+  006D9789  call    dword ptr [edx+110h]
+  006D978F  mov     eax, [esp+100h+var_C8]
+  006D9793  mov     ecx, [esp+100h+var_D0]
+  006D9797  inc     eax
+  006D9798  cmp     eax, ecx
+  006D979A  mov     ecx, [esp+100h+var_D4]
+  006D979E  mov     [esp+100h+var_C8], eax
+  006D97A2  jl      loc_6D95CD
+  006D97A8  add     ecx, 18h
+  006D97AB  cmp     ecx, (offset dbl_8A03D8+4)
+  006D97B1  mov     [esp+100h+var_D4], ecx
+  006D97B5  jl      loc_6D95B8
+  006D97BB  pop     edi
+  006D97BC  pop     esi
+  006D97BD  pop     ebp
+  006D97BE  pop     ebx
+  006D97BF  add     esp, 0F0h
+  006D97C5  retn    4
+  ...(shown 715)
+
+---- 0x6D8DB0 内的全部 call ----
+  006D8E14 -> 005AFB80  Matrix3D_5AFB80
+  006D8E31 -> 007C5F00  W?Float_To_Int_Floor$n()i
+  006D8E3E -> 007C5F00  W?Float_To_Int_Floor$n()i
+  006D8E84 -> 005AFB80  Matrix3D_5AFB80
+  006D8EA1 -> 007C5F00  W?Float_To_Int_Floor$n()i
+  006D8ED9 -> 005AFB80  Matrix3D_5AFB80
+  006D8EF6 -> 007C5F00  W?Float_To_Int_Floor$n()i
+  006D8FDA -> 005865E0  MapClass_IsCellShrouded
+  006D9007 -> 006D1F10  sub_6D1F10
+  006D90A4 -> 006D9408  loc_6D9408
+  006D9122 -> 006D2140  W?Coord_To_Pixel$:Tactical$n.x(ulrnirni)i
+  006D9172 -> 006D940C  loc_6D940C
+  006D920E -> 005865E0  MapClass_IsCellShrouded
+  006D921F -> 006D915D  loc_6D915D
+  006D929F -> 005865E0  MapClass_IsCellShrouded
+  006D92B7 -> 006D915D  loc_6D915D
+  006D9326 -> 006D1EB0  sub_6D1EB0
+  006D934A -> 006D20E0  Draw_AdjustForBuildingZ
+  006D9391 -> 006DC4C0  sub_6DC4C0
+  006D948B -> 006D1EB0  sub_6D1EB0
+  006D94AC -> 006D20E0  Draw_AdjustForBuildingZ
+  006D957A -> 0043E7B0  sub_43E7B0
+  006D965D -> 005865E0  MapClass_IsCellShrouded
+  006D9721 -> 007C5F00  W?Float_To_Int_Floor$n()i
+
+==============================================================================
+B  调用者链
+==============================================================================
+---- 谁调用 0x6D8DB0 ----
+  006D465F  in TacticalClass_Draw : call    Tactical_Draw_All_6D8DB0
+
+---- TacticalClass_Draw (0x6D3D10) 内的 call ----
+  006D3D50 -> 006D9B50  sub_6D9B50
+  006D3E35 -> 006D3E69  loc_6D3E69
+  006D3E46 -> 006D3DC6  loc_6D3DC6
+  006D3E60 -> 006D3DC6  loc_6D3DC6
+  006D3ED0 -> 006D3EDA  loc_6D3EDA
+  006D3EE2 -> 006D3EE6  loc_6D3EE6
+  006D3F9A -> 007BCF50  sub_7BCF50
+  006D3FA7 -> 004112D0  sub_4112D0
+  006D3FBA -> 006D4085  loc_6D4085
+  006D401B -> 007BCB50  sub_7BCB50
+  006D4042 -> 00410ED0  sub_410ED0
+  006D407C -> 006D4085  loc_6D4085
+  006D40EE -> 006D9A50  sub_6D9A50
+  006D41C9 -> 00421B60  sub_421B60
+  006D4200 -> 00421B60  sub_421B60
+  006D4238 -> 006D4248  loc_6D4248
+  006D4279 -> 006D42B0  loc_6D42B0
+  006D42C8 -> 00421B60  sub_421B60
+  006D4308 -> 00421B60  sub_421B60
+  006D43BE -> 006D43F4  loc_6D43F4
+  006D4428 -> 006D4455  loc_6D4455
+  006D4471 -> 006D2B60  sub_6D2B60
+  006D448B -> 006D3660  sub_6D3660
+  006D449D -> 006D2DE0  sub_6D2DE0
+  006D44AF -> 006D3470  sub_6D3470
+  006D44C1 -> 006D3290  sub_6D3290
+  006D44D3 -> 006D3AC0  sub_6D3AC0
+  006D44E5 -> 006D3040  sub_6D3040
+  006D44F7 -> 006D3870  sub_6D3870
+  006D461A -> 006D9CE0  sub_6D9CE0
+  006D463F -> 006DAD60  TacticalClass_DrawWaypointPaths
+  006D4648 -> 006DA9D0  Tactical_Draw_RallyPoint_Paths_6DA9D0
+  006D4651 -> 006D5030  Tactical_Draw_It_6D5030
+  006D4656 -> 0053D850  IonBlastClass_DrawAll
+  006D465F -> 006D8DB0  Tactical_Draw_All_6D8DB0
+  006D4664 -> 005FFFA0  SpotlightClass_DrawAll
+  006D4669 -> 00550240  LaserDrawClass_DrawAll
+  006D466E -> 004C2830  EBolt_DrawAll
+  006D4673 -> 00556D40  LineTrail_DrawAll
+  006D4678 -> 006591B0  RadBeam_DrawAll
+  006D467F -> 006DBE20  sub_6DBE20
+  006D46B6 -> 00430AC0  sub_430AC0
+  006D46BD -> 006DA180  W?Draw_Drag_Select$:Tactical$n()v
+  006D46C6 -> 006DAD60  TacticalClass_DrawWaypointPaths
+  006D46CF -> 006DA9D0  Tactical_Draw_RallyPoint_Paths_6DA9D0
+  006D46D8 -> 006D5030  Tactical_Draw_It_6D5030
+  006D46DD -> 00637AA0  MapClass_IsPlanningModeActive
+  006D46EA -> 0063B0A0  sub_63B0A0
+  006D46EF -> 0063B150  sub_63B150
+  006D4720 -> 0050B6F0  W?Is_Player$:HouseClass$n()q
+  006D4756 -> 006D479F  loc_6D479F
+  006D475F -> 006D4582  loc_6D4582
+  006D4766 -> 0043B150  HouseClass_43B150
+  006D478E -> 004DC340  sub_4DC340
+  006D47B0 -> 00472640  CaptureManagerClass_NeedsToDrawLinks
+  006D47BF -> 00472160  CaptureManagerClass_DrawLinks
+  006D47E1 -> 00472640  CaptureManagerClass_NeedsToDrawLinks
+  006D47F6 -> 00472160  CaptureManagerClass_DrawLinks
+  006D482D -> 007E1530  __imp_timeGetTime
+  006D4877 -> 004CACB0  float_sin
+  006D4886 -> 007C5F00  W?Float_To_Int_Floor$n()i
+  006D489A -> 004CAD00  float_cos
+  006D48A9 -> 007C5F00  W?Float_To_Int_Floor$n()i
+  006D48F1 -> 00705860  sub_705860
+  006D491A -> 0063B2F0  sub_63B2F0
+  006D492B -> 006D7840  Tactical_Do_Cell_Twinkle_6D7840
+  006D4970 -> 006D4974  loc_6D4974
+  006D49AA -> 006D4B50  TacticalClass_Draw_Timer
+  006D49FF -> 006CC260  SuperClass_GetRechargeTime
+  006D4A29 -> 006D4A33  loc_6D4A33
+  006D4A2D -> 006D49FF  loc_6D49FF
+  006D4A31 -> 006D4A35  loc_6D4A35
+  006D4A6B -> 006D4B50  TacticalClass_Draw_Timer
+  006D4AE6 -> 00734E60  W?Get_String$n(i)v
+  006D4B08 -> 006D4B50  TacticalClass_Draw_Timer
+  006D4B2B -> 006D4E20  Tactical_DrawGameOver
+
+---- GScreenClass_DrawOnTop (0x4F4480) 内的 call 与 jump ----
+  004F44C2 -> 0053BAE0  ChronoScreenEffect_Active
+  004F44DF -> 006D3D10  TacticalClass_Draw
+  004F44F4 -> 006D3D10  TacticalClass_Draw
+  004F4515 -> 006D3D10  TacticalClass_Draw
+  004F455D -> 005D49A0  MessageListClass_Draw
+  004F457E -> 0055F1E0  DrawMPDebug
+
+---- 谁调用 GameDraw / 0x4F4480 ----
+  004C7B0E  in Networking_RespondToEvent : call    GScreenClass_DrawOnTop
+  0053B66B  in ChronoScreenEffect_Update : call    GScreenClass_DrawOnTop
+  0055D84F  in W?Main_Loop$n()i : call    GScreenClass_DrawOnTop
+  0055D8F2  in W?Main_Loop$n()i : call    GScreenClass_DrawOnTop
+  0055DBBE  in W?Main_Loop$n()i : call    GScreenClass_DrawOnTop
+  0055E271  in sub_55E160 : call    GScreenClass_DrawOnTop
+  005F0AD2  in sub_5F0690 : call    GScreenClass_DrawOnTop
+  006485D5  in sub_648350 : call    GScreenClass_DrawOnTop
+  0064926A  in sub_648710 : call    GScreenClass_DrawOnTop
+  00649440  in sub_648710 : call    GScreenClass_DrawOnTop
+  00649848  in sub_648710 : call    GScreenClass_DrawOnTop
+  006498E2  in sub_648710 : call    GScreenClass_DrawOnTop
+  0064998A  in sub_648710 : call    GScreenClass_DrawOnTop
+  006499EF  in sub_648710 : call    GScreenClass_DrawOnTop
+  00649A72  in sub_648710 : call    GScreenClass_DrawOnTop
+  00649AFA  in sub_648710 : call    GScreenClass_DrawOnTop
+  00649B7D  in sub_648710 : call    GScreenClass_DrawOnTop
+  00649C07  in sub_648710 : call    GScreenClass_DrawOnTop
+  00683F9A  in ScenarioClass_Pause : call    GScreenClass_DrawOnTop
+  00685D9A  in sub_685670 : call    GScreenClass_DrawOnTop
+  006863B9  in sub_685DC0 : call    GScreenClass_DrawOnTop
+  0068655D  in sub_6863E0 : call    GScreenClass_DrawOnTop
+  006DEF16  in TActionClass_Execute : call    GScreenClass_DrawOnTop
+  006DEF87  in TActionClass_Execute : call    GScreenClass_DrawOnTop
+  006E28BF  in sub_6E2860 : call    GScreenClass_DrawOnTop
+  006E2937  in sub_6E28DC : call    GScreenClass_DrawOnTop
+
+==============================================================================
+C  其余「读层数组」的函数分类（看它们碰的是哪一层）
+==============================================================================
+
+################ sub_4AA2B0  @004AA2B0 ################
+---- func 004AA2B0 - 004AA37B  (size 203) ----
+  004AA2B0  sub     esp, 8
+  004AA2B3  mov     eax, [esp+8+arg_0]
+  004AA2B7  mov     [esp+8+var_4], 0
+  004AA2BF  test    eax, eax
+  004AA2C1  mov     [esp+8+var_5], 0
+  004AA2C6  jnz     short loc_4AA2CD
+  004AA2C8  mov     [esp+8+var_5], 1
+  004AA2CD  push    ebx
+  004AA2CE  push    ebp
+  004AA2CF  push    esi
+  004AA2D0  push    edi
+  004AA2D1  mov     ebx, offset unk_820030
+  004AA2D6  mov     eax, [ebx]
+  004AA2D8  xor     ebp, ebp
+  004AA2DA  lea     eax, [eax+eax*2]
+  004AA2DD  shl     eax, 3
+  004AA2E0  mov     ecx, vec_ObjectsInLayers.length[eax]
+  004AA2E6  test    ecx, ecx
+  004AA2E8  jle     short loc_4AA352
+  004AA2EA  mov     eax, vec_ObjectsInLayers.data[eax]
+  004AA2F0  mov     esi, [eax+ebp*4]
+  004AA2F3  test    esi, esi
+  004AA2F5  jz      short loc_4AA341
+  004AA2F7  mov     cl, [esi+14h]
+  004AA2FA  mov     edx, [esi]
+  004AA2FC  and     cl, 1
+  004AA2FF  neg     cl
+  004AA301  sbb     ecx, ecx
+  004AA303  and     ecx, esi
+  004AA305  mov     edi, ecx
+  004AA307  mov     ecx, esi
+  004AA309  call    dword ptr [edx+64h]
+  004AA30C  test    al, al
+  004AA30E  jz      short loc_4AA341
+  004AA310  test    edi, edi
+  004AA312  jz      short loc_4AA341
+  004AA314  mov     eax, [edi]
+  004AA316  mov     ecx, edi
+  004AA318  call    dword ptr [eax+13Ch]
+  004AA31E  test    al, al
+  004AA320  jz      short loc_4AA341
+  004AA322  mov     eax, [esp+18h+var_4]
+  004AA326  test    eax, eax
+  004AA328  jnz     short loc_4AA32E
+  004AA32A  mov     [esp+18h+var_4], esi
+  004AA32E  mov     al, [esp+18h+var_5]
+  004AA332  test    al, al
+  004AA334  jnz     short loc_4AA36F
+  004AA336  cmp     [esp+18h+arg_0], esi
+  004AA33A  jnz     short loc_4AA341
+  004AA33C  mov     [esp+18h+var_5], 1
+  004AA341  mov     eax, [ebx]
+  004AA343  inc     ebp
+  004AA344  lea     eax, [eax+eax*2]
+  004AA347  shl     eax, 3
+  004AA34A  cmp     ebp, vec_ObjectsInLayers.length[eax]
+  004AA350  jl      short loc_4AA2EA
+  004AA352  add     ebx, 4
+  004AA355  cmp     ebx, offset unk_82003C
+  004AA35B  jl      loc_4AA2D6
+  ...(shown 60)
+
+################ sub_4AA380  @004AA380 ################
+---- func 004AA380 - 004AA439  (size 185) ----
+  004AA380  sub     esp, 8
+  004AA383  mov     eax, [esp+8+arg_0]
+  004AA387  mov     [esp+8+var_4], 0
+  004AA38F  test    eax, eax
+  004AA391  mov     [esp+8+var_5], 0
+  004AA396  jnz     short loc_4AA39D
+  004AA398  mov     [esp+8+var_5], 1
+  004AA39D  push    ebx
+  004AA39E  push    ebp
+  004AA39F  push    esi
+  004AA3A0  push    edi
+  004AA3A1  mov     ebx, offset unk_82003C
+  004AA3A6  mov     eax, [ebx]
+  004AA3A8  lea     eax, [eax+eax*2]
+  004AA3AB  mov     ebp, vec_ObjectsInLayers.length[eax*8]
+  004AA3B2  dec     ebp
+  004AA3B3  js      short loc_4AA414
+  004AA3B5  mov     eax, [ebx]
+  004AA3B7  lea     ecx, [eax+eax*2]
+  004AA3BA  mov     edx, vec_ObjectsInLayers.data[ecx*8]
+  004AA3C1  mov     esi, [edx+ebp*4]
+  004AA3C4  test    esi, esi
+  004AA3C6  jz      short loc_4AA411
+  004AA3C8  mov     al, [esi+14h]
+  004AA3CB  mov     edx, [esi]
+  004AA3CD  and     al, 1
+  004AA3CF  mov     ecx, esi
+  004AA3D1  neg     al
+  004AA3D3  sbb     eax, eax
+  004AA3D5  and     eax, esi
+  004AA3D7  mov     edi, eax
+  004AA3D9  call    dword ptr [edx+64h]
+  004AA3DC  test    al, al
+  004AA3DE  jz      short loc_4AA411
+  004AA3E0  test    edi, edi
+  004AA3E2  jz      short loc_4AA411
+  004AA3E4  mov     eax, [edi]
+  004AA3E6  mov     ecx, edi
+  004AA3E8  call    dword ptr [eax+13Ch]
+  004AA3EE  test    al, al
+  004AA3F0  jz      short loc_4AA411
+  004AA3F2  mov     eax, [esp+18h+var_4]
+  004AA3F6  test    eax, eax
+  004AA3F8  jnz     short loc_4AA3FE
+  004AA3FA  mov     [esp+18h+var_4], esi
+  004AA3FE  mov     al, [esp+18h+var_5]
+  004AA402  test    al, al
+  004AA404  jnz     short loc_4AA42D
+  004AA406  cmp     [esp+18h+arg_0], esi
+  004AA40A  jnz     short loc_4AA411
+  004AA40C  mov     [esp+18h+var_5], 1
+  004AA411  dec     ebp
+  004AA412  jns     short loc_4AA3B5
+  004AA414  add     ebx, 4
+  004AA417  cmp     ebx, offset DisplayClass::TacticalClass `RTTI Type Descriptor'
+  004AA41D  jl      short loc_4AA3A6
+  004AA41F  mov     eax, [esp+18h+var_4]
+  004AA423  pop     edi
+  004AA424  pop     esi
+  004AA425  pop     ebp
+  ...(shown 60)
+
+################ sub_4ADFF0  @004ADFF0 ################
+---- func 004ADFF0 - 004AE0A8  (size 184) ----
+  004ADFF0  mov     eax, dword_8A03A0
+  004ADFF5  push    ebp
+  004ADFF6  xor     ebp, ebp
+  004ADFF8  test    eax, eax
+  004ADFFA  jle     loc_4AE0A4
+  004AE000  push    ebx
+  004AE001  mov     bl, [esp+8+arg_0]
+  004AE005  push    esi
+  004AE006  push    edi
+  004AE007  mov     edi, [esp+10h+arg_4]
+  004AE00B  mov     eax, dword_8A0394
+  004AE010  mov     esi, [eax+ebp*4]
+  004AE013  test    esi, esi
+  004AE015  jz      short loc_4AE093
+  004AE017  test    byte ptr [esi+14h], 1
+  004AE01B  jz      short loc_4AE093
+  004AE01D  mov     edx, [esi]
+  004AE01F  mov     ecx, esi
+  004AE021  call    dword ptr [edx+2Ch]
+  004AE024  cmp     eax, 6
+  004AE027  jnz     short loc_4AE02D
+  004AE029  test    bl, bl
+  004AE02B  jnz     short loc_4AE093
+  004AE02D  mov     ecx, [esi+21Ch]; this
+  004AE033  call    HouseClass::Is_Player
+  004AE038  test    al, al
+  004AE03A  jz      short loc_4AE055
+  004AE03C  mov     al, [esi+41Bh]
+  004AE042  test    al, al
+  004AE044  jz      short loc_4AE093
+  004AE046  mov     eax, [esi]
+  004AE048  push    edi
+  004AE049  push    0
+  004AE04B  mov     ecx, esi
+  004AE04D  call    dword ptr [eax+120h]
+  004AE053  jmp     short loc_4AE093
+  004AE055  mov     edx, [esi]
+  004AE057  mov     ecx, esi
+  004AE059  call    dword ptr [edx+2Ch]
+  004AE05C  cmp     eax, 6
+  004AE05F  jnz     short loc_4AE093
+  004AE061  mov     eax, RulesData
+  004AE066  mov     cl, [eax+17E7h]
+  004AE06C  test    cl, cl
+  004AE06E  jz      short loc_4AE093
+  004AE070  mov     ecx, HouseClass_PlayerPtr
+  004AE076  push    ecx; h2
+  004AE077  mov     ecx, [esi+21Ch]; this
+  004AE07D  call    HouseClass::Is_Ally
+  004AE082  test    al, al
+  004AE084  jz      short loc_4AE093
+  004AE086  mov     edx, [esi]
+  004AE088  push    0
+  004AE08A  push    edi
+  004AE08B  mov     ecx, esi
+  004AE08D  call    dword ptr [edx+120h]
+  004AE093  mov     eax, dword_8A03A0
+  004AE098  inc     ebp
+  004AE099  cmp     ebp, eax
+  004AE09B  jl      loc_4AE00B
+  ...(shown 60)
+
+################ sub_4AE0B0  @004AE0B0 ################
+---- func 004AE0B0 - 004AE0D3  (size 35) ----
+  004AE0B0  push    ebp
+  004AE0B1  mov     ebp, esp
+  004AE0B3  and     esp, 0FFFFFFF8h
+  004AE0B6  sub     esp, 34h
+  004AE0B9  mov     ecx, dword_8A03A0
+  004AE0BF  push    ebx
+  004AE0C0  xor     eax, eax
+  004AE0C2  push    esi
+  004AE0C3  test    ecx, ecx
+  004AE0C5  push    edi
+  004AE0C6  mov     [esp+40h+var_34], eax
+  004AE0CA  jle     loc_4AE27A
+  004AE0D0  mov     edi, [ebp+arg_0]
+  ...(shown 13)
+
+################ sub_4AE118  @004AE118 ################
+---- func 004AE118 - 004AE283  (size 363) ----
+  004AE118  mov     ecx, [edi]
+  004AE11A  mov     edx, [eax]
+  004AE11C  mov     ebx, [eax+4]
+  004AE11F  sub     ecx, edx
+  004AE121  mov     edx, [edi+4]
+  004AE124  mov     [esp+arg_C], ecx
+  004AE128  mov     ecx, [edi+8]
+  004AE12B  sub     edx, ebx
+  004AE12D  mov     [esp+arg_10], edx
+  004AE131  mov     edx, [eax+8]
+  004AE134  sub     ecx, edx
+  004AE136  sub     esp, 8
+  004AE139  mov     [esp+8+arg_14], ecx
+  004AE13D  fild    [esp+8+arg_14]
+  004AE141  fild    [esp+8+arg_10]
+  004AE145  fild    [esp+8+arg_C]
+  004AE149  fld     st
+  004AE14B  fmul    st, st(1)
+  004AE14D  fld     st(2)
+  004AE14F  fmul    st, st(3)
+  004AE151  faddp   st(1), st
+  004AE153  fld     st(3)
+  004AE155  fmul    st, st(4)
+  004AE157  faddp   st(1), st
+  004AE159  fstp    [esp+8+var_8]
+  004AE15C  fstp    st
+  004AE15E  fstp    st
+  004AE160  fstp    st
+  004AE162  call    float_sqrt
+  004AE167  add     esp, 8
+  004AE16A  call    Float_To_Int_Floor
+  004AE16F  mov     edx, [esi]
+  004AE171  mov     ecx, esi
+  004AE173  mov     ebx, eax
+  004AE175  call    dword ptr [edx+84h]
+  004AE17B  mov     eax, [eax+5E8h]
+  004AE181  mov     edx, [ebp+0Ch]
+  004AE184  shl     eax, 8
+  004AE187  add     eax, edx
+  004AE189  cmp     ebx, eax
+  004AE18B  jg      loc_4AE263
+  004AE191  jmp     loc_4AE255
+  004AE196  mov     eax, [esi]
+  004AE198  mov     ecx, esi
+  004AE19A  call    dword ptr [eax+2Ch]
+  004AE19D  cmp     eax, 6
+  004AE1A0  jnz     loc_4AE263
+  004AE1A6  mov     ecx, RulesData
+  004AE1AC  mov     al, [ecx+17E7h]
+  004AE1B2  test    al, al
+  004AE1B4  jz      loc_4AE263
+  004AE1BA  mov     edx, HouseClass_PlayerPtr
+  004AE1C0  mov     ecx, [esi+21Ch]; this
+  004AE1C6  push    edx; h2
+  004AE1C7  call    HouseClass::Is_Ally
+  004AE1CC  test    al, al
+  004AE1CE  jz      loc_4AE263
+  004AE1D4  mov     eax, [esi]
+  004AE1D6  lea     ecx, [esp+8+arg_28]
+  004AE1DA  push    ecx
+  ...(shown 60)
+
+################ sub_6D97D0  @006D97D0 ################
+---- func 006D97D0 - 006D990F  (size 319) ----
+  006D97D0  sub     esp, 30h
+  006D97D3  mov     eax, [esp+30h+a3]
+  006D97D7  mov     edx, [esp+30h+a2]; a2
+  006D97DB  push    0; a5
+  006D97DD  push    0; a4
+  006D97DF  push    eax; a3
+  006D97E0  lea     ecx, [esp+3Ch+a1]; a1
+  006D97E4  call    sub_421B60
+  006D97E9  mov     ecx, [eax]
+  006D97EB  mov     [esp+30h+var_30], ecx
+  006D97EF  mov     edx, [eax+4]
+  006D97F2  mov     [esp+30h+var_2C], edx
+  006D97F6  mov     ecx, [eax+8]
+  006D97F9  mov     [esp+30h+var_28], ecx
+  006D97FD  mov     edx, [eax+0Ch]
+  006D9800  mov     eax, dword_8A03A0
+  006D9805  dec     eax
+  006D9806  mov     [esp+30h+var_24], edx
+  006D980A  test    eax, eax
+  006D980C  mov     [esp+30h+a2], eax
+  006D9810  jl      loc_6D9909
+  006D9816  push    ebx
+  006D9817  push    ebp
+  006D9818  push    esi
+  006D9819  push    edi
+  006D981A  mov     ecx, dword_8A0394
+  006D9820  mov     esi, [ecx+eax*4]
+  006D9823  mov     ecx, esi
+  006D9825  mov     edx, [esi]
+  006D9827  call    dword ptr [edx+2Ch]
+  006D982A  cmp     eax, 24h ; '$'
+  006D982D  jnz     loc_6D98F6
+  006D9833  mov     eax, [esi]
+  006D9835  mov     ecx, esi
+  006D9837  call    dword ptr [eax+44h]
+  006D983A  test    al, al
+  006D983C  jnz     loc_6D98F6
+  006D9842  mov     ecx, [esi+0C8h]
+  006D9848  mov     al, [ecx+2B3h]
+  006D984E  test    al, al
+  006D9850  jnz     loc_6D98F6
+  006D9856  mov     al, [esi+0CDh]
+  006D985C  test    al, al
+  006D985E  jnz     loc_6D98F6
+  006D9864  mov     edx, [esi]
+  006D9866  mov     edi, rect_mouseclass_vp.T
+  006D986C  mov     ebp, rect_mouseclass_vp.L
+  006D9872  lea     eax, [esp+40h+var_10]
+  006D9876  push    eax
+  006D9877  mov     ecx, esi
+  006D9879  call    dword ptr [edx+12Ch]
+  006D987F  mov     edx, [eax+4]
+  006D9882  mov     ecx, [eax]
+  006D9884  mov     ebx, [esp+40h+var_28]
+  006D9888  add     edx, ebp
+  006D988A  mov     ebp, [esp+40h+var_30]
+  006D988E  add     ecx, edi
+  006D9890  mov     edi, [eax+8]
+  006D9893  mov     eax, [eax+0Ch]
+  006D9896  add     ebx, ebp
+  ...(shown 60)
+
+################ sub_6D9920  @006D9920 ################
+---- func 006D9920 - 006D9A4F  (size 303) ----
+  006D9920  sub     esp, 30h
+  006D9923  mov     eax, [esp+30h+a3]
+  006D9927  mov     edx, [esp+30h+a2]; a2
+  006D992B  push    0; a5
+  006D992D  push    0; a4
+  006D992F  push    eax; a3
+  006D9930  lea     ecx, [esp+3Ch+a1]; a1
+  006D9934  call    sub_421B60
+  006D9939  mov     ecx, [eax]
+  006D993B  mov     [esp+30h+var_30], ecx
+  006D993F  mov     edx, [eax+4]
+  006D9942  mov     [esp+30h+var_2C], edx
+  006D9946  mov     ecx, [eax+8]
+  006D9949  mov     [esp+30h+var_28], ecx
+  006D994D  mov     ecx, dword_8A03A0
+  006D9953  mov     edx, [eax+0Ch]
+  006D9956  xor     eax, eax
+  006D9958  test    ecx, ecx
+  006D995A  mov     [esp+30h+var_24], edx
+  006D995E  mov     [esp+30h+a2], eax
+  006D9962  jle     loc_6D9A49
+  006D9968  push    ebx
+  006D9969  push    ebp
+  006D996A  push    esi
+  006D996B  push    edi
+  006D996C  mov     ecx, dword_8A0394
+  006D9972  mov     esi, [ecx+eax*4]
+  006D9975  mov     ecx, esi
+  006D9977  mov     edx, [esi]
+  006D9979  call    dword ptr [edx+2Ch]
+  006D997C  cmp     eax, 6
+  006D997F  jnz     loc_6D9A2E
+  006D9985  mov     al, [esi+6E7h]
+  006D998B  test    al, al
+  006D998D  jz      short loc_6D999C
+  006D998F  mov     al, Debug_Map
+  006D9994  test    al, al
+  006D9996  jz      loc_6D9A2E
+  006D999C  mov     eax, [esi]
+  006D999E  mov     edi, rect_mouseclass_vp.T
+  006D99A4  mov     ebp, rect_mouseclass_vp.L
+  006D99AA  lea     ecx, [esp+40h+var_10]
+  006D99AE  push    ecx
+  006D99AF  mov     ecx, esi
+  006D99B1  call    dword ptr [eax+12Ch]
+  006D99B7  mov     edx, [eax+4]
+  006D99BA  mov     ecx, [eax]
+  006D99BC  mov     ebx, [esp+40h+var_28]
+  006D99C0  add     edx, ebp
+  006D99C2  mov     ebp, [esp+40h+var_30]
+  006D99C6  add     ecx, edi
+  006D99C8  mov     edi, [eax+8]
+  006D99CB  mov     eax, [eax+0Ch]
+  006D99CE  add     ebx, ebp
+  006D99D0  cmp     ecx, ebx
+  006D99D2  jge     short loc_6D9A2E
+  006D99D4  mov     ebx, [esp+40h+var_2C]
+  006D99D8  mov     ebp, [esp+40h+var_24]
+  006D99DC  add     ebp, ebx
+  006D99DE  cmp     edx, ebp
+  ...(shown 60)
+
+################ sub_6D9A50  @006D9A50 ################
+---- func 006D9A50 - 006D9B42  (size 242) ----
+  006D9A50  sub     esp, 28h
+  006D9A53  mov     [esp+28h+this], ecx
+  006D9A57  push    ebx
+  006D9A58  mov     ecx, dword_8A03A0
+  006D9A5E  push    ebp
+  006D9A5F  xor     eax, eax
+  006D9A61  push    esi
+  006D9A62  test    ecx, ecx
+  006D9A64  push    edi
+  006D9A65  mov     [esp+38h+var_28], eax
+  006D9A69  jle     loc_6D9B38
+  006D9A6F  mov     ecx, dword_8A0394
+  006D9A75  mov     esi, [ecx+eax*4]
+  006D9A78  mov     ecx, esi
+  006D9A7A  mov     edx, [esi]
+  006D9A7C  call    dword ptr [edx+2Ch]
+  006D9A7F  cmp     eax, 6
+  006D9A82  jnz     loc_6D9B21
+  006D9A88  mov     al, [esi+80h]
+  006D9A8E  test    al, al
+  006D9A90  jz      loc_6D9B21
+  006D9A96  mov     eax, [esi]
+  006D9A98  lea     ecx, [esp+38h+var_10]
+  006D9A9C  push    ecx
+  006D9A9D  mov     ecx, esi
+  006D9A9F  call    dword ptr [eax+12Ch]
+  006D9AA5  mov     ebx, eax
+  006D9AA7  mov     ebp, rect_mouseclass_vp.T
+  006D9AAD  mov     ecx, [ebx]
+  006D9AAF  add     ecx, ebp
+  006D9AB1  mov     edx, [ebx+4]
+  006D9AB4  mov     edi, [ebx+8]
+  006D9AB7  mov     ebx, [ebx+0Ch]
+  006D9ABA  mov     [esp+24h], ebx
+  006D9ABE  mov     ebx, rect_mouseclass_vp.L
+  006D9AC4  add     edx, ebx
+  006D9AC6  lea     ebx, [edi+ecx]
+  006D9AC9  mov     edi, [esp+38h+arg_0]
+  006D9ACD  cmp     edi, ebx
+  006D9ACF  jge     short loc_6D9B21
+  006D9AD1  mov     ebx, [esp+24h]
+  006D9AD5  lea     ebp, [ebx+edx]
+  006D9AD8  mov     ebx, [esp+38h+arg_4]
+  006D9ADC  cmp     ebx, ebp
+  006D9ADE  jge     short loc_6D9B21
+  006D9AE0  mov     ebp, [esp+38h+arg_8]
+  006D9AE4  add     ebp, edi
+  006D9AE6  cmp     ebp, ecx
+  006D9AE8  jle     short loc_6D9B21
+  006D9AEA  mov     ecx, [esp+48h]
+  006D9AEE  add     ebx, ecx
+  006D9AF0  cmp     ebx, edx
+  006D9AF2  jle     short loc_6D9B21
+  006D9AF4  mov     ecx, [eax]
+  006D9AF6  push    0; a5
+  006D9AF8  sub     esp, 10h
+  006D9AFB  mov     edx, esp
+  006D9AFD  mov     [edx], ecx
+  006D9AFF  mov     ecx, [eax+4]
+  006D9B02  mov     [edx+4], ecx
+  ...(shown 60)
+
+################ sub_650A90  @00650A90 ################
+---- func 00650A90 - 006516E9  (size 3161) ----
+  00650A90  push    ebp
+  00650A91  mov     ebp, esp
+  00650A93  and     esp, 0FFFFFFF8h
+  00650A96  sub     esp, 28h
+  00650A99  mov     al, MPSYNCDEBUG
+  00650A9E  push    ebx
+  00650A9F  push    ebp
+  00650AA0  push    esi
+  00650AA1  mov     esi, ecx
+  00650AA3  push    edi
+  00650AA4  test    al, al
+  00650AA6  mov     [esp+38h+var_1C], esi
+  00650AAA  jnz     short loc_650AC9
+  00650AAC  mov     eax, Scenario
+  00650AB1  lea     ecx, [eax+218h]
+  00650AB7  call    Random2Class::operator()
+  00650ABC  mov     dword_AFA26C, eax
+  00650AC1  pop     edi
+  00650AC2  pop     esi
+  00650AC3  pop     ebp
+  00650AC4  pop     ebx
+  00650AC5  mov     esp, ebp
+  00650AC7  pop     ebp
+  00650AC8  retn
+  00650AC9  lea     eax, [esi+esi*2]
+  00650ACC  mov     edx, dword_AC51FC
+  00650AD2  shl     eax, 3
+  00650AD5  sub     eax, esi
+  00650AD7  lea     ecx, [eax+eax*8]
+  00650ADA  lea     edi, ds:0AC6660h[ecx*4]
+  00650AE1  mov     [esp+38h+var_18], edi
+  00650AE5  mov     [edi], edx
+  00650AE7  mov     eax, Scenario
+  00650AEC  lea     ecx, [eax+218h]
+  00650AF2  call    Random2Class::operator()
+  00650AF7  mov     [edi+4], eax
+  00650AFA  mov     ecx, Frame
+  00650B00  mov     [edi+8], ecx
+  00650B03  xor     ebx, ebx
+  00650B05  lea     ebp, [edi+0Ch]
+  00650B08  mov     [ebp+arg_30], 0FFFFFFFFh
+  00650B0F  mov     eax, vec_Houses.length
+  00650B14  cmp     ebx, eax
+  00650B16  jge     loc_650C3E
+  00650B1C  mov     byte ptr [ebp+0], 0
+  00650B20  mov     eax, NameNodeTypes.length
+  00650B25  xor     esi, esi
+  00650B27  test    eax, eax
+  00650B29  jle     short loc_650B54
+  00650B2B  mov     edx, NameNodeTypes.data
+  00650B31  mov     ecx, [edx+esi*4]; src
+  00650B34  cmp     [ecx+6Fh], ebx
+  00650B37  jnz     short loc_650B4A
+  00650B39  push    14h; size_t
+  00650B3B  call    MP_ReadNthPlayerName
+  00650B40  push    eax; char *
+  00650B41  push    ebp; char *
+  00650B42  call    _strncpy
+  00650B47  add     esp, 0Ch
+  00650B4A  mov     eax, NameNodeTypes.length
+  ...(shown 60)
+
+==============================================================================
+C2  这些函数的调用者（判断它们是「查询」还是「绘制」）
+==============================================================================
+
+  ---- sub_4AA2B0 (0x4AA2B0) 的调用者 ----
+    0053665D  in sub_536610 : call    sub_4AA2B0
+
+  ---- sub_4AA380 (0x4AA380) 的调用者 ----
+    00536ACD  in sub_536A80 : call    sub_4AA380
+
+  ---- sub_4ADFF0 (0x4ADFF0) 的调用者 ----
+    004ACB9C  in W?Encroach_Shadow$:DisplayClass$n()v : call    sub_4ADFF0
+    004ACBFE  in W?Encroach_Fog$:DisplayClass$n()v : call    sub_4ADFF0
+    00577C60  in W?Reveal_The_Map$:MapClass$n($HousesType$$)v : call    sub_4ADFF0
+
+  ---- sub_4AE0B0 (0x4AE0B0) 的调用者 ----
+
+  ---- sub_4AE118 (0x4AE118) 的调用者 ----
+
+  ---- sub_6D97D0 (0x6D97D0) 的调用者 ----
+    006D3BB9  in sub_6D3AC0 : call    sub_6D97D0
+    006D3C8E  in sub_6D3AC0 : call    sub_6D97D0
+    006D3CB3  in sub_6D3AC0 : call    sub_6D97D0
+    006D3CDA  in sub_6D3AC0 : call    sub_6D97D0
+    006D3CF7  in sub_6D3AC0 : call    sub_6D97D0
+
+  ---- sub_6D9920 (0x6D9920) 的调用者 ----
+    006D3969  in sub_6D3870 : call    sub_6D9920
+    006D3A3E  in sub_6D3870 : call    sub_6D9920
+    006D3A63  in sub_6D3870 : call    sub_6D9920
+    006D3A8A  in sub_6D3870 : call    sub_6D9920
+    006D3AA7  in sub_6D3870 : call    sub_6D9920
+
+  ---- sub_6D9A50 (0x6D9A50) 的调用者 ----
+    006D40EE  in TacticalClass_Draw : call    sub_6D9A50
+
+  ---- sub_650A90 (0x650A90) 的调用者 ----
+    0064DE70  in sub_64DAB0 : call    sub_650A90
+
+==============================================================================
+D  sub_64DAB0（校验值）里的层数组循环
+==============================================================================
+---- func 0064DAB0 - 0064DE7D ----
+  >>> 0064DCE4  mov     ebp, offset vec_ObjectsInLayers.length
+  >>> 0064DD8C  cmp     ebp, offset dword_8A03E8
+
+---- 谁调用 sub_64DAB0 ----
+  0064731C  in sub_647260 : call    sub_64DAB0
+  00647684  in sub_6475F0 : call    sub_64DAB0

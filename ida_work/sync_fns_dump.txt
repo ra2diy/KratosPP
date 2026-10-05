@@ -1,0 +1,3913 @@
+====================================================================================================
+TARGET 0x64736D in sub_647260 [0x647260 - 0x6475D5]
+Callers:
+    sub_647260 depth=0
+    W?Main_Loop$n()i depth=1
+
+int sub_647260()
+{
+  int result; // eax
+  signed int v1; // ecx
+  int v2; // ebx
+  NetworkEventPacketEx *v3; // edi
+  int v4; // ecx
+  int indexInArray; // edx
+  NetworkEventPacketEx *v6; // esi
+  NetworkEventPacketEx *v7; // edi
+  NetworkEventPacketEx *v8; // [esp+0h] [ebp-84h]
+  int Buffer; // [esp+10h] [ebp-74h] BYREF
+  _BYTE v10[108]; // [esp+14h] [ebp-70h] BYREF
+  __int16 v11; // [esp+80h] [ebp-4h]
+  char v12; // [esp+82h] [ebp-2h]
+
+  if ( (arg_ATTRACT_Flags & 2) != 0 )
+  {
+    v10[0] = 0;
+    if ( sub_54F000(Keyboard) )
+    {
+      result = sub_54F050(Keyboard);
+      if ( result == 27 || (arg_ATTRACT_Flags & 4) != 0 )
+      {
+        LOBYTE(GameActive) = 0;
+        return result;
+      }
+    }
+    else if ( (arg_ATTRACT_Flags & 4) != 0 && Frame > 0 )
+    {
+      result = (WWMouse->vt->anonymous_10)(WWMouse);
+      if ( dword_AC50F8 != result || (result = (WWMouse->vt->anonymous_11)(WWMouse), dword_AC5200 != result) )
+      {
+        LOBYTE(GameActive) = 0;
+        return result;
+      }
+    }
+    dword_AC50F8 = (WWMouse->vt->anonymous_10)(WWMouse);
+    dword_AC5200 = (WWMouse->vt->anonymous_11)(WWMouse);
+    sub_64DAB0();
+    v1 = Frame;
+    dword_B04474[Frame] = *&dword_AC51FC;
+    if ( v1 >= dword_A8E30C )
+    {
+      if ( MPSYNCDEBUG )
+        Multiplay_LogToSync_MPDEBUG(v1 % 256, 0);
+      else
+        Multiplay_LogToSYNC_NOMPDEBUG(v8);
+      Emergency_Exit(v8);
+      _exit_0(0);
+    }
+    result = Session.idxGameMode;
+    if ( v1 )
+    {
+      if ( Session.idxGameMode )
+      {
+        if ( Session.idxGameMode != 5 && dword_A8B24C == 2 )
+        {
+          result = FrameSendRate * ((FrameSendRate + v1 - 1) / FrameSendRate);
+          if ( v1 != result )
+            return result;
+        }
+      }
+    }
+    else if ( Session.idxGameMode )
+    {
+      return result;
+    }
+    result = CCFileClass_ReadNextBytes(&Buffer, 4);
+    if ( result != 4 )
+      goto LABEL_33;
+    v2 = 0;
+    if ( Buffer > 0 )
+    {
+      do
+      {
+        result = CCFileClass_ReadNextBytes(v10, 111);
+        if ( result != 111 )
+          goto LABEL_33;
+        v10[1] &= ~1u;
+        if ( dword_8B41F8 < 0x4000 )
+        {
+          v3 = &NetworkPackets1[dword_8B4200];
+          qmemcpy(v3, v10, 0x6Cu);
+          v3 = (v3 + 108);
+          *&v3->ev.EventKind = v11;
+          v3->ev.PlayerIdx = v12;
+          dword_A70204[dword_8B4200] = timeGetTime();
+          dword_8B4200 = (dword_8B4200 + 1) & 0x3FFF;
+          ++dword_8B41F8;
+        }
+      }
+      while ( ++v2 < Buffer );
+    }
+    if ( Session.idxGameMode )
+    {
+      v4 = gTeamCount;
+      indexInArray = 0;
+    }
+    else
+    {
+      v4 = 1;
+      indexInArray = HouseClass_PlayerPtr->Country->indexInArray;
+    }
+    result = DoList(v4, indexInArray, 0, 0, 0);
+    if ( !result )
+    {
+LABEL_33:
+      LOBYTE(GameActive) = 0;
+      return result;
+    }
+    return sub_64D990(0);
+  }
+  else
+  {
+    result = Session.idxGameMode;
+    switch ( Session.idxGameMode )
+    {
+      case 0:
+      case 5:
+        while ( LastEventIdx )
+        {
+          NetworkPackets0[dword_A802CC].ev.field_1 &= ~1u;
+          if ( dword_8B41F8 < 0x4000 )
+          {
+            v6 = &NetworkPackets0[dword_A802CC];
+            v7 = &NetworkPackets1[dword_8B4200];
+            qmemcpy(v7, v6, 0x6Cu);
+            v6 = (v6 + 108);
+            v7 = (v7 + 108);
+            *&v7->ev.EventKind = *&v6->ev.EventKind;
+            v7->ev.PlayerIdx = v6->ev.PlayerIdx;
+            dword_A70204[dword_8B4200] = timeGetTime();
+            dword_8B4200 = (dword_8B4200 + 1) & 0x3FFF;
+            ++dword_8B41F8;
+          }
+          sub_652540(&LastEventIdx);
+        }
+        if ( (arg_ATTRACT_Flags & 1) != 0 )
+          sub_64D9E0();
+        result = DoList(1, HouseClass_PlayerPtr->Country->indexInArray, 0, 0, 0);
+        if ( result )
+          return sub_64D990(0);
+        LOBYTE(GameActive) = 0;
+        break;
+      case 1:
+      case 2:
+      case 3:
+      case 4:
+        result = sub_6475F0();
+        break;
+      default:
+        return result;
+    }
+  }
+  return result;
+}
+
+
+====================================================================================================
+TARGET 0x64CD11 in DoList [0x64C380 - 0x64CD2A]
+Callers:
+    DoList depth=0
+    sub_647260 depth=1
+    sub_6475F0 depth=1
+
+int __fastcall DoList(int a1, int a2, int this, int a4, int a5)
+{
+  int length; // ebx
+  int v6; // edi
+  int v7; // esi
+  int v8; // ecx
+  int TimeStamp; // eax
+  signed int v10; // ecx
+  int i; // esi
+  int v12; // eax
+  int v13; // edi
+  HouseClass *v14; // eax
+  int v15; // ebp
+  int v16; // ebx
+  int v17; // eax
+  int v18; // edx
+  NetworkEventPacketEx *v19; // esi
+  char EventKind; // dl
+  int v21; // edx
+  int v22; // esi
+  NetworkEventPacketEx *v23; // ecx
+  int v24; // esi
+  NetworkEventPacketEx *v25; // esi
+  NetworkEventPacketEx *v26; // edi
+  PtrHouseClass *Vector; // eax
+  int v28; // ecx
+  HouseClass *v29; // esi
+  int v30; // ecx
+  int v31; // ecx
+  int v32; // eax
+  int v33; // esi
+  int v34; // ebx
+  int v35; // ebp
+  HouseClass *v36; // esi
+  wchar_t *String; // eax
+  char v38; // dl
+  int X_high; // ebx
+  int v40; // esi
+  _BOOL1 v41; // cl
+  char *v42; // edx
+  wXY *p_loc; // eax
+  int v45; // edi
+  unsigned __int8 v46; // si
+  wchar_t *v47; // eax
+  wchar_t *v48; // [esp-10h] [ebp-60h]
+  NetworkEventPacketEx *v49; // [esp+0h] [ebp-50h]
+  int idxHouse; // [esp+10h] [ebp-40h]
+  HouseClass *v51; // [esp+14h] [ebp-3Ch]
+  int v52; // [esp+14h] [ebp-3Ch]
+  int v53; // [esp+18h] [ebp-38h]
+  int v54; // [esp+1Ch] [ebp-34h]
+  int v55; // [esp+20h] [ebp-30h]
+  int PlayerIdx; // [esp+24h] [ebp-2Ch]
+  wXY v57; // [esp+28h] [ebp-28h]
+  char X; // [esp+2Ch] [ebp-24h]
+  int v59; // [esp+30h] [ebp-20h]
+  char v60; // [esp+34h] [ebp-1Ch]
+  byte Dest[20]; // [esp+38h] [ebp-18h] BYREF
+  char v62; // [esp+4Ch] [ebp-4h]
+
+  length = vec_Houses.length;
+  v6 = dword_8B41F8;
+  v7 = 0;
+  v54 = dword_8B41F8;
+  v55 = vec_Houses.length;
+  if ( dword_8B41F8 > 0 )
+  {
+    v8 = dword_A8B1DC;
+    do
+    {
+      if ( NetworkPackets1[(v7 + dword_8B41FC) & 0x3FFF].ev.EventKind != ev_FRAMEINFO )
+      {
+        TimeStamp = NetworkPackets1[(v7 + dword_8B41FC) & 0x3FFF].ev.TimeStamp;
+        if ( TimeStamp > dword_A8B1F8 && TimeStamp < v8 )
+        {
+          WWDebugString("DoList: Moving event from frame %d to frame %d\n", TimeStamp, v8);
+          v8 = dword_A8B1DC;
+          NetworkPackets1[(v7 + dword_8B41FC) & 0x3FFF].ev.TimeStamp = dword_A8B1DC;
+        }
+      }
+      ++v7;
+    }
+    while ( v7 < v6 );
+  }
+  if ( dword_A8E2D8 )
+  {
+    v10 = dword_A8E2DC;
+    if ( dword_A8E2DC )
+    {
+      if ( dword_A8E2E0 != -1 )
+      {
+        for ( i = 0; i < v6; ++i )
+        {
+          if ( NetworkPackets1[(dword_8B41FC + i) & 0x3FFF].ev.EventKind == ev_EXIT
+            && NetworkPackets1[(dword_8B41FC + i) & 0x3FFF].ev.PlayerIdx == dword_A8E2E0 )
+          {
+            v12 = NetworkPackets1[(dword_8B41FC + i) & 0x3FFF].ev.TimeStamp;
+            if ( v12 > dword_A8E2D8 && v12 < v10 )
+            {
+              WWDebugString("DoList: Moving EXIT event from frame %d to frame %d\n", v12, v10);
+              v10 = dword_A8E2DC;
+              NetworkPackets1[(i + dword_8B41FC) & 0x3FFF].ev.TimeStamp = dword_A8E2DC;
+            }
+          }
+        }
+        if ( Frame > v10 )
+        {
+          dword_A8E2D8 = 0;
+          dword_A8E2DC = 0;
+          dword_A8E2E0 = -1;
+        }
+      }
+    }
+  }
+  idxHouse = 0;
+  if ( length <= 0 )
+    return 1;
+  v13 = dword_A83ED4;
+  while ( 1 )
+  {
+    v14 = vec_Houses.Vector[idxHouse]._;
+    v51 = v14;
+    if ( v14 )
+    {
+      if ( v14->IsHuman || v14->IsPlayer )
+        break;
+    }
+@@49:
+    if ( ++idxHouse >= v55 )
+      return 1;
+  }
+  v15 = 0;
+  v53 = 0;
+  if ( v54 <= 0 )
+  {
+@@37:
+    v40 = 0;
+    X_high = -1;
+    v38 = 0;
+    X = 0;
+    v52 = 0;
+    if ( dword_A83ED0 > 0 )
+    {
+      while ( 1 )
+      {
+        v41 = 0;
+        if ( X_high != -1 )
+        {
+          v41 = HIBYTE(NetworkPackets2[(v13 + v40)].ev.altLoc.X) != X_high;
+          if ( HIBYTE(NetworkPackets2[(v13 + v40)].ev.field_F) != v38
+            || *(&NetworkPackets2[(v13 + v40)].ev.altLoc.Y + 1) != v59
+            || NetworkPackets2[(v13 + v40)].ev.field_17 != X
+            || *&NetworkPackets2[(v13 + v40)].ev.loc != v57 )
+          {
+            v41 = 1;
+          }
+        }
+        X_high = SHIBYTE(NetworkPackets2[(v13 + v40)].ev.altLoc.X);
+        v42 = &NetworkPackets2[(v13 + v40)].ev.altLoc.Y + 1;
+        p_loc = &NetworkPackets2[(v13 + v40)].ev.loc;
+        v59 = *v42;
+        v60 = v42[4];
+        v57 = *p_loc;
+        X = p_loc[1].X;
+        if ( v41 )
+        {
+          if ( v40 - v52 > 1 )
+          {
+            sub_64CDA0();
+            v13 = dword_A83ED4;
+          }
+          v52 = v40;
+        }
+        else if ( v40 == dword_A83ED0 - 1 && v40 - v52 + 1 > 1 )
+        {
+          sub_64CDA0();
+          v13 = dword_A83ED4;
+        }
+        if ( ++v40 >= dword_A83ED0 )
+          break;
+        v38 = v60;
+      }
+    }
+    if ( dword_A83ED0 )
+    {
+      while ( 1 )
+      {
+        Networking_RespondToEvent(&NetworkPackets2[v13]);
+        if ( !dword_A83ED0 )
+          break;
+        v13 = (dword_A83ED4 + 1);
+        dword_A83ED4 = v13;
+        if ( !--dword_A83ED0 )
+          goto @@49;
+      }
+      v13 = dword_A83ED4;
+    }
+    goto @@49;
+  }
+  v16 = this;
+  while ( 1 )
+  {
+    v17 = (dword_8B41FC + v15) & 0x3FFF;
+    PlayerIdx = NetworkPackets1[v17].ev.PlayerIdx;
+    if ( PlayerIdx != v51->PlayerNumber )
+      goto @@36;
+    v18 = NetworkPackets1[v17].ev.TimeStamp;
+    if ( Frame < v18 || (NetworkPackets1[v17].ev.field_1 & 1) != 0 )
+      goto @@36;
+    if ( Frame <= v18 )
+      break;
+    v19 = &NetworkPackets1[v17];
+    if ( v19->ev.EventKind == 28 || !Session.idxGameMode || Session.idxGameMode == 5 )
+      break;
+    WWDebugString("Packet received too late!\n");
+    WWDebugString("--------- Event data: -------------------\n");
+    WWDebugString("Type:       %s\n", (&netpacketTypes)[v19->ev.EventKind]);
+    WWDebugString("Frame:      %d\n", v19->ev.TimeStamp);
+    WWDebugString("ID:         %d\n", v19->ev.PlayerIdx);
+    WWDebugString("MaxAhead=%d\n", Factory_BuildSpeedMult);
+    WWDebugString("Frame=%d\n", Frame);
+    WWDebugString("FrameSendRate=%d\n", FrameSendRate);
+    (*(*v16 + 16))(v16);
+    v13 = dword_A83ED4;
+@@36:
+    v53 = ++v15;
+    if ( v15 >= v54 )
+      goto @@37;
+  }
+  EventKind = NetworkPackets1[v17].ev.EventKind;
+  if ( EventKind == ev_EXIT )
+  {
+    Vector = vec_Houses.Vector;
+    v28 = 0;
+    while ( 1 )
+    {
+      v29 = Vector->_;
+      if ( Vector->_ )
+      {
+        if ( v29->PlayerNumber == PlayerIdx )
+          break;
+      }
+      ++v28;
+      ++Vector;
+      if ( v28 >= v55 )
+        goto @@20;
+    }
+    v29->field_248 = 1;
+@@20:
+    if ( sub_5E2BE0(v29) == 1 )
+    {
+      if ( Session.idxGameMode != 4 || byte_A8F900 )
+      {
+@@22:
+        if ( !sub_5E2BA0(v29) )
+          sub_4FC980(v29);
+        goto @@23;
+      }
+      LOBYTE(byte_A8B8C1) = 1;
+      sub_6C8820();
+      LOBYTE(v30) = 0;
+      GameCompletionRecords_Generate(v30);
+    }
+    if ( Session.idxGameMode == 4 && !byte_A8F900 && HouseClass_PlayerPtr && HouseClass_PlayerPtr == v29 )
+    {
+      WWDebugString("Sending game results because I quit, but didn't see completion");
+      LOBYTE(v31) = 0;
+      GameCompletionRecords_Generate(v31);
+    }
+    goto @@22;
+  }
+  if ( EventKind == ev_OPTIONS || EventKind == ev_PAGEUSER )
+  {
+@@23:
+    if ( byte_A8ED74 && NetworkPackets1[(v15 + dword_8B41FC) & 0x3FFF].ev.EventKind == ev_EXIT )
+      WWDebugString(
+        "Exit Event: ID:%d (%s),  Event Frame:%d,  My Frame:%d\n",
+        NetworkPackets1[(v15 + dword_8B41FC) & 0x3FFF].ev.PlayerIdx,
+        vec_Houses.Vector[NetworkPackets1[(v15 + dword_8B41FC) & 0x3FFF].ev.PlayerIdx]._->InitialName,
+        NetworkPackets1[(v15 + dword_8B41FC) & 0x3FFF].ev.TimeStamp,
+        Frame);
+    v32 = (dword_8B41FC + v15) & 0x3FFF;
+    if ( NetworkPackets1[v32].ev.PlayerIdx != HouseClass_PlayerPtr->PlayerNumber )
+    {
+      if ( NetworkPackets1[v32].ev.EventKind == 19 )
+      {
+        WWDebugString("Processing EXIT event on frame %d\n", Frame);
+        if ( Session.idxGameMode == 1 || Session.idxGameMode == 2 )
+        {
+          Game_PlayerLeft(idxHouse, 0);
+        }
+        else if ( Session.idxGameMode == 3 || Session.idxGameMode == 4 )
+        {
+          if ( this )
+          {
+            v34 = (*(*this + 24))(this, idxHouse);
+            if ( v34 != -1 )
+            {
+              if ( v34 < (*(*this + 16))(this) - 1 )
+              {
+                v35 = a5 + 24 * v34;
+                do
+                {
+                  ++v34;
+                  qmemcpy(v35, (v35 + 24), 0x18u);
+                  v35 += 24;
+                }
+                while ( v34 < (*(*this + 16))(this) - 1 );
+                v15 = v53;
+              }
+              Game_PlayerLeftMP(idxHouse, 0);
+            }
+          }
+        }
+        if ( (arg_ATTRACT_Flags & 2) != 0 && NetworkPackets1[(v15 + dword_8B41FC) & 0x3FFF].ev.EventKind == ev_EXIT )
+        {
+          v36 = v51;
+          v51->IsHuman = 0;
+          v51->IQ = RulesData->MaxIQLevels;
+          HouseClass::Computer_Paranoid();
+          if ( "Computer" )
+          {
+            strncpy(Dest, "Computer", 0x14u);
+            v62 = 0;
+          }
+          else
+          {
+            Dest[0] = "Computer";
+          }
+          if ( Dest != v51->InitialName )
+          {
+            qmemcpy(v51->InitialName, Dest, 0x14u);
+            v51->InitialName[20] = v62;
+            v36 = v51;
+          }
+          String = Get_String("TXT_COMPUTER", 0, "D:\\ra2mdpost\\Queue.CPP", 5672);
+          wcsncpy(v36->Name, String, 0x15u);
+          HIWORD(v36->field_16024) = 0;
+          WWDebugString("Removing a player %s:%d\n", "D:\\ra2mdpost\\Queue.CPP", 5674);
+          --gPlayerCount;
+        }
+      }
+      goto @@35;
+    }
+    v33 = dword_A70204[v32];
+    dword_8373A0 = timeGetTime() - v33;
+    v23 = &NetworkPackets1[(v15 + dword_8B41FC) & 0x3FFF];
+@@25:
+    Networking_RespondToEvent(v23);
+    goto @@35;
+  }
+  if ( EventKind != 28 )
+  {
+    v24 = dword_A70204[v17];
+    dword_8373A0 = timeGetTime() - v24;
+    v23 = &NetworkPackets1[(v15 + dword_8B41FC) & 0x3FFF];
+    if ( v23->ev.EventKind == 4 )
+    {
+      if ( dword_A83ED0 < 256 )
+      {
+        v25 = &NetworkPackets1[(dword_8B41FC + v15) & 0x3FFF];
+        v26 = &NetworkPackets2[dword_A83ED8];
+        qmemcpy(v26, v25, 0x6Cu);
+        v25 = (v25 + 108);
+        v26 = (v26 + 108);
+        *&v26->ev.EventKind = *&v25->ev.EventKind;
+        v26->ev.PlayerIdx = v25->ev.PlayerIdx;
+        dword_A8ADDC[dword_A83ED8] = timeGetTime();
+        dword_A83ED8 = (dword_A83ED8 + 1);
+        ++dword_A83ED0;
+      }
+      goto @@35;
+    }
+    goto @@25;
+  }
+  if ( a4 )
+  {
+    v22 = *a4;
+    v21 = *(a4 + 8);
+    if ( *a4 == -1 )
+      goto @@12;
+    if ( Frame - v22 < v21 )
+    {
+      v21 -= Frame - v22;
+@@12:
+      if ( v21 )
+        goto @@35;
+    }
+  }
+  if ( NetworkPackets1[v17].ev.TimeStamp != Frame
+    || dword_B04474[(NetworkPackets1[(dword_8B41FC + v15) & 0x3FFF].ev.TimeStamp
+                   - LOBYTE(NetworkPackets1[(dword_8B41FC + v15) & 0x3FFF].ev.altLoc.Y))] == NetworkPackets1[(dword_8B41FC + v15) & 0x3FFF].ev.CRC )
+  {
+@@35:
+    v16 = this;
+    NetworkPackets1[(dword_8B41FC + v15) & 0x3FFF].ev.field_1 |= 1u;
+    v13 = dword_A83ED4;
+    goto @@36;
+  }
+  if ( MPSYNCDEBUG )
+  {
+    v46 = 0;
+    v45 = 256;
+    do
+    {
+      Multiplay_LogToSync_MPDEBUG(v46++, &NetworkPackets1[(dword_8B41FC + v53) & 0x3FFF]);
+      --v45;
+    }
+    while ( v45 );
+  }
+  else
+  {
+    Multiplay_LogToSYNC_NOMPDEBUG(v49);
+  }
+  ++dword_A8DAB4;
+  v48 = Get_String("TXT_STOP", 0, "D:\\ra2mdpost\\Queue.CPP", 5723);
+  v47 = Get_String("TXT_OUT_OF_SYNC", 0, "D:\\ra2mdpost\\Queue.CPP", 5722);
+  MsgBox(v47, v48, 0, 0, 0);
+  --dword_A8DAB4;
+  return 0;
+}
+
+
+====================================================================================================
+TARGET 0x65C7D0 in _ZN12Random2ClassclEv [0x65C780 - 0x65C7D1]
+Callers:
+    _ZN12Random2ClassclEv depth=0
+    AircraftClass_ReceiveDamage depth=1
+    W?$ct:AnimClass$n($AnimType$$ulucuc)_ depth=1
+    W?Start$:AnimClass$n()v depth=1
+    BuildingClass_Destroy depth=1
+    W?Take_Damage$:BuildingClass$n(rnii$WarheadType$$pn$TechnoClass$$i)$ResultType$$ depth=1
+    BuildingClass_Mi_Missile depth=1
+    BulletClass_Fire depth=1
+    CellClass_Clear_Icon_4814F0 depth=1
+    sub_485590 depth=1
+    CellClass_SetupVeins depth=1
+    sub_49F420 depth=1
+    DropPodLocomotionClass_ILocomotion_Update depth=1
+    W?AI$:FootClass$n()v depth=1
+    sub_501AC0 depth=1
+    InfantryClass_UpdatePosition depth=1
+    W?Doing_AI$:InfantryClass$n()v depth=1
+    LightningStorm_Strike depth=1
+    sub_53A300 depth=1
+    sub_58C6F0 depth=1
+    sub_58C800 depth=1
+    sub_58D620 depth=1
+    sub_58F2C0 depth=1
+    sub_5905D0 depth=1
+    sub_590970 depth=1
+    sub_5910F0 depth=1
+    sub_591740 depth=1
+    sub_591D80 depth=1
+    sub_592440 depth=1
+    sub_594870 depth=1
+    sub_594B50 depth=1
+    sub_595400 depth=1
+    sub_598000 depth=1
+    sub_598030 depth=1
+    MapSeedClass_Generate_InitRandomMap depth=1
+    sub_59A8F0 depth=1
+    MapSeedClass_Generate_SeedWater_Archipelago depth=1
+    MapSeedClass_Generate_SeedWater_TeamContinent depth=1
+    sub_59B740 depth=1
+    sub_59BBC0 depth=1
+    sub_59C630 depth=1
+    sub_59C920 depth=1
+    sub_59D510 depth=1
+    sub_59E740 depth=1
+    sub_5A08D0 depth=1
+    sub_5A1350 depth=1
+    sub_5A19E0 depth=1
+    sub_5A23A0 depth=1
+    sub_5A28C0 depth=1
+    sub_5A2EF3 depth=1
+    sub_5A3AE0 depth=1
+    Place_Trees depth=1
+    sub_5A45E0 depth=1
+    sub_5A4B60 depth=1
+    sub_5A4FCB depth=1
+    MapSeedClass_Generate_PlaceUrbanAreas depth=1
+    sub_5A5360 depth=1
+    sub_5A5B50 depth=1
+    sub_5A6510 depth=1
+    sub_5A6920 depth=1
+    sub_5A6D80 depth=1
+    sub_5A7070 depth=1
+    sub_5A78D0 depth=1
+    sub_5A82E0 depth=1
+    sub_5A8720 depth=1
+    sub_5A89D0 depth=1
+    sub_5A8F00 depth=1
+    sub_5A91E0 depth=1
+    MapSeedClass_AddTechBuildings depth=1
+    OverlayClass_Place depth=1
+    ParticleClass_CTOR depth=1
+    ParticleClass_Update_Smoke depth=1
+    ParticleClass_Update_Gas depth=1
+    ParticleClass_Update_Fire depth=1
+    ParticleSystemClass_GenerateParticle depth=1
+    ParticleSystemClass_Update_Spark depth=1
+    ParticleSystemClass_Update_Smoke depth=1
+    sub_64DAB0 depth=1
+    Multiplay_LogToSYNC_NOMPDEBUG depth=1
+    sub_650A90 depth=1
+    ActionClass_DoMeteorShower depth=1
+    TechnoClass_CTOR depth=1
+    W?Player_Assign_Mission$:TechnoClass$n($MissionType$$ll)v depth=1
+    TechnoClass_ReceiveDamage depth=1
+    W?Response_Select$:TechnoClass$n()v depth=1
+    W?Response_Move$:TechnoClass$n()v_0 depth=1
+    W?Response_Fire$:TechnoClass$n()v depth=1
+    TechnoClass_UpdateGattling_ depth=1
+    TerrainClass_Burn depth=1
+    TerrainClass_Update depth=1
+    sub_722440 depth=1
+    sub_722AF0 depth=1
+    sub_722F00 depth=1
+    sub_7235A0 depth=1
+    UnitClass_Destroy depth=1
+    W?Per_Cell_Process$:UnitClass$n($PCPType$$)v depth=1
+    UnitTypeClass_SpawnAtCoords depth=1
+    VoxelAnimClass_CTOR depth=1
+    VeinholeMonsterClass_Update depth=1
+    sub_74D7C0 depth=1
+    Remove_Matching depth=1
+
+int __thiscall Random2Class::operator()(_DWORD *this)
+{
+  int result; // eax
+  int v2; // edx
+  int v3; // esi
+
+  if ( *this )
+    return 0;
+  this[this[1] + 3] ^= this[this[2] + 3];
+  v2 = this[1];
+  result = this[v2++ + 3];
+  v3 = this[2] + 1;
+  this[1] = v2;
+  this[2] = v3;
+  if ( v2 >= 250 )
+    this[1] = 0;
+  if ( v3 >= 250 )
+    this[2] = 0;
+  return result;
+}
+
+
+====================================================================================================
+TARGET 0x65C88A in _ZN12Random2ClassclEii [0x65C7E0 - 0x65C88D]
+Callers:
+    _ZN12Random2ClassclEii depth=0
+    sub_4047B0 depth=1
+    sub_4048B0 depth=1
+    sub_404BB0 depth=1
+    sub_4055C0 depth=1
+    sub_405AC0 depth=1
+    AircraftClass_Mi_Hunt depth=1
+    AircraftClass_Update depth=1
+    AircraftClass_Mi_Unload depth=1
+    AircraftClass_Mi_Move depth=1
+    W?Do_Mission_Move_Carryall$:AircraftClass$n()i depth=1
+    AircraftClass_Mi_Patrol depth=1
+    AircraftClass_Mi_Attack depth=1
+    W?New_LZ$:AircraftClass$n.x(l)l depth=1
+    sub_4197C0 depth=1
+    AircraftClass_Mi_Guard depth=1
+    W?$ct:AnimClass$n($AnimType$$ulucuc)_ depth=1
+    AnimClass_Update depth=1
+    W?Start$:AnimClass$n()v depth=1
+    W?Middle$:AnimClass$n()v depth=1
+    sub_425D10 depth=1
+    sub_439690 depth=1
+    sub_4397E0 depth=1
+    BuildingClass_CreateDamageFires depth=1
+    BuildingClass_Destroy depth=1
+    W?Take_Damage$:BuildingClass$n(rnii$WarheadType$$pn$TechnoClass$$i)$ResultType$$ depth=1
+    BuildingClass_RegisterDestruction depth=1
+    W?Exit_Object$:BuildingClass$n(pn$TechnoClass$$)i depth=1
+    BuildingClass_21C depth=1
+    BuildingClass_Mission_Deconstruction depth=1
+    BuildingClass_210 depth=1
+    BuildingClass_Unload depth=1
+    BuildingClass_254 depth=1
+    BuildingClass_30C depth=1
+    BuildingClass_Update_Repair depth=1
+    BulletClass_SetMovement depth=1
+    BulletClass_Detonate depth=1
+    BulletClass_Fire depth=1
+    BulletClass_Shrapnel depth=1
+    CaptureManagerClass_Update depth=1
+    CaptureManagerClass_DecideUnitFate depth=1
+    CellClass_BlowUpBridge depth=1
+    W?Reduce_Wall$:CellClass$n(i)i depth=1
+    CellClass_PickInfantrySublocation depth=1
+    sub_4818E0 depth=1
+    W?Goodie_Check$:CellClass$n(pn$FootClass$$)i depth=1
+    W?Spread_Tiberium$:CellClass$n(i)i depth=1
+    sub_487190 depth=1
+    Damage_At_Cell_Update_489280 depth=1
+    SelectDamageAnimation depth=1
+    sub_49CAF0 depth=1
+    W?Create_Crate$:CrateClass$n(s)i depth=1
+    W?Calculated_Cell$:DisplayClass$n.x($SourceType$$is$SpeedType$$i$MZoneType$$)s depth=1
+    W?Read_INI$:DisplayClass$n(rn$CCINIClass$$)v depth=1
+    ScenarioClass_GenerateDropshipLoadout depth=1
+    EBolt_Draw depth=1
+    EBolt_Fire depth=1
+    EMPulseClass_Initialize depth=1
+    sub_4CFD20 depth=1
+    sub_4CFDD0 depth=1
+    sub_4D007B depth=1
+    W?Mission_Move$:FootClass$n()i depth=1
+    FootClass_Patrol depth=1
+    FootClass_Mi_Capture depth=1
+    FootClass_Mi_Eaten depth=1
+    FootClass_Attack depth=1
+    FootClass_Guard depth=1
+    FootClass_Hunt depth=1
+    FootClass_AreaGuard depth=1
+    FootClass_Enter depth=1
+    FootClass_Retreat depth=1
+    sub_4DD2F0 depth=1
+    FootClass_Mi_Rescue depth=1
+    FootClass_Crash depth=1
+    HouseClass_CTOR depth=1
+    HouseClass_Update depth=1
+    HouseClass_SWDefendAgainst depth=1
+    HouseClass_Update_AI depth=1
+    W?AI_Building$:HouseClass$n()i depth=1
+    W?AI_Unit$:HouseClass$n()i depth=1
+    W?AI_Infantry$:HouseClass$n()i depth=1
+    W?AI_Aircraft$:HouseClass$n()i depth=1
+    sub_500200 depth=1
+    sub_501AC0 depth=1
+    HouseClass_GenerateAIBuildList depth=1
+    W?AI_Building_Defense$:HouseClass$n(ii)i depth=1
+    sub_508150 depth=1
+    HouseClass_Update_AI_Production depth=1
+    sub_50A350 depth=1
+    HouseClass_PickOffensiveSWTarget depth=1
+    HoverLocomotionClass_ILocomotion_PowerOff depth=1
+    sub_516FC0 depth=1
+    InfantryClass_IdleAction depth=1
+    InfantryClass_Scatter depth=1
+    InfantryClass_DoAction depth=1
+    InfantryClass_Attack depth=1
+    InfantryClass_UpdateDeployment depth=1
+    InfantryClass_53C depth=1
+    sub_522550 depth=1
+    LightningStorm_Start depth=1
+    sub_53A300 depth=1
+    sub_53A6C0 depth=1
+    sub_54BA30 depth=1
+    jumpjet2 depth=1
+    sub_54C550 depth=1
+    LaserDrawClass_Draw depth=1
+    W?Main_Loop$n()i depth=1
+    W?Place_Random_Crate$:MapClass$n()i depth=1
+    sub_575220 depth=1
+    sub_575540 depth=1
+    sub_575870 depth=1
+    sub_575BA0 depth=1
+    W?Pick_Random_Location$:MapClass$n.x()s depth=1
+    sub_580BC0 depth=1
+    MapClass_DestroyCliff depth=1
+    sub_595FB0 depth=1
+    MapSeedClass_DialogFunc depth=1
+    sub_597260 depth=1
+    sub_597430 depth=1
+    sub_5B82F0 depth=1
+    MPCoop_func64 depth=1
+    Game_SelectStartingPoint depth=1
+    Scenario_Smth depth=1
+    MPCoop_func6C depth=1
+    MPCoop_func70 depth=1
+    Global_ShowScoreScreen2 depth=1
+    MPGameMode_SmthStartingHouses2 depth=1
+    MPGameMode_Create_Units depth=1
+    MPGameMode_CreateStartingUnits depth=1
+    sub_5DE520 depth=1
+    Scenario_SmthStartingHouses5 depth=1
+    ParasiteClass_UpdateSquiddy depth=1
+    FootClass_CreateWake depth=1
+    ParasiteClass_Update depth=1
+    ParticleClass_CTOR depth=1
+    ParticleClass_Update_Railgun depth=1
+    ParticleClass_Update_Spark depth=1
+    ParticleSystemClass_Update_Spark depth=1
+    ParticleSystemClass_Update_Railgun depth=1
+    RadBeam_DrawAll depth=1
+    W?Fill_In_Data$n()v depth=1
+    Get_Starting_Locations depth=1
+    W?Create_Units$n(i)v depth=1
+    W?Scan_Place_Object$n(pn$ObjectClass$$s)i depth=1
+    ScenarioClass_AssignSecretProduction depth=1
+    W?Read_MultiPlayer_Settings$:SessionClass$n()v depth=1
+    MPGameMode_func6C depth=1
+    sub_69B690 depth=1
+    Scenario_GenerateRandomCountries depth=1
+    sub_69B7E0 depth=1
+    Game_ProcessRandomPlayers depth=1
+    sub_6B59A0 depth=1
+    sub_6B5C90 depth=1
+    TActionClass_Execute depth=1
+    sub_6E1780 depth=1
+    Team_Scout depth=1
+    Team_GatherAtFriendlyBase depth=1
+    HouseClass_TryFindEligibleAITriggers depth=1
+    W?Evaluate_Object$:TechnoClass$n.x($ThreatType$$iipnx$1$rnii)i depth=1
+    TechnoClass_Update depth=1
+    W?Cloaking_AI$:TechnoClass$n()v depth=1
+    W?Rearm_Delay$:TechnoClass$n.x(ii)i depth=1
+    W?Radiation_Eruption$:TechnoClass$n(liulpnuc)i depth=1
+    TechnoClass_Fire depth=1
+    TechnoClass_ReceiveDamage depth=1
+    sub_705860 depth=1
+    TechnoClass_PointerGotInvalid depth=1
+    W?Crew_Type$:TechnoClass$n.x()$InfantryType$$ depth=1
+    W?Base_Is_Attacked$:TechnoClass$n(pnx$1$)v depth=1
+    W?Target_Something_Nearby$:TechnoClass$n($ThreatType$$)i depth=1
+    TechnoClass_DealParticleDamage depth=1
+    TechnoClass_UpdateTint_IronCurtain depth=1
+    TechnoClass_UpdateTint_Airstrike depth=1
+    InfantryClass_UpdateTargetingTimer depth=1
+    W?Next_Song$:ThemeClass$n.x($ThemeType$$)$2$ depth=1
+    W?Reset$:TriggerClass$n.x(rn$TDEventClass$$)v depth=1
+    UnitClass_Update depth=1
+    UnitClass_VisceroidWander depth=1
+    UnitClass_Put depth=1
+    UnitClass_ReceiveDamage depth=1
+    UnitClass_Unload depth=1
+    UnitClass_Harvest depth=1
+    UnitClass_Hunt depth=1
+    W?Mission_Guard$:UnitClass$n()i depth=1
+    UnitClass_Scatter depth=1
+    UnitClass_AreaGuard depth=1
+    UnitClass_UpdateDisguise depth=1
+    VoxelAnimClass_Update depth=1
+    VeinholeMonsterClass_Update depth=1
+    WaveClass_DamageCell depth=1
+    sub_770C10 depth=1
+    sub_771010 depth=1
+    sub_7712C0 depth=1
+    sub_7714B0 depth=1
+    sub_7A41C0 depth=1
+    sub_7B13D0 depth=1
+    sub_7B3AA0 depth=1
+
+int __thiscall Random2Class::operator()(RandomizerClass *this, int min, int max)
+{
+  int result; // eax
+  int v5; // ecx
+  int v6; // ebx
+  int v7; // edi
+  _BOOL1 v8; // zf
+  int v9; // ecx
+  int v10; // eax
+  int v11; // ebp
+  int v12; // eax
+  int v13; // eax
+  int v14; // esi
+  int v15; // ecx
+
+  result = min;
+  v5 = max;
+  v6 = min;
+  if ( min != max )
+  {
+    if ( min > max )
+    {
+      v6 = max;
+      v5 = min;
+    }
+    v7 = v5 - v6;
+    v8 = v5 - v6 >= 0;
+    v9 = 31;
+    if ( v8 )
+    {
+      do
+      {
+        if ( v9 <= 0 )
+          break;
+        --v9;
+      }
+      while ( ((1 << v9) & v7) == 0 );
+    }
+    v10 = v7 + 1;
+    v11 = ~(-1 << (v9 + 1));
+    if ( v7 + 1 > v7 && v7 + 1 != v7 )
+    {
+      do
+      {
+        if ( this->VT )
+        {
+          v12 = 0;
+        }
+        else
+        {
+          this->RandomChunks[this->field_4] ^= this->RandomChunks[this->field_8];
+          v13 = this->field_4;
+          v14 = this->RandomChunks[v13++];
+          v15 = this->field_8 + 1;
+          this->field_4 = v13;
+          this->field_8 = v15;
+          if ( v13 >= 250 )
+            this->field_4 = 0;
+          if ( v15 >= 250 )
+            this->field_8 = 0;
+          v12 = v14;
+        }
+        v10 = v11 & v12;
+      }
+      while ( v10 > v7 );
+    }
+    return v6 + v10;
+  }
+  return result;
+}
+
+
+====================================================================================================
+TARGET 0x55AFB3 in LogicClass_Update [0x55AFB0 - 0x55B71D]
+Callers:
+    LogicClass_Update depth=0
+    W?Main_Loop$n()i depth=1
+
+void __fastcall LogicClass_Update(VectorPtrObjectClass *this)
+{
+  int v1; // eax
+  ScenarioClass *Scenario; // edi
+  TagClass *Tag; // esi
+  int TimeLeft; // eax
+  int TimeStart; // edx
+  int v6; // eax
+  TimerStruct *p_MissionTimer; // edx
+  int v8; // eax
+  int v9; // ecx
+  int v10; // eax
+  int v11; // ebp
+  int v12; // eax
+  int v15; // eax
+  int v16; // edx
+  ScenarioClass *v17; // ebp
+  int v18; // edi
+  TimerStruct *p_ShroudRegrowTimer; // esi
+  signed int v20; // eax
+  int v21; // ecx
+  int v23; // eax
+  int v24; // edx
+  int v25; // eax
+  int v26; // edx
+  int v28; // eax
+  int v29; // ecx
+  int v30; // edi
+  int v31; // eax
+  int NukeAmbientChangeRate; // edx
+  TimerStruct *p_TimerZ; // ecx
+  int v35; // esi
+  signed int v36; // eax
+  int v37; // ecx
+  TimerStruct *v38; // edx
+  signed int v39; // eax
+  int AmbientCopy; // ecx
+  int v42; // eax
+  ScenarioClass *v43; // edx
+  int AmbientPercent; // ecx
+  int v45; // ecx
+  int v46; // edi
+  void *v47; // eax
+  PtrAITeamClass *v48; // esi
+  void *v49; // eax
+  int i; // esi
+  int j; // esi
+  int k; // esi
+  int m; // esi
+  AbstractClass *v54; // ecx
+  int n; // esi
+  int ii; // esi
+  int jj; // esi
+  HouseClass *v58; // ecx
+  dwXYZ *p_pos; // eax
+  int a2; // [esp+14h] [ebp-24h] BYREF
+  int Y; // [esp+18h] [ebp-20h]
+  int Memory; // [esp+1Ch] [ebp-1Ch]
+  void *v64[6]; // [esp+20h] [ebp-18h] BYREF
+
+  v1 = 0;
+  Scenario = ::Scenario;
+  ++dword_ABCD40;
+  dword_A83CDC = 0;
+  if ( vec_Tags_0x10.length > 0 )
+  {
+    while ( 1 )
+    {
+      Tag = vec_Tags_0x10.data[v1]._;
+      if ( Scenario->gap_34be[0] )
+      {
+        if ( TagClass_RaiseEvent(Tag, ekPickupCrate_any, 0, stru_ABCCD8, 0, 0) )
+          goto LABEL_22;
+        Scenario = ::Scenario;
+      }
+      if ( Scenario->field_34AA )
+      {
+        if ( TagClass_RaiseEvent(Tag, ekGlobalSet, 0, stru_ABCCD8, 0, 0)
+          || TagClass_RaiseEvent(Tag, ekGlobalCleared, 0, stru_ABCCD8, 0, 0)
+          || TagClass_RaiseEvent(Tag, ekLocalSet, 0, stru_ABCCD8, 0, 0)
+          || TagClass_RaiseEvent(Tag, ekLocalCleared, 0, stru_ABCCD8, 0, 0) )
+        {
+          goto LABEL_22;
+        }
+        Scenario = ::Scenario;
+      }
+      if ( Scenario->field_34AB
+        && (TagClass_RaiseEvent(Tag, ekAmbientLightBelow, 0, stru_ABCCD8, 0, 0)
+         || TagClass_RaiseEvent(Tag, ekAmbientLightAbove, 0, stru_ABCCD8, 0, 0))
+        || TagClass_RaiseEvent(Tag, ekElapsedTime, 0, stru_ABCCD8, 0, 0)
+        || TagClass_RaiseEvent(Tag, ekRandomDelay, 0, stru_ABCCD8, 0, 0) )
+      {
+        goto LABEL_22;
+      }
+      Scenario = ::Scenario;
+      if ( ::Scenario->MissionTimer.TimeStart != -1 )
+      {
+        TimeStart = ::Scenario->MissionTimer.TimeStart;
+        TimeLeft = ::Scenario->MissionTimer.TimeLeft;
+        if ( TimeStart != -1 )
+        {
+          if ( Frame - TimeStart >= TimeLeft )
+            break;
+          TimeLeft -= Frame - TimeStart;
+        }
+        if ( !TimeLeft )
+          break;
+      }
+LABEL_23:
+      v1 = ++dword_A83CDC;
+      if ( dword_A83CDC >= vec_Tags_0x10.length )
+        goto LABEL_24;
+    }
+    TagClass_RaiseEvent(Tag, ekMissionTimerExpired, 0, stru_ABCCD8, 0, 0);
+LABEL_22:
+    Scenario = ::Scenario;
+    goto LABEL_23;
+  }
+LABEL_24:
+  v6 = Scenario->MissionTimer.TimeStart;
+  p_MissionTimer = &Scenario->MissionTimer;
+  if ( v6 != -1 )
+  {
+    v9 = Scenario->MissionTimer.TimeLeft;
+    v8 = Frame - v6;
+    if ( Frame - Scenario->MissionTimer.TimeStart >= v9 || v9 == v8 )
+    {
+      if ( p_MissionTimer->TimeStart != -1 )
+      {
+        v10 = Scenario->MissionTimer.TimeLeft;
+        v11 = Frame - p_MissionTimer->TimeStart;
+        if ( v11 >= v10 )
+          v12 = 0;
+        else
+          v12 = v10 - v11;
+        Scenario->MissionTimer.TimeLeft = v12;
+        p_MissionTimer->TimeStart = -1;
+      }
+      GScreen_FlagToRedraw(&Map, 2);
+      Scenario = ::Scenario;
+    }
+  }
+  Scenario->field_34AA = 0;
+  ::Scenario->field_34A9 = 0;
+  ::Scenario->field_34AB = 0;
+  ::Scenario->gap_34be[0] = 0;
+  _EBX = RulesData;
+  if ( !RulesData->ShroudGrow )
+    goto LABEL_40;
+  __asm
+  {
+    fld     qword ptr [ebx+(RulesClass.VeinholeShrinkRate+155Ch)]
+    fcomp   ds:double_0
+    fnstsw  ax
+  }
+  if ( (_AX & 0x4000) != 0 )
+  {
+LABEL_40:
+    v17 = ::Scenario;
+    goto LABEL_41;
+  }
+  v17 = ::Scenario;
+  v18 = Frame;
+  v16 = ::Scenario->ShroudRegrowTimer.TimeStart;
+  v15 = ::Scenario->ShroudRegrowTimer.TimeLeft;
+  p_ShroudRegrowTimer = &::Scenario->ShroudRegrowTimer;
+  if ( v16 == -1 )
+    goto LABEL_38;
+  if ( Frame - v16 < v15 )
+  {
+    v15 -= Frame - v16;
+LABEL_38:
+    if ( v15 )
+      goto LABEL_42;
+  }
+  __asm
+  {
+    fld     qword ptr [ebx+(RulesClass.VeinholeShrinkRate+155Ch)]
+    fmul    ds:double_900; 900
+  }
+  v20 = Float_To_Int_Floor();
+  v21 = Y;
+  p_ShroudRegrowTimer->TimeStart = v18;
+  p_ShroudRegrowTimer->field_4 = v21;
+  p_ShroudRegrowTimer->TimeLeft = v20;
+  DisplayClass::Encroach_Shadow(&Map);
+  v17 = ::Scenario;
+  _EBX = RulesData;
+LABEL_41:
+  v18 = Frame;
+LABEL_42:
+  if ( !(v18 % 120) )
+  {
+    MapClass_ReshroudAgain(&Map);
+    v17 = ::Scenario;
+    _EBX = RulesData;
+    v18 = Frame;
+  }
+  if ( (v17->flags & 0x1000) != 0 )
+  {
+    __asm
+    {
+      fld     qword ptr [ebx+1648h]
+      fcomp   ds:double_0
+      fnstsw  ax
+    }
+    if ( (_AX & 0x4000) == 0 )
+    {
+      v24 = v17->TimerT.TimeStart;
+      v23 = v17->TimerT.TimeLeft;
+      if ( v24 != -1 )
+      {
+        if ( v18 - v24 >= v23 )
+        {
+LABEL_50:
+          __asm
+          {
+            fld     qword ptr [ebx+1648h]
+            fmul    ds:double_900; 900
+          }
+          v25 = Float_To_Int_Floor();
+          v26 = Y;
+          v17->TimerT.TimeStart = v18;
+          v17->TimerT.field_4 = v26;
+          v17->TimerT.TimeLeft = v25;
+          DisplayClass::Encroach_Fog(&Map);
+          v17 = ::Scenario;
+          _EBX = RulesData;
+          v18 = Frame;
+          goto LABEL_51;
+        }
+        v23 -= v18 - v24;
+      }
+      if ( !v23 )
+        goto LABEL_50;
+    }
+  }
+LABEL_51:
+  if ( v17->AmbientPercent != v17->AmbientCopy )
+  {
+    __asm
+    {
+      fld     qword ptr [ebx+(RulesClass.DropPod.data+1560h)]
+      fcomp   ds:double_0
+      fnstsw  ax
+    }
+    if ( (_AX & 0x4000) == 0 )
+    {
+      v29 = v17->TimerZ.TimeStart;
+      v28 = v17->TimerZ.TimeLeft;
+      if ( v29 != -1 )
+      {
+        v30 = v18 - v29;
+        if ( v30 >= v28 )
+          goto LABEL_57;
+        v28 -= v30;
+      }
+      if ( v28 )
+        goto LABEL_71;
+LABEL_57:
+      if ( Nuke_IsActive() || sub_53A120() || ChronoEffect_Active() )
+      {
+        NukeAmbientChangeRate = ::Scenario->NukeAmbientChangeRate;
+        p_TimerZ = &::Scenario->TimerZ;
+        ::Scenario->TimerZ.TimeStart = Frame;
+        v31 = Y;
+      }
+      else
+      {
+        if ( !PsyDom_IsActive() )
+        {
+          _ECX = RulesData;
+          v35 = Frame;
+          __asm
+          {
+            fld     qword ptr [ecx+1668h]
+            fmul    ds:double_900; 900
+          }
+          v36 = Float_To_Int_Floor();
+          v37 = Y;
+          v38 = &::Scenario->TimerZ;
+          ::Scenario->TimerZ.TimeStart = v35;
+          v38->field_4 = v37;
+          v38->TimeLeft = v36;
+          goto LABEL_65;
+        }
+        NukeAmbientChangeRate = ::Scenario->DominatorAmbientChangeRate;
+        p_TimerZ = &::Scenario->TimerZ;
+        ::Scenario->TimerZ.TimeStart = Frame;
+        v31 = Y;
+      }
+      p_TimerZ->field_4 = v31;
+      p_TimerZ->TimeLeft = NukeAmbientChangeRate;
+LABEL_65:
+      ::Scenario->AmbientPercent &= (::Scenario->AmbientPercent <= 0) - 1;
+      _EAX = RulesData;
+      __asm
+      {
+        fld     qword ptr [eax+(RulesClass.DropPod.IsInitialized+1560h)]
+        fmul    ds:num_100
+      }
+      v39 = Float_To_Int_Floor();
+      AmbientCopy = ::Scenario->AmbientCopy;
+      if ( ::Scenario->AmbientPercent >= AmbientCopy )
+      {
+        ::Scenario->AmbientCopy = v39 + AmbientCopy;
+        v43 = ::Scenario;
+        v42 = ::Scenario->AmbientCopy;
+        AmbientPercent = ::Scenario->AmbientPercent;
+        if ( v42 >= AmbientPercent )
+LABEL_69:
+          v42 = AmbientPercent;
+      }
+      else
+      {
+        ::Scenario->AmbientCopy = AmbientCopy - v39;
+        v43 = ::Scenario;
+        v42 = ::Scenario->AmbientCopy;
+        AmbientPercent = ::Scenario->AmbientPercent;
+        if ( v42 <= AmbientPercent )
+          goto LABEL_69;
+      }
+      v43->AmbientCopy = v42;
+      ::Scenario->field_34AB = 1;
+      sub_4AE4C0(&Map);
+      GScreen_FlagToRedraw(&Map, 1);
+    }
+  }
+LABEL_71:
+  sub_722C40();
+  sub_7221B0();
+  BombListClass_Update(&vec_BombList);
+  KamikazeContainer_Update(&KamikazeContainer.Timer.TimeStart);
+  v46 = 0;
+  sub_55BB40(0, 0);
+  v45 = 10;
+  v64[0] = &DynamicVectorClass<TeamClass *>::`vftable';
+  v64[5] = 10;
+  v64[4] = 0;
+  if ( vec_Teams.length > 0 )
+  {
+    v47 = v64[2];
+    while ( 1 )
+    {
+      v48 = &vec_Teams.data[v46];
+      if ( v64[4] < v47 )
+        goto LABEL_79;
+      if ( (BYTE1(v64[3]) || !v47) && v45 > 0 )
+        break;
+LABEL_81:
+      if ( ++v46 >= vec_Teams.length )
+        goto LABEL_82;
+      v45 = v64[5];
+    }
+    if ( (*(v64[0] + 2))(v64, v47 + v45, 0) )
+    {
+LABEL_79:
+      v49 = v64[4]++;
+      *(v64[1] + v49) = v48->_;
+    }
+    v47 = v64[2];
+    goto LABEL_81;
+  }
+LABEL_82:
+  for ( i = 0; i < v64[4]; ++i )
+    (*(**(v64[1] + i) + 92))(*(v64[1] + i));
+  for ( j = v_DiskLaser_count - 1; j >= 0; --j )
+    (*(**(v_DiskLaser_ptr + j) + 92))(*(v_DiskLaser_ptr + j));
+  SpotlightClass_UpdateAll();
+  LaserDrawClass_UpdateAll();
+  sub_53A6C0();
+  for ( k = vec_RadSites.length - 1; k >= 0; --k )
+    vec_RadSites.data[k]._->vt->Update(vec_RadSites.data[k]._);
+  vecLightSources_UpdateCells(6, 0);
+  EMPulseClass_UpdateAll();
+  for ( m = 0; m < this->length; ++m )
+  {
+    v54 = this->data[m]._;
+    (v54->iRTTIInfo[3].Create_ID)(v54);
+  }
+  if ( Session.idxGameMode )
+  {
+    if ( Session.idxGameMode != 5 )
+    {
+      for ( n = 0; n < *(&stru_A83E04 + 3); ++n )
+        (*(**(stru_A83E04 + n) + 92))(*(stru_A83E04 + n));
+    }
+  }
+  IonBlastClass_UpdateAll();
+  sub_420E90();
+  MapClass::Logic(&Map);
+  (*(TacticalMap->vt + 23))(TacticalMap);
+  for ( ii = 0; ii < Factory.length; ++ii )
+    Factory.data[ii]._->vt->Update(Factory.data[ii]._);
+  for ( jj = 0; jj < vec_Houses.length; ++jj )
+  {
+    v58 = vec_Houses.Vector[jj]._;
+    if ( v58 )
+      v58->vt->Update(v58);
+  }
+  if ( MapClass_FollowingWhat(&Map) )
+  {
+    p_pos = &MapClass_FollowingWhat(&Map)->t.r.m.o.pos;
+    a2 = p_pos->X;
+    Y = p_pos->Y;
+    Memory = p_pos->Z;
+    sub_6D6070(TacticalMap, &a2);
+  }
+  v64[0] = &VectorClass<TeamClass *>::`vftable';
+  if ( v64[1] )
+  {
+    if ( BYTE1(v64[3]) )
+      delete(v64[1]);
+  }
+}
+
+
+====================================================================================================
+TARGET 0x55B719 in LogicClass_Update [0x55AFB0 - 0x55B71D]
+Callers:
+    LogicClass_Update depth=0
+    W?Main_Loop$n()i depth=1
+
+void __fastcall LogicClass_Update(VectorPtrObjectClass *this)
+{
+  int v1; // eax
+  ScenarioClass *Scenario; // edi
+  TagClass *Tag; // esi
+  int TimeLeft; // eax
+  int TimeStart; // edx
+  int v6; // eax
+  TimerStruct *p_MissionTimer; // edx
+  int v8; // eax
+  int v9; // ecx
+  int v10; // eax
+  int v11; // ebp
+  int v12; // eax
+  int v15; // eax
+  int v16; // edx
+  ScenarioClass *v17; // ebp
+  int v18; // edi
+  TimerStruct *p_ShroudRegrowTimer; // esi
+  signed int v20; // eax
+  int v21; // ecx
+  int v23; // eax
+  int v24; // edx
+  int v25; // eax
+  int v26; // edx
+  int v28; // eax
+  int v29; // ecx
+  int v30; // edi
+  int v31; // eax
+  int NukeAmbientChangeRate; // edx
+  TimerStruct *p_TimerZ; // ecx
+  int v35; // esi
+  signed int v36; // eax
+  int v37; // ecx
+  TimerStruct *v38; // edx
+  signed int v39; // eax
+  int AmbientCopy; // ecx
+  int v42; // eax
+  ScenarioClass *v43; // edx
+  int AmbientPercent; // ecx
+  int v45; // ecx
+  int v46; // edi
+  void *v47; // eax
+  PtrAITeamClass *v48; // esi
+  void *v49; // eax
+  int i; // esi
+  int j; // esi
+  int k; // esi
+  int m; // esi
+  AbstractClass *v54; // ecx
+  int n; // esi
+  int ii; // esi
+  int jj; // esi
+  HouseClass *v58; // ecx
+  dwXYZ *p_pos; // eax
+  int a2; // [esp+14h] [ebp-24h] BYREF
+  int Y; // [esp+18h] [ebp-20h]
+  int Memory; // [esp+1Ch] [ebp-1Ch]
+  void *v64[6]; // [esp+20h] [ebp-18h] BYREF
+
+  v1 = 0;
+  Scenario = ::Scenario;
+  ++dword_ABCD40;
+  dword_A83CDC = 0;
+  if ( vec_Tags_0x10.length > 0 )
+  {
+    while ( 1 )
+    {
+      Tag = vec_Tags_0x10.data[v1]._;
+      if ( Scenario->gap_34be[0] )
+      {
+        if ( TagClass_RaiseEvent(Tag, ekPickupCrate_any, 0, stru_ABCCD8, 0, 0) )
+          goto LABEL_22;
+        Scenario = ::Scenario;
+      }
+      if ( Scenario->field_34AA )
+      {
+        if ( TagClass_RaiseEvent(Tag, ekGlobalSet, 0, stru_ABCCD8, 0, 0)
+          || TagClass_RaiseEvent(Tag, ekGlobalCleared, 0, stru_ABCCD8, 0, 0)
+          || TagClass_RaiseEvent(Tag, ekLocalSet, 0, stru_ABCCD8, 0, 0)
+          || TagClass_RaiseEvent(Tag, ekLocalCleared, 0, stru_ABCCD8, 0, 0) )
+        {
+          goto LABEL_22;
+        }
+        Scenario = ::Scenario;
+      }
+      if ( Scenario->field_34AB
+        && (TagClass_RaiseEvent(Tag, ekAmbientLightBelow, 0, stru_ABCCD8, 0, 0)
+         || TagClass_RaiseEvent(Tag, ekAmbientLightAbove, 0, stru_ABCCD8, 0, 0))
+        || TagClass_RaiseEvent(Tag, ekElapsedTime, 0, stru_ABCCD8, 0, 0)
+        || TagClass_RaiseEvent(Tag, ekRandomDelay, 0, stru_ABCCD8, 0, 0) )
+      {
+        goto LABEL_22;
+      }
+      Scenario = ::Scenario;
+      if ( ::Scenario->MissionTimer.TimeStart != -1 )
+      {
+        TimeStart = ::Scenario->MissionTimer.TimeStart;
+        TimeLeft = ::Scenario->MissionTimer.TimeLeft;
+        if ( TimeStart != -1 )
+        {
+          if ( Frame - TimeStart >= TimeLeft )
+            break;
+          TimeLeft -= Frame - TimeStart;
+        }
+        if ( !TimeLeft )
+          break;
+      }
+LABEL_23:
+      v1 = ++dword_A83CDC;
+      if ( dword_A83CDC >= vec_Tags_0x10.length )
+        goto LABEL_24;
+    }
+    TagClass_RaiseEvent(Tag, ekMissionTimerExpired, 0, stru_ABCCD8, 0, 0);
+LABEL_22:
+    Scenario = ::Scenario;
+    goto LABEL_23;
+  }
+LABEL_24:
+  v6 = Scenario->MissionTimer.TimeStart;
+  p_MissionTimer = &Scenario->MissionTimer;
+  if ( v6 != -1 )
+  {
+    v9 = Scenario->MissionTimer.TimeLeft;
+    v8 = Frame - v6;
+    if ( Frame - Scenario->MissionTimer.TimeStart >= v9 || v9 == v8 )
+    {
+      if ( p_MissionTimer->TimeStart != -1 )
+      {
+        v10 = Scenario->MissionTimer.TimeLeft;
+        v11 = Frame - p_MissionTimer->TimeStart;
+        if ( v11 >= v10 )
+          v12 = 0;
+        else
+          v12 = v10 - v11;
+        Scenario->MissionTimer.TimeLeft = v12;
+        p_MissionTimer->TimeStart = -1;
+      }
+      GScreen_FlagToRedraw(&Map, 2);
+      Scenario = ::Scenario;
+    }
+  }
+  Scenario->field_34AA = 0;
+  ::Scenario->field_34A9 = 0;
+  ::Scenario->field_34AB = 0;
+  ::Scenario->gap_34be[0] = 0;
+  _EBX = RulesData;
+  if ( !RulesData->ShroudGrow )
+    goto LABEL_40;
+  __asm
+  {
+    fld     qword ptr [ebx+(RulesClass.VeinholeShrinkRate+155Ch)]
+    fcomp   ds:double_0
+    fnstsw  ax
+  }
+  if ( (_AX & 0x4000) != 0 )
+  {
+LABEL_40:
+    v17 = ::Scenario;
+    goto LABEL_41;
+  }
+  v17 = ::Scenario;
+  v18 = Frame;
+  v16 = ::Scenario->ShroudRegrowTimer.TimeStart;
+  v15 = ::Scenario->ShroudRegrowTimer.TimeLeft;
+  p_ShroudRegrowTimer = &::Scenario->ShroudRegrowTimer;
+  if ( v16 == -1 )
+    goto LABEL_38;
+  if ( Frame - v16 < v15 )
+  {
+    v15 -= Frame - v16;
+LABEL_38:
+    if ( v15 )
+      goto LABEL_42;
+  }
+  __asm
+  {
+    fld     qword ptr [ebx+(RulesClass.VeinholeShrinkRate+155Ch)]
+    fmul    ds:double_900; 900
+  }
+  v20 = Float_To_Int_Floor();
+  v21 = Y;
+  p_ShroudRegrowTimer->TimeStart = v18;
+  p_ShroudRegrowTimer->field_4 = v21;
+  p_ShroudRegrowTimer->TimeLeft = v20;
+  DisplayClass::Encroach_Shadow(&Map);
+  v17 = ::Scenario;
+  _EBX = RulesData;
+LABEL_41:
+  v18 = Frame;
+LABEL_42:
+  if ( !(v18 % 120) )
+  {
+    MapClass_ReshroudAgain(&Map);
+    v17 = ::Scenario;
+    _EBX = RulesData;
+    v18 = Frame;
+  }
+  if ( (v17->flags & 0x1000) != 0 )
+  {
+    __asm
+    {
+      fld     qword ptr [ebx+1648h]
+      fcomp   ds:double_0
+      fnstsw  ax
+    }
+    if ( (_AX & 0x4000) == 0 )
+    {
+      v24 = v17->TimerT.TimeStart;
+      v23 = v17->TimerT.TimeLeft;
+      if ( v24 != -1 )
+      {
+        if ( v18 - v24 >= v23 )
+        {
+LABEL_50:
+          __asm
+          {
+            fld     qword ptr [ebx+1648h]
+            fmul    ds:double_900; 900
+          }
+          v25 = Float_To_Int_Floor();
+          v26 = Y;
+          v17->TimerT.TimeStart = v18;
+          v17->TimerT.field_4 = v26;
+          v17->TimerT.TimeLeft = v25;
+          DisplayClass::Encroach_Fog(&Map);
+          v17 = ::Scenario;
+          _EBX = RulesData;
+          v18 = Frame;
+          goto LABEL_51;
+        }
+        v23 -= v18 - v24;
+      }
+      if ( !v23 )
+        goto LABEL_50;
+    }
+  }
+LABEL_51:
+  if ( v17->AmbientPercent != v17->AmbientCopy )
+  {
+    __asm
+    {
+      fld     qword ptr [ebx+(RulesClass.DropPod.data+1560h)]
+      fcomp   ds:double_0
+      fnstsw  ax
+    }
+    if ( (_AX & 0x4000) == 0 )
+    {
+      v29 = v17->TimerZ.TimeStart;
+      v28 = v17->TimerZ.TimeLeft;
+      if ( v29 != -1 )
+      {
+        v30 = v18 - v29;
+        if ( v30 >= v28 )
+          goto LABEL_57;
+        v28 -= v30;
+      }
+      if ( v28 )
+        goto LABEL_71;
+LABEL_57:
+      if ( Nuke_IsActive() || sub_53A120() || ChronoEffect_Active() )
+      {
+        NukeAmbientChangeRate = ::Scenario->NukeAmbientChangeRate;
+        p_TimerZ = &::Scenario->TimerZ;
+        ::Scenario->TimerZ.TimeStart = Frame;
+        v31 = Y;
+      }
+      else
+      {
+        if ( !PsyDom_IsActive() )
+        {
+          _ECX = RulesData;
+          v35 = Frame;
+          __asm
+          {
+            fld     qword ptr [ecx+1668h]
+            fmul    ds:double_900; 900
+          }
+          v36 = Float_To_Int_Floor();
+          v37 = Y;
+          v38 = &::Scenario->TimerZ;
+          ::Scenario->TimerZ.TimeStart = v35;
+          v38->field_4 = v37;
+          v38->TimeLeft = v36;
+          goto LABEL_65;
+        }
+        NukeAmbientChangeRate = ::Scenario->DominatorAmbientChangeRate;
+        p_TimerZ = &::Scenario->TimerZ;
+        ::Scenario->TimerZ.TimeStart = Frame;
+        v31 = Y;
+      }
+      p_TimerZ->field_4 = v31;
+      p_TimerZ->TimeLeft = NukeAmbientChangeRate;
+LABEL_65:
+      ::Scenario->AmbientPercent &= (::Scenario->AmbientPercent <= 0) - 1;
+      _EAX = RulesData;
+      __asm
+      {
+        fld     qword ptr [eax+(RulesClass.DropPod.IsInitialized+1560h)]
+        fmul    ds:num_100
+      }
+      v39 = Float_To_Int_Floor();
+      AmbientCopy = ::Scenario->AmbientCopy;
+      if ( ::Scenario->AmbientPercent >= AmbientCopy )
+      {
+        ::Scenario->AmbientCopy = v39 + AmbientCopy;
+        v43 = ::Scenario;
+        v42 = ::Scenario->AmbientCopy;
+        AmbientPercent = ::Scenario->AmbientPercent;
+        if ( v42 >= AmbientPercent )
+LABEL_69:
+          v42 = AmbientPercent;
+      }
+      else
+      {
+        ::Scenario->AmbientCopy = AmbientCopy - v39;
+        v43 = ::Scenario;
+        v42 = ::Scenario->AmbientCopy;
+        AmbientPercent = ::Scenario->AmbientPercent;
+        if ( v42 <= AmbientPercent )
+          goto LABEL_69;
+      }
+      v43->AmbientCopy = v42;
+      ::Scenario->field_34AB = 1;
+      sub_4AE4C0(&Map);
+      GScreen_FlagToRedraw(&Map, 1);
+    }
+  }
+LABEL_71:
+  sub_722C40();
+  sub_7221B0();
+  BombListClass_Update(&vec_BombList);
+  KamikazeContainer_Update(&KamikazeContainer.Timer.TimeStart);
+  v46 = 0;
+  sub_55BB40(0, 0);
+  v45 = 10;
+  v64[0] = &DynamicVectorClass<TeamClass *>::`vftable';
+  v64[5] = 10;
+  v64[4] = 0;
+  if ( vec_Teams.length > 0 )
+  {
+    v47 = v64[2];
+    while ( 1 )
+    {
+      v48 = &vec_Teams.data[v46];
+      if ( v64[4] < v47 )
+        goto LABEL_79;
+      if ( (BYTE1(v64[3]) || !v47) && v45 > 0 )
+        break;
+LABEL_81:
+      if ( ++v46 >= vec_Teams.length )
+        goto LABEL_82;
+      v45 = v64[5];
+    }
+    if ( (*(v64[0] + 2))(v64, v47 + v45, 0) )
+    {
+LABEL_79:
+      v49 = v64[4]++;
+      *(v64[1] + v49) = v48->_;
+    }
+    v47 = v64[2];
+    goto LABEL_81;
+  }
+LABEL_82:
+  for ( i = 0; i < v64[4]; ++i )
+    (*(**(v64[1] + i) + 92))(*(v64[1] + i));
+  for ( j = v_DiskLaser_count - 1; j >= 0; --j )
+    (*(**(v_DiskLaser_ptr + j) + 92))(*(v_DiskLaser_ptr + j));
+  SpotlightClass_UpdateAll();
+  LaserDrawClass_UpdateAll();
+  sub_53A6C0();
+  for ( k = vec_RadSites.length - 1; k >= 0; --k )
+    vec_RadSites.data[k]._->vt->Update(vec_RadSites.data[k]._);
+  vecLightSources_UpdateCells(6, 0);
+  EMPulseClass_UpdateAll();
+  for ( m = 0; m < this->length; ++m )
+  {
+    v54 = this->data[m]._;
+    (v54->iRTTIInfo[3].Create_ID)(v54);
+  }
+  if ( Session.idxGameMode )
+  {
+    if ( Session.idxGameMode != 5 )
+    {
+      for ( n = 0; n < *(&stru_A83E04 + 3); ++n )
+        (*(**(stru_A83E04 + n) + 92))(*(stru_A83E04 + n));
+    }
+  }
+  IonBlastClass_UpdateAll();
+  sub_420E90();
+  MapClass::Logic(&Map);
+  (*(TacticalMap->vt + 23))(TacticalMap);
+  for ( ii = 0; ii < Factory.length; ++ii )
+    Factory.data[ii]._->vt->Update(Factory.data[ii]._);
+  for ( jj = 0; jj < vec_Houses.length; ++jj )
+  {
+    v58 = vec_Houses.Vector[jj]._;
+    if ( v58 )
+      v58->vt->Update(v58);
+  }
+  if ( MapClass_FollowingWhat(&Map) )
+  {
+    p_pos = &MapClass_FollowingWhat(&Map)->t.r.m.o.pos;
+    a2 = p_pos->X;
+    Y = p_pos->Y;
+    Memory = p_pos->Z;
+    sub_6D6070(TacticalMap, &a2);
+  }
+  v64[0] = &VectorClass<TeamClass *>::`vftable';
+  if ( v64[1] )
+  {
+    if ( BYTE1(v64[3]) )
+      delete(v64[1]);
+  }
+}
+
+
+====================================================================================================
+TARGET 0x6F9B7E in W?Greatest_Threat$:TechnoClass$n.x($ThreatType$$)l [0x6F8DF0 - 0x6F9DAF]
+Callers:
+    W?Greatest_Threat$:TechnoClass$n.x($ThreatType$$)l depth=0
+    BuildingClass_SelectAutoTarget depth=1
+    W?Greatest_Threat$:FootClass$n.x($ThreatType$$)l depth=1
+
+_TechnoClass *__thiscall TechnoClass::Greatest_Threat(
+        _TechnoClass *this,
+        eTargetTypeFlags projFlags,
+        int curThreat,
+        char a4)
+{
+  vt_TechnoClass *this__; // eax
+  __int32 projFlags_; // ebx
+  int *v8; // eax
+  vt_TechnoClass *vt; // edx
+  _TechnoTypeClass *v10; // eax
+  __int32 v11; // ebx
+  int v12; // eax
+  int v13; // ecx
+  int v14; // eax
+  _TechnoClass *Transporter; // ecx
+  int v16; // edi
+  int v17; // eax
+  _TechnoTypeClass *v18; // eax
+  int Cost; // eax
+  int v20; // edi
+  int v21; // ecx
+  vt_TechnoClass *v22; // edx
+  _TechnoClass *target_; // ebp
+  CellClass *v24; // eax
+  _TechnoClass *v25; // eax
+  HouseClass_old *v26; // ecx
+  int v27; // eax
+  int count; // ecx
+  int incrementAmount; // eax
+  int length; // eax
+  PtrCellTypeClass *data; // edx
+  int v32; // ecx
+  int v33; // eax
+  int v34; // eax
+  int *v35; // edx
+  _TechnoClass *v36; // eax
+  int v37; // edi
+  eTargetTypeFlags v38; // ebx
+  int v39; // eax
+  _TechnoClass *v40; // ebp
+  int v41; // ecx
+  int v42; // eax
+  PtrCellTypeClass *v43; // edx
+  int v44; // ecx
+  int v45; // eax
+  int v46; // eax
+  int *v47; // edx
+  int v48; // eax
+  int v49; // eax
+  int v50; // ebp
+  int v51; // ecx
+  int v52; // eax
+  PtrCellTypeClass *v53; // edx
+  int v54; // ecx
+  int v55; // eax
+  int v56; // eax
+  int *v57; // edx
+  int v58; // eax
+  int v59; // ebx
+  int v60; // eax
+  int v61; // ebp
+  int v62; // ecx
+  int v63; // eax
+  PtrCellTypeClass *v64; // edx
+  int v65; // ecx
+  int v66; // eax
+  int v67; // eax
+  int *v68; // edx
+  int v69; // eax
+  int v70; // eax
+  int v71; // ebp
+  int v72; // ecx
+  int v73; // eax
+  PtrCellTypeClass *v74; // edx
+  int v75; // ecx
+  int v76; // eax
+  int v77; // eax
+  int *v78; // edx
+  int v79; // eax
+  int v80; // edi
+  char v81; // bl
+  int i; // ebp
+  AircraftClass *curAircraft; // edi
+  HouseClass_old *OwningPlayer; // ecx
+  int v85; // eax
+  int v86; // ebx
+  int *v87; // ebp
+  _TechnoClass *v88; // edi
+  HouseClass_old *v89; // ecx
+  _BOOL1 v90; // [esp+13h] [ebp-59h]
+  int newTargetFlags; // [esp+14h] [ebp-58h]
+  int threat_; // [esp+18h] [ebp-54h] BYREF
+  int BestThreat; // [esp+1Ch] [ebp-50h]
+  _TechnoClass *BestTarget; // [esp+20h] [ebp-4Ch]
+  int v95; // [esp+24h] [ebp-48h]
+  wXY a2; // [esp+28h] [ebp-44h] BYREF
+  int wanteddistance; // [esp+2Ch] [ebp-40h]
+  int v98; // [esp+30h] [ebp-3Ch]
+  wXY v99; // [esp+34h] [ebp-38h] BYREF
+  int v100; // [esp+38h] [ebp-34h]
+  _TechnoTypeClass *wat; // [esp+3Ch] [ebp-30h]
+  wXY v102; // [esp+40h] [ebp-2Ch]
+  wXY v103; // [esp+44h] [ebp-28h]
+  wXY v104; // [esp+48h] [ebp-24h]
+  wXY v105; // [esp+4Ch] [ebp-20h]
+  wXY position; // [esp+50h] [ebp-1Ch] BYREF
+  int v107; // [esp+54h] [ebp-18h]
+  wXY coords; // [esp+58h] [ebp-14h] BYREF
+  Point3D ptr; // [esp+60h] [ebp-Ch] BYREF
+
+  BestTarget = 0;
+  ++TargetScan;
+  this__ = this->vt;
+  BestThreat = -1;
+  wat = -1;
+  if ( LOBYTE(this__->r.m.o.GetTechnoType(this)->t.JumpjetWobbles) && HouseClass::Is_Human(this->t.OwningPlayer) )// NoAutoFire
+    return 0;
+  LOWORD(projFlags_) = projFlags;
+  if ( (projFlags & e01) == 0
+    && this->vt->r.m.o.a.What_Am_I(this) != eBuilding
+    && this->vt->r.m.o.a.What_Am_I(this) != eAircraft )
+  {
+    v8 = this->vt->r.m.o.a.GetCoords(this, &ptr);
+    v102.X = *v8 / 256;
+    vt = this->vt;
+    v102.Y = v8[1] / 256;
+    position = v102;
+    v10 = vt->r.m.o.GetTechnoType(this);
+    wat = MapClass_CanLocationBeReached(&Map, &position, v10->t.MindControlRingOffset, 1);
+  }
+  if ( this->vt->r.m.o.a.What_Am_I(this) == eInfantry )
+  {
+    if ( TechnoClass::Combat_Damage(this, -1) < 0 )
+    {
+      projFlags_ = projFlags & (e02|e01) | ttFriendlies|ttInf;
+LABEL_16:
+      projFlags = projFlags_;
+      goto LABEL_17;
+    }
+    if ( *(this[1].t.IronTintTimer.TimeLeft + 0xEC3) )// Engineer
+    {
+      LOWORD(projFlags_) = projFlags & ~(ttVeh|ttInf);
+      projFlags &= ~(ttVeh|ttInf);
+    }
+  }
+  else if ( this->vt->r.m.o.a.What_Am_I(this) == eUnit && TechnoClass::Combat_Damage(this, -1) < 0 )
+  {
+    projFlags_ = projFlags & (e02|e01) | ttFriendlies|ttVeh;
+    goto LABEL_16;
+  }
+LABEL_17:
+  newTargetFlags = 0;
+  if ( (projFlags_ & 0x100) != 0 )
+    newTargetFlags = eTargetTypeNewFlags_8000|ttnBuilding|ttnAircraft;
+  v11 = projFlags_ & ttAircraft;
+  if ( v11 )
+  {
+    v12 = newTargetFlags;
+    LOBYTE(v12) = newTargetFlags | ttnVehicle;
+    newTargetFlags = v12;
+  }
+  if ( (projFlags & (ttTechCapture|ttOccupiable|ttBaseDefense|ttFactories|ttPower|eCapture|ttHarvest|ttBuild)) != 0 )
+    newTargetFlags |= ttnBuilding;
+  if ( (projFlags & ttInf) != 0 )
+  {
+    v13 = newTargetFlags;
+    BYTE1(v13) = BYTE1(newTargetFlags) | ttnInfantry;
+    newTargetFlags = v13;
+  }
+  if ( (projFlags & (ttHarvest|ttVeh)) != 0 )
+  {
+    v14 = newTargetFlags;
+    LOBYTE(v14) = newTargetFlags | ttnAircraft;
+    newTargetFlags = v14;
+  }
+  if ( LOBYTE(this->vt->r.m.o.GetTechnoType(this)->t.RotCount) )// DistributedFire
+  {
+    this->t.CurrentTargets.vt->Clear();
+    this->t.CurrentTargetThreats.vt->Clear();
+  }
+  Transporter = this->t.Transporter;
+  v90 = 0;
+  if ( Transporter && LOBYTE(Transporter->vt->r.m.o.GetTechnoType(Transporter)->t.Prerequisite._.Vector) )// OpenTopped
+    v90 = this->t.Transporter->t.MindControlledBy != 0;
+  if ( (projFlags & (e02|e01)) == 0 )
+  {
+    v81 = a4;
+    if ( (newTargetFlags & ttnVehicle) != 0 )
+    {
+      for ( i = 0; i < vec_Aircrafts.length; ++i )
+      {
+        OwningPlayer = this->t.OwningPlayer;
+        curAircraft = vec_Aircrafts.data[i]._;  // AttackFriendlies
+        position = 0;
+        if ( (!HouseClass::Is_Ally(OwningPlayer, curAircraft)
+           || LOBYTE(this->vt->r.m.o.GetTechnoType(this)->t.Points_)
+           || this->t.Berzerk
+           || v90)
+          && (!v81 || curAircraft->f.t.OwningPlayer->PlayerNumber == this->t.OwningPlayer->idxEnemyHouse)
+          && ((BYTE1(projFlags) & 0x40) == 0 || HouseClass::Is_Ally(this->t.OwningPlayer, curAircraft->f.t.OwningPlayer))
+          && TechnoClass::Evaluate_Object(
+               this,
+               projFlags,
+               newTargetFlags,
+               -1,
+               curAircraft,
+               &position,
+               -1,
+               &TechnoClass_DefaultCoords.X)
+          && *&position > BestThreat )
+        {
+          BestTarget = curAircraft;
+          BestThreat = position;
+        }
+      }
+    }
+    if ( (projFlags & ttVeh) != 0 )
+    {
+      v85 = newTargetFlags;
+      LOBYTE(v85) = newTargetFlags | ttnVehicle;
+      newTargetFlags = v85;
+    }
+    v86 = 0;
+    if ( vec_Techno.length > 0 )
+    {
+      v87 = curThreat;
+      do
+      {
+        v89 = this->t.OwningPlayer;
+        v88 = vec_Techno.data[v86]._;
+        curThreat = 0;
+        if ( (!HouseClass::Is_Ally(v89, v88)
+           || TechnoClass::Combat_Damage(this, -1) < 0
+           || !HouseClass::Is_Human(this->t.OwningPlayer)
+           && this
+           && this->vt->r.m.o.a.What_Am_I(this) == eInfantry
+           && *(*(this->vt->r.m.o.a.What_Am_I(this) == eInfantry ? &this[1].t.IronTintTimer.TimeLeft : 1728) + 0xEC3)
+           || LOBYTE(this->vt->r.m.o.GetTechnoType(this)->t.Points_)
+           || this->t.Berzerk
+           || v90)
+          && v88->t.r.m.o.BerserkCapable == 2
+          && (!a4 || v88->t.OwningPlayer->PlayerNumber == this->t.OwningPlayer->idxEnemyHouse)
+          && ((BYTE1(projFlags) & 0x40) == 0 || HouseClass::Is_Ally(this->t.OwningPlayer, v88->t.OwningPlayer))
+          && TechnoClass::Evaluate_Object(this, projFlags, newTargetFlags, -1, v88, &curThreat, wat, v87)
+          && curThreat > BestThreat )
+        {
+          BestTarget = v88;
+          BestThreat = curThreat;
+        }
+        ++v86;
+      }
+      while ( v86 < vec_Techno.length );
+    }
+    return BestTarget;
+  }
+  v16 = 0;
+  wanteddistance = 0;
+  if ( (projFlags & 1) != 0 )
+  {
+    v17 = (this->vt->Techno_31C)(this, 0);
+LABEL_39:
+    v16 = v17;
+    wanteddistance = v17;
+    goto LABEL_40;
+  }
+  if ( (projFlags & e02) != 0 )
+  {
+    if ( this->t.r.m.currentMission == mi_Patrol )
+      v17 = this->vt->Techno_31C(this);
+    else
+      v17 = (this->vt->Techno_31C)(this, 1);
+    goto LABEL_39;
+  }
+LABEL_40:
+  if ( TechnoClass::Combat_Damage(this, -1) < 0 && this->t.r.m.currentMission == mi_Guard )
+  {
+    v16 = 512;
+    wanteddistance = 512;
+  }
+  v100 = v16 / 256;
+  if ( !v16 )
+  {
+    v18 = this->vt->r.m.o.GetTechnoType(this);
+    if ( !TechnoTypeClass_IsTurretChanger(v18) || this->vt->r.m.o.GetTechnoType(this)->t.RejoinTeamIfLimboed )
+    {
+      if ( this->vt->r.m.o.GetTechnoType(this)->t.Palette[1]
+        && HIBYTE(this->vt->r.m.o.GetTechnoType(this)[1].VTable)
+        && LOBYTE(this->vt->r.m.o.GetTechnoType(this)->t.JumpjetCrash) )// Underwater && Organic && SelfHealing
+      {
+        Cost = this->vt->r.m.o.GetTechnoType(this)->t.Cost;// GuardRange
+      }
+      else
+      {
+        v20 = this->vt->r.m.o.GetWeaponRange(this, 1);
+        if ( this->vt->r.m.o.GetWeaponRange(this, 0) <= v20 )
+          Cost = this->vt->r.m.o.GetWeaponRange(this, 1);
+        else
+          Cost = this->vt->r.m.o.GetWeaponRange(this, 0);
+      }
+    }
+    else
+    {
+      Cost = this->vt->r.m.o.GetWeaponRange(this, this->t.CurrentTurretNumber);
+    }
+    v100 = Cost / 256 + *this->vt->r.m.o.GetTechnoType(this)->t.gap_6f0 / 256 + 1;
+  }
+  v21 = curThreat;
+  LOWORD(curThreat) = *curThreat / 256;
+  v22 = this->vt;
+  HIWORD(curThreat) = *(v21 + 4) / 256;
+  coords = curThreat;
+  if ( v22->CanOccupyFire(this) )
+    v100 = this->vt->Techno_404(this) + RulesData->OccupyWeaponRange + 1;
+  if ( v11 )
+  {
+    v24 = MapClass::Coord_Cell(&Map, &coords);
+    sub_412B40(v24, v100);
+    gfv_removeFirstItem(&GlobalUnitsForSomething);
+    target_ = v25;
+    if ( v25 )
+    {
+      do
+      {
+        v26 = this->t.OwningPlayer;
+        curThreat = 0;
+        if ( (!HouseClass::Is_Ally(v26, target_)
+           || LOBYTE(this->vt->r.m.o.GetTechnoType(this)->t.Points_)
+           || this->t.Berzerk
+           || v90)
+          && ((BYTE1(projFlags) & 0x40) == 0 || HouseClass::Is_Ally(this->t.OwningPlayer, target_->t.OwningPlayer)) )
+        {
+          if ( target_->t.r.m.o.field_6C )
+          {
+            LOBYTE(v27) = target_->vt->r.m.o.InWhichLayer(target_);
+            if ( v27 != 2 && (!a4 || target_->t.OwningPlayer->PlayerNumber == this->t.OwningPlayer->idxEnemyHouse) )
+            {
+              if ( TechnoClass::Evaluate_Object(
+                     this,
+                     projFlags,
+                     (newTargetFlags | 0x8002),
+                     wanteddistance,
+                     target_,
+                     &curThreat,
+                     -1,
+                     &TechnoClass_DefaultCoords.X) )
+              {
+                if ( LOBYTE(this->vt->r.m.o.GetTechnoType(this)->t.RotCount) )// DistributedFire
+                {
+                  count = this->t.CurrentTargets.count;
+                  if ( this->t.CurrentTargets.length < count
+                    || (this->t.CurrentTargets.IsAllocated || !count)
+                    && (incrementAmount = this->t.CurrentTargets.incrementAmount, incrementAmount > 0)
+                    && this->t.CurrentTargets.vt->Resize(count + incrementAmount, 0) )
+                  {
+                    length = this->t.CurrentTargets.length;
+                    data = this->t.CurrentTargets.data;
+                    this->t.CurrentTargets.length = length + 1;
+                    data[length]._ = target_;
+                  }
+                  v32 = this->t.CurrentTargetThreats.count;
+                  if ( this->t.CurrentTargetThreats.length < v32
+                    || (this->t.CurrentTargetThreats.IsAllocated || !v32)
+                    && (v33 = this->t.field_450, v33 > 0)
+                    && (this->t.CurrentTargetThreats.vt->Resize)(&this->t.CurrentTargetThreats, v32 + v33, 0) )
+                  {
+                    v34 = this->t.CurrentTargetThreats.length;
+                    v35 = this->t.CurrentTargetThreats.data;
+                    this->t.CurrentTargetThreats.length = v34 + 1;
+                    v35[v34] = curThreat;
+                  }
+                }
+                if ( curThreat > BestThreat )
+                {
+                  BestTarget = target_;
+                  BestThreat = curThreat;
+                }
+              }
+            }
+          }
+        }
+        gfv_removeFirstItem(&GlobalUnitsForSomething);
+        target_ = v36;
+      }
+      while ( v36 );
+    }
+  }
+  if ( (projFlags & ttVeh) != 0 )
+    newTargetFlags |= ttnVehicle;
+  if ( projFlags == (ttAircraft|e01) )
+    return BestTarget;
+  v99.X = 0;
+  v99.Y = 0;
+  v98 = 0;
+  v95 = 0;
+  if ( v100 <= 0 )
+    return BestTarget;
+  while ( 1 )
+  {
+    v37 = -v95;
+    v102 = -v95;
+    if ( -v95 <= v95 )
+    {
+      HIWORD(ptr.X) = -v95;
+      while ( 1 )
+      {
+        v103.Y = HIWORD(ptr.X) + coords.Y;
+        v103.X = v37 + coords.X;
+        a2 = v103;
+        if ( MapClass::In_Radar(&Map, &a2) )
+        {
+          v38 = projFlags;
+          if ( TechnoClass::Evaluate_Cell(
+                 this,
+                 projFlags,
+                 newTargetFlags,
+                 &a2,
+                 wanteddistance,
+                 &curThreat,
+                 &threat_,
+                 wat)
+            && curThreat
+            && (!a4 || *(*(curThreat + 540) + 48) == this->t.OwningPlayer->idxEnemyHouse)
+            && ((BYTE1(projFlags) & 0x40) == 0 || HouseClass::Is_Ally(this->t.OwningPlayer, *(curThreat + 540))) )
+          {
+            if ( LOBYTE(this->vt->r.m.o.GetTechnoType(this)->t.RotCount) )
+            {
+              v39 = this->t.CurrentTargets.count;
+              v40 = curThreat;
+              if ( this->t.CurrentTargets.length < v39
+                || (this->t.CurrentTargets.IsAllocated || !v39)
+                && (v41 = this->t.CurrentTargets.incrementAmount, v41 > 0)
+                && (this->t.CurrentTargets.vt->Resize)(&this->t.CurrentTargets, v39 + v41, 0) )
+              {
+                v42 = this->t.CurrentTargets.length;
+                v43 = this->t.CurrentTargets.data;
+                this->t.CurrentTargets.length = v42 + 1;
+                v43[v42]._ = v40;
+              }
+              v44 = this->t.CurrentTargetThreats.count;
+              if ( this->t.CurrentTargetThreats.length < v44
+                || (this->t.CurrentTargetThreats.IsAllocated || !v44)
+                && (v45 = this->t.field_450, v45 > 0)
+                && (this->t.CurrentTargetThreats.vt->Resize)(&this->t.CurrentTargetThreats, v44 + v45, 0) )
+              {
+                v46 = this->t.CurrentTargetThreats.length;
+                v47 = this->t.CurrentTargetThreats.data;
+                this->t.CurrentTargetThreats.length = v46 + 1;
+                v47[v46] = threat_;
+              }
+            }
+            if ( BestThreat < threat_ )
+            {
+              BestThreat = threat_;
+              BestTarget = curThreat;
+            }
+          }
+          if ( !BestTarget )
+          {
+            v48 = TechnoClass::Evaluate_Just_Cell(&a2);
+            threat_ = v48;
+            if ( v98 < v48 )
+            {
+              v98 = v48;
+              v99 = a2;
+            }
+          }
+          LOWORD(v37) = v102.X;
+        }
+        else
+        {
+          v38 = projFlags;
+        }
+        v104.Y = v95 + coords.Y;
+        v104.X = v37 + coords.X;
+        a2 = v104;
+        if ( MapClass::In_Radar(&Map, &a2) )
+        {
+          if ( TechnoClass::Evaluate_Cell(this, v38, newTargetFlags, &a2, wanteddistance, &curThreat, &threat_, wat)
+            && curThreat
+            && (!a4 || *(*(curThreat + 540) + 48) == this->t.OwningPlayer->idxEnemyHouse)
+            && ((BYTE1(v38) & 0x40) == 0 || HouseClass::Is_Ally(this->t.OwningPlayer, *(curThreat + 540))) )
+          {
+            if ( LOBYTE(this->vt->r.m.o.GetTechnoType(this)->t.RotCount) )
+            {
+              v49 = this->t.CurrentTargets.count;
+              v50 = curThreat;
+              if ( this->t.CurrentTargets.length < v49
+                || (this->t.CurrentTargets.IsAllocated || !v49)
+                && (v51 = this->t.CurrentTargets.incrementAmount, v51 > 0)
+                && (this->t.CurrentTargets.vt->Resize)(&this->t.CurrentTargets, v49 + v51, 0) )
+              {
+                v52 = this->t.CurrentTargets.length;
+                v53 = this->t.CurrentTargets.data;
+                this->t.CurrentTargets.length = v52 + 1;
+                v53[v52]._ = v50;
+              }
+              v54 = this->t.CurrentTargetThreats.count;
+              if ( this->t.CurrentTargetThreats.length < v54
+                || (this->t.CurrentTargetThreats.IsAllocated || !v54)
+                && (v55 = this->t.field_450, v55 > 0)
+                && (this->t.CurrentTargetThreats.vt->Resize)(&this->t.CurrentTargetThreats, v54 + v55, 0) )
+              {
+                v56 = this->t.CurrentTargetThreats.length;
+                v57 = this->t.CurrentTargetThreats.data;
+                this->t.CurrentTargetThreats.length = v56 + 1;
+                v57[v56] = threat_;
+              }
+            }
+            if ( BestThreat < threat_ )
+            {
+              BestThreat = threat_;
+              BestTarget = curThreat;
+            }
+          }
+          if ( !BestTarget )
+          {
+            v58 = TechnoClass::Evaluate_Just_Cell(&a2);
+            threat_ = v58;
+            if ( v98 < v58 )
+            {
+              v98 = v58;
+              v99 = a2;
+            }
+          }
+        }
+        if ( ++*&v102 > v95 )
+          break;
+        LOWORD(v37) = v102.X;
+      }
+    }
+    v59 = 1 - v95;
+    if ( 1 - v95 < v95 )
+    {
+      LOWORD(v107) = -v95;
+      do
+      {
+        v105.X = coords.X + v107;
+        v105.Y = v59 + coords.Y;
+        a2 = v105;
+        if ( MapClass::In_Radar(&Map, &a2) )
+        {
+          if ( TechnoClass::Evaluate_Cell(
+                 this,
+                 projFlags,
+                 newTargetFlags,
+                 &a2,
+                 wanteddistance,
+                 &curThreat,
+                 &threat_,
+                 wat)
+            && curThreat
+            && (!a4 || *(*(curThreat + 540) + 48) == this->t.OwningPlayer->idxEnemyHouse)
+            && ((BYTE1(projFlags) & 0x40) == 0 || HouseClass::Is_Ally(this->t.OwningPlayer, *(curThreat + 540))) )
+          {
+            if ( LOBYTE(this->vt->r.m.o.GetTechnoType(this)->t.RotCount) )// DistributedFire
+            {
+              v60 = this->t.CurrentTargets.count;
+              v61 = curThreat;
+              if ( this->t.CurrentTargets.length < v60
+                || (this->t.CurrentTargets.IsAllocated || !v60)
+                && (v62 = this->t.CurrentTargets.incrementAmount, v62 > 0)
+                && (this->t.CurrentTargets.vt->Resize)(&this->t.CurrentTargets, v60 + v62, 0) )
+              {
+                v63 = this->t.CurrentTargets.length;
+                v64 = this->t.CurrentTargets.data;
+                this->t.CurrentTargets.length = v63 + 1;
+                v64[v63]._ = v61;
+              }
+              v65 = this->t.CurrentTargetThreats.count;
+              if ( this->t.CurrentTargetThreats.length < v65
+                || (this->t.CurrentTargetThreats.IsAllocated || !v65)
+                && (v66 = this->t.field_450, v66 > 0)
+                && (this->t.CurrentTargetThreats.vt->Resize)(&this->t.CurrentTargetThreats, v65 + v66, 0) )
+              {
+                v67 = this->t.CurrentTargetThreats.length;
+                v68 = this->t.CurrentTargetThreats.data;
+                this->t.CurrentTargetThreats.length = v67 + 1;
+                v68[v67] = threat_;
+              }
+            }
+            if ( BestThreat < threat_ )
+            {
+              BestThreat = threat_;
+              BestTarget = curThreat;
+            }
+          }
+          if ( !BestTarget )
+          {
+            v69 = TechnoClass::Evaluate_Just_Cell(&a2);
+            threat_ = v69;
+            if ( v98 < v69 )
+            {
+              v98 = v69;
+              v99 = a2;
+            }
+          }
+        }
+        position.X = coords.X + v95;
+        position.Y = v59 + coords.Y;
+        a2 = position;
+        if ( MapClass::In_Radar(&Map, &a2) )
+        {
+          if ( TechnoClass::Evaluate_Cell(
+                 this,
+                 projFlags,
+                 newTargetFlags,
+                 &a2,
+                 wanteddistance,
+                 &curThreat,
+                 &threat_,
+                 wat)
+            && curThreat
+            && (!a4 || *(*(curThreat + 540) + 48) == this->t.OwningPlayer->idxEnemyHouse)
+            && ((BYTE1(projFlags) & 0x40) == 0 || HouseClass::Is_Ally(this->t.OwningPlayer, *(curThreat + 540))) )
+          {
+            if ( LOBYTE(this->vt->r.m.o.GetTechnoType(this)->t.RotCount) )// DistributedFire
+            {
+              v70 = this->t.CurrentTargets.count;
+              v71 = curThreat;
+              if ( this->t.CurrentTargets.length < v70
+                || (this->t.CurrentTargets.IsAllocated || !v70)
+                && (v72 = this->t.CurrentTargets.incrementAmount, v72 > 0)
+                && (this->t.CurrentTargets.vt->Resize)(&this->t.CurrentTargets, v70 + v72, 0) )
+              {
+                v73 = this->t.CurrentTargets.length;
+                v74 = this->t.CurrentTargets.data;
+                this->t.CurrentTargets.length = v73 + 1;
+                v74[v73]._ = v71;
+              }
+              v75 = this->t.CurrentTargetThreats.count;
+              if ( this->t.CurrentTargetThreats.length < v75
+                || (this->t.CurrentTargetThreats.IsAllocated || !v75)
+                && (v76 = this->t.field_450, v76 > 0)
+                && (this->t.CurrentTargetThreats.vt->Resize)(&this->t.CurrentTargetThreats, v75 + v76, 0) )
+              {
+                v77 = this->t.CurrentTargetThreats.length;
+                v78 = this->t.CurrentTargetThreats.data;
+                this->t.CurrentTargetThreats.length = v77 + 1;
+                v78[v77] = threat_;
+              }
+            }
+            if ( BestThreat < threat_ )
+            {
+              BestThreat = threat_;
+              BestTarget = curThreat;
+            }
+          }
+          if ( !BestTarget )
+          {
+            v79 = TechnoClass::Evaluate_Just_Cell(&a2);
+            threat_ = v79;
+            if ( v98 < v79 )
+            {
+              v98 = v79;
+              v99 = a2;
+            }
+          }
+        }
+        ++v59;
+      }
+      while ( v59 < v95 );
+    }
+    if ( BestTarget )
+    {
+      v80 = v95;
+      if ( v95 == v100 / 4 || v95 == v100 / 2 )
+        return BestTarget;
+    }
+    else
+    {
+      v80 = v95;
+    }
+    if ( v99.X != someMoreCoords.X || v99.Y != someMoreCoords.Y )
+      break;
+    v95 = v80 + 1;
+    if ( v80 + 1 >= v100 )
+      return BestTarget;
+  }
+  return MapClass::Coord_Cell(&Map, &v99);
+}
+/* Orphan comments:
+IsGattling
+AirRangeBonus
+AttackFriendlies
+AttackFriendlies || Engineer
+*/
+
+
+====================================================================================================
+TARGET 0x6FF08B in TechnoClass_Fire [0x6FDD50 - 0x6FF94F]
+Callers:
+    TechnoClass_Fire depth=0
+    W?Fire_At$:AircraftClass$n(li)pn$BulletClass$$ depth=1
+    InfantryClass_Fire depth=1
+    UnitClass_Fire depth=1
+
+BulletClass *__thiscall TechnoClass_Fire(_TechnoClass *this, int dest, int idxWeapon)
+{
+  WeaponTypeClass *vt; // ebx
+  _ObjectClass *v5; // eax
+  BulletTypeClass *Projectile; // edx
+  _TechnoTypeClass *v7; // eax
+  vt_TechnoClass *v8; // edx
+  int *v10; // eax
+  Point3D *v11; // eax
+  HouseClass *v12; // eax
+  HouseClass_old *v13; // edi
+  int *v14; // eax
+  int *v15; // eax
+  int v16; // edi
+  Point3D *v17; // eax
+  unsigned int v18; // ecx
+  int Y; // edx
+  unsigned int Z; // eax
+  _DWORD *v21; // eax
+  AbstractClass *v22; // eax
+  dwXYZ *v23; // eax
+  dwXYZ *v24; // eax
+  _TechnoClass *v25; // edi
+  WeaponTypeClass *v26; // ebx
+  char IsSonic; // al
+  int Damage; // edi
+  DiskLaserClass *v34; // eax
+  DiskLaserClass *v35; // ebx
+  int v36; // eax
+  WeaponTypeClass *v37; // ecx
+  int v38; // eax
+  int Speed; // eax
+  WarheadTypeClass *Warhead; // edx
+  BulletTypeClass *v41; // ecx
+  BulletClass *Bullet; // eax
+  BulletClass *v43; // edi
+  _BOOL1 v44; // zf
+  int v45; // eax
+  _TechnoClass *v46; // edi
+  WeaponTypeClass *WeaponType; // eax
+  dwXYZ *v48; // eax
+  int v49; // edx
+  int v50; // edi
+  BulletTypeClass *v51; // ecx
+  int v52; // edi
+  int v53; // eax
+  int BallisticScatter; // eax
+  int v55; // eax
+  int v56; // ebx
+  double v57; // rcx
+  double v58; // rcx
+  BulletTypeClass *v59; // eax
+  __int16 v60; // ax
+  __int16 v61; // bx
+  unsigned int v64; // ebx
+  int v65; // edx
+  int v66; // eax
+  double v69; // rcx
+  BulletClass *v70; // ebx
+  BulletTypeClass *Type; // eax
+  signed int v73; // eax
+  int *v74; // edi
+  _DWORD *v75; // ebx
+  __int16 v78; // ax
+  int *v80; // edi
+  _TechnoClass *v81; // edi
+  vt_TechnoClass *v82; // edx
+  int v83; // eax
+  int v85; // eax
+  WeaponTypeClass *v87; // ebx
+  ParticleSystemClass *v88; // eax
+  ParticleSystemClass *v89; // eax
+  ParticleSystemClass *v90; // eax
+  ParticleSystemClass *v91; // eax
+  unsigned int *v92; // eax
+  ParticleSystemClass *v93; // eax
+  ParticleSystemClass *v94; // eax
+  vt_TechnoClass *v95; // edx
+  int v96; // eax
+  AnimTypeClass *OccupantAnim; // edi
+  int length; // eax
+  unsigned int v99; // edx
+  int *data; // eax
+  AnimClass *v101; // eax
+  AnimClass *v102; // edi
+  dwXYZ *v103; // eax
+  WaveClass *v104; // eax
+  _ObjectClass *v105; // edi
+  WeaponContainer *v106; // eax
+  LaserDrawClass *v107; // eax
+  LaserDrawClass *v108; // eax
+  WarheadTypeClass *v109; // eax
+  __int16 v111; // ax
+  WaveClass *v112; // eax
+  WaveClass *v113; // eax
+  int *v114; // eax
+  Point3D *v115; // eax
+  HouseClass *v116; // eax
+  HouseClass_old *v117; // edi
+  int *v118; // eax
+  int *v119; // eax
+  HouseClass *v120; // eax
+  BulletClass *v121; // edi
+  int v122; // ecx
+  int v123; // eax
+  int v124; // eax
+  int v125; // edx
+  AITeamClass *v126; // ecx
+  signed int v127; // [esp+0h] [ebp-C4h]
+  double v128; // [esp+4h] [ebp-C0h]
+  double v129; // [esp+4h] [ebp-C0h]
+  int v130; // [esp+4h] [ebp-C0h]
+  double v131; // [esp+8h] [ebp-BCh]
+  double v132; // [esp+Ch] [ebp-B8h]
+  WeaponTypeClass *v133; // [esp+Ch] [ebp-B8h]
+  double v134; // [esp+Ch] [ebp-B8h]
+  double v135; // [esp+Ch] [ebp-B8h]
+  double v136; // [esp+Ch] [ebp-B8h]
+  double v137; // [esp+Ch] [ebp-B8h]
+  double v138; // [esp+Ch] [ebp-B8h]
+  double v139; // [esp+Ch] [ebp-B8h]
+  double v140; // [esp+Ch] [ebp-B8h]
+  float v141; // [esp+Ch] [ebp-B8h]
+  double v142; // [esp+Ch] [ebp-B8h]
+  double v143; // [esp+Ch] [ebp-B8h]
+  double v144; // [esp+Ch] [ebp-B8h]
+  double v145; // [esp+Ch] [ebp-B8h]
+  double v146; // [esp+Ch] [ebp-B8h]
+  byte Bright; // [esp+10h] [ebp-B4h]
+  float v148; // [esp+10h] [ebp-B4h]
+  int v149; // [esp+14h] [ebp-B0h]
+  int pos; // [esp+18h] [ebp-ACh]
+  int *v151[3]; // [esp+20h] [ebp-A4h] BYREF
+  double coords; // [esp+2Ch] [ebp-98h] BYREF
+  int v153; // [esp+38h] [ebp-8Ch]
+  int v154; // [esp+3Ch] [ebp-88h]
+  dwXYZ_ wat; // [esp+40h] [ebp-84h] BYREF
+  int v156; // [esp+4Ch] [ebp-78h]
+  BulletClass *arg; // [esp+50h] [ebp-74h]
+  WeaponTypeClass *weap; // [esp+54h] [ebp-70h]
+  dwXYZ tgtCoords; // [esp+58h] [ebp-6Ch] BYREF
+  double CellCoords; // [esp+64h] [ebp-60h] BYREF
+  double v161; // [esp+6Ch] [ebp-58h]
+  double v162; // [esp+74h] [ebp-50h]
+  double proj; // [esp+7Ch] [ebp-48h]
+  double v164; // [esp+84h] [ebp-40h] BYREF
+  int *v165; // [esp+94h] [ebp-30h] BYREF
+  _ObjectClass *sourceUnit; // [esp+98h] [ebp-2Ch]
+  dwXYZ_ FLH; // [esp+9Ch] [ebp-28h] BYREF
+  Point3D a2; // [esp+A8h] [ebp-1Ch] BYREF
+
+  _ESI = this;
+  vt = this->vt->GetWeapon(this, idxWeapon)->vt;
+  weap = vt;
+  if ( !vt )
+    return 0;
+  v5 = dest ? ((*(dest + 20) & 2) != 0 ? dest : 0) : 0;
+  Projectile = vt->Projectile;
+  sourceUnit = v5;
+  LODWORD(proj) = Projectile;
+  if ( Debug_Map || !dest || v5 && v5->o.InLimbo )
+    return 0;
+  if ( vt->Suicide )
+  {
+    v7 = (*(*_ESI + 132))(_ESI);
+    v8 = *_ESI;
+    LODWORD(coords) = v7->t.o.Strength;
+    v8->r.m.o.ReceiveDamage(_ESI, &coords, 0, RulesData->C4Warhead, 0, 1, 0, 0);
+    return 0;
+  }
+  if ( vt->UseFireParticles && *(_ESI + 0xC1)
+    || vt->IsRailgun && *(_ESI + 0xC5)
+    || vt->UseSparkParticles && *(_ESI + 0xC2)
+    || vt->IsSonic && *(_ESI + 0xC9) )
+  {
+    return 0;
+  }
+  if ( vt->Spawner )
+  {
+    SpawnManagerClass_SetTarget(*(_ESI + 0xB4), dest);
+    if ( _ESI[0x41A] || _ESI[0x41B] )
+    {
+      v10 = (*(*_ESI + 0x48))(_ESI, &wat.Y);
+      if ( !MapClass_IsUnshrouded(&Map, v10) )
+      {
+        v11 = (*(*_ESI + 72))(_ESI, &wat.Y);
+        if ( !MapClass_IsCellShrouded(&Map, v11) )
+          return 0;
+      }
+      if ( (*(*_ESI + 44))(_ESI) == 2 && _ESI[0x41A] )
+        return 0;
+    }
+    if ( !sourceUnit )
+      return 0;
+    v12 = sourceUnit->vt->a.GetOwningHouse(sourceUnit);
+    v13 = v12;
+    if ( v12 && HouseClass::Is_Player(v12) )
+    {
+      if ( vt->RevealOnFire )
+      {
+        v14 = (*(*_ESI + 0x48))(_ESI, &wat.Y);
+        MapClass::Sight_From(&Map, v14, 3, v13, 0, 0, 0, 1, 0);
+      }
+    }
+    v15 = (*(*_ESI + 0x48))(_ESI, &wat.Y);
+    MapClass_Sight_From_3(&Map, v15, 0, 4, 0);
+    return 0;
+  }
+  if ( vt->DrainWeapon )
+  {
+    if ( (*(dest + 20) & 1) == 0 || !HIBYTE((*(*dest + 0x84))(dest)->t.Prerequisite.__.incrementAmount) )
+      return 0;
+    TechnoClass_Drain(_ESI, dest);
+    (*(*_ESI + offsetof(vt_TechnoClass, SetTarget)))(_ESI, 0);
+    return 0;
+  }
+  if ( (SprayOffsetsInitialized & 1) == 0 )
+  {
+    SprayOffsets[0].X = 256;
+    SprayOffsets[0].Y = 0;
+    SprayOffsets[1].X = 180;
+    SprayOffsets[1].Y = 180;
+    SprayOffsets[2].X = 0;
+    SprayOffsets[2].Y = 256;
+    SprayOffsets[3].X = -180;
+    SprayOffsets[3].Y = 180;
+    SprayOffsets[4].X = -256;
+    SprayOffsets[4].Y = 0;
+    SprayOffsets[5].X = -180;
+    SprayOffsets[5].Y = -180;
+    SprayOffsetsInitialized |= 1u;
+    SprayOffsets[6].X = 0;
+    SprayOffsets[6].Y = -256;
+    SprayOffsets[0].Z = 0;
+    SprayOffsets[1].Z = 0;
+    SprayOffsets[2].Z = 0;
+    SprayOffsets[3].Z = 0;
+    SprayOffsets[4].Z = 0;
+    SprayOffsets[5].Z = 0;
+    SprayOffsets[6].Z = 0;
+    SprayOffsets[7].X = 180;
+    SprayOffsets[7].Y = -180;
+    SprayOffsets[7].Z = 0;
+    atexit(sub_6FF950);
+  }
+  if ( *((*(*_ESI + 132))(_ESI) + 0x691) )
+  {
+    if ( *(_ESI + 0xEE) )
+      *(_ESI + 0xA8) = (8 / vt->Burst + *(_ESI + 0xA8)) % 8;
+    else
+      *(_ESI + 0xA8) = Random2Class::operator()(&Scenario->Randomizer, 0, 7);
+    v16 = *(_ESI + 40);
+    v17 = &SprayOffsets[*(_ESI + 0xA8)];
+    v18 = *(_ESI + 0x27) + v17->X;
+    Y = v17->Y;
+    Z = *(_ESI + 41) + v17->Z;
+    FLH.X = v18;
+    FLH.Y = v16 + Y;
+  }
+  else
+  {
+    if ( vt->AreaFire )
+    {
+      v21 = (*(*_ESI + 72))(_ESI, &wat.Y);
+      LOWORD(v154) = *v21 / 256;
+      HIWORD(v154) = v21[1] / 256;
+      LODWORD(coords) = v154;
+      v22 = MapClass::Coord_Cell(&Map, &coords);
+      FLH = *(v22->iRTTIInfo[3].QueryInterface)(v22, &wat.Y);
+      dest = MapClass_Get_Target_Cell(&Map, &FLH);
+      goto LABEL_51;
+    }
+    if ( sourceUnit )
+      v23 = (sourceUnit->vt->GetPos)(sourceUnit, &wat.Y);
+    else
+      v23 = (*(*dest + 0x58))(dest, &wat.Y);
+    FLH.X = v23->X;
+    FLH.Y = v23->Y;
+    Z = v23->Z;
+  }
+  FLH.Z = Z;
+LABEL_51:
+  if ( *((*(*_ESI + 132))(_ESI) + 0x691) )
+    dest = MapClass_Get_Target_Cell(&Map, &FLH);
+  v24 = (*(*_ESI + 0xB0))(_ESI, &wat.Y, idxWeapon, 0, 0, 0);
+  v25 = LODWORD(proj);
+  tgtCoords = *v24;
+  if ( *(LODWORD(proj) + 732) || *(LODWORD(proj) + 0x29C) )
+  {
+    (*(*_ESI + offsetof(vt_TechnoClass, Techno_308)))(_ESI);
+    if ( LOBYTE(v25->t.BerzerkDurationLeft) )
+      tgtCoords = *(*(*_ESI + 72))(_ESI, &wat.Y);
+  }
+  else
+  {
+    __asm
+    {
+      fild    [esp+0B0h+FLH.X]
+      fisub   [esp+0C0h+tgtCoords.X]
+      fstp    qword ptr [esp+0C0h+anonymous_0+0Ch]; double
+      fild    [esp+0C0h+tgtCoords.Y]
+      fisub   [esp+0C0h+FLH.Y]
+      fstp    qword ptr [esp+0C0h+anonymous_0+4]; double
+    }
+    arctanfoo(v128, v132);
+    __asm { fstp    st }
+  }
+  v26 = weap;
+  IsSonic = weap->IsSonic;
+  Damage = weap->Damage;
+  LODWORD(coords) = Damage;
+  wat.X = Damage;
+  if ( IsSonic || weap->UseFireParticles )
+  {
+    Damage = 0;
+  }
+  else
+  {
+    if ( Damage <= 0 )
+      goto LABEL_71;
+    _ECX = *(_ESI + 0x87);
+    __asm
+    {
+      fld     [ecx+HouseClass_old.IHouse._.FirepowerMultiplier]; Used - estimating Damage
+      fmul    [this+_TechnoClass.t.FirepowerMultiplier]
+      fimul   dword ptr [esp+0B0h+coords]
+    }
+    Damage = Float_To_Int_Floor();
+    wat.X = Damage;
+    if ( !Veterancy_IsVeteran(_ESI + 0x54) && !Veterancy_IsElite(_ESI + 0x54) )
+      goto LABEL_71;
+    v154 = (*(*_ESI + 132))(_ESI);
+    if ( (!Veterancy_IsVeteran(_ESI + 0x54) || !*(v154 + 670))
+      && (!Veterancy_IsElite(_ESI + 0x54) || !*(v154 + 670) && !*(v154 + offsetof(OverlayTypeClass, Explodes))) )
+    {
+      goto LABEL_71;
+    }
+    __asm { fild    [esp+0B0h+wat.X] }
+    _ECX = RulesData;
+    __asm { fmul    qword ptr [ecx+(RulesClass+670h)]; VeteranCombat }
+    Damage = Float_To_Int_Floor();
+  }
+  wat.X = Damage;
+LABEL_71:
+  if ( (*(*_ESI + 1024))(_ESI) )
+  {
+    __asm { fild    [esp+0B0h+wat.X] }
+    _EAX = RulesData;
+    __asm { fmul    dword ptr [eax+(RulesClass+0F40h)] }
+    Damage = Float_To_Int_Floor();
+    wat.X = Damage;
+  }
+  if ( *(_ESI + 0xB9) && (*(*_ESI + 44))(_ESI) != 6 )
+  {
+    __asm { fild    [esp+0B0h+wat.X] }
+    _EAX = RulesData;
+    __asm { fmul    dword ptr [eax+(RulesClass+0F4Ch)] }
+    Damage = Float_To_Int_Floor();
+    wat.X = Damage;
+  }
+  if ( _ESI[offsetof(ObjectClass, field_86)] )
+  {
+    __asm { fild    [esp+0B0h+wat.X] }
+    _ECX = RulesData;
+    __asm { fmul    dword ptr [ecx+(RulesClass+0F58h)] }
+    Damage = Float_To_Int_Floor();
+    wat.X = Damage;
+  }
+  if ( v26->DiskLaser )
+  {
+    v34 = new(0x40u);
+    if ( v34 )
+    {
+      v35 = DiskLaserClass_CTOR(v34);
+      if ( v35 )
+      {
+        ++*(_ESI + 0xEE);
+        v36 = (*(*_ESI + offsetof(vt_TechnoClass, GetROF)))(_ESI, idxWeapon);
+        *(_ESI + 0xBE) = v36;
+        *(_ESI + 0xBB) = Frame;
+        *(_ESI + 188) = wat.Z;
+        v37 = weap;
+        v133 = weap;
+        *(_ESI + 189) = v36;
+        *(_ESI + 0xEE) %= v37->Burst;
+        DiskLaserClass_Fire(v35, _ESI, dest, v133, Damage, v149, pos);
+        return 0;
+      }
+      v26 = LODWORD(coords);
+    }
+  }
+  LODWORD(coords) = (FLH.Y - tgtCoords.Y) * (FLH.Y - tgtCoords.Y) + (FLH.X - tgtCoords.X) * (FLH.X - tgtCoords.X);
+  __asm
+  {
+    fild    dword ptr [esp+0B8h+coords]
+    fstp    qword ptr [esp+0B8h+anonymous_0+0Ch]
+  }
+  float_sqrt(v134);
+  v38 = Float_To_Int_Floor();
+  Speed = WeaponTypeClass_GetSpeed(v26, v38);
+  Warhead = v26->Warhead;
+  Bright = v26->Bright;
+  v41 = v26->Projectile;
+  v154 = Speed;
+  Bullet = BulletType_CreateBullet(v41, dest, _ESI, Damage, Warhead, Speed, Bright);
+  arg = Bullet;
+  if ( Bullet )
+  {
+    v43 = Bullet;
+    BulletClass_SetWeaponType(Bullet, v26);
+    (v43->vt->o.Remove)(v43);
+    if ( _ESI )
+    {
+      v44 = (_ESI[20] & 4) == 0;
+      HIBYTE(v153) = (_ESI[20] & 4) != 0;
+      if ( !v44 )
+      {
+        if ( !*(_ESI + 0x19D) )
+          RaiseError(E_POINTER);
+        if ( (*(**(_ESI + 413) + offsetof(vt_ILocomotion_LocomotionClass, Is_Moving)))(*(_ESI + 413))
+          && !*((*(*_ESI + 132))(_ESI) + sizeof(_TechnoTypeClass)) )
+        {
+          v43->field_B4 = 1;
+        }
+      }
+    }
+    if ( !v43->field_B4 && !*(LODWORD(proj) + offsetof(BulletTypeClass, Inaccurate)) )
+    {
+      v45 = *(_ESI + 0xAD);
+      v46 = v45 ? ((*(v45 + 20) & 1) != 0 ? v45 : 0) : 0;
+      WeaponType = BulletClass_GetWeaponType(arg);
+      if ( v46 )
+      {
+        if ( WeaponType )
+          v46->t.r.m.o.BackupHealth -= TechnoClass_EstimateDamage(_ESI, v46, WeaponType);
+      }
+    }
+    v48 = TechnoClass_PredictTargetCoords(_ESI, &a2);
+    v49 = v48->Y;
+    wat.Y = v48->X - tgtCoords.X;
+    v50 = v48->Z;
+    a2.X = wat.Y;
+    v51 = LODWORD(proj);
+    v52 = v50 - tgtCoords.Z;
+    wat.Z = v49 - tgtCoords.Y;
+    v53 = v49 - tgtCoords.Y;
+    LOBYTE(v49) = *(LODWORD(proj) + 674);
+    v156 = v52;
+    a2.Y = v53;
+    a2.Z = v52;
+    if ( v49 && *(LODWORD(proj) + offsetof(BulletTypeClass, Arcing)) )
+    {
+      if ( !*(LODWORD(proj) + offsetof(BulletTypeClass, FlakScatter))
+        || *(LODWORD(proj) + offsetof(BulletTypeClass, Inviso)) )
+      {
+        LODWORD(coords) = Random2Class::operator()(
+                            &Scenario->Randomizer,
+                            RulesData->BallisticScatter / 2,
+                            RulesData->BallisticScatter);
+        v151[1] = Random2Class::operator()(&Scenario->Randomizer, 0, 2147483646);
+        __asm
+        {
+          fild    [esp+0B0h+var_A4+4]
+          fmul    ds:inverse_2147483646; 1/0x7FFFFFFF
+          fmul    ds:dbl_7E3CC0
+          fsub    ds:double_Pi2; 1.570796326794897 (pi / 2)
+          fmul    ds:num_m0_0001; -1.043006004058427e4
+        }
+        v151[1] = (Float_To_Int_Floor() - 0x3FFF);
+        __asm
+        {
+          fild    [esp+0B0h+var_A4+4]
+          fmul    ds:dbl_7E2810; -9.587672516830327e-5
+          fstp    [esp+0B0h+anonymous_1]
+          fild    dword ptr [esp+0B0h+coords]
+        }
+        v58 = v164;
+        __asm
+        {
+          fstp    [esp+0B8h+coords]
+          fild    [esp+0B8h+wat.Z]
+          fstp    [esp+0B8h+var_10]
+        }
+        float_sin(v164);
+        __asm
+        {
+          fmul    [esp+0B8h+coords]
+          fsubr   [esp+0B8h+var_10]
+        }
+        v151[1] = Float_To_Int_Floor();
+        float_cos(COERCE_DOUBLE(__PAIR64__(HIDWORD(v58), LODWORD(v164))));
+        __asm
+        {
+          fmul    [esp+0C0h+coords]
+          fiadd   [esp+0B0h+wat.Y]
+        }
+        a2.X = Float_To_Int_Floor();
+        v53 = v151[1];
+      }
+      else
+      {
+        __asm
+        {
+          fild    [esp+0B0h+wat.Y]
+          fstp    dword ptr [esp+0B8h+var_10]
+          fild    [esp+0B8h+wat.Z]
+          fstp    dword ptr [esp+0B8h+var_10+4]
+          fild    [esp+0B8h+var_78]
+          fld     dword ptr [esp+0B8h+var_10+4]
+          fld     dword ptr [esp+0B8h+var_10]
+          fld     st
+          fmul    st, st(1)
+          fld     st(2)
+          fmul    st, st(3)
+          faddp   st(1), st
+          fld     st(3)
+          fmul    st, st(4)
+          faddp   st(1), st
+          fstp    qword ptr [esp+0B8h+anonymous_0+0Ch]
+          fstp    st
+          fstp    st
+          fstp    st
+        }
+        float_sqrt(v135);
+        BallisticScatter = RulesData->BallisticScatter;
+        __asm { fstp    dword ptr [esp+0B0h+coords] }
+        v55 = Random2Class::operator()(&Scenario->Randomizer, 0, BallisticScatter);
+        __asm { fld     dword ptr [esp+0B0h+coords] }
+        v56 = Float_To_Int_Floor() * v55;
+        v151[1] = (v56 / (*(*_ESI + 0x168))(_ESI, idxWeapon));
+        LODWORD(coords) = Random2Class::operator()(&Scenario->Randomizer, 0, 2147483646);
+        __asm
+        {
+          fild    dword ptr [esp+0B0h+coords]
+          fmul    ds:inverse_2147483646; 1/0x7FFFFFFF
+          fmul    ds:dbl_7E3CC0
+          fsub    ds:double_Pi2; 1.570796326794897 (pi / 2)
+          fmul    ds:num_m0_0001; -1.043006004058427e4
+        }
+        LODWORD(coords) = Float_To_Int_Floor() - 0x3FFF;
+        __asm
+        {
+          fild    dword ptr [esp+0B0h+coords]
+          fmul    ds:dbl_7E2810; -9.587672516830327e-5
+          fstp    [esp+0B0h+coords]
+          fild    [esp+0B0h+var_A4+4]
+        }
+        v57 = coords;
+        __asm
+        {
+          fstp    [esp+0B8h+anonymous_1]
+          fild    [esp+0B8h+wat.Z]
+          fstp    [esp+0B8h+var_10]
+        }
+        float_sin(coords);
+        __asm
+        {
+          fmul    [esp+0B8h+anonymous_1]
+          fsubr   [esp+0B8h+var_10]
+        }
+        v151[1] = Float_To_Int_Floor();
+        float_cos(COERCE_DOUBLE(__PAIR64__(HIDWORD(v57), LODWORD(coords))));
+        __asm
+        {
+          fmul    [esp+0C0h+anonymous_1]
+          fiadd   [esp+0B0h+wat.Y]
+        }
+        a2.X = Float_To_Int_Floor();
+        v53 = v151[1];
+      }
+      v26 = weap;
+      v51 = LODWORD(proj);
+      a2.Y = v53;
+      a2.Z = v52;
+    }
+    if ( v51->ROT || v51->Dropping )
+    {
+      LODWORD(coords) = *(*(*_ESI + offsetof(vt_TechnoClass, Techno_308)))(_ESI);
+      if ( *(LODWORD(proj) + offsetof(BulletTypeClass, Dropping)) )
+        tgtCoords = *(*(*_ESI + 72))(_ESI, &wat.Y);
+    }
+    else
+    {
+      __asm
+      {
+        fild    [esp+0B0h+a2]
+        fstp    qword ptr [esp+0B8h+anonymous_0+0Ch]; double
+      }
+      v151[1] = -v53;
+      __asm
+      {
+        fild    [esp+0C0h+var_A4+4]
+        fstp    qword ptr [esp+0C0h+anonymous_0+4]; double
+      }
+      arctanfoo(v129, v136);
+      __asm
+      {
+        fsub    ds:double_Pi2; 1.570796326794897 (pi / 2)
+        fmul    ds:num_m0_0001; -1.043006004058427e4
+      }
+      LOWORD(v151[1]) = Float_To_Int_Floor();
+      *&coords = v151[1];
+    }
+    __asm
+    {
+      fild    [esp+0B0h+var_18]
+      fild    [esp+0B0h+var_14]
+      fild    [esp+0B0h+a2]
+      fld     st
+      fmulp   st(1), st
+      fst     [esp+0B0h+var_10]
+      fld     st(1)
+      fmul    st, st(2)
+      fld     st(3)
+      fmul    st, st(4)
+      faddp   st(1), st
+      fadd    st, st(1)
+      fstp    qword ptr [esp+0B0h+var_A4+4]
+      fstp    st
+      fstp    st
+      fstp    st
+    }
+    float_sqrt(*&v151[1]);
+    if ( v154 > Float_To_Int_Floor() / 2 )
+    {
+      float_sqrt(*&v151[1]);
+      v154 = Float_To_Int_Floor() / 2;
+    }
+    LODWORD(proj) = *((*(*_ESI + 132))(_ESI) + 0x6A4);
+    v59 = v26->Projectile;
+    if ( v59->ROT > 0 || v59->Vertical )
+    {
+      if ( !LODWORD(proj) )
+        v154 = 1;
+      arg->field_110 = v26->Speed;
+    }
+    __asm { fild    [esp+0B0h+var_88] }
+    v161 = 0.0;
+    __asm { fstp    [esp+0B8h+anonymous_1] }
+    v162 = 0.0;
+    CellCoords = 100.0;
+    float_sqrt(10000.0);
+    __asm
+    {
+      fdivr   [esp+0B8h+anonymous_1]
+      fld     st
+      fmul    [esp+0B0h+CellCoords]
+      fstp    [esp+0B0h+CellCoords]
+      fld     st
+      fmul    [esp+0B0h+var_58]
+      fstp    [esp+0B0h+var_58]
+      fmul    [esp+0B0h+anonymous_2]
+      fstp    [esp+0B0h+anonymous_2]
+    }
+    if ( SLODWORD(proj) <= 0 )
+    {
+      __asm
+      {
+        fld     [esp+0B0h+CellCoords]
+        fcomp   ds:double_0
+        fnstsw  ax
+      }
+      if ( (_AX & 0x4000) != 0 )
+      {
+        __asm
+        {
+          fld     [esp+0B0h+var_58]
+          fcomp   ds:double_0
+          fnstsw  ax
+        }
+        if ( (_AX & 0x4000) != 0 )
+          CellCoords = 100.0;
+      }
+      __asm
+      {
+        fld     [esp+0B0h+CellCoords]
+        fmul    [esp+0B0h+CellCoords]
+        fld     [esp+0B0h+var_58]
+        fmul    [esp+0B0h+var_58]
+        faddp   st(1), st
+        fstp    qword ptr [esp+0B8h+anonymous_0+0Ch]
+      }
+      float_sqrt(v138);
+      __asm { fstp    [esp+0B8h+proj] }
+      v151[1] = (SLOWORD(coords) - 0x3FFF);
+      __asm
+      {
+        fild    [esp+0B8h+var_A4+4]
+        fmul    ds:dbl_7E2810; -9.587672516830327e-5
+        fstp    [esp+0B8h+anonymous_1]
+      }
+      v69 = v164;
+      float_cos(v164);
+      __asm
+      {
+        fmul    [esp+0C0h+proj]
+        fstp    [esp+0C8h+CellCoords]
+      }
+      float_sin(COERCE_DOUBLE(__PAIR64__(HIDWORD(v69), LODWORD(v164))));
+      __asm
+      {
+        fmul    [esp+0C8h+proj]
+        fchs
+        fstp    [esp+0B0h+var_58]
+      }
+    }
+    else
+    {
+      __asm
+      {
+        fild    dword ptr [esp+0B0h+proj]
+        fdivr   ds:dbl_7E44D0; 3.141592653589793
+        fimul   dword ptr [this+43Ch]
+        fsub    ds:double_Pi2; 1.570796326794897 (pi / 2)
+        fstp    [esp+0B4h+anonymous_1]
+      }
+      v151[1] = (Desired_Facing256((_ESI + 904), &v151[1])->X - 0x3FFF);
+      __asm
+      {
+        fild    [esp+0B0h+var_A4+4]
+        fmul    ds:dbl_7E2810; -9.587672516830327e-5
+        fadd    [esp+0B0h+anonymous_1]
+        fsub    ds:double_Pi2; 1.570796326794897 (pi / 2)
+        fmul    ds:num_m0_0001; -1.043006004058427e4
+      }
+      v60 = Float_To_Int_Floor();
+      __asm
+      {
+        fld     [esp+0B0h+CellCoords]
+        fcomp   ds:double_0
+      }
+      v61 = v60;
+      __asm { fnstsw  ax }
+      if ( (_AX & 0x4000) != 0 )
+      {
+        __asm
+        {
+          fld     [esp+0B0h+var_58]
+          fcomp   ds:double_0
+          fnstsw  ax
+        }
+        if ( (_AX & 0x4000) != 0 )
+          CellCoords = 100.0;
+      }
+      __asm
+      {
+        fld     [esp+0B0h+CellCoords]
+        fmul    [esp+0B0h+CellCoords]
+        fld     [esp+0B0h+var_58]
+        fmul    [esp+0B0h+var_58]
+        faddp   st(1), st
+        fstp    qword ptr [esp+0B8h+anonymous_0+0Ch]
+      }
+      float_sqrt(v137);
+      __asm { fstp    [esp+0B8h+coords] }
+      v151[1] = (v61 - 0x3FFF);
+      __asm
+      {
+        fild    [esp+0B8h+var_A4+4]
+        fmul    ds:dbl_7E2810; -9.587672516830327e-5
+        fstp    [esp+0B8h+anonymous_1]
+      }
+      v64 = HIDWORD(v164);
+      float_cos(v164);
+      __asm
+      {
+        fmul    [esp+0C0h+coords]
+        fstp    [esp+0C8h+CellCoords]
+      }
+      float_sin(COERCE_DOUBLE(__PAIR64__(v64, LODWORD(v164))));
+      v65 = LODWORD(proj);
+      __asm { fmul    [esp+0C8h+coords] }
+      v66 = *(_ESI + 271) + 1;
+      *(_ESI + 271) = v66;
+      __asm
+      {
+        fchs
+        fstp    [esp+0B0h+var_58]
+      }
+      if ( v66 >= v65 )
+        *(_ESI + 271) = 0;
+    }
+    v70 = arg;
+    LOWORD(v165) = 0x3FFF;
+    HIBYTE(v153) = 1;
+    Type = arg->Type;
+    if ( Type->Arcing )
+    {
+      _ECX = RulesData;
+      __asm { fild    [ecx+(RulesClass.BridgeExplosions.vt+1560h)] }
+      LOBYTE(_ECX) = Type->Floater;
+      __asm { fstp    [esp+0B0h+anonymous_1] }
+      if ( _ECX )
+      {
+        GetHalfGravity();
+        __asm { fstp    [esp+0B0h+anonymous_1] }
+      }
+      __asm
+      {
+        fild    [esp+0B0h+var_18]
+        fld     st
+        fmul    st, st(1)
+        fadd    [esp+0B8h+var_10]
+        fstp    qword ptr [esp+0B8h+anonymous_0+0Ch]
+        fstp    st
+      }
+      float_sqrt(v139);
+      v73 = Float_To_Int_Floor();
+      v131 = v164;
+      v127 = v73;
+      TechnoClass_CanLobber(_ESI, idxWeapon);
+      HIBYTE(v153) = sub_48A8D0(v127, v52, v131, &v165);
+    }
+    else if ( Type->o.Voxel )
+    {
+      v74 = (*(*dest + 0x48))(dest, &wat.Y);
+      if ( v74[2] >= (*(*_ESI + 0x48))(_ESI, &a2)[2] )
+        LOWORD(v151[1]) = 0x4000;
+      else
+        LOWORD(v151[1]) = 0x8000;
+      v165 = v151[1];
+    }
+    else
+    {
+      v154 = abs32(v52);
+      if ( v154 > 200 )
+      {
+        v75 = *(_ESI + 0xAD);
+        coords = 20.0;
+        if ( v75 )
+        {
+          if ( (*(*v75 + 44))(v75) == 6 )
+          {
+            _EAX = (*(*_ESI + offsetof(vt_TechnoClass, Techno_300)))(_ESI, &v164, idxWeapon);
+            wat.Y = *_EAX;
+            wat.Z = _EAX[1];
+            v52 = 200 * *(v75[328] + 0xEF4) - _EAX[2];
+            v154 = abs32(v52);
+            __asm
+            {
+              fild    [esp+0B0h+var_88]
+              fcomp   ds:dbl_7E44C8
+              fnstsw  ax
+            }
+            if ( (BYTE1(_EAX) & 1) != 0 )
+              coords = 0.0;
+          }
+        }
+        __asm
+        {
+          fild    [esp+0B0h+var_18]
+          fld     st
+          fmul    st, st(1)
+          fadd    [esp+0B8h+var_10]
+          fstp    qword ptr [esp+0B8h+anonymous_0+0Ch]
+          fstp    st
+        }
+        float_sqrt(v140);
+        v151[1] = Float_To_Int_Floor();
+        __asm
+        {
+          fild    [esp+0B0h+var_A4+4]
+          fcom    ds:dbl_7E8AE8
+          fnstsw  ax
+        }
+        if ( (_AX & 0x100) != 0 )
+        {
+          __asm
+          {
+            fstp    st
+            fld     ds:dbl_7E8AE8
+          }
+        }
+        __asm
+        {
+          fstp    dword ptr [esp+0B4h+anonymous_0+10h]
+          fild    [esp+0B4h+var_88]
+          fsub    [esp+0B8h+coords]
+          fstp    dword ptr [esp+0B8h+anonymous_0+0Ch]
+        }
+        sub_4CB3D0(v141, v148);
+        if ( v52 < 0 )
+          __asm { fchs }
+        __asm
+        {
+          fsub    ds:double_Pi2; 1.570796326794897 (pi / 2)
+          fmul    ds:num_m0_0001; -1.043006004058427e4
+        }
+        v78 = Float_To_Int_Floor();
+        v70 = arg;
+        LOWORD(v151[1]) = v78;
+        v165 = v151[1];
+      }
+    }
+    sub_41C350(&CellCoords);
+    __asm { fstp    qword ptr [esp+0B8h+anonymous_0+0Ch]; double }
+    arctanfoo(v162, v142);
+    __asm
+    {
+      fsub    ds:double_Pi2; 1.570796326794897 (pi / 2)
+      fmul    ds:num_m0_0001; -1.043006004058427e4
+    }
+    v151[1] = (Float_To_Int_Floor() - 0x3FFF);
+    __asm
+    {
+      fild    [esp+0B8h+var_A4+4]
+      fmul    ds:dbl_7E2810; -9.587672516830327e-5
+      fstp    qword ptr [esp+0B8h+var_A4+4]
+      fld     [esp+0B8h+CellCoords]
+      fmul    [esp+0B8h+CellCoords]
+      fld     [esp+0B8h+var_58]
+      fmul    [esp+0B8h+var_58]
+      faddp   st(1), st
+      fld     [esp+0B8h+anonymous_2]
+      fmul    [esp+0B8h+anonymous_2]
+      faddp   st(1), st
+      fstp    qword ptr [esp+0B8h+anonymous_0+0Ch]
+    }
+    float_sqrt(v143);
+    __asm
+    {
+      fstp    [esp+0B8h+var_10]
+      fld     qword ptr [esp+0B8h+var_A4+4]
+      fcomp   ds:double_0
+      fnstsw  ax
+    }
+    if ( (_AX & 0x4000) == 0 )
+    {
+      v80 = v151[2];
+      float_cos(*&v151[1]);
+      __asm
+      {
+        fdivr   [esp+0B8h+CellCoords]
+        fstp    [esp+0C0h+CellCoords]
+      }
+      float_cos(COERCE_DOUBLE(__PAIR64__(v80, v151[1])));
+      __asm
+      {
+        fdivr   [esp+0C0h+var_58]
+        fstp    [esp+0B0h+var_58]
+      }
+    }
+    v151[1] = (v165 - 0x3FFF);
+    __asm
+    {
+      fild    [esp+0B8h+var_A4+4]
+      fmul    ds:dbl_7E2810; -9.587672516830327e-5
+      fstp    qword ptr [esp+0B8h+anonymous_0+0Ch]; double
+    }
+    float_cos(v144);
+    __asm
+    {
+      fmul    [esp+0B8h+CellCoords]
+      fstp    [esp+0B8h+CellCoords]
+    }
+    v151[1] = (v165 - 0x3FFF);
+    __asm
+    {
+      fild    [esp+0B8h+var_A4+4]
+      fmul    ds:dbl_7E2810; -9.587672516830327e-5
+      fstp    qword ptr [esp+0B8h+anonymous_0+0Ch]; double
+    }
+    float_cos(v145);
+    __asm
+    {
+      fmul    [esp+0B8h+var_58]
+      fstp    [esp+0B8h+var_58]
+    }
+    v151[1] = (v165 - 0x3FFF);
+    __asm
+    {
+      fild    [esp+0B8h+var_A4+4]
+      fmul    ds:dbl_7E2810; -9.587672516830327e-5
+      fstp    qword ptr [esp+0B8h+anonymous_0+0Ch]
+    }
+    float_sin(v146);
+    __asm
+    {
+      fmul    [esp+0B8h+var_10]
+      fstp    [esp+0B0h+anonymous_2]
+    }
+    if ( HIBYTE(v153) && v70->vt->Place(v70, &tgtCoords, &CellCoords) )
+    {
+      if ( (*(*_ESI + offsetof(vt_TechnoClass, CanOccupyFire)))(_ESI) && _ESI && (*(*_ESI + 44))(_ESI) == 6 )
+      {
+        v81 = (*(*_ESI + 44))(_ESI) == 6 ? _ESI : 0;
+        v82 = v81->vt;
+        ++v81[1].t.RadarFlashTimer.TimeLeft;
+        v81[1].t.RadarFlashTimer.TimeLeft %= v82->GetOccupantCount(v81);
+      }
+      if ( v70->Type->Inviso && sourceUnit && sourceUnit->o.OnBridge )
+        v70->o.OnBridge = 1;
+      if ( (*(*_ESI + offsetof(vt_TechnoClass, HasTurret)))(_ESI) && *((*(*_ESI + 132))(_ESI) + 0xCA2) )
+      {
+        v151[1] = *(_ESI + 0xF6);
+        if ( v151[1] )
+        {
+          v83 = *(_ESI + 0xF7);
+          *(_ESI + 0xFC) = 1;
+          *(_ESI + 0xFD) = v83;
+          if ( v83 < 1 )
+            *(_ESI + 0xFD) = 1;
+          __asm
+          {
+            fild    [esp+0B0h+var_A4+4]
+            fidiv   [this+_TechnoClass.t.Turret.field_1C]
+            fstp    [this+_TechnoClass.t.Turret.field_10]
+          }
+          *(_ESI + 0xFA) = _ET1;
+        }
+        v151[1] = *(_ESI + 0xFE);
+        if ( v151[1] )
+        {
+          v85 = *(_ESI + 0xFF);
+          *(_ESI + 0x104) = 1;
+          *(_ESI + 0x105) = v85;
+          if ( v85 < 1 )
+            *(_ESI + 0x105) = 1;
+          __asm
+          {
+            fild    [esp+0B0h+var_A4+4]
+            fidiv   [this+_TechnoClass.t.Barrel.field_1C]
+            fstp    [this+_TechnoClass.t.Barrel.field_10]
+          }
+          *(_ESI + 0x102) = _ET1;
+        }
+      }
+      v87 = weap;
+      if ( weap->UseFireParticles && !*(_ESI + 0xC1) )
+      {
+        v88 = new(sizeof(ParticleSystemClass));
+        if ( v88 )
+          v89 = ParticleSystemClass_CTOR(
+                  v88,
+                  v87->AttachedParticleSystem,
+                  &tgtCoords,
+                  dest,
+                  _ESI,
+                  &TechnoClass_DefaultCoords,
+                  0);
+        else
+          v89 = 0;
+        *(_ESI + 0xC1) = v89;
+      }
+      if ( v87->UseSparkParticles && !*(_ESI + 0xC2) )
+      {
+        v90 = new(sizeof(ParticleSystemClass));
+        if ( v90 )
+          v91 = ParticleSystemClass_CTOR(
+                  v90,
+                  v87->AttachedParticleSystem,
+                  &tgtCoords,
+                  dest,
+                  _ESI,
+                  &TechnoClass_DefaultCoords,
+                  0);
+        else
+          v91 = 0;
+        *(_ESI + 0xC2) = v91;
+      }
+      if ( v87->IsRailgun && !*(_ESI + 0xC5) )
+      {
+        v92 = TechnoClass_DealParticleDamage(_ESI, &a2, &tgtCoords, dest, v87);
+        wat.Y = *v92;
+        wat.Z = v92[1];
+        v156 = v92[2];
+        v93 = new(sizeof(ParticleSystemClass));
+        if ( v93 )
+          v94 = ParticleSystemClass_CTOR(v93, v87->AttachedParticleSystem, &tgtCoords, 0, _ESI, &wat.Y, 0);
+        else
+          v94 = 0;
+        *(_ESI + 0xC5) = v94;
+      }
+      v95 = *_ESI;
+      ++*(_ESI + 0xEE);
+      v96 = v95->GetROF(_ESI, idxWeapon);
+      if ( _ESI[0x298] )
+        v96 /= 2;
+      *(_ESI + 0xBE) = v96;
+      OccupantAnim = 0;
+      *(_ESI + 0xBB) = Frame;
+      *(_ESI + 188) = wat.Z;
+      *(_ESI + 189) = v96;
+      *(_ESI + 0xEE) %= v87->Burst;
+      length = v87->AnimList.length;
+      if ( length == 8 )
+      {
+        OccupantAnim = v87->AnimList.data[(((((*(*(*_ESI + offsetof(vt_TechnoClass, Techno_308)))(_ESI) >> 12) + 1) >> 1) & 7)
+                                         + 1)
+                                        % 8]._;
+      }
+      else if ( length > 0 )
+      {
+        OccupantAnim = v87->AnimList.data->_;
+      }
+      if ( (*(*_ESI + offsetof(vt_TechnoClass, CanOccupyFire)))(_ESI) )
+        OccupantAnim = v87->OccupantAnim;
+      if ( !OccupantAnim && _ESI[0x82] && v87->OpenToppedAnim )
+        OccupantAnim = v87->OpenToppedAnim;
+      if ( v87->vec_Report.length > 0 && !*((*(*_ESI + 132))(_ESI) + 0xCD5) )
+      {
+        v99 = *(_ESI + 484) % v87->vec_Report.length;
+        data = v87->vec_Report.data;
+        v151[1] = &tgtCoords;
+        Sound_Effect(data[v99], &tgtCoords.X, 0);
+      }
+      if ( OccupantAnim )
+      {
+        v101 = new(sizeof(AnimClass));
+        if ( v101 )
+          v102 = AnimClass::AnimClass(v101, OccupantAnim, &tgtCoords, 0, 1, 0x600u, 0, 0);
+        else
+          v102 = 0;
+        if ( (*(*_ESI + 44))(_ESI) == 6 )
+        {
+          v103 = (*(*_ESI + 0xAC))(_ESI, &wat.Y);
+          v102->ZAdjust = (tgtCoords.Y - v103->Y) / -4 >= 0 ? 0 : (tgtCoords.Y - v103->Y) / -4;
+          if ( (*(*_ESI + 0x408))(_ESI) > 0 )
+            v102->ZAdjust = -200;
+        }
+        if ( v102 && (*(*_ESI + 44))(_ESI) != 6 )
+          AnimClass::Attach_To(v102, _ESI);
+      }
+      if ( v87->IsSonic )
+      {
+        v104 = new(sizeof(WaveClass));
+        v105 = dest;
+        if ( v104 )
+          *(_ESI + 0xC9) = WaveClass_CTOR(v104, &FLH, &tgtCoords, _ESI, 0, dest);
+        else
+          *(_ESI + 0xC9) = 0;
+      }
+      else
+      {
+        v105 = dest;
+      }
+      if ( LOBYTE((*(*_ESI + 0x84))(_ESI)->t.EliteWeaponStages[2]) && HouseClass::Is_Player(*(_ESI + 0x87)) )
+      {
+        *(_ESI + 0xEF) = Frame;
+        *(_ESI + 240) = wat.Z;
+        *(_ESI + 241) = 15;
+      }
+      if ( v87->IsLaser )
+      {
+        if ( (*(*_ESI + 44))(_ESI) == 6 )
+        {
+          v106 = (*(*_ESI + offsetof(vt_TechnoClass, GetWeapon_TurretChanger)))(_ESI);
+          v107 = TechnoClass::Electric_Zap(_ESI, v105, idxWeapon, v106->WeaponType, &TechnoClass_DefaultCoords);
+          if ( v107 )
+          {
+            if ( *(_ESI + 0x148) == RulesData->PrismType )
+            {
+              v107->field_1C = 3;
+              if ( *(_ESI + 0x199) > 0 )
+              {
+                v107->field_21 = 1;
+                v107->field_1C = 5;
+              }
+            }
+          }
+        }
+        else
+        {
+          v108 = TechnoClass::Electric_Zap(_ESI, v105, idxWeapon, v87, &TechnoClass_DefaultCoords);
+          if ( v108 && v87->IsHouseColor )
+            v108->field_1C = 2;
+        }
+      }
+      else if ( v87->IsElectricBolt )
+      {
+        TechnoClass::Electric_Bolt(_ESI, v105);
+      }
+      else if ( v87->IsRadBeam )
+      {
+        v109 = v87->Warhead;
+        if ( v109 && v109->Temporal )
+          TechnoClass::Radiation_Beam(_ESI, v105, 1);
+        else
+          TechnoClass::Radiation_Beam(_ESI, v105, 0);
+      }
+      else if ( v87->IsRadEruption )
+      {
+        _EAX = v87->Warhead;
+        __asm { fld     [eax+WarheadTypeClass.CellSpread] }
+        v111 = Float_To_Int_Floor();
+        TechnoClass::Radiation_Eruption(_ESI, v111);
+      }
+      else if ( v87->IsMagBeam
+             && (!*(_ESI + 0xC9) || (!v105 || v105->vt->a.What_Am_I(v105) != eBuilding) && !*(_ESI + 0xC9)) )
+      {
+        v112 = new(0x240u);
+        if ( v112 )
+          v113 = WaveClass_CTOR(v112, &FLH, &tgtCoords, _ESI, 3, v105);
+        else
+          v113 = 0;
+        *(_ESI + 0xC9) = v113;
+      }
+      (*(*_ESI + offsetof(vt_TechnoClass, SpendOneAmmo)))(_ESI);
+      (*(*_ESI + 0x124))(_ESI, Ground);
+      if ( !_ESI[0x41A] && !_ESI[0x41B]
+        || ((v114 = (*(*_ESI + 72))(_ESI, &wat.Y), MapClass_IsUnshrouded(&Map, v114))
+         || (v115 = (*(*_ESI + 72))(_ESI, &wat.Y), MapClass_IsCellShrouded(&Map, v115)))
+        && ((*(*_ESI + 44))(_ESI) != 2 || !_ESI[0x41A]) )
+      {
+        if ( v105 )
+        {
+          if ( (v105->o.a.derivationFlags & 2) != 0 )
+          {
+            v116 = v105->vt->a.GetOwningHouse(v105);
+            v117 = v116;
+            if ( v116 )
+            {
+              if ( HouseClass::Is_Player(v116) && v87->RevealOnFire )
+              {
+                v118 = (*(*_ESI + 0x48))(_ESI, &wat.Y);
+                MapClass::Sight_From(&Map, v118, 3, v117, 0, 0, 0, 1, 0);
+                v119 = (*(*_ESI + 0x48))(_ESI, &wat.Y);
+                MapClass_Sight_From_3(&Map, v119, 0, 4, 0);
+              }
+            }
+          }
+        }
+      }
+      *(_ESI + 72) = Frame;
+    }
+    else
+    {
+      (v70->vt->o.a.Release)(v70);
+      arg = 0;
+    }
+    Damage = wat.X;
+    v26 = weap;
+  }
+  if ( v26->LimboLaunch )
+  {
+    if ( *((*(*_ESI + 132))(_ESI) + 0xD3C) )
+    {
+      if ( _ESI[0x83] )
+      {
+        v120 = (*(*_ESI + 60))(_ESI);
+        if ( HouseClass::Is_Player(v120) )
+        {
+          if ( (*(*dest + 44))(dest) == Infantry )
+            _ESI[0x432] = 1;
+        }
+      }
+    }
+    if ( *((*(*_ESI + 132))(_ESI) + 0xD3D)
+      && _ESI
+      && (_ESI[0x14] & 4) != offsetof(_TechnoClass, vt)
+      && *(_ESI + 0x175)
+      && (*(*dest + 44))(dest) == 15 )
+    {
+      *(_ESI + 0x10D) = *((_ESI[20] & 4) != 0 ? (_ESI + 1492) : 1492);
+    }
+    (*(*_ESI + 0xD4))(_ESI);
+    if ( v26->Warhead->Parasite )
+    {
+      if ( dest && (*(dest + 20) & 4) != 0 )
+        *(dest + 0x698) = Frame + 20;
+      (arg->vt->o.Remove)(arg);
+      v130 = Damage;
+      v121 = arg;
+      BulletClass_Initialize(arg, v26->Projectile, dest, _ESI, v130, v26->Warhead, v26->Speed, v26->Bright);
+      (v121->vt->Place)(v121, &tgtCoords);
+    }
+  }
+  if ( *((*(*_ESI + 132))(_ESI) + 0x6B0) && (*(_ESI + 0x2B) != 1 || (*(*_ESI + 44))(_ESI) == 6) )
+  {
+    v122 = *(_ESI + 0x11E);
+    if ( *(_ESI + 0x120) < v122
+      || (_ESI[1149] || !v122)
+      && (v123 = *(_ESI + 289), v123 > 0)
+      && (*(*(_ESI + 0x11C) + 8))(_ESI + 0x470, v122 + v123, 0) )
+    {
+      v124 = *(_ESI + 288);
+      v125 = *(_ESI + 285);
+      *(_ESI + 288) = v124 + 1;
+      *(v125 + 4 * v124) = dest;
+    }
+    (*(*_ESI + offsetof(vt_TechnoClass, SetTarget)))(_ESI, 0);
+  }
+  if ( v26->FireOnce )
+  {
+    if ( _ESI )
+    {
+      if ( (_ESI[20] & 4) != 0 )
+      {
+        v126 = *(_ESI + 0x175);
+        if ( v126 )
+        {
+          TeamClass::Assign_Mission_Target(v126, 0);
+          *(*(_ESI + 0x175) + offsetof(AITeamClass, actionExecuted)) = 1;
+        }
+      }
+    }
+    (*(*_ESI + offsetof(vt_TechnoClass, SetTarget)))(_ESI, 0);
+  }
+  return arg;
+}
+
+
+====================================================================================================
+TARGET 0x7013A0 in W?Override_Mission$:TechnoClass$n($MissionType$$ll)v [0x7013A0 - 0x7013D6]
+Callers:
+    W?Override_Mission$:TechnoClass$n($MissionType$$ll)v depth=0
+    FootClass_SetNewTarget depth=1
+
+void __thiscall TechnoClass::Override_Mission(_TechnoClass *this, int a2, _TechnoClass *a3, int a4)
+{
+  this->t.LastTarget = this->t.Target;
+  MissionClass::Override_Mission(this, a2, a3, a4);
+  this->vt->SetTarget(this, a3);
+}
+
+
+====================================================================================================
+TARGET 0x4D8F40 in FootClass_SetNewTarget [0x4D8F40 - 0x4D8F78]
+Callers:
+    FootClass_SetNewTarget depth=0
+    AircraftClass_SetNewTarget depth=1
+
+int __thiscall FootClass_SetNewTarget(_TechnoClass *this, int a2, _TechnoClass *a3, _TechnoClass *a4)
+{
+  this[1].t.r.m.o.Parachute = *&this[1].t.r.m.o.HasParachute;
+  TechnoClass::Override_Mission(this, a2, a3, a4);
+  return this->vt->SetDestination(this, a4, 1);
+}
+
+
+====================================================================================================
+TARGET 0x41BB30 in AircraftClass_SetNewTarget [0x41BB30 - 0x41BB87]
+Callers:
+    AircraftClass_SetNewTarget depth=0
+
+int __thiscall AircraftClass_SetNewTarget(_TechnoClass *this, int a2, _TechnoClass *a3, _TechnoClass *a4)
+{
+  int result; // eax
+
+  switch ( this->t.r.m.currentMission )
+  {
+    case mi_Retreat:
+    case mi_Paradrop_Approach:
+    case mi_Paradrop_Overfly:
+    case mi_AttackAgain:
+    case mi_Spyplane_Approach:
+      if ( this->t.AirstrikeImUsing )
+        goto LABEL_4;
+      result = a2 - 4;
+      switch ( a2 )
+      {
+        case 4:
+        case 26:
+        case 27:
+        case 30:
+        case 31:
+          goto LABEL_4;
+        default:
+          return result;
+      }
+    default:
+LABEL_4:
+      result = FootClass_SetNewTarget(this, a2, a3, a4);
+      break;
+  }
+  return result;
+}
+

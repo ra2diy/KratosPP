@@ -19,7 +19,7 @@
 #define VERSION_REVISION 3
 
 // Indicates Kratos-related bugfixes only
-#define VERSION_PATCH 3
+#define VERSION_PATCH 4
 
 #pragma endregion
 

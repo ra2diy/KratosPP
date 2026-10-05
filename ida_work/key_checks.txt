@@ -1,0 +1,193 @@
+############ 0. 搜索含 GetWeapon 的名字 ############
+TechnoClass_GetWeapon direct -> 0070E140
+   004526F0 BuildingClass_GetWeapon
+   0046B270 BulletClass_GetWeaponType
+   005F4390 ObjectClass_GetWeaponRange
+   0070E140 TechnoClass_GetWeapon
+   007177C0 TechnoType_GetWeapon
+
+############ 1. LayerClass::Sort  (vanilla 0x55DBC3 调用的 sub_551A30) ############
+---- sub_551A30 (Sort)  @00551A30 ----
+   00551A30  push    ecx
+   00551A31  push    ebx
+   00551A32  push    ebp
+   00551A33  mov     ebp, ecx
+   00551A35  xor     ebx, ebx
+   00551A37  mov     eax, [ebp+10h]
+   00551A3A  dec     eax
+   00551A3B  test    eax, eax
+   00551A3D  jle     short loc_551A81
+   00551A3F  push    esi
+   00551A40  push    edi
+   00551A41  mov     eax, [ebp+4]
+   00551A44  mov     esi, [eax+ebx*4+4]
+   00551A48  mov     edi, [eax+ebx*4]
+   00551A4B  mov     ecx, esi
+   00551A4D  mov     edx, [esi]
+   00551A4F  call    dword ptr [edx+0B8h]
+   00551A55  mov     [esp+14h+var_4], eax
+   00551A59  mov     eax, [edi]
+   00551A5B  mov     ecx, edi
+   00551A5D  call    dword ptr [eax+0B8h]
+   00551A63  cmp     [esp+14h+var_4], eax
+   00551A67  jge     short loc_551A76
+   00551A69  mov     ecx, [ebp+4]
+   00551A6C  mov     [ecx+ebx*4+4], edi
+   00551A70  mov     edx, [ebp+4]
+   00551A73  mov     [edx+ebx*4], esi
+   00551A76  mov     eax, [ebp+10h]
+   00551A79  inc     ebx
+   00551A7A  dec     eax
+   00551A7B  cmp     ebx, eax
+   00551A7D  jl      short loc_551A41
+   00551A7F  pop     edi
+   00551A80  pop     esi
+   00551A81  pop     ebp
+   00551A82  pop     ebx
+   00551A83  pop     ecx
+   00551A84  retn
+   00551A85  db 0Bh dup(90h)
+   00551A90  push    esi
+   00551A91  mov     esi, ecx
+   00551A93  mov     ecx, [esi+8]
+   00551A96  mov     eax, [esi+10h]
+   00551A99  cmp     eax, ecx
+   00551A9B  jl      short loc_551AC5
+   00551A9D  mov     al, [esi+0Dh]
+   00551AA0  test    al, al
+   00551AA2  jnz     short loc_551AA8
+   00551AA4  test    ecx, ecx
+   00551AA6  jnz     short loc_551ABF
+   00551AA8  mov     eax, [esi+14h]
+   00551AAB  test    eax, eax
+   00551AAD  jle     short loc_551ABF
+   00551AAF  mov     edx, [esi]
+   00551AB1  add     eax, ecx
+   00551AB3  push    0
+   00551AB5  push    eax
+   00551AB6  mov     ecx, esi
+   00551AB8  call    dword ptr [edx+8]
+   00551ABB  test    al, al
+
+  xrefs to sub_551A30:
+    from 0055DBC8 : call    sub_551A30
+
+############ 2. Main_Loop 0x55DBC3 附近 ############
+---- Main_Loop tail  @0055DB80 ----
+   0055DB80  inc     esi
+   0055DB81  cmp     esi, eax
+   0055DB83  jl      short loc_55DB24
+   0055DB85  mov     AllowVoice, 1
+   0055DB8C  push    4; int
+   0055DB8E  push    offset dword_ABCDFC; lpBuffer
+   0055DB93  mov     ecx, offset FileQ
+   0055DB98  call    CCFileClass_ReadNextBytes
+   0055DB9D  mov     ecx, offset FileQ
+   0055DBA2  push    4; int
+   0055DBA4  push    offset dword_ABCE00; lpBuffer
+   0055DBA9  call    CCFileClass_ReadNextBytes
+   0055DBAE  mov     ecx, offset Map; this
+   0055DBB3  push    edi; a2
+   0055DBB4  call    GScreen_FlagToRedraw
+   0055DBB9  mov     ecx, offset Map; this
+   0055DBBE  call    GScreenClass_DrawOnTop
+   0055DBC3  mov     ecx, offset unk_8A0390
+   0055DBC8  call    sub_551A30
+   0055DBCD  cmp     Session, edi
+   0055DBD3  jnz     loc_55DC99
+   0055DBD9  mov     al, byte_ABCE08
+   0055DBDE  test    al, al
+   0055DBE0  jnz     loc_55DC99
+   0055DBE6  mov     eax, Scenario
+   0055DBEB  or      ecx, 0FFFFFFFFh
+   0055DBEE  mov     byte_ABCE08, 1
+   0055DBF5  lea     edx, [esp+1C4h+Str]
+   0055DBF9  lea     edi, [eax+125Ch]
+   0055DBFF  xor     eax, eax
+   0055DC01  repne scasb
+   0055DC03  not     ecx
+   0055DC05  sub     edi, ecx
+   0055DC07  push    2Eh ; '.'; int
+   0055DC09  mov     eax, ecx
+   0055DC0B  mov     esi, edi
+   0055DC0D  mov     edi, edx
+   0055DC0F  shr     ecx, 2
+   0055DC12  rep movsd
+   0055DC14  mov     ecx, eax
+
+
+############ 3. DisplayClass::Submit ############
+
+############ 4. Greatest_Threat 0x6F8FE0..0x6F9060 (0x6F9039 的门控) ############
+---- Greatest_Threat region  @006F8FE0 ----
+   006F8FE0  test    al, 3
+   006F8FE2  jz      loc_6F9B6E
+   006F8FE8  xor     edi, edi
+   006F8FEA  test    al, 1
+   006F8FEC  mov     [esp+6Ch+wanteddistance], edi
+   006F8FF0  jz      short loc_6F8FF7
+   006F8FF2  mov     edx, [esi]
+   006F8FF4  push    edi
+   006F8FF5  jmp     short loc_6F9016
+   006F8FF7  test    al, 2
+   006F8FF9  jz      short loc_6F9024
+   006F8FFB  cmp     dword ptr [esi+0ACh], 19h
+   006F9002  jnz     short loc_6F9012
+   006F9004  mov     eax, [esi]
+   006F9006  push    2
+   006F9008  mov     ecx, esi; this
+   006F900A  call    [eax+vt_TechnoClass.Techno_31C]
+   006F9010  jmp     short loc_6F901E
+   006F9012  mov     edx, [esi]
+   006F9014  push    1
+   006F9016  mov     ecx, esi
+   006F9018  call    dword ptr [edx+31Ch]
+   006F901E  mov     edi, eax
+   006F9020  mov     [esp+6Ch+wanteddistance], edi
+   006F9024  push    ebp; idxWeapon
+   006F9025  mov     ecx, esi; this
+   006F9027  call    TechnoClass::Combat_Damage; arg = -1
+   006F902C  test    eax, eax
+   006F902E  jge     short loc_6F9042
+   006F9030  cmp     [esi+_MissionClass.m.currentMission], 5
+
+
+############ 5. Greatest_Threat 内的 Random 调用 ############
+func W?Greatest_Threat$:TechnoClass$n.x($ThreatType$$)l 006F8DF0-006F9DAF
+  hits=0
+
+############ 6. 0x8A0370 附近全局（层数组） ############
+   008A0370 : FFFFFFFF  
+   008A0374 : FFFFFFFF  
+   008A0378 : FFFFFFFF  
+   008A037C : FFFFFFFF  
+   008A0380 : FFFFFFFF  
+   008A0384 : FFFFFFFF  
+   008A0388 : FFFFFFFF  
+   008A038C : FFFFFFFF  
+   008A0390 : FFFFFFFF  unk_8A0390
+   008A0394 : FFFFFFFF  dword_8A0394
+   008A0398 : FFFFFFFF  
+   008A039C : FFFFFFFF  
+   008A03A0 : FFFFFFFF  dword_8A03A0
+   008A03A4 : FFFFFFFF  
+   008A03A8 : FFFFFFFF  
+   008A03AC : FFFFFFFF  
+   008A03B0 : FFFFFFFF  
+   008A03B4 : FFFFFFFF  
+   008A03B8 : FFFFFFFF  
+   008A03BC : FFFFFFFF  
+   008A03C0 : FFFFFFFF  
+   008A03C4 : FFFFFFFF  
+   008A03C8 : FFFFFFFF  
+   008A03CC : FFFFFFFF  
+   008A03D0 : FFFFFFFF  
+   008A03D4 : FFFFFFFF  
+   008A03D8 : FFFFFFFF  dbl_8A03D8
+   008A03DC : FFFFFFFF  
+   008A03E0 : FFFFFFFF  byte_8A03E0
+   008A03E4 : FFFFFFFF  
+   008A03E8 : FFFFFFFF  dword_8A03E8
+   008A03EC : FFFFFFFF  dword_8A03EC
+  xrefs to 0x8A0390:
+    from 0055DBC3 : mov     ecx, offset unk_8A0390

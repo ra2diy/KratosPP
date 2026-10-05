@@ -1,0 +1,32 @@
+### 关键常量
+  0x7E44E8  驱动/船 -- 倾斜分支阈值 (dbl)                   dbl=0.005  flt=89128.9609375
+  0x7EF8F8  IsSinking 角度上限 (flt)                   dbl=5.245755804e-315  flt=0.7853981852531433
+  0x7F4E74  角度下限 (flt)                             dbl=-7.524506171740058e-266  flt=-0.7853981852531433
+  0x7EC0B0  2.0e-5 (dbl)                           dbl=2e-05  flt=-1.3686737149039799e-33
+  0x7F4E78  -2.0e-5 (dbl)                          dbl=-2e-05  flt=-1.3686737149039799e-33
+  0x7E4408  facing->voxel 缩放 (dbl)                 dbl=-0.19634954084936207  flt=3370280550400.0
+
+### TechnoTypeClass 成员 0x350..0x3A0
+struct id = 0xFF014921
+size = 0xDF8
+  +0x358  field_358                          size=4
+  +0x35C  field_35C                          size=4
+  +0x360  field_360                          size=4
+  +0x364  field_364                          size=4
+  +0x368  field_368                          size=4
+  +0x36C  Weight                             size=8
+  +0x374  PhysicalSize                       size=8
+  +0x37C  Size                               size=8
+  +0x384  SizeLimit                          size=8
+  +0x38C  HoverAttack                        size=1
+  +0x38D  field_38D                          size=1
+  +0x38E  field_38E                          size=1
+  +0x38F  field_38F                          size=1
+  +0x390  VHPScan                            size=4
+  +0x394  field_394                          size=4
+  +0x398  field_398                          size=4
+  +0x39C  RollAngle                          size=8
+
+### _TechnoClass 成员 0x320..0x340（确认偏移差）
+struct id = 0xFF018E91
+size = 0x520

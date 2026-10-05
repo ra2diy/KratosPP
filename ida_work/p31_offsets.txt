@@ -1,0 +1,292 @@
+### p31 real displacement verification ###
+==============================================================================================================
+[struct TechnoClass] id=0xff016053 size=1308
+ERR dump TechnoClass AttributeError("'dyn_member_ref_array' object has no attribute 'soff'")
+==============================================================================================================
+[struct _TechnoClass] id=0xff018e91 size=1312
+ERR dump _TechnoClass AttributeError("'dyn_member_ref_array' object has no attribute 'soff'")
+==============================================================================================================
+[struct TechnoClass_] NOT FOUND
+==============================================================================================================
+[struct FootClass] id=0xff016055 size=1720
+ERR dump FootClass AttributeError("'dyn_member_ref_array' object has no attribute 'soff'")
+==============================================================================================================
+[struct _FootClass] id=0xff018e94 size=1724
+ERR dump _FootClass AttributeError("'dyn_member_ref_array' object has no attribute 'soff'")
+==============================================================================================================
+[struct LocomotionClass] id=0xff01dfe0 size=24
+ERR dump LocomotionClass AttributeError("'dyn_member_ref_array' object has no attribute 'soff'")
+==============================================================================================================
+[struct ILocomotion] NOT FOUND
+==============================================================================================================
+[struct ShipLocomotionClass] id=0xff01e025 size=108
+ERR dump ShipLocomotionClass AttributeError("'dyn_member_ref_array' object has no attribute 'soff'")
+==============================================================================================================
+[struct DriveLocomotionClass] id=0xff01e0a9 size=108
+ERR dump DriveLocomotionClass AttributeError("'dyn_member_ref_array' object has no attribute 'soff'")
+==============================================================================================================
+[Ship_Matrix branch decision] 0x0069f6c0
+  0x0069f6c0  fcomp   ds:dbl1_0; 1.0
+  0x0069f6c6  fnstsw  ax
+  0x0069f6c8  test    ah, 40h   ; imm=0x40
+  0x0069f6cb  jz      short loc_69F6FE
+  0x0069f6cd  mov     ecx, [esi+8]   ; disp=0x8 (8)
+  0x0069f6d0  fld     dword ptr [ecx+328h]   ; disp=0x328 (808)
+  0x0069f6d6  fabs
+  0x0069f6d8  fcomp   ds:dbl_7E44E8
+  0x0069f6de  fnstsw  ax
+  0x0069f6e0  test    ah, 1   ; imm=0x1
+  0x0069f6e3  jz      short loc_69F6FE
+  0x0069f6e5  fld     dword ptr [ecx+32Ch]   ; disp=0x32c (812)
+  0x0069f6eb  fabs
+  0x0069f6ed  fcomp   ds:dbl_7E44E8
+  0x0069f6f3  fnstsw  ax
+  0x0069f6f5  test    ah, 1   ; imm=0x1
+  0x0069f6f8  jnz     loc_69F9C3
+
+==============================================================================================================
+[Ship_Matrix tilt compensation reads] 0x0069f7f0
+  0x0069f7f0  mov     ecx, [esi+8]   ; disp=0x8 (8)
+  0x0069f7f3  mov     edx, eax
+  0x0069f7f5  mov     [esp+230h+var_21C], edx
+  0x0069f7f9  fld     dword ptr [ecx+32Ch]   ; disp=0x32c (812)
+  0x0069f7ff  fcomp   ds:num_0_0; 0.0
+  0x0069f805  fnstsw  ax
+  0x0069f807  test    ah, 1   ; imm=0x1
+  0x0069f80a  jz      short loc_69F812
+  0x0069f80c  neg     edi
+  0x0069f80e  mov     [esp+230h+var_218], edi
+  0x0069f812  fld     dword ptr [ecx+328h]   ; disp=0x328 (808)
+  0x0069f818  fcomp   ds:num_0_0; 0.0
+  0x0069f81e  fnstsw  ax
+  0x0069f820  test    ah, 41h   ; imm=0x41
+  0x0069f823  jnz     short loc_69F82B
+  0x0069f825  neg     edx
+  0x0069f827  mov     [esp+230h+var_21C], edx
+  0x0069f82b  fild    [esp+230h+var_214]   ; disp=0x1c (28)
+  0x0069f82f  push    ecx; float
+  0x0069f830  lea     ecx, [esp+234h+var_1E0]   ; disp=0x54 (84)
+  0x0069f834  fstp    dword ptr [esp+234h+var_238+4]
+  0x0069f837  call    sub_5AE9E0
+  0x0069f83c  fild    [esp+230h+var_218]   ; disp=0x18 (24)
+  0x0069f840  push    ecx; float
+  0x0069f841  lea     ecx, [esp+234h+var_1B0]   ; disp=0x84 (132)
+  0x0069f848  fstp    dword ptr [esp+234h+var_238+4]
+  0x0069f84b  call    Matrix3DClass_5AE980
+  0x0069f850  fild    [esp+230h+var_21C]   ; disp=0x14 (20)
+  0x0069f854  push    ecx; float
+  0x0069f855  lea     ecx, [esp+234h+var_1B0]   ; disp=0x84 (132)
+  0x0069f85c  fstp    dword ptr [esp+234h+var_238+4]
+  0x0069f85f  call    Matrix3DClass_5AE9B0
+  0x0069f864  mov     ecx, [esi+8]   ; disp=0x8 (8)
+  0x0069f867  mov     edx, [ecx+328h]   ; disp=0x328 (808)
+  0x0069f86d  lea     ecx, [esp+230h+var_1B0]   ; disp=0x80 (128)
+  0x0069f874  push    edx; float
+  0x0069f875  call    sub_5AEF60
+  0x0069f87a  mov     eax, [esi+8]   ; disp=0x8 (8)
+  0x0069f87d  mov     ecx, [eax+32Ch]   ; disp=0x32c (812)
+  0x0069f883  push    ecx; float
+
+==============================================================================================================
+[Techno_41C head] 0x0070b570
+  0x0070b570  sub     esp, 10h   ; imm=0x10
+  0x0070b573  push    ebx
+  0x0070b574  push    esi
+  0x0070b575  mov     esi, ecx
+  0x0070b577  xor     ebx, ebx
+  0x0070b579  fld     [esi+_TechnoClass.t.field_324]   ; disp=0x328 (808)
+  0x0070b57f  fcomp   ds:dbl_7EC0B0; 2.0e-5
+  0x0070b585  fnstsw  ax
+  0x0070b587  test    ah, 41h   ; imm=0x41
+  0x0070b58a  jnz     short loc_70B590
+  0x0070b58c  mov     dl, 1   ; imm=0x1
+  0x0070b58e  jmp     short loc_70B592
+  0x0070b590  xor     dl, dl; arg
+  0x0070b592  fld     [esi+_TechnoClass.t.field_324]   ; disp=0x328 (808)
+  0x0070b598  fcomp   ds:dbl_7F4E78; -2.0e-5
+  0x0070b59e  mov     [esp+18h+var_E], 1   ; imm=0x1
+  0x0070b5a3  fnstsw  ax
+  0x0070b5a5  test    ah, 1   ; imm=0x1
+  0x0070b5a8  jnz     short loc_70B5AE
+  0x0070b5aa  mov     [esp+18h+var_E], bl
+  0x0070b5ae  cmp     [esi+_TechnoClass.t.field_3C9], bl
+  0x0070b5b4  jz      loc_70B63D
+  0x0070b5ba  fld     [esi+_TechnoClass.t.field_328]   ; disp=0x32c (812)
+  0x0070b5c0  fcomp   ds:num_0_0; 0.0
+  0x0070b5c6  fld     [esi+_TechnoClass.t.field_328]   ; disp=0x32c (812)
+  0x0070b5cc  fnstsw  ax
+  0x0070b5ce  test    ah, 1   ; imm=0x1
+  0x0070b5d1  jz      short loc_70B5D5
+  0x0070b5d3  fchs
+  0x0070b5d5  fcomp   ds:flt_7EF8F8; 7.8539819e-1
+  0x0070b5db  fnstsw  ax
+  0x0070b5dd  test    ah, 1   ; imm=0x1
+  0x0070b5e0  jz      loc_70BCA4
+  0x0070b5e6  lea     eax, [esp+18h+arg]   ; disp=0x14 (20)
+  0x0070b5ea  lea     ecx, [esi+_TechnoClass.t.Facing.field_0.X]; Facing   ; disp=0x388 (904)
+  0x0070b5f0  push    eax; arg
+  0x0070b5f1  call    Desired_Facing256
+  0x0070b5f6  mov     eax, [eax]
+  0x0070b5f8  shr     eax, 0Ch   ; imm=0xc
+  0x0070b5fb  inc     eax
+  0x0070b5fc  shr     eax, 1   ; imm=0x1
+  0x0070b5fe  and     eax, 7   ; imm=0x7
+  0x0070b601  jz      short loc_70B625
+  0x0070b603  cmp     eax, 5   ; imm=0x5
+  0x0070b606  jle     short loc_70B60D
+  0x0070b608  cmp     eax, 7   ; imm=0x7
+  0x0070b60b  jle     short loc_70B625
+  0x0070b60d  fld     [esi+_TechnoClass.t.field_328]   ; disp=0x32c (812)
+  0x0070b613  fadd    ds:num_0_01; 1.0e-2
+  0x0070b619  fstp    [esi+_TechnoClass.t.field_328]   ; disp=0x32c (812)
+  0x0070b61f  pop     esi
+  0x0070b620  pop     ebx
+  0x0070b621  add     esp, 10h   ; imm=0x10
+  0x0070b624  retn
+  0x0070b625  fld     [esi+_TechnoClass.t.field_328]   ; disp=0x32c (812)
+  0x0070b62b  fsub    ds:num_0_01; 1.0e-2
+  0x0070b631  fstp    [esi+_TechnoClass.t.field_328]   ; disp=0x32c (812)
+  0x0070b637  pop     esi
+  0x0070b638  pop     ebx
+  0x0070b639  add     esp, 10h   ; imm=0x10
+
+==============================================================================================================
+[sub_7559B0 (matrix from X)] 0x007559b0
+  0x007559b0  push    esi
+  0x007559b1  lea     esi, [edx+edx*2]
+  0x007559b4  mov     eax, ecx
+  0x007559b6  push    edi
+  0x007559b7  shl     esi, 4   ; imm=0x4
+  0x007559ba  add     esi, offset unk_B45188   ; imm=0xb45188
+  0x007559c0  mov     ecx, 0Ch   ; imm=0xc
+  0x007559c5  mov     edi, eax
+  0x007559c7  rep movsd
+  0x007559c9  pop     edi
+  0x007559ca  pop     esi
+  0x007559cb  retn
+  0x007559cc  db 4 dup(90h)
+  0x007559d0  sub     esp, 40h   ; imm=0x40
+  0x007559d3  mov     eax, edx
+  0x007559d5  cmp     ecx, eax
+  0x007559d7  push    esi
+  0x007559d8  push    edi
+  0x007559d9  jnz     short loc_7559FA
+  0x007559db  mov     edi, [esp+4Ch]   ; disp=0x4c (76)
+  0x007559df  lea     esi, [eax+eax*2]
+  0x007559e2  shl     esi, 4   ; imm=0x4
+  0x007559e5  add     esi, offset unk_B43F10   ; imm=0xb43f10
+  0x007559eb  mov     ecx, 0Ch   ; imm=0xc
+  0x007559f0  rep movsd
+  0x007559f2  pop     edi
+  0x007559f3  pop     esi
+  0x007559f4  add     esp, 40h   ; imm=0x40
+  0x007559f7  retn    0Ch
+  0x007559fa  fld     qword ptr [esp+50h]   ; disp=0x50 (80)
+  0x007559fe  push    ecx
+  0x007559ff  mov     edx, ecx
+  0x00755a01  shl     eax, 4   ; imm=0x4
+  0x00755a04  fstp    dword ptr [esp]
+  0x00755a07  add     eax, offset unk_B44348   ; imm=0xb44348
+  0x00755a0c  lea     ecx, [esp+0Ch]   ; disp=0xc (12)
+  0x00755a10  shl     edx, 4   ; imm=0x4
+  0x00755a13  push    eax
+  0x00755a14  add     edx, offset unk_B44348   ; imm=0xb44348
+  0x00755a1a  call    sub_646590
+  0x00755a1f  mov     edx, eax
+  0x00755a21  lea     ecx, [esp+18h]   ; disp=0x18 (24)
+  0x00755a25  call    sub_646980
+  0x00755a2a  mov     edi, [esp+4Ch]   ; disp=0x4c (76)
+  0x00755a2e  mov     ecx, 0Ch   ; imm=0xc
+  0x00755a33  mov     esi, eax
+  0x00755a35  rep movsd
+  0x00755a37  pop     edi
+  0x00755a38  pop     esi
+  0x00755a39  add     esp, 40h   ; imm=0x40
+  0x00755a3c  retn    0Ch
+  0x00755a3f  align 10h
+  0x00755a40  mov     eax, [esp+arg_0]   ; disp=0x4 (4)
+  0x00755a44  sub     esp, 40h   ; imm=0x40
+  0x00755a47  cmp     edx, eax
+  0x00755a49  push    ebx
+  0x00755a4a  push    esi
+  0x00755a4b  push    edi
+  0x00755a4c  mov     ebx, ecx
+  0x00755a4e  jz      short loc_755A94
+
+==============================================================================================================
+[sub_755A40 (lerp)] 0x00755a40
+  0x00755a40  mov     eax, [esp+arg_0]   ; disp=0x4 (4)
+  0x00755a44  sub     esp, 40h   ; imm=0x40
+  0x00755a47  cmp     edx, eax
+  0x00755a49  push    ebx
+  0x00755a4a  push    esi
+  0x00755a4b  push    edi
+  0x00755a4c  mov     ebx, ecx
+  0x00755a4e  jz      short loc_755A94
+  0x00755a50  fld     [esp+4Ch+arg_4]   ; disp=0x54 (84)
+  0x00755a54  push    ecx; float
+  0x00755a55  lea     ecx, [esp+50h+var_40]   ; disp=0x10 (16)
+  0x00755a59  shl     eax, 4   ; imm=0x4
+  0x00755a5c  fstp    [esp+50h+var_50]
+  0x00755a5f  add     eax, offset unk_B43188   ; imm=0xb43188
+  0x00755a64  shl     edx, 4   ; imm=0x4
+  0x00755a67  push    eax; int
+  0x00755a68  add     edx, offset unk_B43188   ; imm=0xb43188
+  0x00755a6e  call    sub_646590
+  0x00755a73  mov     edx, eax
+  0x00755a75  lea     ecx, [esp+4Ch+var_30]   ; disp=0x1c (28)
+  0x00755a79  call    sub_646980
+  0x00755a7e  mov     ecx, 0Ch   ; imm=0xc
+  0x00755a83  mov     esi, eax
+  0x00755a85  mov     edi, ebx
+  0x00755a87  mov     eax, ebx
+  0x00755a89  rep movsd
+  0x00755a8b  pop     edi
+  0x00755a8c  pop     esi
+  0x00755a8d  pop     ebx
+  0x00755a8e  add     esp, 40h   ; imm=0x40
+  0x00755a91  retn    0Ch
+  0x00755a94  lea     esi, [eax+eax*2]
+  0x00755a97  mov     ecx, 0Ch   ; imm=0xc
+  0x00755a9c  shl     esi, 4   ; imm=0x4
+  0x00755a9f  add     esi, offset unk_B45188   ; imm=0xb45188
+  0x00755aa5  mov     edi, ebx
+  0x00755aa7  rep movsd
+  0x00755aa9  pop     edi
+  0x00755aaa  mov     eax, ebx
+  0x00755aac  pop     esi
+  0x00755aad  pop     ebx
+  0x00755aae  add     esp, 40h   ; imm=0x40
+  0x00755ab1  retn    0Ch
+  0x00755ab4  db 0Ch dup(90h)
+  0x00755ac0  mov     eax, dword_8467FC[ecx*4]
+  0x00755ac7  retn
+  0x00755ac8  db 8 dup(90h)
+  0x00755ad0  sub     esp, 8   ; imm=0x8
+  0x00755ad3  mov     eax, [ecx]
+  0x00755ad5  sub     esp, 8   ; imm=0x8
+  0x00755ad8  mov     [esp+0Ch], eax
+  0x00755adc  mov     eax, [edx]
+  0x00755ade  mov     [esp+8], eax
+  0x00755ae2  sub     esp, 8   ; imm=0x8
+  0x00755ae5  fild    dword ptr [esp+10h]   ; disp=0x10 (16)
+  0x00755ae9  fisub   dword ptr [esp+14h]   ; disp=0x14 (20)
+  0x00755aed  fstp    qword ptr [esp+8]   ; disp=0x8 (8)
+  0x00755af1  fild    dword ptr [ecx+4]   ; disp=0x4 (4)
+  0x00755af4  fisub   dword ptr [edx+4]   ; disp=0x4 (4)
+  0x00755af7  fstp    qword ptr [esp]
+
+==============================================================================================================
+[IsVoxel slot scan in vt_TechnoClass(Unit)]
+==============================================================================================================
+[struct TechnoTypeClass] id=0xff014921 size=3576
+ERR dump ttype AttributeError("'dyn_member_ref_array' object has no attribute 'soff'")
+Traceback (most recent call last):
+  File "D:/Workspace/ra2mod/platform/KratosPP/ida_work/p31_offsets.py", line 119, in <module>
+    dump_struct("TechnoTypeClass", 400)
+  File "D:/Workspace/ra2mod/platform/KratosPP/ida_work/p31_offsets.py", line 37, in dump_struct
+    w("  +%#06x  %-42s size=%-4d %s" % (m.soff, mname, msize, mt))
+                                        ^^^^^^
+AttributeError: 'dyn_member_ref_array' object has no attribute 'soff'
+
+### DONE ###

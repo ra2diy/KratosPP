@@ -1,0 +1,626 @@
+rdata 007E1608..00812000 len=199160
+
+############ A. 名字检索 ############
+   0041C250  LocomotionClass_CreateInstance
+   0041C2E0  LocomotionClass_41C2E0
+   0045A050  LocomotionClass_AssureExists
+   0045A170  LocomotionClass_ppv_AddRef
+   0045AF20  LocomotionClass_FillVar
+   004AF540  DriveLocomotionClass_CTOR
+   004AF720  DriveLocomotionClass_QueryInterface
+   004AF780  DriveLocomotionClass_Load
+   004AF800  DriveLocomotionClass_Save
+   004AFB80  DriveLocomotionClass_ILocomotion_IsMoving
+   004AFC20  DriveLocomotionClass_ILocomotion_IsMovingNow
+   004B2630  DriveLocomotionClass_blah
+   004B4830  DriveLocomotionClass_GetClassID
+   004B4C30  LocomotionClass_IsDirty
+   004B4C50  LocomotionClass_ILocomotion_IsReallyMovingNow
+   004B4C60  LocomotionClass_ILocomotion_GetStatus
+   004B4C70  LocomotionClass_ILocomotion_AcquireHunterSeekerTarget
+   004B4C80  LocomotionClass_ILocomotion_IsSurfacing
+   004B4C90  LocomotionClass_ILocomotion_StopMovementAction
+   004B4CA0  LocomotionClass_ILocomotion_Lock
+   004B4CB0  DriveLocomotionClass_AddRef
+   004B4CC0  DriveLocomotionClass_Release
+   004B4CF0  DriveLocomotionClass_GetSize
+   004B4D00  DriveLocomotionClass_SDDTOR
+   004B5AB0  DpodLocomotionClass_CTOR
+   004B5B70  DropPodLocomotionClass_ILocomotion_Update
+   004B6200  DropPodLocomotionClass_GetClassID
+   004B6240  DropPodLocomotionClass_Load
+   004B62C0  DropPodLocomotionClass_Save
+   004B6470  DropPodLocomotionClass_QueryInterface
+   004B6610  LocomotionClass_ILocomotion_IsMovingNow
+   004B6620  LocomotionClass_ILocomotion_MarkAllOccupationBits
+   004B6630  LocomotionClass_ILocomotion_IsMovingHere
+   004B6640  LocomotionClass_ILocomotion_WillJumpTracks
+   004B6650  LocomotionClass_ILocomotion_Unlock
+   004B6660  LocomotionClass_ILocomotion_GetTrackNumber
+   004B6670  LocomotionClass_ILocomotion_GetTrackIndex
+   004B6680  LocomotionClass_ILocomotion_GetSpeedAccum
+   004B6690  LocomotionClass_ILocomotion_4B6690
+   004B66A0  DropPodLocomotionClass_AddRef
+   004B66B0  DropPodLocomotionClass_Release
+   004B66E0  DropPodLocomotionClass_GetSize
+   004B66F0  DropPodLocomotionClass_SDDTOR
+   004CC9A0  FlyLocomotionClass_CTOR
+   004CFC80  FlyLocomotionClass_GetClassID
+   004CFCC0  FlyLocomotionClass_Load
+   004D0390  FlyLocomotionClass_GetSize
+   004D03A0  FlyLocomotionClass_SDDTOR
+   004D0510  LocomotionClass_ILocomotion_QueryInterface
+   004D0520  LocomotionClass_ILocomotion_AddRef
+   004D0530  LocomotionClass_ILocomotion_Release
+   00513C20  HoverLocomotionClass_CTOR
+   00514D10  HoverLocomotionClass_ILocomotion_GetCoords
+   00516BF0  HoverLocomotionClass_ILocomotion_PowerOff
+   00516C70  HoverLocomotionClass_ILocomotion_IsPowered
+   00517070  HoverLocomotionClass_GetClassID
+   005170B0  HoverLocomotionClass_Load
+   005172B0  HoverLocomotionClass_GetSize
+   005172C0  HoverLocomotionClass_SDDTOR
+   005172F0  ??_GLocomotionClass@@UAEPAXI@Z
+   005233A0  LocomotionClass_HandItOver
+   0054AC40  JumpjetLocomotionClass_CTOR
+   0054AEC0  JumpjetLocomotionClass_Process
+   0054B710  JumpjetLocomotionClass_GetClassID
+   0054B750  JumpjetLocomotionClass_Load
+   0054B7E0  JumpjetLocomotionClass_Save
+   0054D0D0  JumpjetLocomotionClass_Is_Moving_Now
+   0054DC60  JumpjetLocomotionClass_QueryInterface
+   0054DF50  JumpjetLocomotionClass_AddRef
+   0054DF60  JumpjetLocomotionClass_Release
+   0054DF90  JumpjetLocomotionClass_GetSize
+   0054DFA0  JumpjetLocomotionClass_SDDTOR
+   0055A6C0  LocomotionClass_CTOR
+   0055A6F0  ??1TunnelLocomotionClass@@UAE@XZ
+   0055A710  LocomotionClass_ILocomotion_LinkToObject
+   0055A730  LocomotionClass_ILocomotion_DrawMatrix
+   0055A7D0  LocomotionClass_ILocomotion_ShadowMatrix
+   0055A8C0  LocomotionClass_ILocomotion_ShadowPoint
+   0055A8F0  LocomotionClass_ILocomotion_PowerOn
+   0055A910  LocomotionClass_ILocomotion_PowerOff
+   0055A930  LocomotionClass_ILocomotion_IsPowered
+   0055A940  LocomotionClass_ILocomotion_IsIonSensitive
+   0055A950  LocomotionClass_AddRef
+   0055A970  LocomotionClass_Release
+   0055A9B0  LocomotionClass_QueryInterface
+   0055AA60  LocomotionClassClass_Save
+   0055AB40  LocomotionClass_GetMaxSize
+   0055AB70  LocomotionClass_ILocomotion_Push
+   0055AB80  LocomotionClass_ILocomotion_Shove
+   0055AB90  LocomotionClass_ILocomotion_TiltPitchAI
+   0055ABA0  LocomotionClass_ILocomotion_ZAdjust
+   0055ABB0  LocomotionClass_ILocomotion_ZGradient
+   0055ABC0  LocomotionClass_ILocomotion_VisualCharacter
+   0055ABD0  LocomotionClass_ILocomotion_DrawPoint
+   0055ABE0  LocomotionClass_ILocomotion_IsToHaveShadow
+   0055ABF0  LocomotionClass_ILocomotion_CanEnterCell
+   0055AC00  LocomotionClass_ILocomotion_ForceImmediateDestination
+   0055AC10  LocomotionClass_ILocomotion_ForceTrack
+   0055AC20  LocomotionClass_ILocomotion_Unlimbo
+   0055AC30  LocomotionClass_ILocomotion_DoTurn
+   0055AC40  LocomotionClass_ILocomotion_StopMoving
+   0055AC50  LocomotionClass_ILocomotion_MoveTo
+   0055AC60  LocomotionClass_ILocomotion_Process
+   0055AC70  LocomotionClass_ILocomotion_Destination
+   0055ACA0  LocomotionClass_ILocomotion_HeadToCoord
+   0055ACD0  LocomotionClass_ILocomotion_IsMoving
+   0055ACE0  LocomotionClass_ILocomotion_ForceNewSlope
+   0055ACF0  LocomotionClass_ILocomotion_DrawingCode
+   0055AD00  LocomotionClass_ILocomotion_CanFire
+   0055AD10  LocomotionClass_ILocomotion_ApparentSpeed
+   005AFEF0  MechLocomotionClass_CTOR
+   005B1960  MechLocomotionClass_GetClassID
+   005B19A0  MechLocomotionClass_Load
+   005B1B40  MechLocomotionClass_GetSize
+   005B1B50  MechLocomotionClass_SDDTOR
+   00661EC0  RocketLocomotionClass_CTOR
+   00661F50  RocketLocomotionClass_ILocomotion_IsMoving
+   00661F90  RocketLocomotionClass_ILocomotion_IsMovingNow
+   00661FB0  RocketLocomotionClass_ILocomotion_Destination
+   006622C0  RocketLocomotionClass_ILocomotion_Process
+   00663030  RocketLocomotionClass_DoStuff
+   006632E0  RocketLocomotionClass_ILocomotion_MoveTo
+   006633C0  RocketLocomotionClass_ILocomotion_StopMoving
+   006633D0  RocketLocomotionClass_GetClassID
+   00663410  RocketLocomotionClass_Load
+   00663460  RocketLocomotionClass_ILocomotion_InWhichLayer
+   00663470  RocketLocomotionClass_ILocomotion_DrawMatrix
+   006635B0  RocketLocomotionClass_GetSize
+   006635C0  RocketLocomotionClass_SDDTOR
+   0069EC50  ShipLocomotionClass_CTOR
+   0069EE30  ShipLocomotionClass_QueryInterface
+   0069EE90  ShipLocomotionClass_Load
+   0069EF10  ShipLocomotionClass_Save
+   006A1C80  ShipLocomotionClass_blah
+   006A3E60  ShipLocomotionClass_GetClassID
+   006A4260  ShipLocomotionClass_AddRef
+   006A4270  ShipLocomotionClass_Release
+   006A42A0  ShipLocomotionClass_GetSize
+   006A42B0  ShipLocomotionClass_SDDTOR
+   006CE270  LocomotionClass_ppv_AddRef2
+   00718000  TeleportLocomotionClass_CTOR
+   00718080  TeleportLocomotionClass_ILocomotion_718080
+   007180A0  TeleportLocomotionClass_ILocomotion_7180A0
+   00718100  TeleportLocomotionClass_ILocomotion_718100
+   00718230  TeleportLocomotionClass_ILocomotion_718230
+   007192C0  TeleportLocomotionClass_ILocomotion_7192C0
+   007192F0  TeleportLocomotionClass_ILocomotion_Process
+   00719C60  TeleportLocomotionClass_GetClassID
+   00719CA0  TeleportLocomotionClass_Load
+   00719D40  TeleportLocomotionClass_Save
+   00719E20  TeleportLocomotionClass_ILocomotion_719E20
+   00719E30  TeleportLocomotionClass_QueryInterface
+   0071A090  TeleportLocomotionClass_ILocomotion_71A090
+   0071A0E0  TeleportLocomotionClass_AddRef
+   0071A0F0  TeleportLocomotionClass_Release
+   0071A120  TeleportLocomotionClass_GetSize
+   0071A130  TeleportLocomotionClass_SDDTOR
+   0071A160  TeleportLocomotionClass_ILocomotion_71A160
+   0071A170  TeleportLocomotionClass_ILocomotion_71A170
+   0071A180  TeleportLocomotionClass_ILocomotion_71A180
+   00728A00  TunnelLocomotionClass_CTOR
+   0072A110  TunnelLocomotionClass_GetClassID
+   0072A150  TunnelLocomotionClass_Load
+   0072A200  TunnelLocomotionClass_GetSize
+   0072A210  ??_GTunnelLocomotionClass@@UAEPAXI@Z
+   0075AA90  WalkLocomotionClass_CTOR
+   0075AB30  WalkLocomotionClass_ILocomotion_IsMoving
+   0075AB40  WalkLocomotionClass_ILocomotion_IsMovingNow
+   0075ABA0  WalkLocomotionClass_ILocomotion_Destination
+   0075AC00  WalkLocomotionClass_ILocomotion_HeadToCoord
+   0075AC80  WalkLocomotionClass_ILocomotion_Process
+   0075ACB0  WalkLocomotionClass_ILocomotion_MoveTo
+   0075ADA0  WalkLocomotionClass_ILocomotion_StopMoving
+   0075AE00  WalkLocomotionClass_ILocomotion_DoTurn
+   0075AE30  WalkLocomotionClass_ILocomotion_ForceImmediateDestination
+   0075C640  WalkLocomotionClass_GetClassID
+   0075C680  WalkLocomotionClass_Load
+   0075C700  WalkLocomotionClass_Save
+   0075C7E0  LocomotionClass_ILocomotion_InWhichLayer
+   0075C7F0  WalkLocomotionClass_QueryInterface
+   0075C850  WalkLocomotionClass_IPiggyback_BeginPiggyback
+   0075C8A0  WalkLocomotionClass_IPiggyback_EndPiggyback
+   0075C8E0  WalkLocomotionClass_IPiggyback_IsOKToEnd
+   0075C920  WalkLocomotionClass_IPiggyback_PiggybackCLSID
+   0075CA30  WalkLocomotionClass_ILocomotion_MarkAllOccupationBits
+   0075CA80  WalkLocomotionClass_ILocomotion_IsMovingHere
+   0075CB20  WalkLocomotionClass_ILocomotion_IsReallyMovingNow
+   0075CB30  WalkLocomotionClass_ILocomotion_Lock
+   0075CB80  WalkLocomotionClass_AddRef
+   0075CB90  WalkLocomotionClass_Release
+   0075CBA0  WalkLocomotionClass_IPiggyback_IsPiggybacking
+   0075CBC0  WalkLocomotionClass_ILocomotion_StopMovementAction
+   0075CBD0  WalkLocomotionClass_GetSize
+   0075CBE0  WalkLocomotionClass_SDDTOR
+   0075CC30  WalkLocomotionClass_ILocomotion_QueryInterface
+   0075CC40  WalkLocomotionClass_ILocomotion_AddRef
+   0075CC50  WalkLocomotionClass_ILocomotion_Release
+   0075CC60  WalkLocomotionClass_IPiggyback_QueryInterface
+   0075CC70  WalkLocomotionClass_IPiggyback_AddRef
+   0075CC80  WalkLocomotionClass_IPiggyback_Release
+   007E7E8C  ??_7DriveLocomotionClass@@6BIPiggyback@@@
+   007E7EB0  ??_7DriveLocomotionClass@@6BILocomotion@@@
+   007E7F7C  ??_7DriveLocomotionClass@@6BDriveLocomotionClass@@@
+   007E8254  ??_7DropPodLocomotionClass@@6BIPiggyback@@@
+   007E8278  ??_7DropPodLocomotionClass@@6BILocomotion@@@
+   007E8344  ??_7DropPodLocomotionClass@@6BDropPodLocomotionClass@@@
+   007E89F4  ??_7FlyLocomotionClass@@6BILocomotion@@@
+   007E8AC0  ??_7FlyLocomotionClass@@6BFlyLocomotionClass@@@
+   007E9A30  CLSID_DriveLocomotionClass
+   007E9A40  CLSID_HoverLocomotionClass
+   007E9A50  CLSID_TunnelLocomotionClass
+   007E9A60  CLSID_WalkLocomotionClass
+   007E9A70  CLSID_DropPodLocomotionClass
+   007E9A80  CLSID_FlyLocomotionClass
+   007E9A90  CLSID_TeleportLocomotionClass
+   007E9AA0  CLSID_MechLocomotionClass
+   007E9AB0  CLSID_ShipLocomotionClass
+   007E9AC0  CLSID_JumpjetLocomotionClass
+   007E9AD0  CLSID_RocketLocomotionClass
+   007EACFC  ??_7HoverLocomotionClass@@6BILocomotion@@@
+   007EADC8  ??_7HoverLocomotionClass@@6BHoverLocomotionClass@@@
+   007EADF4  ??_7LocomotionClass@@6BILocomotion@@@
+   007EAEC0  ??_7LocomotionClass@@6BLocomotionClass@@@
+   007ECD44  ??_7JumpjetLocomotionClass@@6BIPiggyback@@@
+   007ECD68  ??_7JumpjetLocomotionClass@@6BILocomotion@@@
+   007ECE34  ??_7JumpjetLocomotionClass@@6BJumpjetLocomotionClass@@@
+   007EDB6C  ??_7MechLocomotionClass@@6BILocomotion@@@
+   007EDC38  ??_7MechLocomotionClass@@6BMechLocomotionClass@@@
+   007F0B1C  ??_7RocketLocomotionClass@@6BILocomotion@@@
+   007F0BE8  ??_7RocketLocomotionClass@@6BRocketLocomotionClass@@@
+   007F2D68  ??_7ShipLocomotionClass@@6BIPiggyback@@@
+   007F2D8C  ??_7ShipLocomotionClass@@6BILocomotion@@@
+   007F2E58  ??_7ShipLocomotionClass@@6BShipLocomotionClass@@@
+   007F3C78  ??_7?$TClassFactory@VDriveLocomotionClass@@@@6B@
+   007F3C90  ??_7?$TClassFactory@VJumpjetLocomotionClass@@@@6B@
+   007F3CA8  ??_7?$TClassFactory@VHoverLocomotionClass@@@@6B@
+   007F3CC0  ??_7?$TClassFactory@VRocketLocomotionClass@@@@6B@
+   007F3CD8  ??_7?$TClassFactory@VTunnelLocomotionClass@@@@6B@
+   007F3CF0  ??_7?$TClassFactory@VWalkLocomotionClass@@@@6B@
+   007F3D08  ??_7?$TClassFactory@VDropPodLocomotionClass@@@@6B@
+   007F3D20  ??_7?$TClassFactory@VFlyLocomotionClass@@@@6B@
+   007F3D38  ??_7?$TClassFactory@VTeleportLocomotionClass@@@@6B@
+   007F3D50  ??_7?$TClassFactory@VMechLocomotionClass@@@@6B@
+   007F3D68  ??_7?$TClassFactory@VShipLocomotionClass@@@@6B@
+   007F4FDC  ??_7TeleportLocomotionClass@@6BIPiggyback@@@
+   007F5000  ??_7TeleportLocomotionClass@@6BILocomotion@@@
+   007F50CC  ??_7TeleportLocomotionClass@@6BTeleportLocomotionClass@@@
+   007F5A24  ??_7TunnelLocomotionClass@@6BILocomotion@@@
+   007F5AF0  ??_7TunnelLocomotionClass@@6BTunnelLocomotionClass@@@
+   007F69D4  ??_7WalkLocomotionClass@@6BIPiggyback@@@
+   007F69F8  ??_7WalkLocomotionClass@@6BILocomotion@@@
+   007F6AC4  ??_7WalkLocomotionClass@@6BWalkLocomotionClass@@@
+   007FFDD0  ??_R4DriveLocomotionClass@@6BIPiggyback@@@
+   007FFDE8  ??_R4DriveLocomotionClass@@6BILocomotion@@@
+   007FFE30  ??_R13?0A@A@ILocomotion@@8
+   007FFE48  ??_R1A@?0A@A@LocomotionClass@@8
+   007FFE60  ??_R1A@?0A@A@DriveLocomotionClass@@8
+   007FFE78  ??_R2DriveLocomotionClass@@8
+   007FFEA0  ??_R3DriveLocomotionClass@@8
+   007FFEB0  ??_R4DriveLocomotionClass@@6BDriveLocomotionClass@@@
+   00800028  ??_R4DropPodLocomotionClass@@6BIPiggyback@@@
+   00800040  ??_R4DropPodLocomotionClass@@6BILocomotion@@@
+   00800058  ??_R1A@?0A@A@DropPodLocomotionClass@@8
+   00800070  ??_R2DropPodLocomotionClass@@8
+   00800098  ??_R3DropPodLocomotionClass@@8
+   008000A8  ??_R4DropPodLocomotionClass@@6BDropPodLocomotionClass@@@
+   00800658  ??_R4FlyLocomotionClass@@6BILocomotion@@@
+   00800670  ??_R1A@?0A@A@FlyLocomotionClass@@8
+   00800688  ??_R2FlyLocomotionClass@@8
+   008006A8  ??_R3FlyLocomotionClass@@8
+   008006B8  ??_R4FlyLocomotionClass@@6BFlyLocomotionClass@@@
+   00803228  ??_R4HoverLocomotionClass@@6BILocomotion@@@
+   00803240  ??_R1A@?0A@A@HoverLocomotionClass@@8
+   00803258  ??_R2HoverLocomotionClass@@8
+   00803278  ??_R3HoverLocomotionClass@@8
+   00803288  ??_R4HoverLocomotionClass@@6BHoverLocomotionClass@@@
+   008032A0  ??_R4LocomotionClass@@6BILocomotion@@@
+   008032B8  ??_R2LocomotionClass@@8
+   008032D8  ??_R3LocomotionClass@@8
+   008032E8  ??_R4LocomotionClass@@6BLocomotionClass@@@
+   00804C70  ??_R4JumpjetLocomotionClass@@6BIPiggyback@@@
+   00804C88  ??_R4JumpjetLocomotionClass@@6BILocomotion@@@
+   00804CA0  ??_R1A@?0A@A@JumpjetLocomotionClass@@8
+   00804CB8  ??_R2JumpjetLocomotionClass@@8
+   00804CE0  ??_R3JumpjetLocomotionClass@@8
+   00804CF0  ??_R4JumpjetLocomotionClass@@6BJumpjetLocomotionClass@@@
+   00805C28  ??_R4MechLocomotionClass@@6BILocomotion@@@
+   00805C40  ??_R1A@?0A@A@MechLocomotionClass@@8
+   00805C58  ??_R2MechLocomotionClass@@8
+   00805C78  ??_R3MechLocomotionClass@@8
+   00805C88  ??_R4MechLocomotionClass@@6BMechLocomotionClass@@@
+   00808908  ??_R4RocketLocomotionClass@@6BILocomotion@@@
+   00808920  ??_R1A@?0A@A@RocketLocomotionClass@@8
+   00808938  ??_R2RocketLocomotionClass@@8
+   00808958  ??_R3RocketLocomotionClass@@8
+   00808968  ??_R4RocketLocomotionClass@@6BRocketLocomotionClass@@@
+   00809388  ??_R4ShipLocomotionClass@@6BIPiggyback@@@
+   008093A0  ??_R4ShipLocomotionClass@@6BILocomotion@@@
+   008093B8  ??_R1A@?0A@A@ShipLocomotionClass@@8
+   008093D0  ??_R2ShipLocomotionClass@@8
+   008093F8  ??_R3ShipLocomotionClass@@8
+   00809408  ??_R4ShipLocomotionClass@@6BShipLocomotionClass@@@
+   0080AD10  ??_R1A@?0A@A@?$TClassFactory@VDriveLocomotionClass@@@@8
+   0080AD28  ??_R2?$TClassFactory@VDriveLocomotionClass@@@@8
+   0080AD38  ??_R3?$TClassFactory@VDriveLocomotionClass@@@@8
+   0080AD48  ??_R4?$TClassFactory@VDriveLocomotionClass@@@@6B@
+   0080AD60  ??_R1A@?0A@A@?$TClassFactory@VJumpjetLocomotionClass@@@@8
+   0080AD78  ??_R2?$TClassFactory@VJumpjetLocomotionClass@@@@8
+   0080AD88  ??_R3?$TClassFactory@VJumpjetLocomotionClass@@@@8
+   0080AD98  ??_R4?$TClassFactory@VJumpjetLocomotionClass@@@@6B@
+   0080ADB0  ??_R1A@?0A@A@?$TClassFactory@VHoverLocomotionClass@@@@8
+   0080ADC8  ??_R2?$TClassFactory@VHoverLocomotionClass@@@@8
+   0080ADD8  ??_R3?$TClassFactory@VHoverLocomotionClass@@@@8
+   0080ADE8  ??_R4?$TClassFactory@VHoverLocomotionClass@@@@6B@
+   0080AE00  ??_R1A@?0A@A@?$TClassFactory@VRocketLocomotionClass@@@@8
+   0080AE18  ??_R2?$TClassFactory@VRocketLocomotionClass@@@@8
+   0080AE28  ??_R3?$TClassFactory@VRocketLocomotionClass@@@@8
+   0080AE38  ??_R4?$TClassFactory@VRocketLocomotionClass@@@@6B@
+   0080AE50  ??_R1A@?0A@A@?$TClassFactory@VTunnelLocomotionClass@@@@8
+   0080AE68  ??_R2?$TClassFactory@VTunnelLocomotionClass@@@@8
+   0080AE78  ??_R3?$TClassFactory@VTunnelLocomotionClass@@@@8
+   0080AE88  ??_R4?$TClassFactory@VTunnelLocomotionClass@@@@6B@
+   0080AEA0  ??_R1A@?0A@A@?$TClassFactory@VWalkLocomotionClass@@@@8
+   0080AEB8  ??_R2?$TClassFactory@VWalkLocomotionClass@@@@8
+   0080AEC8  ??_R3?$TClassFactory@VWalkLocomotionClass@@@@8
+   0080AED8  ??_R4?$TClassFactory@VWalkLocomotionClass@@@@6B@
+   0080AEF0  ??_R1A@?0A@A@?$TClassFactory@VDropPodLocomotionClass@@@@8
+   0080AF08  ??_R2?$TClassFactory@VDropPodLocomotionClass@@@@8
+   0080AF18  ??_R3?$TClassFactory@VDropPodLocomotionClass@@@@8
+   0080AF28  ??_R4?$TClassFactory@VDropPodLocomotionClass@@@@6B@
+   0080AF40  ??_R1A@?0A@A@?$TClassFactory@VFlyLocomotionClass@@@@8
+   0080AF58  ??_R2?$TClassFactory@VFlyLocomotionClass@@@@8
+   0080AF68  ??_R3?$TClassFactory@VFlyLocomotionClass@@@@8
+   0080AF78  ??_R4?$TClassFactory@VFlyLocomotionClass@@@@6B@
+   0080AF90  ??_R1A@?0A@A@?$TClassFactory@VTeleportLocomotionClass@@@@8
+   0080AFA8  ??_R2?$TClassFactory@VTeleportLocomotionClass@@@@8
+   0080AFB8  ??_R3?$TClassFactory@VTeleportLocomotionClass@@@@8
+   0080AFC8  ??_R4?$TClassFactory@VTeleportLocomotionClass@@@@6B@
+   0080AFE0  ??_R1A@?0A@A@?$TClassFactory@VMechLocomotionClass@@@@8
+   0080AFF8  ??_R2?$TClassFactory@VMechLocomotionClass@@@@8
+   0080B008  ??_R3?$TClassFactory@VMechLocomotionClass@@@@8
+   0080B018  ??_R4?$TClassFactory@VMechLocomotionClass@@@@6B@
+   0080B030  ??_R1A@?0A@A@?$TClassFactory@VShipLocomotionClass@@@@8
+   0080B048  ??_R2?$TClassFactory@VShipLocomotionClass@@@@8
+   0080B058  ??_R3?$TClassFactory@VShipLocomotionClass@@@@8
+   0080B068  ??_R4?$TClassFactory@VShipLocomotionClass@@@@6B@
+   0080C160  ??_R4TeleportLocomotionClass@@6BIPiggyback@@@
+   0080C178  ??_R4TeleportLocomotionClass@@6BILocomotion@@@
+   0080C190  ??_R1A@?0A@A@TeleportLocomotionClass@@8
+   0080C1A8  ??_R2TeleportLocomotionClass@@8
+   0080C1D0  ??_R3TeleportLocomotionClass@@8
+   0080C1E0  ??_R4TeleportLocomotionClass@@6BTeleportLocomotionClass@@@
+   0080CAE8  ??_R4TunnelLocomotionClass@@6BILocomotion@@@
+   0080CB00  ??_R1A@?0A@A@TunnelLocomotionClass@@8
+   0080CB18  ??_R2TunnelLocomotionClass@@8
+   0080CB38  ??_R3TunnelLocomotionClass@@8
+   0080CB48  ??_R4TunnelLocomotionClass@@6BTunnelLocomotionClass@@@
+   0080D228  ??_R4WalkLocomotionClass@@6BIPiggyback@@@
+   0080D240  ??_R4WalkLocomotionClass@@6BILocomotion@@@
+   0080D258  ??_R1A@?0A@A@WalkLocomotionClass@@8
+   0080D270  ??_R2WalkLocomotionClass@@8
+   0080D298  ??_R3WalkLocomotionClass@@8
+   0080D2A8  ??_R4WalkLocomotionClass@@6BWalkLocomotionClass@@@
+   00820208  ??_R0?AUILocomotion@@@8
+   00820228  ??_R0?AVLocomotionClass@@@8
+   00820248  ??_R0?AVDriveLocomotionClass@@@8
+   008202F8  ??_R0?AVDropPodLocomotionClass@@@8
+   008223E8  ??_R0?AVFlyLocomotionClass@@@8
+   008254B8  ??_R0?AVHoverLocomotionClass@@@8
+   00829648  ??_R0?AVJumpjetLocomotionClass@@@8
+   0082C228  ??_R0?AVMechLocomotionClass@@@8
+   008399C8  ??_R0?AVRocketLocomotionClass@@@8
+   0083F880  ??_R0?AVShipLocomotionClass@@@8
+   00841A18  ??_R0?AV?$TClassFactory@VDriveLocomotionClass@@@@@8
+   00841A50  ??_R0?AV?$TClassFactory@VJumpjetLocomotionClass@@@@@8
+   00841A88  ??_R0?AV?$TClassFactory@VHoverLocomotionClass@@@@@8
+   00841AC0  ??_R0?AV?$TClassFactory@VRocketLocomotionClass@@@@@8
+   00841AF8  ??_R0?AV?$TClassFactory@VTunnelLocomotionClass@@@@@8
+   00841B30  ??_R0?AV?$TClassFactory@VWalkLocomotionClass@@@@@8
+   00841B68  ??_R0?AV?$TClassFactory@VDropPodLocomotionClass@@@@@8
+   00841BA0  ??_R0?AV?$TClassFactory@VFlyLocomotionClass@@@@@8
+   00841BD8  ??_R0?AV?$TClassFactory@VTeleportLocomotionClass@@@@@8
+   00841C18  ??_R0?AV?$TClassFactory@VMechLocomotionClass@@@@@8
+   00841C50  ??_R0?AV?$TClassFactory@VShipLocomotionClass@@@@@8
+   00844538  ??_R0?AVTeleportLocomotionClass@@@8
+   00844AA0  ??_R0?AVTunnelLocomotionClass@@@8
+   00847BF0  ??_R0?AVWalkLocomotionClass@@@8
+   008A0790  DriveLocomotionClass_Default_Pos
+   008A0820  DpodLocomotionClass_Default_Pos
+   008B3C78  FlyLocomotionClass_Default_Pos
+   00A8F180  HoverLocomotionClass_Default_Pos
+   00ABC5A8  JumpjetLocomotionClass_Default_Pos
+   00ABEE10  MechLocomotionClass_Default_Pos
+   00B04E38  RocketLocomotionClass_Default_Pos
+   00B077F8  ShipLocomotionClass_Default_Pos
+   00B0EBF8  TeleportLocomotionClass_Default_Pos
+   00B0F910  TunnelLocomotionClass_Default_Pos
+   00B45BE8  WalkLocomotionClass_Default_Pos
+
+############ B. 含已知 Draw_Matrix 的虚表（+0x24）############
+---- Drive Draw_Matrix=004AFF60  slot=007E7ED4  vtable_base=007E7EB0 ----
+   +018 Shadow_Matrix(-4?) 004AFCC0  sub_4AFCC0
+   +01C ?                  0055ABF0  LocomotionClass_ILocomotion_CanEnterCell
+   +020 ?                  0055ABE0  LocomotionClass_ILocomotion_IsToHaveShadow
+   +024 Draw_Matrix        004AFF60  sub_4AFF60
+   +028 Shadow_Matrix      004B0410  sub_4B0410
+   +02C Draw_Point         0055ABD0  LocomotionClass_ILocomotion_DrawPoint
+   +030 Shadow_Point       0055A8C0  LocomotionClass_ILocomotion_ShadowPoint
+   +034 Visual_Character   0055ABC0  LocomotionClass_ILocomotion_VisualCharacter
+   +038 Z_Adjust           004B4870  sub_4B4870
+   +03C Z_Gradient         004B4880  sub_4B4880
+   +040 Process            004B0500  sub_4B0500
+   +044 Move_To            004AFD40  sub_4AFD40
+   +048 Stop_Moving        004AFE00  sub_4AFE00
+   +04C Do_Turn            004B0EF0  sub_4B0EF0
+   +050 Unlimbo            004B04D0  sub_4B04D0
+   +054 Tilt_Pitch_AI      0055AB90  LocomotionClass_ILocomotion_TiltPitchAI
+   +058 Power_On           0055A8F0  LocomotionClass_ILocomotion_PowerOn
+   +06C In_Which_Layer     0055AB80  LocomotionClass_ILocomotion_Shove
+   +074 Is_Moving_Now      004B4820  sub_4B4820
+   +078 Apparent_Speed     0055AC00  LocomotionClass_ILocomotion_ForceImmediateDestination
+   +07C Drawing_Code       004AFB40  sub_4AFB40
+
+---- Ship Draw_Matrix=0069F670  slot=007F2DB0  vtable_base=007F2D8C ----
+   +018 Shadow_Matrix(-4?) 0069F3D0  sub_69F3D0
+   +01C ?                  0055ABF0  LocomotionClass_ILocomotion_CanEnterCell
+   +020 ?                  0055ABE0  LocomotionClass_ILocomotion_IsToHaveShadow
+   +024 Draw_Matrix        0069F670  sub_69F670
+   +028 Shadow_Matrix      0069FB20  sub_69FB20
+   +02C Draw_Point         0055ABD0  LocomotionClass_ILocomotion_DrawPoint
+   +030 Shadow_Point       0055A8C0  LocomotionClass_ILocomotion_ShadowPoint
+   +034 Visual_Character   0055ABC0  LocomotionClass_ILocomotion_VisualCharacter
+   +038 Z_Adjust           006A3EA0  sub_6A3EA0
+   +03C Z_Gradient         006A3EB0  sub_6A3EB0
+   +040 Process            0069FC10  sub_69FC10
+   +044 Move_To            0069F450  sub_69F450
+   +048 Stop_Moving        0069F510  sub_69F510
+   +04C Do_Turn            006A05C0  sub_6A05C0
+   +050 Unlimbo            0069FBE0  sub_69FBE0
+   +054 Tilt_Pitch_AI      0055AB90  LocomotionClass_ILocomotion_TiltPitchAI
+   +058 Power_On           0055A8F0  LocomotionClass_ILocomotion_PowerOn
+   +06C In_Which_Layer     0055AB80  LocomotionClass_ILocomotion_Shove
+   +074 Is_Moving_Now      006A3E50  sub_6A3E50
+   +078 Apparent_Speed     0055AC00  LocomotionClass_ILocomotion_ForceImmediateDestination
+   +07C Drawing_Code       0069F250  sub_69F250
+
+---- Default Draw_Matrix=0055A730  slot=007E829C  vtable_base=007E8278 ----
+   +018 Shadow_Matrix(-4?) 0055ACA0  LocomotionClass_ILocomotion_HeadToCoord
+   +01C ?                  0055ABF0  LocomotionClass_ILocomotion_CanEnterCell
+   +020 ?                  0055ABE0  LocomotionClass_ILocomotion_IsToHaveShadow
+   +024 Draw_Matrix        0055A730  LocomotionClass_ILocomotion_DrawMatrix
+   +028 Shadow_Matrix      0055A7D0  LocomotionClass_ILocomotion_ShadowMatrix
+   +02C Draw_Point         0055ABD0  LocomotionClass_ILocomotion_DrawPoint
+   +030 Shadow_Point       0055A8C0  LocomotionClass_ILocomotion_ShadowPoint
+   +034 Visual_Character   0055ABC0  LocomotionClass_ILocomotion_VisualCharacter
+   +038 Z_Adjust           0055ABA0  LocomotionClass_ILocomotion_ZAdjust
+   +03C Z_Gradient         0055ABB0  LocomotionClass_ILocomotion_ZGradient
+   +040 Process            004B5B70  DropPodLocomotionClass_ILocomotion_Update
+   +044 Move_To            004B6040  sub_4B6040
+   +048 Stop_Moving        004B63A0  nullsub_165
+   +04C Do_Turn            0055AC30  LocomotionClass_ILocomotion_DoTurn
+   +050 Unlimbo            0055AC20  LocomotionClass_ILocomotion_Unlimbo
+   +054 Tilt_Pitch_AI      0055AB90  LocomotionClass_ILocomotion_TiltPitchAI
+   +058 Power_On           0055A8F0  LocomotionClass_ILocomotion_PowerOn
+   +06C In_Which_Layer     0055AB80  LocomotionClass_ILocomotion_Shove
+   +074 Is_Moving_Now      004B64D0  sub_4B64D0
+   +078 Apparent_Speed     0055AC00  LocomotionClass_ILocomotion_ForceImmediateDestination
+   +07C Drawing_Code       0055ACE0  LocomotionClass_ILocomotion_ForceNewSlope
+
+---- Default Draw_Matrix=0055A730  slot=007EAE18  vtable_base=007EADF4 ----
+   +018 Shadow_Matrix(-4?) 0055ACA0  LocomotionClass_ILocomotion_HeadToCoord
+   +01C ?                  0055ABF0  LocomotionClass_ILocomotion_CanEnterCell
+   +020 ?                  0055ABE0  LocomotionClass_ILocomotion_IsToHaveShadow
+   +024 Draw_Matrix        0055A730  LocomotionClass_ILocomotion_DrawMatrix
+   +028 Shadow_Matrix      0055A7D0  LocomotionClass_ILocomotion_ShadowMatrix
+   +02C Draw_Point         0055ABD0  LocomotionClass_ILocomotion_DrawPoint
+   +030 Shadow_Point       0055A8C0  LocomotionClass_ILocomotion_ShadowPoint
+   +034 Visual_Character   0055ABC0  LocomotionClass_ILocomotion_VisualCharacter
+   +038 Z_Adjust           0055ABA0  LocomotionClass_ILocomotion_ZAdjust
+   +03C Z_Gradient         0055ABB0  LocomotionClass_ILocomotion_ZGradient
+   +040 Process            0055AC60  LocomotionClass_ILocomotion_Process
+   +044 Move_To            0055AC50  LocomotionClass_ILocomotion_MoveTo
+   +048 Stop_Moving        0055AC40  LocomotionClass_ILocomotion_StopMoving
+   +04C Do_Turn            0055AC30  LocomotionClass_ILocomotion_DoTurn
+   +050 Unlimbo            0055AC20  LocomotionClass_ILocomotion_Unlimbo
+   +054 Tilt_Pitch_AI      0055AB90  LocomotionClass_ILocomotion_TiltPitchAI
+   +058 Power_On           0055A8F0  LocomotionClass_ILocomotion_PowerOn
+   +06C In_Which_Layer     0055AB80  LocomotionClass_ILocomotion_Shove
+   +074 Is_Moving_Now      004C9150  purecall
+   +078 Apparent_Speed     0055AC00  LocomotionClass_ILocomotion_ForceImmediateDestination
+   +07C Drawing_Code       0055ACE0  LocomotionClass_ILocomotion_ForceNewSlope
+
+---- Default Draw_Matrix=0055A730  slot=007EDB90  vtable_base=007EDB6C ----
+   +018 Shadow_Matrix(-4?) 005AFFE0  sub_5AFFE0
+   +01C ?                  0055ABF0  LocomotionClass_ILocomotion_CanEnterCell
+   +020 ?                  0055ABE0  LocomotionClass_ILocomotion_IsToHaveShadow
+   +024 Draw_Matrix        0055A730  LocomotionClass_ILocomotion_DrawMatrix
+   +028 Shadow_Matrix      0055A7D0  LocomotionClass_ILocomotion_ShadowMatrix
+   +02C Draw_Point         0055ABD0  LocomotionClass_ILocomotion_DrawPoint
+   +030 Shadow_Point       0055A8C0  LocomotionClass_ILocomotion_ShadowPoint
+   +034 Visual_Character   0055ABC0  LocomotionClass_ILocomotion_VisualCharacter
+   +038 Z_Adjust           0055ABA0  LocomotionClass_ILocomotion_ZAdjust
+   +03C Z_Gradient         0055ABB0  LocomotionClass_ILocomotion_ZGradient
+   +040 Process            005B0060  sub_5B0060
+   +044 Move_To            005B0080  sub_5B0080
+   +048 Stop_Moving        005B0120  sub_5B0120
+   +04C Do_Turn            005B0170  sub_5B0170
+   +050 Unlimbo            0055AC20  LocomotionClass_ILocomotion_Unlimbo
+   +054 Tilt_Pitch_AI      0055AB90  LocomotionClass_ILocomotion_TiltPitchAI
+   +058 Power_On           0055A8F0  LocomotionClass_ILocomotion_PowerOn
+   +06C In_Which_Layer     0055AB80  LocomotionClass_ILocomotion_Shove
+   +074 Is_Moving_Now      005B19D0  sub_5B19D0
+   +078 Apparent_Speed     005B01A0  sub_5B01A0
+   +07C Drawing_Code       0055ACE0  LocomotionClass_ILocomotion_ForceNewSlope
+
+---- Default Draw_Matrix=0055A730  slot=007F5024  vtable_base=007F5000 ----
+   +018 Shadow_Matrix(-4?) 0055ACA0  LocomotionClass_ILocomotion_HeadToCoord
+   +01C ?                  0055ABF0  LocomotionClass_ILocomotion_CanEnterCell
+   +020 ?                  0055ABE0  LocomotionClass_ILocomotion_IsToHaveShadow
+   +024 Draw_Matrix        0055A730  LocomotionClass_ILocomotion_DrawMatrix
+   +028 Shadow_Matrix      0055A7D0  LocomotionClass_ILocomotion_ShadowMatrix
+   +02C Draw_Point         0055ABD0  LocomotionClass_ILocomotion_DrawPoint
+   +030 Shadow_Point       0055A8C0  LocomotionClass_ILocomotion_ShadowPoint
+   +034 Visual_Character   0055ABC0  LocomotionClass_ILocomotion_VisualCharacter
+   +038 Z_Adjust           0055ABA0  LocomotionClass_ILocomotion_ZAdjust
+   +03C Z_Gradient         0055ABB0  LocomotionClass_ILocomotion_ZGradient
+   +040 Process            007192F0  TeleportLocomotionClass_ILocomotion_Process
+   +044 Move_To            00718100  TeleportLocomotionClass_ILocomotion_718100
+   +048 Stop_Moving        00718230  TeleportLocomotionClass_ILocomotion_718230
+   +04C Do_Turn            007192C0  TeleportLocomotionClass_ILocomotion_7192C0
+   +050 Unlimbo            0055AC20  LocomotionClass_ILocomotion_Unlimbo
+   +054 Tilt_Pitch_AI      0055AB90  LocomotionClass_ILocomotion_TiltPitchAI
+   +058 Power_On           0055A8F0  LocomotionClass_ILocomotion_PowerOn
+   +06C In_Which_Layer     0055AB80  LocomotionClass_ILocomotion_Shove
+   +074 Is_Moving_Now      00719E20  TeleportLocomotionClass_ILocomotion_719E20
+   +078 Apparent_Speed     0055AC00  LocomotionClass_ILocomotion_ForceImmediateDestination
+   +07C Drawing_Code       0055ACE0  LocomotionClass_ILocomotion_ForceNewSlope
+
+---- Default Draw_Matrix=0055A730  slot=007F6A1C  vtable_base=007F69F8 ----
+   +018 Shadow_Matrix(-4?) 0075AC00  WalkLocomotionClass_ILocomotion_HeadToCoord
+   +01C ?                  0055ABF0  LocomotionClass_ILocomotion_CanEnterCell
+   +020 ?                  0055ABE0  LocomotionClass_ILocomotion_IsToHaveShadow
+   +024 Draw_Matrix        0055A730  LocomotionClass_ILocomotion_DrawMatrix
+   +028 Shadow_Matrix      0055A7D0  LocomotionClass_ILocomotion_ShadowMatrix
+   +02C Draw_Point         0055ABD0  LocomotionClass_ILocomotion_DrawPoint
+   +030 Shadow_Point       0055A8C0  LocomotionClass_ILocomotion_ShadowPoint
+   +034 Visual_Character   0055ABC0  LocomotionClass_ILocomotion_VisualCharacter
+   +038 Z_Adjust           0055ABA0  LocomotionClass_ILocomotion_ZAdjust
+   +03C Z_Gradient         0055ABB0  LocomotionClass_ILocomotion_ZGradient
+   +040 Process            0075AC80  WalkLocomotionClass_ILocomotion_Process
+   +044 Move_To            0075ACB0  WalkLocomotionClass_ILocomotion_MoveTo
+   +048 Stop_Moving        0075ADA0  WalkLocomotionClass_ILocomotion_StopMoving
+   +04C Do_Turn            0075AE00  WalkLocomotionClass_ILocomotion_DoTurn
+   +050 Unlimbo            0055AC20  LocomotionClass_ILocomotion_Unlimbo
+   +054 Tilt_Pitch_AI      0055AB90  LocomotionClass_ILocomotion_TiltPitchAI
+   +058 Power_On           0055A8F0  LocomotionClass_ILocomotion_PowerOn
+   +06C In_Which_Layer     0055AB80  LocomotionClass_ILocomotion_Shove
+   +074 Is_Moving_Now      0075C7E0  LocomotionClass_ILocomotion_InWhichLayer
+   +078 Apparent_Speed     0075AE30  WalkLocomotionClass_ILocomotion_ForceImmediateDestination
+   +07C Drawing_Code       0055ACE0  LocomotionClass_ILocomotion_ForceNewSlope
+
+---- Hover Draw_Matrix=0054DCC0  slot=007ECD8C  vtable_base=007ECD68 ----
+   +018 Shadow_Matrix(-4?) 0054D9B0  sub_54D9B0
+   +01C ?                  0055ABF0  LocomotionClass_ILocomotion_CanEnterCell
+   +020 ?                  0055ABE0  LocomotionClass_ILocomotion_IsToHaveShadow
+   +024 Draw_Matrix        0054DCC0  sub_54DCC0
+   +028 Shadow_Matrix      0055A7D0  LocomotionClass_ILocomotion_ShadowMatrix
+   +02C Draw_Point         0055ABD0  LocomotionClass_ILocomotion_DrawPoint
+   +030 Shadow_Point       0055A8C0  LocomotionClass_ILocomotion_ShadowPoint
+   +034 Visual_Character   0055ABC0  LocomotionClass_ILocomotion_VisualCharacter
+   +038 Z_Adjust           0055ABA0  LocomotionClass_ILocomotion_ZAdjust
+   +03C Z_Gradient         0055ABB0  LocomotionClass_ILocomotion_ZGradient
+   +040 Process            0054AEC0  JumpjetLocomotionClass_Process
+   +044 Move_To            0054B1C0  sub_54B1C0
+   +048 Stop_Moving        0054B4D0  sub_54B4D0
+   +04C Do_Turn            0054B6E0  sub_54B6E0
+   +050 Unlimbo            0055AC20  LocomotionClass_ILocomotion_Unlimbo
+   +054 Tilt_Pitch_AI      0055AB90  LocomotionClass_ILocomotion_TiltPitchAI
+   +058 Power_On           0055A8F0  LocomotionClass_ILocomotion_PowerOn
+   +06C In_Which_Layer     0055AB80  LocomotionClass_ILocomotion_Shove
+   +074 Is_Moving_Now      0054B8D0  sub_54B8D0
+   +078 Apparent_Speed     0055AC00  LocomotionClass_ILocomotion_ForceImmediateDestination
+   +07C Drawing_Code       0055ACE0  LocomotionClass_ILocomotion_ForceNewSlope
+
+############ C. LocomotionClass_ILocomotion_DrawPoint 0x55ABD0 ############
+  0055ABD0  mov     eax, [esp+arg_4]
+  0055ABD4  xor     ecx, ecx
+  0055ABD6  xor     edx, edx
+  0055ABD8  mov     [eax], ecx
+  0055ABDA  mov     [eax+4], edx
+  0055ABDD  retn    8
+
+############ D. 各 loco Draw_Point 实现 ############
+---- [Drive] Draw_Point impl @ 0055ABD0 (LocomotionClass_ILocomotion_DrawPoint) ----
+  0055ABD0  mov     eax, [esp+arg_4]
+  0055ABD4  xor     ecx, ecx
+  0055ABD6  xor     edx, edx
+  0055ABD8  mov     [eax], ecx
+  0055ABDA  mov     [eax+4], edx
+  0055ABDD  retn    8
+
+---- [Ship] Draw_Point = 0055ABD0 (已打印) ----
+---- [Default] Draw_Point = 0055ABD0 (已打印) ----
+---- [Default] Draw_Point = 0055ABD0 (已打印) ----
+---- [Default] Draw_Point = 0055ABD0 (已打印) ----
+---- [Default] Draw_Point = 0055ABD0 (已打印) ----
+---- [Default] Draw_Point = 0055ABD0 (已打印) ----
+---- [Hover] Draw_Point = 0055ABD0 (已打印) ----
+############ E. call [reg+0x2C] 分布 ############
+共 0 处
+
+############ F. XrefsTo 0x55ABD0 ############
+   from 007E7EB0 type=1 in 
+   from 007E8278 type=1 in 
+   from 007EACFC type=1 in 
+   from 007EADF4 type=1 in 
+   from 007ECD68 type=1 in 
+   from 007EDB6C type=1 in 
+   from 007F0B1C type=1 in 
+   from 007F2D8C type=1 in 
+   from 007F5000 type=1 in 
+   from 007F5A24 type=1 in 
+   from 007F69F8 type=1 in 

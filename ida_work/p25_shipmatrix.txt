@@ -1,0 +1,511 @@
+== ShipLocomotionClass::ILocomotion  vt=007F2D8C ==
+   +0x00 = 006A4300  sub_6A4300
+   +0x04 = 006A4310  sub_6A4310
+   +0x24 = 0069F670  sub_69F670
+   +0x28 = 0069FB20  sub_69FB20
+   +0x2C = 0055ABD0  LocomotionClass_ILocomotion_DrawPoint
+   +0x30 = 0055A8C0  LocomotionClass_ILocomotion_ShadowPoint
+
+== ShipLocomotionClass::IPiggyback  vt=007F2D68 ==
+   +0x00 = 006A4330  sub_6A4330
+   +0x04 = 006A4340  sub_6A4340
+   +0x24 = 006A4300  sub_6A4300
+   +0x28 = 006A4310  sub_6A4310
+   +0x2C = 006A4320  sub_6A4320
+   +0x30 = 0055A710  LocomotionClass_ILocomotion_LinkToObject
+
+== ShipLocomotionClass  vt=007F2E58 ==
+   +0x00 = 0069EE30  ShipLocomotionClass_QueryInterface
+   +0x04 = 006A4260  ShipLocomotionClass_AddRef
+   +0x24 = 006A42A0  ShipLocomotionClass_GetSize
+   +0x28 = 00000000  
+   +0x2C = 404E0000  
+   +0x30 = A2529D39  
+
+== DriveLocomotionClass::ILocomotion  vt=007E7EB0 ==
+   +0x00 = 004B4D90  sub_4B4D90
+   +0x04 = 004B4DA0  sub_4B4DA0
+   +0x24 = 004AFF60  sub_4AFF60
+   +0x28 = 004B0410  sub_4B0410
+   +0x2C = 0055ABD0  LocomotionClass_ILocomotion_DrawPoint
+   +0x30 = 0055A8C0  LocomotionClass_ILocomotion_ShadowPoint
+
+== WalkLocomotionClass::ILocomotion  vt=007F69F8 ==
+   +0x00 = 0075CC30  WalkLocomotionClass_ILocomotion_QueryInterface
+   +0x04 = 0075CC40  WalkLocomotionClass_ILocomotion_AddRef
+   +0x24 = 0055A730  LocomotionClass_ILocomotion_DrawMatrix
+   +0x28 = 0055A7D0  LocomotionClass_ILocomotion_ShadowMatrix
+   +0x2C = 0055ABD0  LocomotionClass_ILocomotion_DrawPoint
+   +0x30 = 0055A8C0  LocomotionClass_ILocomotion_ShadowPoint
+
+== TeleportLocomotionClass::ILocomotion  vt=007F5000 ==
+   +0x00 = 0071A160  TeleportLocomotionClass_ILocomotion_71A160
+   +0x04 = 0071A170  TeleportLocomotionClass_ILocomotion_71A170
+   +0x24 = 0055A730  LocomotionClass_ILocomotion_DrawMatrix
+   +0x28 = 0055A7D0  LocomotionClass_ILocomotion_ShadowMatrix
+   +0x2C = 0055ABD0  LocomotionClass_ILocomotion_DrawPoint
+   +0x30 = 0055A8C0  LocomotionClass_ILocomotion_ShadowPoint
+
+======================================================================
+== ShipLocomotionClass Draw_Matrix @ 0069F670  size=1189 ==
+======================================================================
+   0069F670  push    ebp
+   0069F671  mov     ebp, esp
+   0069F673  and     esp, 0FFFFFFF8h
+   0069F676  sub     esp, 224h
+   0069F67C  push    ebx
+   0069F67D  push    esi
+   0069F67E  mov     esi, [ebp+arg_0]
+   0069F681  push    edi
+   0069F682  mov     edi, [esi+2Ch]
+   0069F685  test    edi, edi
+   0069F687  mov     [esp+230h+var_218], edi
+   0069F68B  jnz     short loc_69F695
+   0069F68D  fld     ds:dbl1_0; 1.0
+   0069F693  jmp     short loc_69F6C0
+   0069F695  mov     edx, [esi+20h]
+   0069F698  mov     eax, [esi+28h]
+   0069F69B  cmp     edx, 0FFFFFFFFh
+   0069F69E  jz      short loc_69F6B2
+   0069F6A0  mov     ecx, Frame
+   0069F6A6  sub     ecx, edx
+   0069F6A8  cmp     ecx, eax
+   0069F6AA  jge     short loc_69F6B0
+   0069F6AC  sub     eax, ecx
+   0069F6AE  jmp     short loc_69F6B2
+   0069F6B0  xor     eax, eax
+   0069F6B2  sub     edi, eax
+   0069F6B4  mov     [esp+230h+var_21C], edi
+   0069F6B8  fild    [esp+230h+var_21C]
+   0069F6BC  fidiv   [esp+230h+var_218]
+   0069F6C0  fcomp   ds:dbl1_0; 1.0
+   0069F6C6  fnstsw  ax
+   0069F6C8  test    ah, 40h
+   0069F6CB  jz      short loc_69F6FE
+   0069F6CD  mov     ecx, [esi+8]
+   0069F6D0  fld     dword ptr [ecx+328h]
+   0069F6D6  fabs
+   0069F6D8  fcomp   ds:dbl_7E44E8
+   0069F6DE  fnstsw  ax
+   0069F6E0  test    ah, 1
+   0069F6E3  jz      short loc_69F6FE
+   0069F6E5  fld     dword ptr [ecx+32Ch]
+   0069F6EB  fabs
+   0069F6ED  fcomp   ds:dbl_7E44E8
+   0069F6F3  fnstsw  ax
+   0069F6F5  test    ah, 1
+   0069F6F8  jnz     loc_69F9C3
+   0069F6FE  lea     ecx, [esp+230h+var_1E0]
+   0069F702  call    Matrix3D::Matrix3D
+   0069F707  lea     ecx, [esp+230h+var_1B0]
+   0069F70E  call    Matrix3D::Matrix3D
+   0069F713  mov     ecx, [esi+8]
+   0069F716  mov     eax, [ecx]
+   0069F718  call    dword ptr [eax+84h]
+   0069F71E  mov     ecx, [esi+8]
+   0069F721  fld     qword ptr [eax+360h]
+   0069F727  mov     edx, [ecx]
+   0069F729  fstp    [esp+230h+var_21C]
+   0069F72D  call    dword ptr [edx+84h]
+   0069F733  fld     qword ptr [eax+368h]
+   0069F739  mov     eax, [esi+8]
+   0069F73C  sub     esp, 8
+   0069F73F  fstp    [esp+238h+var_218]
+   0069F743  fld     dword ptr [eax+32Ch]
+   0069F749  fstp    [esp+238h+var_238]; double
+   0069F74C  call    float_cos
+   0069F751  mov     ecx, [esi+8]
+   0069F754  fstp    [esp+238h+var_224]
+   0069F758  fld     dword ptr [ecx+32Ch]
+   0069F75E  fstp    [esp+238h+var_238]
+   0069F761  call    float_sin
+   0069F766  mov     edx, [esi+8]
+   0069F769  fstp    [esp+238h+var_214]
+   0069F76D  fld     dword ptr [edx+328h]
+   0069F773  fstp    [esp+238h+var_238]; double
+   0069F776  call    float_cos
+   0069F77B  mov     eax, [esi+8]
+   0069F77E  fstp    [esp+238h+var_220]
+   0069F782  fld     dword ptr [eax+328h]
+   0069F788  fstp    [esp+238h+var_238]
+   0069F78B  call    float_sin
+   0069F790  fabs
+   0069F792  fmul    [esp+238h+var_21C]
+   0069F796  fld     [esp+238h+var_214]
+   0069F79A  fabs
+   0069F79C  fmul    [esp+238h+var_218]
+   0069F7A0  add     esp, 8
+   0069F7A3  faddp   st(1), st
+   0069F7A5  call    Float_To_Int_Floor
+   0069F7AA  fld     [esp+230h+var_224]
+   0069F7AE  fmul    [esp+230h+var_218]
+   0069F7B2  mov     [esp+230h+var_214], eax
+   0069F7B6  call    Float_To_Int_Floor
+   0069F7BB  mov     [esp+230h+var_224], eax
+   0069F7BF  fild    [esp+230h+var_224]
+   0069F7C3  fsubr   [esp+230h+var_218]
+   0069F7C7  call    Float_To_Int_Floor
+   0069F7CC  fld     [esp+230h+var_220]
+   0069F7D0  fmul    [esp+230h+var_21C]
+   0069F7D4  mov     edi, eax
+   0069F7D6  mov     [esp+230h+var_218], edi
+   0069F7DA  call    Float_To_Int_Floor
+   0069F7DF  mov     [esp+230h+var_220], eax
+   0069F7E3  fild    [esp+230h+var_220]
+   0069F7E7  fsubr   [esp+230h+var_21C]
+   0069F7EB  call    Float_To_Int_Floor
+   0069F7F0  mov     ecx, [esi+8]
+   0069F7F3  mov     edx, eax
+   0069F7F5  mov     [esp+230h+var_21C], edx
+   0069F7F9  fld     dword ptr [ecx+32Ch]
+   0069F7FF  fcomp   ds:num_0_0; 0.0
+   0069F805  fnstsw  ax
+   0069F807  test    ah, 1
+   0069F80A  jz      short loc_69F812
+   0069F80C  neg     edi
+   0069F80E  mov     [esp+230h+var_218], edi
+   0069F812  fld     dword ptr [ecx+328h]
+   0069F818  fcomp   ds:num_0_0; 0.0
+   0069F81E  fnstsw  ax
+   0069F820  test    ah, 41h
+   0069F823  jnz     short loc_69F82B
+   0069F825  neg     edx
+   0069F827  mov     [esp+230h+var_21C], edx
+   0069F82B  fild    [esp+230h+var_214]
+   0069F82F  push    ecx; float
+   0069F830  lea     ecx, [esp+234h+var_1E0]
+   0069F834  fstp    dword ptr [esp+234h+var_238+4]
+   0069F837  call    sub_5AE9E0
+   0069F83C  fild    [esp+230h+var_218]
+   0069F840  push    ecx; float
+   0069F841  lea     ecx, [esp+234h+var_1B0]
+   0069F848  fstp    dword ptr [esp+234h+var_238+4]
+   0069F84B  call    Matrix3DClass_5AE980
+   0069F850  fild    [esp+230h+var_21C]
+   0069F854  push    ecx; float
+   0069F855  lea     ecx, [esp+234h+var_1B0]
+   0069F85C  fstp    dword ptr [esp+234h+var_238+4]
+   0069F85F  call    Matrix3DClass_5AE9B0
+   0069F864  mov     ecx, [esi+8]
+   0069F867  mov     edx, [ecx+328h]
+   0069F86D  lea     ecx, [esp+230h+var_1B0]
+   0069F874  push    edx; float
+   0069F875  call    sub_5AEF60
+   0069F87A  mov     eax, [esi+8]
+   0069F87D  mov     ecx, [eax+32Ch]
+   0069F883  push    ecx; float
+   0069F884  lea     ecx, [esp+234h+var_1B0]
+   0069F88B  call    sub_5AF080
+   0069F890  mov     eax, [ebp+arg_8]
+   0069F893  test    eax, eax
+   0069F895  jz      short loc_69F89D
+   0069F897  mov     dword ptr [eax], 0FFFFFFFFh
+   0069F89D  lea     edx, [esp+230h+var_30]
+   0069F8A4  push    eax
+   0069F8A5  push    edx
+   0069F8A6  push    esi
+   0069F8A7  call    LocomotionClass_ILocomotion_DrawMatrix
+   0069F8AC  push    eax
+   0069F8AD  lea     ecx, [esp+234h+var_180]
+   0069F8B4  call    Matrix3DClass_5AE610
+   0069F8B9  lea     ecx, [esp+230h+var_210]
+   0069F8BD  call    Matrix3D::Matrix3D
+   0069F8C2  mov     ebx, [esi+2Ch]
+   0069F8C5  lea     ecx, [esi+20h]; TimerStruct *
+   0069F8C8  test    ebx, ebx
+   0069F8CA  mov     [esp+230h+var_224], ebx
+   0069F8CE  jz      short loc_69F94B
+   0069F8D0  mov     edi, [ecx]
+   0069F8D2  mov     eax, [ecx+8]
+   0069F8D5  cmp     edi, 0FFFFFFFFh
+   0069F8D8  jz      short loc_69F8EC
+
+--- decompile ---
+int *__stdcall sub_69F670(_DWORD *a1, int *a2, _DWORD *a3)
+{
+  int v3; // edi
+  long double v4; // fst7
+  int v5; // edx
+  int v6; // eax
+  int v7; // ecx
+  signed int v8; // edi
+  signed int v9; // eax
+  int v10; // ecx
+  int v11; // eax
+  int v12; // ebx
+  TimerStruct *v13; // ecx
+  int TimeStart; // edi
+  int v15; // eax
+  long double v16; // fst7
+  int v17; // edi
+  const void *v18; // eax
+  int v19; // esi
+  int v20; // ecx
+  int v21; // eax
+  int v22; // ebx
+  int v23; // edx
+  int v24; // eax
+  int v25; // edx
+  long double v26; // fst7
+  int v27; // ecx
+  int v28; // eax
+  const void *v29; // eax
+  int v30; // esi
+  const void *v31; // esi
+  int *result; // eax
+  float v33; // [esp+4h] [ebp-234h]
+  float v34; // [esp+4h] [ebp-234h]
+  float v35; // [esp+4h] [ebp-234h]
+  int *v36; // [esp+4h] [ebp-234h]
+  int v37; // [esp+1Ch] [ebp-21Ch]
+  int v38; // [esp+20h] [ebp-218h]
+  signed int v39; // [esp+24h] [ebp-214h]
+  int v40[12]; // [esp+28h] [ebp-210h] BYREF
+  int v41[12]; // [esp+58h] [ebp-1E0h] BYREF
+  int v42[12]; // [esp+88h] [ebp-1B0h] BYREF
+  int v43[12]; // [esp+B8h] [ebp-180h] BYREF
+  int v44[12]; // [esp+E8h] [ebp-150h] BYREF
+  int v45[12]; // [esp+118h] [ebp-120h] BYREF
+  int v46[12]; // [esp+148h] [ebp-F0h] BYREF
+  int v47[12]; // [esp+178h] [ebp-C0h] BYREF
+  int v48[12]; // [esp+208h] [ebp-30h] BYREF
+
+  v3 = a1[11];
+  if ( v3 )
+  {
+    v5 = a1[8];
+    v6 = a1[10];
+    if ( v5 != -1 )
+    {
+      if ( Frame - v5 >= v6 )
+        v6 = 0;
+      else
+        v6 -= Frame - v5;
+    }
+    v4 = (v3 - v6) / a1[11];
+  }
+  else
+  {
+    v4 = 1.0;
+  }
+  if ( v4 == 1.0 )
+  {
+    v7 = a1[2];
+    if ( fabs(*(v7 + 808)) < 0.005 && fabs(*(v7 + 812)) < 0.005 )
+    {
+      if ( a3 && *a3 != -1 )
+      {
+        v20 = *a3 << 6;
+        *a3 = v20;
+        *a3 = v20 + a1[6];
+      }
+      v21 = LocomotionClass_ILocomotion_DrawMatrix(a1, v45, a3);
+      Matrix3DClass_5AE610(v21);
+      Matrix3D::Matrix3D(v40);
+      v22 = a1[11];
+      if ( !v22 )
+        goto LABEL_48;
+      v23 = a1[8];
+      v24 = a1[10];
+      if ( v23 != -1 )
+      {
+        if ( Frame - v23 >= v24 )
+          v24 = 0;
+        else
+          v24 -= Frame - v23;
+      }
+      if ( (v22 - v24) / a1[11] < 1.0 )
+      {
+        v25 = a1[11];
+        if ( v25 )
+        {
+          v27 = a1[8];
+          v28 = a1[10];
+          if ( v27 != -1 )
+          {
+            if ( Frame - v27 >= v28 )
+              v28 = 0;
+            else
+              v28 -= Frame - v27;
+          }
+          v26 = (v25 - v28) / a1[11];
+        }
+        else
+        {
+          v26 = 1.0;
+        }
+        v29 = sub_755A40(a1[6], v26);
+      }
+      else
+      {
+LABEL_48:
+        v30 = a1[6];
+        if ( !v30 )
+        {
+LABEL_51:
+          qmemcpy(v43, v40, sizeof(v43));
+          v36 = v44;
+          goto LABEL_52;
+        }
+        v29 = sub_7559B0(v46, v30);
+      }
+      qmemcpy(v40, v29, sizeof(v40));
+      goto LABEL_51;
+    }
+  }
+  Matrix3D::Matrix3D(v41);
+  Matrix3D::Matrix3D(v42);
+  (*(*a1[2] + 132))(a1[2]);
+  (*(*a1[2] + 132))(a1[2]);
+  float_cos(*(a1[2] + 812));
+  float_sin(*(a1[2] + 812));
+  float_cos(*(a1[2] + 808));
+  float_sin(*(a1[2] + 808));
+  v39 = Float_To_Int_Floor();
+  Float_To_Int_Floor();
+  v8 = Float_To_Int_Floor();
+  v38 = v8;
+  Float_To_Int_Floor();
+  v9 = Float_To_Int_Floor();
+  v10 = a1[2];
+  v37 = v9;
+  if ( *(v10 + 812) < 0.0 )
+    v38 = -v8;
+  if ( *(v10 + 808) > 0.0 )
+    v37 = -v9;
+  v33 = v39;
+  sub_5AE9E0(v33);
+  v34 = v38;
+  Matrix3DClass_5AE980(v34);
+  v35 = v37;
+  Matrix3DClass_5AE9B0(v35);
+  sub_5AEF60(*(a1[2] + 808));
+  sub_5AF080(*(a1[2] + 812));
+  if ( a3 )
+    *a3 = -1;
+  v11 = LocomotionClass_ILocomotion_DrawMatrix(a1, v48, a3);
+  Matrix3DClass_5AE610(v11);
+  Matrix3D::Matrix3D(v40);
+  v12 = a1[11];
+  v13 = (a1 + 8);
+  if ( v12 )
+  {
+    TimeStart = v13->TimeStart;
+    v15 = a1[10];
+    if ( v13->TimeStart != -1 )
+    {
+      if ( Frame - TimeStart >= v15 )
+        v15 = 0;
+      else
+        v15 -= Frame - TimeStart;
+    }
+    if ( (v12 - v15) / a1[11] < 1.0 )
+    {
+      if ( a1[11] )
+      {
+        v17 = a1[11];
+        v16 = (v17 - Timer_GetTimeLeft2(v13)) / v17;
+      }
+      else
+      {
+        v16 = 1.0;
+      }
+      v18 = sub_755A40(a1[6], v16);
+      goto LABEL_29;
+    }
+  }
+  v19 = a1[6];
+  if ( v19 )
+  {
+    v18 = sub_7559B0(v47, v19);
+LABEL_29:
+    qmemcpy(v40, v18, sizeof(v40));
+  }
+  qmemcpy(v44, v40, sizeof(v44));
+  v36 = v42;
+  Matrix3D_Multiply_5AF980(v44);
+  Matrix3D_Multiply_5AF980(v43);
+LABEL_52:
+  v31 = Matrix3D_Multiply_5AF980(v36);
+  result = a2;
+  qmemcpy(v41, v31, sizeof(v41));
+  qmemcpy(a2, v41, 0x30u);
+  return result;
+}
+
+
+--- 该函数内所有 mov/lea 引用 [+328h]/[+32Ch] 的位置 ---
+   0069F6D0  fld     dword ptr [ecx+328h]
+   0069F6E5  fld     dword ptr [ecx+32Ch]
+   0069F743  fld     dword ptr [eax+32Ch]
+   0069F758  fld     dword ptr [ecx+32Ch]
+   0069F76D  fld     dword ptr [edx+328h]
+   0069F782  fld     dword ptr [eax+328h]
+   0069F7F9  fld     dword ptr [ecx+32Ch]
+   0069F812  fld     dword ptr [ecx+328h]
+   0069F867  mov     edx, [ecx+328h]
+   0069F87D  mov     ecx, [eax+32Ch]
+
+======================================================================
+== base LocomotionClass Draw_Matrix @ 0x55A730 ==
+======================================================================
+   0055A730  sub     esp, 34h
+   0055A733  push    esi
+   0055A734  push    edi
+   0055A735  lea     ecx, [esp+3Ch+this]
+   0055A739  call    Matrix3D::Matrix3D
+   0055A73E  mov     edi, dword ptr [esp+3Ch+arg.X]
+   0055A742  lea     eax, [esp+3Ch+a2]
+   0055A746  push    eax; arg
+   0055A747  mov     ecx, [edi+8]
+   0055A74A  add     ecx, 388h; Facing
+   0055A750  call    Desired_Facing256
+   0055A755  mov     ecx, [eax]
+   0055A757  shr     ecx, 0Ah
+   0055A75A  inc     ecx
+   0055A75B  shr     ecx, 1
+   0055A75D  and     ecx, 1Fh
+   0055A760  sub     ecx, 8
+   0055A763  mov     dword ptr [esp+3Ch+arg.X], ecx
+   0055A767  push    ecx; float
+   0055A768  fild    dword ptr [esp+40h+arg.X]
+   0055A76C  lea     ecx, [esp+40h+this]; this
+   0055A770  fmul    ds:dbl_7E4408
+   0055A776  fstp    [esp+40h+var_40]; a2
+   0055A779  call    Matrix3D_5AF1A0
+   0055A77E  mov     esi, [esp+3Ch+arg_8]
+   0055A782  test    esi, esi
+   0055A784  jz      short loc_55A7B6
+   0055A786  mov     eax, [esi]
+   0055A788  cmp     eax, 0FFFFFFFFh
+   0055A78B  jz      short loc_55A7B6
+   0055A78D  shl     eax, 5
+   0055A790  mov     [esi], eax
+   0055A792  mov     ecx, [edi+8]
+   0055A795  lea     edx, [esp+3Ch+arg]; arg
+   0055A799  add     ecx, 388h; Facing
+   0055A79F  push    edx; arg
+   0055A7A0  call    Desired_Facing256
+   0055A7A5  mov     eax, [eax]
+   0055A7A7  mov     ecx, [esi]
+   0055A7A9  shr     eax, 0Ah
+   0055A7AC  inc     eax
+   0055A7AD  shr     eax, 1
+   0055A7AF  and     eax, 1Fh
+   0055A7B2  or      ecx, eax
+   0055A7B4  mov     [esi], ecx
+   0055A7B6  mov     eax, [esp+3Ch+arg_4]
+   0055A7BA  mov     ecx, 0Ch
+   0055A7BF  lea     esi, [esp+3Ch+this]
+   0055A7C3  mov     edi, eax
+   0055A7C5  rep movsd
+   0055A7C7  pop     edi
+   0055A7C8  pop     esi
+   0055A7C9  add     esp, 34h
+   0055A7CC  retn    0Ch
+   0055A7CF  align 10h
+   0055A7D0  sub     esp, 74h
+   0055A7D3  push    ebx
+   0055A7D4  mov     ebx, [esp+78h+arg_0]
+   0055A7D8  push    ebp
+   0055A7D9  push    esi

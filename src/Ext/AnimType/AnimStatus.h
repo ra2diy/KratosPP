@@ -64,6 +64,7 @@ public:
 		pCreater = nullptr;
 		pAttachOwner = nullptr; // 动画附着的对象
 		Offset = CoordStruct::Empty; // 附着的偏移位置
+		_attachLayerCached = -2;
 
 		_offsetData = {};
 
@@ -109,6 +110,10 @@ public:
 	TechnoClass* pCreater = nullptr;
 	ObjectClass* pAttachOwner = nullptr; // 动画附着的对象
 	CoordStruct Offset = CoordStruct::Empty; // 附着的偏移位置
+
+	// 附着对象层索引（ObjectClass::LastLayer，偏移 +0x94）的缓存，用于检测主身换层（-2 = 未初始化）。
+	// 仅渲染排序用途，不参与存档；换存档后首帧多 Submit 一次，无副作用。
+	int _attachLayerCached = -2;
 
 #pragma region Save/Load
 	template <typename T>

@@ -1,0 +1,662 @@
+############ MapClass::Place_Down @ 005683C0 ############
+  005683C0  sub     esp, 8A0h
+  005683C6  push    ebx
+  005683C7  push    ebp
+  005683C8  push    esi
+  005683C9  push    edi
+  005683CA  mov     edi, [esp+8B0h+Content]
+  005683D1  mov     ebx, ecx
+  005683D3  test    edi, edi
+  005683D5  mov     [esp+8B0h+var_898], ebx
+  005683D9  jz      loc_5687DF
+  005683DF  mov     eax, [ebx+_TechnoClass.t.CurrentGattlingStage]
+  005683E5  mov     edx, [edi]
+  005683E7  mov     ecx, edi
+  005683E9  mov     [esp+8B0h+var_894], eax
+  005683ED  call    dword ptr [edx+88h]
+  005683F3  mov     cl, [eax+_TechnoTypeClass.t.o.field_235]
+  005683F9  test    cl, cl
+  005683FB  jz      loc_5687DF
+  00568401  mov     eax, [edi]
+  00568403  mov     ecx, edi
+  00568405  call    dword ptr [eax+78h]
+  00568408  cmp     eax, 2
+  0056840B  jnz     loc_5687DF
+  00568411  mov     edx, [edi]
+  00568413  lea     ecx, [esp+8B0h+var_880]
+  00568417  push    ecx
+  00568418  push    0
+  0056841A  mov     ecx, edi
+  0056841C  call    [edx+vt_TechnoClass.r.m.o.Object_108]
+  00568422  mov     ecx, eax
+  00568424  mov     edx, 20h ; ' '
+  00568429  call    List_Copy
+  0056842E  lea     ebp, [esp+8B0h+var_880]
+  00568432  mov     ax, [ebp+0]
+  00568436  cmp     ax, 7FFFh
+  0056843A  jnz     short loc_568446
+  0056843C  cmp     [ebp+2], ax
+  00568440  jz      loc_568510
+  00568446  mov     edx, [esp+8B0h+a2]
+  0056844D  add     ax, [edx]
+  00568450  mov     cx, ax
+  00568453  mov     ax, [ebp+2]
+  00568457  add     ax, [edx+2]
+  0056845B  mov     word ptr [esp+8B0h+var_89C], cx
+  00568460  movsx   ecx, cx
+  00568463  mov     word ptr [esp+8B0h+var_89C+2], ax
+  00568468  movsx   eax, ax
+  0056846B  shl     eax, 9
+  0056846E  lea     esi, [eax+ecx]
+  00568471  test    esi, esi
+  00568473  jl      loc_568508
+  00568479  cmp     esi, [esp+8B0h+var_894]
+  0056847D  jge     loc_568508
+  00568483  mov     eax, [ebx+13Ch]
+  00568489  mov     ecx, [eax+esi*4]
+  0056848C  test    ecx, ecx
+  0056848E  jz      short loc_568508
+  00568490  mov     ebx, [esp+8B0h+var_89C]
+  00568494  test    esi, esi
+  00568496  jl      short loc_5684A6
+  00568498  cmp     esi, 40000h
+  0056849E  jge     short loc_5684A6
+  005684A0  mov     eax, ecx
+  005684A2  test    eax, eax
+  005684A4  jnz     short loc_5684B1
+  005684A6  mov     dword ptr tmpCell.pos.X, ebx
+  005684AC  mov     eax, offset tmpCell
+  005684B1  mov     dl, [edi+8Ch]
+  005684B7  mov     ecx, eax; this
+  005684B9  push    edx; bridge
+  005684BA  push    edi; Content
+  005684BB  call    CellClass::Occupy_Down
+  005684C0  test    esi, esi
+  005684C2  jl      short loc_5684F2
+  005684C4  cmp     esi, 40000h
+  005684CA  jge     short loc_5684F2
+  005684CC  mov     eax, [esp+8B0h+var_898]
+  005684D0  mov     ecx, [eax+13Ch]
+  005684D6  mov     esi, [ecx+esi*4]
+  005684D9  test    esi, esi
+  005684DB  jz      short loc_5684F2
+  005684DD  mov     ecx, esi; this
+  005684DF  push    0FFFFFFFFh; coords
+  005684E1  call    CellClass_Setup
+  005684E6  mov     ebx, [esp+8B0h+var_898]
+  005684EA  add     ebp, 4
+  005684ED  jmp     loc_568432
+  005684F2  mov     ecx, offset tmpCell; this
+  005684F7  push    0FFFFFFFFh; coords
+  005684F9  mov     dword ptr tmpCell.pos.X, ebx
+  005684FF  call    CellClass_Setup
+  00568504  mov     ebx, [esp+8B0h+var_898]
+  00568508  add     ebp, 4
+  0056850B  jmp     loc_568432
+  00568510  mov     edx, [edi]
+  00568512  mov     ecx, edi
+  00568514  call    dword ptr [edx+2Ch]
+  00568517  cmp     eax, 6
+  0056851A  jnz     loc_5687DF
+  00568520  mov     eax, [edi]
+  00568522  mov     ecx, edi
+  00568524  call    dword ptr [eax+2Ch]
+  00568527  sub     eax, 6
+  0056852A  neg     eax
+  0056852C  sbb     eax, eax
+  0056852E  not     eax
+  00568530  and     eax, edi
+  00568532  mov     [esp+8B0h+var_88C], eax
+  00568536  mov     eax, [eax+520h]
+  0056853C  mov     cl, [eax+1766h]
+  00568542  test    cl, cl
+  00568544  jz      loc_5687DF
+  0056854A  mov     ebp, [eax+0EF8h]
+  00568550  dec     ebp
+  00568551  test    ebp, ebp
+  00568553  mov     [esp+8B0h+var_89C], ebp
+  00568557  jg      short loc_568565
+  00568559  mov     [esp+8B0h+var_89C], 1
+  00568561  mov     ebp, [esp+8B0h+var_89C]
+   -- 调用目标 --
+      005683ED call -> 00000088  
+      00568405 call -> 00000078  
+      0056841C call -> 00000108  
+      00568429 call -> 0048DEE0  W?List_Copy$n(pnxsipns)v
+      005684BB call -> 0047E8A0  W?Occupy_Down$:CellClass$n(pn$ObjectClass$$)v
+      005684E1 call -> 0047D2B0  CellClass_Setup
+      005684ED jmp -> 00568432  W?Place_Down$:MapClass$n(spn$ObjectClass$$)v
+      005684FF call -> 0047D2B0  CellClass_Setup
+      0056850B jmp -> 00568432  W?Place_Down$:MapClass$n(spn$ObjectClass$$)v
+      00568514 call -> 0000002C  
+      00568524 call -> 0000002C  
+
+############ MapClass::Pick_Up @ 005687F0 ############
+  005687F0  sub     esp, 8A0h
+  005687F6  push    ebx
+  005687F7  push    ebp
+  005687F8  push    esi
+  005687F9  push    edi
+  005687FA  mov     edi, [esp+8B0h+a2]
+  00568801  mov     ebx, ecx
+  00568803  test    edi, edi
+  00568805  mov     [esp+8B0h+var_898], ebx
+  00568809  jz      loc_568B94
+  0056880F  mov     eax, [ebx+140h]
+  00568815  mov     edx, [edi]
+  00568817  mov     ecx, edi
+  00568819  mov     [esp+8B0h+var_894], eax
+  0056881D  call    dword ptr [edx+88h]
+  00568823  mov     cl, [eax+235h]
+  00568829  test    cl, cl
+  0056882B  jz      loc_568B94
+  00568831  mov     eax, [edi]
+  00568833  mov     ecx, edi
+  00568835  call    dword ptr [eax+78h]
+  00568838  cmp     eax, 2
+  0056883B  jnz     loc_568B94
+  00568841  mov     edx, [edi]
+  00568843  lea     ecx, [esp+8B0h+var_880]
+  00568847  push    ecx
+  00568848  push    0
+  0056884A  mov     ecx, edi
+  0056884C  call    dword ptr [edx+108h]
+  00568852  mov     ecx, eax
+  00568854  mov     edx, 20h ; ' '
+  00568859  call    List_Copy
+  0056885E  lea     ebp, [esp+8B0h+var_880]
+  00568862  mov     ax, [ebp+0]
+  00568866  cmp     ax, 7FFFh
+  0056886A  jnz     short loc_568876
+  0056886C  cmp     [ebp+2], ax
+  00568870  jz      loc_568940
+  00568876  mov     edx, [esp+8B0h+arg]
+  0056887D  add     ax, [edx]
+  00568880  mov     cx, ax
+  00568883  mov     ax, [ebp+2]
+  00568887  add     ax, [edx+2]
+  0056888B  mov     word ptr [esp+8B0h+var_89C], cx
+  00568890  movsx   ecx, cx
+  00568893  mov     word ptr [esp+8B0h+var_89C+2], ax
+  00568898  movsx   eax, ax
+  0056889B  shl     eax, 9
+  0056889E  lea     esi, [eax+ecx]
+  005688A1  test    esi, esi
+  005688A3  jl      loc_568938
+  005688A9  cmp     esi, [esp+8B0h+var_894]
+  005688AD  jge     loc_568938
+  005688B3  mov     eax, [ebx+13Ch]
+  005688B9  mov     ecx, [eax+esi*4]
+  005688BC  test    ecx, ecx
+  005688BE  jz      short loc_568938
+  005688C0  mov     ebx, [esp+8B0h+var_89C]
+  005688C4  test    esi, esi
+  005688C6  jl      short loc_5688D6
+  005688C8  cmp     esi, 40000h
+  005688CE  jge     short loc_5688D6
+  005688D0  mov     eax, ecx
+  005688D2  test    eax, eax
+  005688D4  jnz     short loc_5688E1
+  005688D6  mov     dword ptr tmpCell.pos.X, ebx
+  005688DC  mov     eax, offset tmpCell
+  005688E1  mov     dl, [edi+8Ch]
+  005688E7  mov     ecx, eax; this
+  005688E9  push    edx
+  005688EA  push    edi; a2
+  005688EB  call    CellClass_RemoveContent
+  005688F0  test    esi, esi
+  005688F2  jl      short loc_568922
+  005688F4  cmp     esi, 40000h
+  005688FA  jge     short loc_568922
+  005688FC  mov     eax, [esp+8B0h+var_898]
+  00568900  mov     ecx, [eax+13Ch]
+  00568906  mov     esi, [ecx+esi*4]
+  00568909  test    esi, esi
+  0056890B  jz      short loc_568922
+  0056890D  mov     ecx, esi; this
+  0056890F  push    0FFFFFFFFh; coords
+  00568911  call    CellClass_Setup
+  00568916  mov     ebx, [esp+8B0h+var_898]
+  0056891A  add     ebp, 4
+  0056891D  jmp     loc_568862
+  00568922  mov     ecx, offset tmpCell; this
+  00568927  push    0FFFFFFFFh; coords
+  00568929  mov     dword ptr tmpCell.pos.X, ebx
+  0056892F  call    CellClass_Setup
+  00568934  mov     ebx, [esp+8B0h+var_898]
+  00568938  add     ebp, 4
+  0056893B  jmp     loc_568862
+  00568940  mov     edx, [edi]
+  00568942  mov     ecx, edi
+  00568944  call    dword ptr [edx+2Ch]
+  00568947  cmp     eax, 6
+  0056894A  jnz     loc_568B94
+  00568950  mov     eax, [edi]
+  00568952  mov     ecx, edi
+  00568954  call    dword ptr [eax+2Ch]
+  00568957  mov     edx, eax
+  00568959  sub     edx, 6
+  0056895C  neg     edx
+  0056895E  sbb     edx, edx
+  00568960  not     edx
+  00568962  and     edx, edi
+  00568964  mov     [esp+8B0h+var_89C], edx
+  00568968  mov     eax, [edx+520h]
+  0056896E  mov     cl, [eax+1766h]
+  00568974  test    cl, cl
+  00568976  jz      loc_568B94
+  0056897C  mov     ebp, [eax+0EF8h]
+  00568982  dec     ebp
+  00568983  test    ebp, ebp
+  00568985  mov     [esp+8B0h+var_890], ebp
+  00568989  jg      short loc_568997
+  0056898B  mov     [esp+8B0h+var_890], 1
+  00568993  mov     ebp, [esp+8B0h+var_890]
+   -- 调用目标 --
+      0056881D call -> 00000088  
+      00568835 call -> 00000078  
+      0056884C call -> 00000108  
+      00568859 call -> 0048DEE0  W?List_Copy$n(pnxsipns)v
+      005688EB call -> 0047EA90  CellClass_RemoveContent
+      00568911 call -> 0047D2B0  CellClass_Setup
+      0056891D jmp -> 00568862  W?Pick_Up$:MapClass$n(spn$ObjectClass$$)v
+      0056892F call -> 0047D2B0  CellClass_Setup
+      0056893B jmp -> 00568862  W?Pick_Up$:MapClass$n(spn$ObjectClass$$)v
+      00568944 call -> 0000002C  
+      00568954 call -> 0000002C  
+
+############ MapClass_AddObjectToALayer @ 00551A90 ############
+  00551A90  push    esi
+  00551A91  mov     esi, ecx
+  00551A93  mov     ecx, [esi+8]
+  00551A96  mov     eax, [esi+10h]
+  00551A99  cmp     eax, ecx
+  00551A9B  jl      short loc_551AC5
+  00551A9D  mov     al, [esi+0Dh]
+  00551AA0  test    al, al
+  00551AA2  jnz     short loc_551AA8
+  00551AA4  test    ecx, ecx
+  00551AA6  jnz     short loc_551ABF
+  00551AA8  mov     eax, [esi+14h]
+  00551AAB  test    eax, eax
+  00551AAD  jle     short loc_551ABF
+  00551AAF  mov     edx, [esi]
+  00551AB1  add     eax, ecx
+  00551AB3  push    0
+  00551AB5  push    eax
+  00551AB6  mov     ecx, esi
+  00551AB8  call    dword ptr [edx+8]
+  00551ABB  test    al, al
+  00551ABD  jnz     short loc_551AC5
+  00551ABF  xor     eax, eax
+  00551AC1  pop     esi
+  00551AC2  retn    4
+  00551AC5  mov     eax, [esi+10h]
+  00551AC8  push    ebx
+  00551AC9  mov     ebx, [esp+8+a2]
+  00551ACD  push    edi
+  00551ACE  xor     edi, edi
+  00551AD0  test    eax, eax
+  00551AD2  jle     short loc_551AEC
+  00551AD4  mov     eax, [esi+4]
+  00551AD7  push    ebx; a2
+  00551AD8  mov     ecx, [eax+edi*4]; this
+  00551ADB  call    ObjectClass_CompareYSortValues
+  00551AE0  test    al, al
+  00551AE2  jnz     short loc_551AEC
+  00551AE4  mov     eax, [esi+10h]
+  00551AE7  inc     edi
+  00551AE8  cmp     edi, eax
+  00551AEA  jl      short loc_551AD4
+  00551AEC  mov     eax, [esi+10h]
+  00551AEF  dec     eax
+  00551AF0  cmp     eax, edi
+  00551AF2  jl      short loc_551B04
+  00551AF4  mov     ecx, [esi+4]
+  00551AF7  dec     eax
+  00551AF8  cmp     eax, edi
+  00551AFA  mov     edx, [ecx+eax*4+4]
+  00551AFE  mov     [ecx+eax*4+8], edx
+  00551B02  jge     short loc_551AF4
+  00551B04  mov     eax, [esi+4]
+  00551B07  mov     [eax+edi*4], ebx
+  00551B0A  mov     eax, [esi+10h]
+  00551B0D  inc     eax
+  00551B0E  pop     edi
+  00551B0F  mov     [esi+10h], eax
+  00551B12  pop     ebx
+  00551B13  mov     eax, 1
+  00551B18  pop     esi
+  00551B19  retn    4
+  00551B1C  db 4 dup(90h)
+  00551B20  push    ebx
+  00551B21  push    esi
+  00551B22  mov     esi, [esp+8+pStm]
+  00551B26  push    edi
+  00551B27  test    esi, esi
+  00551B29  mov     ebx, ecx
+  00551B2B  jnz     short loc_551B38
+  00551B2D  pop     edi
+  00551B2E  pop     esi
+  00551B2F  mov     eax, 80004003h
+  00551B34  pop     ebx
+  00551B35  retn    4
+  00551B38  mov     eax, [ebx+10h]
+  00551B3B  mov     ecx, [esi]
+  00551B3D  push    0
+  00551B3F  lea     edx, [esp+10h+pStm]
+  00551B43  push    4
+  00551B45  push    edx
+  00551B46  push    esi
+  00551B47  mov     [esp+1Ch+pStm], eax
+  00551B4B  call    dword ptr [ecx+10h]
+  00551B4E  test    eax, eax
+  00551B50  jl      short loc_551B7C
+  00551B52  mov     eax, [esp+0Ch+pStm]
+  00551B56  xor     edi, edi
+  00551B58  test    eax, eax
+  00551B5A  jle     short loc_551B7A
+  00551B5C  mov     ecx, [ebx+4]
+  00551B5F  mov     eax, [esi]
+  00551B61  push    0
+  00551B63  push    4
+  00551B65  lea     edx, [ecx+edi*4]
+  00551B68  push    edx
+  00551B69  push    esi
+  00551B6A  call    dword ptr [eax+10h]
+  00551B6D  test    eax, eax
+  00551B6F  jl      short loc_551B7C
+  00551B71  mov     eax, [esp+0Ch+pStm]
+  00551B75  inc     edi
+  00551B76  cmp     edi, eax
+  00551B78  jl      short loc_551B5C
+  00551B7A  xor     eax, eax
+  00551B7C  pop     edi
+  00551B7D  pop     esi
+  00551B7E  pop     ebx
+  00551B7F  retn    4
+  00551B82  db 0Eh dup(90h)
+  00551B90  push    ecx
+  00551B91  push    ebx
+  00551B92  push    esi
+  00551B93  push    edi
+  00551B94  mov     edi, [esp+10h+arg_0]
+  00551B98  test    edi, edi
+  00551B9A  mov     esi, ecx
+  00551B9C  jnz     short loc_551BAA
+  00551B9E  pop     edi
+  00551B9F  pop     esi
+  00551BA0  mov     eax, 80004003h
+  00551BA5  pop     ebx
+  00551BA6  pop     ecx
+  00551BA7  retn    4
+  00551BAA  mov     eax, [edi]
+  00551BAC  push    0
+  00551BAE  lea     ecx, [esp+14h+arg_0]
+  00551BB2  push    4
+  00551BB4  push    ecx
+  00551BB5  push    edi
+  00551BB6  mov     [esp+20h+arg_0], 0
+  00551BBE  call    dword ptr [eax+0Ch]
+  00551BC1  test    eax, eax
+  00551BC3  jl      loc_551C50
+  00551BC9  mov     eax, [esp+10h+arg_0]
+  00551BCD  xor     ebx, ebx
+  00551BCF  test    eax, eax
+  00551BD1  jle     short loc_551C2E
+  00551BD3  mov     edx, [edi]
+  00551BD5  push    0
+  00551BD7  lea     eax, [esp+14h+var_4]
+  00551BDB  push    4
+  00551BDD  push    eax
+  00551BDE  push    edi
+  00551BDF  call    dword ptr [edx+0Ch]
+  00551BE2  test    eax, eax
+  00551BE4  jl      short loc_551C50
+  00551BE6  mov     ecx, [esi+8]
+  00551BE9  mov     eax, [esi+10h]
+  00551BEC  cmp     eax, ecx
+  00551BEE  jl      short loc_551C12
+  00551BF0  mov     al, [esi+0Dh]
+  00551BF3  test    al, al
+  00551BF5  jnz     short loc_551BFB
+  00551BF7  test    ecx, ecx
+  00551BF9  jnz     short loc_551C25
+  00551BFB  mov     eax, [esi+14h]
+  00551BFE  test    eax, eax
+  00551C00  jle     short loc_551C25
+  00551C02  mov     edx, [esi]
+  00551C04  add     eax, ecx
+  00551C06  push    0
+  00551C08  push    eax
+  00551C09  mov     ecx, esi
+  00551C0B  call    dword ptr [edx+8]
+  00551C0E  test    al, al
+  00551C10  jz      short loc_551C25
+  00551C12  mov     eax, [esi+10h]
+  00551C15  mov     edx, [esi+4]
+  00551C18  lea     ecx, [eax+1]
+  00551C1B  mov     [esi+10h], ecx
+  00551C1E  mov     ecx, [esp+10h+var_4]
+  00551C22  mov     [edx+eax*4], ecx
+  00551C25  mov     eax, [esp+10h+arg_0]
+  00551C29  inc     ebx
+  00551C2A  cmp     ebx, eax
+  00551C2C  jl      short loc_551BD3
+  00551C2E  xor     edi, edi
+  00551C30  test    eax, eax
+  00551C32  jle     short loc_551C4E
+   -- 调用目标 --
+      00551AB8 call -> 00000008  
+      00551ADB call -> 005F6220  ObjectClass_CompareYSortValues
+      00551B4B call -> 00000010  
+      00551B6A call -> 00000010  
+      00551BBE call -> 0000000C  
+      00551BDF call -> 0000000C  
+      00551C0B call -> 00000008  
+
+############ MapClass_AddObjectToALayerX @ 005519B0 ############
+  005519B0  mov     al, [esp+sortable]
+  005519B4  push    esi
+  005519B5  test    al, al
+  005519B7  mov     esi, ecx
+  005519B9  jz      short loc_5519CF
+  005519BB  mov     eax, [esp+4+a2]
+  005519BF  push    eax; a2
+  005519C0  call    MapClass_AddObjectToALayer
+  005519C5  neg     eax
+  005519C7  sbb     eax, eax
+  005519C9  pop     esi
+  005519CA  neg     eax
+  005519CC  retn    8
+  005519CF  mov     ecx, [esi+8]
+  005519D2  mov     eax, [esi+10h]
+  005519D5  cmp     eax, ecx
+  005519D7  jl      short loc_551A0A
+  005519D9  mov     al, [esi+0Dh]
+  005519DC  test    al, al
+  005519DE  jnz     short loc_5519E4
+  005519E0  test    ecx, ecx
+  005519E2  jnz     short loc_5519FB
+  005519E4  mov     eax, [esi+14h]
+  005519E7  test    eax, eax
+  005519E9  jle     short loc_5519FB
+  005519EB  mov     edx, [esi]
+  005519ED  add     eax, ecx
+  005519EF  push    0
+  005519F1  push    eax
+  005519F2  mov     ecx, esi
+  005519F4  call    dword ptr [edx+8]
+  005519F7  test    al, al
+  005519F9  jnz     short loc_551A0A
+  005519FB  xor     al, al
+  005519FD  xor     edx, edx
+  005519FF  test    al, al
+  00551A01  setnz   dl
+  00551A04  mov     al, dl
+  00551A06  pop     esi
+  00551A07  retn    8
+  00551A0A  mov     eax, [esi+10h]
+  00551A0D  mov     edx, [esi+4]
+  00551A10  lea     ecx, [eax+1]
+  00551A13  mov     [esi+10h], ecx
+  00551A16  mov     ecx, [esp+4+a2]
+  00551A1A  mov     [edx+eax*4], ecx
+  00551A1D  mov     al, 1
+  00551A1F  xor     edx, edx
+  00551A21  pop     esi
+  00551A22  test    al, al
+  00551A24  setnz   dl
+  00551A27  mov     al, dl
+  00551A29  retn    8
+  00551A2C  db 4 dup(90h)
+  00551A30  push    ecx
+  00551A31  push    ebx
+  00551A32  push    ebp
+  00551A33  mov     ebp, ecx
+  00551A35  xor     ebx, ebx
+  00551A37  mov     eax, [ebp+10h]
+  00551A3A  dec     eax
+  00551A3B  test    eax, eax
+  00551A3D  jle     short loc_551A81
+  00551A3F  push    esi
+  00551A40  push    edi
+  00551A41  mov     eax, [ebp+4]
+  00551A44  mov     esi, [eax+ebx*4+4]
+  00551A48  mov     edi, [eax+ebx*4]
+  00551A4B  mov     ecx, esi
+  00551A4D  mov     edx, [esi]
+  00551A4F  call    dword ptr [edx+0B8h]
+  00551A55  mov     [esp+14h+var_4], eax
+  00551A59  mov     eax, [edi]
+  00551A5B  mov     ecx, edi
+  00551A5D  call    dword ptr [eax+0B8h]
+  00551A63  cmp     [esp+14h+var_4], eax
+  00551A67  jge     short loc_551A76
+  00551A69  mov     ecx, [ebp+4]
+  00551A6C  mov     [ecx+ebx*4+4], edi
+  00551A70  mov     edx, [ebp+4]
+  00551A73  mov     [edx+ebx*4], esi
+  00551A76  mov     eax, [ebp+10h]
+  00551A79  inc     ebx
+  00551A7A  dec     eax
+  00551A7B  cmp     ebx, eax
+  00551A7D  jl      short loc_551A41
+  00551A7F  pop     edi
+  00551A80  pop     esi
+  00551A81  pop     ebp
+  00551A82  pop     ebx
+  00551A83  pop     ecx
+  00551A84  retn
+  00551A85  db 0Bh dup(90h)
+  00551A90  push    esi
+  00551A91  mov     esi, ecx
+  00551A93  mov     ecx, [esi+8]
+  00551A96  mov     eax, [esi+10h]
+  00551A99  cmp     eax, ecx
+  00551A9B  jl      short loc_551AC5
+  00551A9D  mov     al, [esi+0Dh]
+  00551AA0  test    al, al
+  00551AA2  jnz     short loc_551AA8
+  00551AA4  test    ecx, ecx
+  00551AA6  jnz     short loc_551ABF
+  00551AA8  mov     eax, [esi+14h]
+  00551AAB  test    eax, eax
+  00551AAD  jle     short loc_551ABF
+  00551AAF  mov     edx, [esi]
+  00551AB1  add     eax, ecx
+  00551AB3  push    0
+  00551AB5  push    eax
+  00551AB6  mov     ecx, esi
+  00551AB8  call    dword ptr [edx+8]
+  00551ABB  test    al, al
+  00551ABD  jnz     short loc_551AC5
+  00551ABF  xor     eax, eax
+  00551AC1  pop     esi
+  00551AC2  retn    4
+  00551AC5  mov     eax, [esi+10h]
+  00551AC8  push    ebx
+  00551AC9  mov     ebx, [esp+8+a2]
+  00551ACD  push    edi
+  00551ACE  xor     edi, edi
+  00551AD0  test    eax, eax
+  00551AD2  jle     short loc_551AEC
+  00551AD4  mov     eax, [esi+4]
+  00551AD7  push    ebx; a2
+  00551AD8  mov     ecx, [eax+edi*4]; this
+  00551ADB  call    ObjectClass_CompareYSortValues
+  00551AE0  test    al, al
+  00551AE2  jnz     short loc_551AEC
+  00551AE4  mov     eax, [esi+10h]
+  00551AE7  inc     edi
+  00551AE8  cmp     edi, eax
+  00551AEA  jl      short loc_551AD4
+  00551AEC  mov     eax, [esi+10h]
+  00551AEF  dec     eax
+  00551AF0  cmp     eax, edi
+  00551AF2  jl      short loc_551B04
+  00551AF4  mov     ecx, [esi+4]
+  00551AF7  dec     eax
+  00551AF8  cmp     eax, edi
+  00551AFA  mov     edx, [ecx+eax*4+4]
+  00551AFE  mov     [ecx+eax*4+8], edx
+  00551B02  jge     short loc_551AF4
+  00551B04  mov     eax, [esi+4]
+  00551B07  mov     [eax+edi*4], ebx
+  00551B0A  mov     eax, [esi+10h]
+  00551B0D  inc     eax
+  00551B0E  pop     edi
+  00551B0F  mov     [esi+10h], eax
+  00551B12  pop     ebx
+  00551B13  mov     eax, 1
+  00551B18  pop     esi
+  00551B19  retn    4
+  00551B1C  db 4 dup(90h)
+  00551B20  push    ebx
+  00551B21  push    esi
+  00551B22  mov     esi, [esp+8+pStm]
+  00551B26  push    edi
+  00551B27  test    esi, esi
+  00551B29  mov     ebx, ecx
+  00551B2B  jnz     short loc_551B38
+  00551B2D  pop     edi
+  00551B2E  pop     esi
+  00551B2F  mov     eax, 80004003h
+  00551B34  pop     ebx
+  00551B35  retn    4
+  00551B38  mov     eax, [ebx+10h]
+  00551B3B  mov     ecx, [esi]
+  00551B3D  push    0
+  00551B3F  lea     edx, [esp+10h+pStm]
+  00551B43  push    4
+  00551B45  push    edx
+  00551B46  push    esi
+  00551B47  mov     [esp+1Ch+pStm], eax
+  00551B4B  call    dword ptr [ecx+10h]
+  00551B4E  test    eax, eax
+  00551B50  jl      short loc_551B7C
+  00551B52  mov     eax, [esp+0Ch+pStm]
+   -- 调用目标 --
+      005519C0 call -> 00551A90  MapClass_AddObjectToALayer
+      005519F4 call -> 00000008  
+      00551A4F call -> 000000B8  
+      00551A5D call -> 000000B8  
+      00551AB8 call -> 00000008  
+      00551ADB call -> 005F6220  ObjectClass_CompareYSortValues
+      00551B4B call -> 00000010  
+
+############ 谁引用 vec_ObjectsInLayers 0x8A0360 ############
+   from 004A8909 type=1 in DisplayClass_InitClear
+   from 004A9752 type=1 in W?Submit$:DisplayClass$n(pnx$ObjectClass$$$LayerType$$)v
+   from 004A9794 type=3 in W?Remove$:DisplayClass$n(pnx$ObjectClass$$$LayerType$$)v
+   from 004A979B type=1 in W?Remove$:DisplayClass$n(pnx$ObjectClass$$$LayerType$$)v
+   from 004AE6F6 type=1 in W?Decode_Pointers$:DisplayClass$n(np$Display$$)
+   from 004AE726 type=1 in sub_4AE720
+
+############ AddObjectToALayer 的引用者 ############
+-- 00551A90 --
+   from 005519C0 type=17 in MapClass_AddObjectToALayerX
+-- 005519B0 --
+   from 004A9759 type=17 in W?Submit$:DisplayClass$n(pnx$ObjectClass$$$LayerType$$)v
+   from 0055BABB type=17 in sub_55BAA0
+   from 007E607C type=1 in 

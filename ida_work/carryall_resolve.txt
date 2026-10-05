@@ -1,0 +1,11 @@
+ADDR 0x7388FD  -> FUNC UnitClass_ClickedMission [0x738890-0x73890D]
+ADDR 0x7F5DB4  -> no function
+ADDR 0x74041B  -> FUNC W?What_Action$:UnitClass$n.x(pnx$ObjectClass$$)$ActionType$$ [0x73FD50-0x7404AA]
+ADDR 0x6FF8F1  -> FUNC TechnoClass_Fire [0x6FDD50-0x6FF94F]
+ADDR 0x739971  -> FUNC UnitClass_Try_To_Deploy [0x7393C0-0x739AB8]
+
+=== Callers of UnitClass_ClickedMission (0x738890) ===
+  from 0x7F5DB4 in ?
+
+=== Callers of W?What_Action$:UnitClass$n.x(pnx$ObjectClass$$)$ActionType$$ (0x73FD50) ===
+  from 0x7F5CE4 in ?

@@ -1,0 +1,603 @@
+==============================================================================
+== ShipLocomotionClass::Draw_Matrix  FULL @ 0x69F670
+==============================================================================
+  0069F670  push    ebp                                   
+  0069F671  mov     ebp, esp                              
+  0069F673  and     esp, 0FFFFFFF8h                       
+  0069F676  sub     esp, 224h                             
+  0069F67C  push    ebx                                   
+  0069F67D  push    esi                                   
+  0069F67E  mov     esi, [ebp+arg_0]                      
+  0069F681  push    edi                                   
+  0069F682  mov     edi, [esi+2Ch]                        
+  0069F685  test    edi, edi                              
+  0069F687  mov     [esp+230h+var_218], edi               
+  0069F68B  jnz     short loc_69F695                      
+  0069F68D  fld     ds:dbl1_0; 1.0                        
+  0069F693  jmp     short loc_69F6C0                      
+  0069F695  mov     edx, [esi+20h]                        
+  0069F698  mov     eax, [esi+28h]                        
+  0069F69B  cmp     edx, 0FFFFFFFFh                       
+  0069F69E  jz      short loc_69F6B2                      
+  0069F6A0  mov     ecx, Frame                            
+  0069F6A6  sub     ecx, edx                              
+  0069F6A8  cmp     ecx, eax                              
+  0069F6AA  jge     short loc_69F6B0                      
+  0069F6AC  sub     eax, ecx                              
+  0069F6AE  jmp     short loc_69F6B2                      
+  0069F6B0  xor     eax, eax                              
+  0069F6B2  sub     edi, eax                              
+  0069F6B4  mov     [esp+230h+var_21C], edi               
+  0069F6B8  fild    [esp+230h+var_21C]                    
+  0069F6BC  fidiv   [esp+230h+var_218]                    
+  0069F6C0  fcomp   ds:dbl1_0; 1.0                        
+  0069F6C6  fnstsw  ax                                    
+  0069F6C8  test    ah, 40h                               
+  0069F6CB  jz      short loc_69F6FE                      
+  0069F6CD  mov     ecx, [esi+8]                          
+  0069F6D0  fld     dword ptr [ecx+328h]                  
+  0069F6D6  fabs                                          
+  0069F6D8  fcomp   ds:dbl_7E44E8                         
+  0069F6DE  fnstsw  ax                                    
+  0069F6E0  test    ah, 1                                 
+  0069F6E3  jz      short loc_69F6FE                      
+  0069F6E5  fld     dword ptr [ecx+32Ch]                  
+  0069F6EB  fabs                                          
+  0069F6ED  fcomp   ds:dbl_7E44E8                         
+  0069F6F3  fnstsw  ax                                    
+  0069F6F5  test    ah, 1                                 
+  0069F6F8  jnz     loc_69F9C3                            
+  0069F6FE  lea     ecx, [esp+230h+var_1E0]               
+  0069F702  call    Matrix3D::Matrix3D                    
+  0069F707  lea     ecx, [esp+230h+var_1B0]               
+  0069F70E  call    Matrix3D::Matrix3D                    
+  0069F713  mov     ecx, [esi+8]                          
+  0069F716  mov     eax, [ecx]                            
+  0069F718  call    dword ptr [eax+84h]                   
+  0069F71E  mov     ecx, [esi+8]                          
+  0069F721  fld     qword ptr [eax+360h]                  
+  0069F727  mov     edx, [ecx]                            
+  0069F729  fstp    [esp+230h+var_21C]                    
+  0069F72D  call    dword ptr [edx+84h]                   
+  0069F733  fld     qword ptr [eax+368h]                  
+  0069F739  mov     eax, [esi+8]                          
+  0069F73C  sub     esp, 8                                
+  0069F73F  fstp    [esp+238h+var_218]                    
+  0069F743  fld     dword ptr [eax+32Ch]                  
+  0069F749  fstp    [esp+238h+var_238]; double            
+  0069F74C  call    float_cos                             
+  0069F751  mov     ecx, [esi+8]                          
+  0069F754  fstp    [esp+238h+var_224]                    
+  0069F758  fld     dword ptr [ecx+32Ch]                  
+  0069F75E  fstp    [esp+238h+var_238]                    
+  0069F761  call    float_sin                             
+  0069F766  mov     edx, [esi+8]                          
+  0069F769  fstp    [esp+238h+var_214]                    
+  0069F76D  fld     dword ptr [edx+328h]                  
+  0069F773  fstp    [esp+238h+var_238]; double            
+  0069F776  call    float_cos                             
+  0069F77B  mov     eax, [esi+8]                          
+  0069F77E  fstp    [esp+238h+var_220]                    
+  0069F782  fld     dword ptr [eax+328h]                  
+  0069F788  fstp    [esp+238h+var_238]                    
+  0069F78B  call    float_sin                             
+  0069F790  fabs                                          
+  0069F792  fmul    [esp+238h+var_21C]                    
+  0069F796  fld     [esp+238h+var_214]                    
+  0069F79A  fabs                                          
+  0069F79C  fmul    [esp+238h+var_218]                    
+  0069F7A0  add     esp, 8                                
+  0069F7A3  faddp   st(1), st                             
+  0069F7A5  call    Float_To_Int_Floor                    
+  0069F7AA  fld     [esp+230h+var_224]                    
+  0069F7AE  fmul    [esp+230h+var_218]                    
+  0069F7B2  mov     [esp+230h+var_214], eax               
+  0069F7B6  call    Float_To_Int_Floor                    
+  0069F7BB  mov     [esp+230h+var_224], eax               
+  0069F7BF  fild    [esp+230h+var_224]                    
+  0069F7C3  fsubr   [esp+230h+var_218]                    
+  0069F7C7  call    Float_To_Int_Floor                    
+  0069F7CC  fld     [esp+230h+var_220]                    
+  0069F7D0  fmul    [esp+230h+var_21C]                    
+  0069F7D4  mov     edi, eax                              
+  0069F7D6  mov     [esp+230h+var_218], edi               
+  0069F7DA  call    Float_To_Int_Floor                    
+  0069F7DF  mov     [esp+230h+var_220], eax               
+  0069F7E3  fild    [esp+230h+var_220]                    
+  0069F7E7  fsubr   [esp+230h+var_21C]                    
+  0069F7EB  call    Float_To_Int_Floor                    
+  0069F7F0  mov     ecx, [esi+8]                          
+  0069F7F3  mov     edx, eax                              
+  0069F7F5  mov     [esp+230h+var_21C], edx               
+  0069F7F9  fld     dword ptr [ecx+32Ch]                  
+  0069F7FF  fcomp   ds:num_0_0; 0.0                       
+  0069F805  fnstsw  ax                                    
+  0069F807  test    ah, 1                                 
+  0069F80A  jz      short loc_69F812                      
+  0069F80C  neg     edi                                   
+  0069F80E  mov     [esp+230h+var_218], edi               
+  0069F812  fld     dword ptr [ecx+328h]                  
+  0069F818  fcomp   ds:num_0_0; 0.0                       
+  0069F81E  fnstsw  ax                                    
+  0069F820  test    ah, 41h                               
+  0069F823  jnz     short loc_69F82B                      
+  0069F825  neg     edx                                   
+  0069F827  mov     [esp+230h+var_21C], edx               
+  0069F82B  fild    [esp+230h+var_214]                    
+  0069F82F  push    ecx; float                            
+  0069F830  lea     ecx, [esp+234h+var_1E0]               
+  0069F834  fstp    dword ptr [esp+234h+var_238+4]        
+  0069F837  call    sub_5AE9E0                               ; <<<< Matrix3D::TranslateZ
+  0069F83C  fild    [esp+230h+var_218]                    
+  0069F840  push    ecx; float                            
+  0069F841  lea     ecx, [esp+234h+var_1B0]               
+  0069F848  fstp    dword ptr [esp+234h+var_238+4]        
+  0069F84B  call    Matrix3DClass_5AE980                     ; <<<< Matrix3D::TranslateX
+  0069F850  fild    [esp+230h+var_21C]                    
+  0069F854  push    ecx; float                            
+  0069F855  lea     ecx, [esp+234h+var_1B0]               
+  0069F85C  fstp    dword ptr [esp+234h+var_238+4]        
+  0069F85F  call    Matrix3DClass_5AE9B0                     ; <<<< Matrix3D::TranslateY
+  0069F864  mov     ecx, [esi+8]                          
+  0069F867  mov     edx, [ecx+328h]                       
+  0069F86D  lea     ecx, [esp+230h+var_1B0]               
+  0069F874  push    edx; float                            
+  0069F875  call    sub_5AEF60                               ; <<<< Matrix3D::RotateX
+  0069F87A  mov     eax, [esi+8]                          
+  0069F87D  mov     ecx, [eax+32Ch]                       
+  0069F883  push    ecx; float                            
+  0069F884  lea     ecx, [esp+234h+var_1B0]               
+  0069F88B  call    sub_5AF080                               ; <<<< Matrix3D::RotateY
+  0069F890  mov     eax, [ebp+arg_8]                      
+  0069F893  test    eax, eax                              
+  0069F895  jz      short loc_69F89D                      
+  0069F897  mov     dword ptr [eax], 0FFFFFFFFh           
+  0069F89D  lea     edx, [esp+230h+var_30]                
+  0069F8A4  push    eax                                   
+  0069F8A5  push    edx                                   
+  0069F8A6  push    esi                                   
+  0069F8A7  call    LocomotionClass_ILocomotion_DrawMatrix   ; <<<< ILocomotion_DrawMatrix(base)
+  0069F8AC  push    eax                                   
+  0069F8AD  lea     ecx, [esp+234h+var_180]               
+  0069F8B4  call    Matrix3DClass_5AE610                  
+  0069F8B9  lea     ecx, [esp+230h+var_210]               
+  0069F8BD  call    Matrix3D::Matrix3D                    
+  0069F8C2  mov     ebx, [esi+2Ch]                        
+  0069F8C5  lea     ecx, [esi+20h]; TimerStruct *         
+  0069F8C8  test    ebx, ebx                              
+  0069F8CA  mov     [esp+230h+var_224], ebx               
+  0069F8CE  jz      short loc_69F94B                      
+  0069F8D0  mov     edi, [ecx]                            
+  0069F8D2  mov     eax, [ecx+8]                          
+  0069F8D5  cmp     edi, 0FFFFFFFFh                       
+  0069F8D8  jz      short loc_69F8EC                      
+  0069F8DA  mov     edx, Frame                            
+  0069F8E0  sub     edx, edi                              
+  0069F8E2  cmp     edx, eax                              
+  0069F8E4  jge     short loc_69F8EA                      
+  0069F8E6  sub     eax, edx                              
+  0069F8E8  jmp     short loc_69F8EC                      
+  0069F8EA  xor     eax, eax                              
+  0069F8EC  sub     ebx, eax                              
+  0069F8EE  mov     [esp+230h+var_220], ebx               
+  0069F8F2  fild    [esp+230h+var_220]                    
+  0069F8F6  fidiv   [esp+230h+var_224]                    
+  0069F8FA  fcomp   ds:dbl1_0; 1.0                        
+  0069F900  fnstsw  ax                                    
+  0069F902  test    ah, 1                                 
+  0069F905  jz      short loc_69F94B                      
+  0069F907  mov     eax, [ecx+0Ch]                        
+  0069F90A  test    eax, eax                              
+  0069F90C  jnz     short loc_69F916                      
+  0069F90E  fld     ds:dbl1_0; 1.0                        
+  0069F914  jmp     short loc_69F930                      
+  0069F916  mov     edi, [ecx+0Ch]                        
+  0069F919  mov     [esp+230h+var_224], edi               
+  0069F91D  call    Timer_GetTimeLeft2                    
+  0069F922  sub     edi, eax                              
+  0069F924  mov     [esp+230h+var_220], edi               
+  0069F928  fild    [esp+230h+var_220]                    
+  0069F92C  fidiv   [esp+230h+var_224]                    
+  0069F930  mov     eax, [esi+18h]                        
+  0069F933  mov     edx, [esi+1Ch]                        
+  0069F936  sub     esp, 8                                
+  0069F939  lea     ecx, [esp+238h+var_60]                
+  0069F940  fstp    [esp+238h+var_238]                    
+  0069F943  push    eax; int                              
+  0069F944  call    sub_755A40                               ; <<<< Matrix_lerp(?)
+  0069F949  jmp     short loc_69F960                      
+  0069F94B  mov     esi, [esi+18h]                        
+  0069F94E  test    esi, esi                              
+  0069F950  jz      short loc_69F96D                      
+  0069F952  mov     edx, esi                              
+  0069F954  lea     ecx, [esp+230h+var_C0]                
+  0069F95B  call    sub_7559B0                               ; <<<< Matrix_from_X(?)
+  0069F960  mov     ecx, 0Ch                              
+  0069F965  mov     esi, eax                              
+  0069F967  lea     edi, [esp+230h+var_210]               
+  0069F96B  rep movsd                                     
+  0069F96D  mov     ecx, 0Ch                              
+  0069F972  lea     esi, [esp+230h+var_210]               
+  0069F976  lea     edi, [esp+230h+var_150]               
+  0069F97D  lea     edx, [esp+230h+var_180]               
+  0069F984  rep movsd                                     
+  0069F986  lea     ecx, [esp+230h+var_1B0]               
+  0069F98D  lea     eax, [esp+230h+var_150]               
+  0069F994  push    ecx                                   
+  0069F995  push    edx                                   
+  0069F996  push    eax                                   
+  0069F997  lea     edx, [esp+23Ch+var_1E0]               
+  0069F99B  lea     ecx, [esp+23Ch+var_F0]                
+  0069F9A2  call    Matrix3D_Multiply_5AF980                 ; <<<< Matrix3D::Multiply
+  0069F9A7  mov     edx, eax                              
+  0069F9A9  lea     ecx, [esp+238h+var_90]                
+  0069F9B0  call    Matrix3D_Multiply_5AF980                 ; <<<< Matrix3D::Multiply
+  0069F9B5  mov     edx, eax                              
+  0069F9B7  lea     ecx, [esp+234h+var_120]               
+  0069F9BE  jmp     loc_69FAEA                            
+  0069F9C3  mov     eax, [ebp+arg_8]                      
+  0069F9C6  test    eax, eax                              
+  0069F9C8  jz      short loc_69F9DD                      
+  0069F9CA  mov     ecx, [eax]                            
+  0069F9CC  cmp     ecx, 0FFFFFFFFh                       
+  0069F9CF  jz      short loc_69F9DD                      
+  0069F9D1  shl     ecx, 6                                
+  0069F9D4  mov     [eax], ecx                            
+  0069F9D6  mov     edx, [esi+18h]                        
+  0069F9D9  add     edx, ecx                              
+  0069F9DB  mov     [eax], edx                            
+  0069F9DD  push    eax                                   
+  0069F9DE  lea     eax, [esp+234h+var_120]               
+  0069F9E5  push    eax                                   
+  0069F9E6  push    esi                                   
+  0069F9E7  call    LocomotionClass_ILocomotion_DrawMatrix   ; <<<< ILocomotion_DrawMatrix(base)
+  0069F9EC  push    eax                                   
+  0069F9ED  lea     ecx, [esp+234h+var_150]               
+  0069F9F4  call    Matrix3DClass_5AE610                  
+  0069F9F9  lea     ecx, [esp+230h+var_210]               
+  0069F9FD  call    Matrix3D::Matrix3D                    
+  0069FA02  mov     ebx, [esi+2Ch]                        
+  0069FA05  test    ebx, ebx                              
+  0069FA07  mov     [esp+230h+var_224], ebx               
+  0069FA0B  jz      loc_69FAA0                            
+  0069FA11  mov     edx, [esi+20h]                        
+  0069FA14  mov     eax, [esi+28h]                        
+  0069FA17  mov     edi, Frame                            
+  0069FA1D  cmp     edx, 0FFFFFFFFh                       
+  0069FA20  jz      short loc_69FA30                      
+  0069FA22  mov     ecx, edi                              
+  0069FA24  sub     ecx, edx                              
+  0069FA26  cmp     ecx, eax                              
+  0069FA28  jge     short loc_69FA2E                      
+  0069FA2A  sub     eax, ecx                              
+  0069FA2C  jmp     short loc_69FA30                      
+  0069FA2E  xor     eax, eax                              
+  0069FA30  sub     ebx, eax                              
+  0069FA32  mov     [esp+230h+var_220], ebx               
+  0069FA36  fild    [esp+230h+var_220]                    
+  0069FA3A  fidiv   [esp+230h+var_224]                    
+  0069FA3E  fcomp   ds:dbl1_0; 1.0                        
+  0069FA44  fnstsw  ax                                    
+  0069FA46  test    ah, 1                                 
+  0069FA49  jz      short loc_69FAA0                      
+  0069FA4B  mov     edx, [esi+2Ch]                        
+  0069FA4E  test    edx, edx                              
+  0069FA50  mov     [esp+230h+var_224], edx               
+  0069FA54  jnz     short loc_69FA5E                      
+  0069FA56  fld     ds:dbl1_0; 1.0                        
+  0069FA5C  jmp     short loc_69FA85                      
+  0069FA5E  mov     ecx, [esi+20h]                        
+  0069FA61  mov     eax, [esi+28h]                        
+  0069FA64  cmp     ecx, 0FFFFFFFFh                       
+  0069FA67  jz      short loc_69FA77                      
+  0069FA69  sub     edi, ecx                              
+  0069FA6B  mov     ecx, edi                              
+  0069FA6D  cmp     ecx, eax                              
+  0069FA6F  jge     short loc_69FA75                      
+  0069FA71  sub     eax, ecx                              
+  0069FA73  jmp     short loc_69FA77                      
+  0069FA75  xor     eax, eax                              
+  0069FA77  sub     edx, eax                              
+  0069FA79  mov     [esp+230h+var_220], edx               
+  0069FA7D  fild    [esp+230h+var_220]                    
+  0069FA81  fidiv   [esp+230h+var_224]                    
+  0069FA85  mov     ecx, [esi+18h]                        
+  0069FA88  mov     edx, [esi+1Ch]                        
+  0069FA8B  sub     esp, 8                                
+  0069FA8E  fstp    [esp+238h+var_238]                    
+  0069FA91  push    ecx; int                              
+  0069FA92  lea     ecx, [esp+23Ch+var_90]                
+  0069FA99  call    sub_755A40                               ; <<<< Matrix_lerp(?)
+  0069FA9E  jmp     short loc_69FAB5                      
+  0069FAA0  mov     esi, [esi+18h]                        
+  0069FAA3  test    esi, esi                              
+  0069FAA5  jz      short loc_69FAC2                      
+  0069FAA7  mov     edx, esi                              
+  0069FAA9  lea     ecx, [esp+230h+var_F0]                
+  0069FAB0  call    sub_7559B0                               ; <<<< Matrix_from_X(?)
+  0069FAB5  mov     ecx, 0Ch                              
+  0069FABA  mov     esi, eax                              
+  0069FABC  lea     edi, [esp+230h+var_210]               
+  0069FAC0  rep movsd                                     
+  0069FAC2  mov     ecx, 0Ch                              
+  0069FAC7  lea     esi, [esp+230h+var_210]               
+  0069FACB  lea     edi, [esp+230h+var_180]               
+  0069FAD2  lea     edx, [esp+230h+var_150]               
+  0069FAD9  rep movsd                                     
+  0069FADB  push    edx                                   
+  0069FADC  lea     edx, [esp+234h+var_180]               
+  0069FAE3  lea     ecx, [esp+234h+var_C0]                
+  0069FAEA  call    Matrix3D_Multiply_5AF980                 ; <<<< Matrix3D::Multiply
+  0069FAEF  mov     ecx, 0Ch                              
+  0069FAF4  mov     esi, eax                              
+  0069FAF6  mov     eax, [ebp+arg_4]                      
+  0069FAF9  lea     edi, [esp+230h+var_1E0]               
+  0069FAFD  rep movsd                                     
+  0069FAFF  mov     ecx, 0Ch                              
+  0069FB04  lea     esi, [esp+230h+var_1E0]               
+  0069FB08  mov     edi, eax                              
+  0069FB0A  rep movsd                                     
+  0069FB0C  pop     edi                                   
+  0069FB0D  pop     esi                                   
+  0069FB0E  pop     ebx                                   
+  0069FB0F  mov     esp, ebp                              
+  0069FB11  pop     ebp                                   
+  0069FB12  retn    0Ch                                   
+
+==============================================================================
+== Ship  TILT PATH  0x69F9C3 @ 0x69F9C3
+==============================================================================
+  0069F9C3  mov     eax, [ebp+arg_8]                      
+  0069F9C6  test    eax, eax                              
+  0069F9C8  jz      short loc_69F9DD                      
+  0069F9CA  mov     ecx, [eax]                            
+  0069F9CC  cmp     ecx, 0FFFFFFFFh                       
+  0069F9CF  jz      short loc_69F9DD                      
+  0069F9D1  shl     ecx, 6                                
+  0069F9D4  mov     [eax], ecx                            
+  0069F9D6  mov     edx, [esi+18h]                        
+  0069F9D9  add     edx, ecx                              
+  0069F9DB  mov     [eax], edx                            
+  0069F9DD  push    eax                                   
+  0069F9DE  lea     eax, [esp+234h+var_120]               
+  0069F9E5  push    eax                                   
+  0069F9E6  push    esi                                   
+  0069F9E7  call    LocomotionClass_ILocomotion_DrawMatrix   ; <<<< ILocomotion_DrawMatrix(base)
+  0069F9EC  push    eax                                   
+  0069F9ED  lea     ecx, [esp+234h+var_150]               
+  0069F9F4  call    Matrix3DClass_5AE610                  
+  0069F9F9  lea     ecx, [esp+230h+var_210]               
+  0069F9FD  call    Matrix3D::Matrix3D                    
+  0069FA02  mov     ebx, [esi+2Ch]                        
+  0069FA05  test    ebx, ebx                              
+  0069FA07  mov     [esp+230h+var_224], ebx               
+  0069FA0B  jz      loc_69FAA0                            
+  0069FA11  mov     edx, [esi+20h]                        
+  0069FA14  mov     eax, [esi+28h]                        
+  0069FA17  mov     edi, Frame                            
+  0069FA1D  cmp     edx, 0FFFFFFFFh                       
+  0069FA20  jz      short loc_69FA30                      
+  0069FA22  mov     ecx, edi                              
+  0069FA24  sub     ecx, edx                              
+  0069FA26  cmp     ecx, eax                              
+  0069FA28  jge     short loc_69FA2E                      
+  0069FA2A  sub     eax, ecx                              
+  0069FA2C  jmp     short loc_69FA30                      
+  0069FA2E  xor     eax, eax                              
+  0069FA30  sub     ebx, eax                              
+  0069FA32  mov     [esp+230h+var_220], ebx               
+  0069FA36  fild    [esp+230h+var_220]                    
+  0069FA3A  fidiv   [esp+230h+var_224]                    
+  0069FA3E  fcomp   ds:dbl1_0; 1.0                        
+  0069FA44  fnstsw  ax                                    
+  0069FA46  test    ah, 1                                 
+  0069FA49  jz      short loc_69FAA0                      
+  0069FA4B  mov     edx, [esi+2Ch]                        
+  0069FA4E  test    edx, edx                              
+  0069FA50  mov     [esp+230h+var_224], edx               
+  0069FA54  jnz     short loc_69FA5E                      
+  0069FA56  fld     ds:dbl1_0; 1.0                        
+  0069FA5C  jmp     short loc_69FA85                      
+  0069FA5E  mov     ecx, [esi+20h]                        
+  0069FA61  mov     eax, [esi+28h]                        
+  0069FA64  cmp     ecx, 0FFFFFFFFh                       
+  0069FA67  jz      short loc_69FA77                      
+  0069FA69  sub     edi, ecx                              
+  0069FA6B  mov     ecx, edi                              
+  0069FA6D  cmp     ecx, eax                              
+  0069FA6F  jge     short loc_69FA75                      
+  0069FA71  sub     eax, ecx                              
+  0069FA73  jmp     short loc_69FA77                      
+  0069FA75  xor     eax, eax                              
+  0069FA77  sub     edx, eax                              
+  0069FA79  mov     [esp+230h+var_220], edx               
+  0069FA7D  fild    [esp+230h+var_220]                    
+  0069FA81  fidiv   [esp+230h+var_224]                    
+  0069FA85  mov     ecx, [esi+18h]                        
+  0069FA88  mov     edx, [esi+1Ch]                        
+  0069FA8B  sub     esp, 8                                
+  0069FA8E  fstp    [esp+238h+var_238]                    
+  0069FA91  push    ecx; int                              
+  0069FA92  lea     ecx, [esp+23Ch+var_90]                
+  0069FA99  call    sub_755A40                               ; <<<< Matrix_lerp(?)
+  0069FA9E  jmp     short loc_69FAB5                      
+  0069FAA0  mov     esi, [esi+18h]                        
+  0069FAA3  test    esi, esi                              
+  0069FAA5  jz      short loc_69FAC2                      
+  0069FAA7  mov     edx, esi                              
+  0069FAA9  lea     ecx, [esp+230h+var_F0]                
+  0069FAB0  call    sub_7559B0                               ; <<<< Matrix_from_X(?)
+  0069FAB5  mov     ecx, 0Ch                              
+  0069FABA  mov     esi, eax                              
+  0069FABC  lea     edi, [esp+230h+var_210]               
+  0069FAC0  rep movsd                                     
+  0069FAC2  mov     ecx, 0Ch                              
+  0069FAC7  lea     esi, [esp+230h+var_210]               
+  0069FACB  lea     edi, [esp+230h+var_180]               
+  0069FAD2  lea     edx, [esp+230h+var_150]               
+  0069FAD9  rep movsd                                     
+  0069FADB  push    edx                                   
+  0069FADC  lea     edx, [esp+234h+var_180]               
+  0069FAE3  lea     ecx, [esp+234h+var_C0]                
+  0069FAEA  call    Matrix3D_Multiply_5AF980                 ; <<<< Matrix3D::Multiply
+  0069FAEF  mov     ecx, 0Ch                              
+  0069FAF4  mov     esi, eax                              
+  0069FAF6  mov     eax, [ebp+arg_4]                      
+  0069FAF9  lea     edi, [esp+230h+var_1E0]               
+  0069FAFD  rep movsd                                     
+  0069FAFF  mov     ecx, 0Ch                              
+  0069FB04  lea     esi, [esp+230h+var_1E0]               
+  0069FB08  mov     edi, eax                              
+  0069FB0A  rep movsd                                     
+  0069FB0C  pop     edi                                   
+  0069FB0D  pop     esi                                   
+  0069FB0E  pop     ebx                                   
+  0069FB0F  mov     esp, ebp                              
+  0069FB11  pop     ebp                                   
+  0069FB12  retn    0Ch                                   
+
+==============================================================================
+== Drive TILT PATH  0x4B02B3 @ 0x4B02B3
+==============================================================================
+  004B02B3  mov     eax, [ebp+arg_8]                      
+  004B02B6  test    eax, eax                              
+  004B02B8  jz      short loc_4B02CD                      
+  004B02BA  mov     ecx, [eax]                            
+  004B02BC  cmp     ecx, 0FFFFFFFFh                       
+  004B02BF  jz      short loc_4B02CD                      
+  004B02C1  shl     ecx, 6                                
+  004B02C4  mov     [eax], ecx                            
+  004B02C6  mov     edx, [esi+18h]                        
+  004B02C9  add     edx, ecx                              
+  004B02CB  mov     [eax], edx                            
+  004B02CD  push    eax                                   
+  004B02CE  lea     eax, [esp+234h+var_120]               
+  004B02D5  push    eax                                   
+  004B02D6  push    esi                                   
+  004B02D7  call    LocomotionClass_ILocomotion_DrawMatrix   ; <<<< ILocomotion_DrawMatrix(base)
+  004B02DC  push    eax                                   
+  004B02DD  lea     ecx, [esp+234h+var_150]               
+  004B02E4  call    Matrix3DClass_5AE610                  
+  004B02E9  lea     ecx, [esp+230h+var_210]               
+  004B02ED  call    Matrix3D::Matrix3D                    
+  004B02F2  mov     ebx, [esi+2Ch]                        
+  004B02F5  test    ebx, ebx                              
+  004B02F7  mov     [esp+230h+var_224], ebx               
+  004B02FB  jz      loc_4B0390                            
+  004B0301  mov     edx, [esi+20h]                        
+  004B0304  mov     eax, [esi+28h]                        
+  004B0307  mov     edi, Frame                            
+  004B030D  cmp     edx, 0FFFFFFFFh                       
+  004B0310  jz      short loc_4B0320                      
+  004B0312  mov     ecx, edi                              
+  004B0314  sub     ecx, edx                              
+  004B0316  cmp     ecx, eax                              
+  004B0318  jge     short loc_4B031E                      
+  004B031A  sub     eax, ecx                              
+  004B031C  jmp     short loc_4B0320                      
+  004B031E  xor     eax, eax                              
+  004B0320  sub     ebx, eax                              
+  004B0322  mov     [esp+230h+var_220], ebx               
+  004B0326  fild    [esp+230h+var_220]                    
+  004B032A  fidiv   [esp+230h+var_224]                    
+  004B032E  fcomp   ds:dbl1_0; 1.0                        
+  004B0334  fnstsw  ax                                    
+  004B0336  test    ah, 1                                 
+  004B0339  jz      short loc_4B0390                      
+  004B033B  mov     edx, [esi+2Ch]                        
+  004B033E  test    edx, edx                              
+  004B0340  mov     [esp+230h+var_224], edx               
+  004B0344  jnz     short loc_4B034E                      
+  004B0346  fld     ds:dbl1_0; 1.0                        
+  004B034C  jmp     short loc_4B0375                      
+  004B034E  mov     ecx, [esi+20h]                        
+  004B0351  mov     eax, [esi+28h]                        
+  004B0354  cmp     ecx, 0FFFFFFFFh                       
+  004B0357  jz      short loc_4B0367                      
+  004B0359  sub     edi, ecx                              
+  004B035B  mov     ecx, edi                              
+  004B035D  cmp     ecx, eax                              
+  004B035F  jge     short loc_4B0365                      
+  004B0361  sub     eax, ecx                              
+  004B0363  jmp     short loc_4B0367                      
+  004B0365  xor     eax, eax                              
+  004B0367  sub     edx, eax                              
+  004B0369  mov     [esp+230h+var_220], edx               
+  004B036D  fild    [esp+230h+var_220]                    
+  004B0371  fidiv   [esp+230h+var_224]                    
+  004B0375  mov     ecx, [esi+18h]                        
+  004B0378  mov     edx, [esi+1Ch]                        
+  004B037B  sub     esp, 8                                
+  004B037E  fstp    [esp+238h+var_238]                    
+  004B0381  push    ecx; int                              
+  004B0382  lea     ecx, [esp+23Ch+var_90]                
+  004B0389  call    sub_755A40                               ; <<<< Matrix_lerp(?)
+  004B038E  jmp     short loc_4B03A5                      
+  004B0390  mov     esi, [esi+18h]                        
+  004B0393  test    esi, esi                              
+  004B0395  jz      short loc_4B03B2                      
+  004B0397  mov     edx, esi                              
+  004B0399  lea     ecx, [esp+230h+var_F0]                
+  004B03A0  call    sub_7559B0                               ; <<<< Matrix_from_X(?)
+  004B03A5  mov     ecx, 0Ch                              
+  004B03AA  mov     esi, eax                              
+  004B03AC  lea     edi, [esp+230h+var_210]               
+  004B03B0  rep movsd                                     
+  004B03B2  mov     ecx, 0Ch                              
+  004B03B7  lea     esi, [esp+230h+var_210]               
+  004B03BB  lea     edi, [esp+230h+var_180]               
+  004B03C2  lea     edx, [esp+230h+var_150]               
+  004B03C9  rep movsd                                     
+  004B03CB  push    edx                                   
+  004B03CC  lea     edx, [esp+234h+var_180]               
+  004B03D3  lea     ecx, [esp+234h+var_C0]                
+  004B03DA  call    Matrix3D_Multiply_5AF980                 ; <<<< Matrix3D::Multiply
+  004B03DF  mov     ecx, 0Ch                              
+  004B03E4  mov     esi, eax                              
+  004B03E6  mov     eax, [ebp+arg_4]                      
+  004B03E9  lea     edi, [esp+230h+var_1E0]               
+  004B03ED  rep movsd                                     
+  004B03EF  mov     ecx, 0Ch                              
+  004B03F4  lea     esi, [esp+230h+var_1E0]               
+  004B03F8  mov     edi, eax                              
+  004B03FA  rep movsd                                     
+  004B03FC  pop     edi                                   
+  004B03FD  pop     esi                                   
+  004B03FE  pop     ebx                                   
+  004B03FF  mov     esp, ebp                              
+  004B0401  pop     ebp                                   
+  004B0402  retn    0Ch                                   
+
+##############################################################################
+# 调用点统计（Ship 0x69F670 起 与 Drive 0x4AFF60 起，各扫 0x900 字节）
+##############################################################################
+--- Ship ---
+   0069F837  call Matrix3D::TranslateZ (0x5AE9E0)
+   0069F84B  call Matrix3D::TranslateX (0x5AE980)
+   0069F85F  call Matrix3D::TranslateY (0x5AE9B0)
+   0069F875  call Matrix3D::RotateX (0x5AEF60)
+   0069F88B  call Matrix3D::RotateY (0x5AF080)
+   0069F8A7  call ILocomotion_DrawMatrix(base) (0x55A730)
+   0069F944  call Matrix_lerp(?) (0x755A40)
+   0069F95B  call Matrix_from_X(?) (0x7559B0)
+   0069F9A2  call Matrix3D::Multiply (0x5AF980)
+   0069F9B0  call Matrix3D::Multiply (0x5AF980)
+   0069F9E7  call ILocomotion_DrawMatrix(base) (0x55A730)
+   0069FA99  call Matrix_lerp(?) (0x755A40)
+   0069FAB0  call Matrix_from_X(?) (0x7559B0)
+   0069FAEA  call Matrix3D::Multiply (0x5AF980)
+--- Drive ---
+   004B0127  call Matrix3D::TranslateZ (0x5AE9E0)
+   004B013B  call Matrix3D::TranslateX (0x5AE980)
+   004B014F  call Matrix3D::TranslateY (0x5AE9B0)
+   004B0165  call Matrix3D::RotateX (0x5AEF60)
+   004B017B  call Matrix3D::RotateY (0x5AF080)
+   004B0197  call ILocomotion_DrawMatrix(base) (0x55A730)
+   004B0234  call Matrix_lerp(?) (0x755A40)
+   004B024B  call Matrix_from_X(?) (0x7559B0)
+   004B0292  call Matrix3D::Multiply (0x5AF980)
+   004B02A0  call Matrix3D::Multiply (0x5AF980)
+   004B02D7  call ILocomotion_DrawMatrix(base) (0x55A730)
+   004B0389  call Matrix_lerp(?) (0x755A40)
+   004B03A0  call Matrix_from_X(?) (0x7559B0)
+   004B03DA  call Matrix3D::Multiply (0x5AF980)

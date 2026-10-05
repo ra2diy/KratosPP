@@ -1,0 +1,604 @@
+############ 1) 虚表槽定位 ############
+-- FootClass: slot +0x124 == FootClass_SetLayer(0x4D3780) --
+   seg=.rdata vtable=0x007E22A4 (slot@0x007E23C8)
+      slot+0x1B4 (SetLocation) = 0x004DB810 FootClass_SetCoords
+      slot+0x48  (GetCoords)   = 0x005F65A0 W?Center_Coord$:ObjectClass$n.x()ul
+      slot+0xB8  (GetYSort)    = 0x005F6BD0 ObjectClass_ReturnRealYSort
+      slot+0x78  (GetLayer)    = 0x0041ADC0 TechnoClass_InWhichLayer
+      slot+0x1B8 (GetCellStruct)=0x0041BEA0 TechnoClass_GetCellCoords
+   seg=.rdata vtable=0x007E8C94 (slot@0x007E8DB8)
+      slot+0x1B4 (SetLocation) = 0x004DB810 FootClass_SetCoords
+      slot+0x48  (GetCoords)   = 0x005F65A0 W?Center_Coord$:ObjectClass$n.x()ul
+      slot+0xB8  (GetYSort)    = 0x005F6BD0 ObjectClass_ReturnRealYSort
+      slot+0x78  (GetLayer)    = 0x004DB7E0 FootClass_InWhichLayer
+      slot+0x1B8 (GetCellStruct)=0x0041BEA0 TechnoClass_GetCellCoords
+   seg=.rdata vtable=0x007EB058 (slot@0x007EB17C)
+      slot+0x1B4 (SetLocation) = 0x004DB810 FootClass_SetCoords
+      slot+0x48  (GetCoords)   = 0x005F65A0 W?Center_Coord$:ObjectClass$n.x()ul
+      slot+0xB8  (GetYSort)    = 0x005F6BD0 ObjectClass_ReturnRealYSort
+      slot+0x78  (GetLayer)    = 0x004DB7E0 FootClass_InWhichLayer
+      slot+0x1B8 (GetCellStruct)=0x0041BEA0 TechnoClass_GetCellCoords
+   seg=.rdata vtable=0x007F5C70 (slot@0x007F5D94)
+      slot+0x1B4 (SetLocation) = 0x004DB810 FootClass_SetCoords
+      slot+0x48  (GetCoords)   = 0x005F65A0 W?Center_Coord$:ObjectClass$n.x()ul
+      slot+0xB8  (GetYSort)    = 0x005F6BD0 ObjectClass_ReturnRealYSort
+      slot+0x78  (GetLayer)    = 0x004DB7E0 FootClass_InWhichLayer
+      slot+0x1B8 (GetCellStruct)=0x0041BEA0 TechnoClass_GetCellCoords
+
+-- TechnoClass/ObjectClass: slot +0x1B4 == 0x5F6940 (SetPosition) --
+   seg=.rdata vtable=0x007E3354
+   seg=.rdata vtable=0x007E3AD0
+   seg=.rdata vtable=0x007E3EBC
+   seg=.rdata vtable=0x007E46E4
+   seg=.rdata vtable=0x007EC258
+   seg=.rdata vtable=0x007EDCC0
+   seg=.rdata vtable=0x007EF060
+   seg=.rdata vtable=0x007EF3D4
+   seg=.rdata vtable=0x007EF954
+   seg=.rdata vtable=0x007EFB9C
+   seg=.rdata vtable=0x007F0508
+   seg=.rdata vtable=0x007F32FC
+   seg=.rdata vtable=0x007F4960
+   seg=.rdata vtable=0x007F522C
+   seg=.rdata vtable=0x007F6318
+   seg=.rdata vtable=0x007F66A8
+   seg=.rdata vtable=0x007F6BF4
+
+############ 2) 0x4D3810 (疑似 FootClass_SetCoords) ############
+  004D3810  sub     esp, 14h
+  004D3813  push    ebx
+  004D3814  push    esi
+  004D3815  mov     esi, ecx
+  004D3817  mov     eax, [esi]
+  004D3819  call    dword ptr [eax+84h]
+  004D381F  mov     ebx, [eax+5B4h]
+  004D3825  cmp     ebx, 0FFFFFFFFh
+  004D3828  jnz     short loc_4D3834
+  004D382A  pop     esi
+  004D382B  mov     al, 1
+  004D382D  pop     ebx
+  004D382E  add     esp, 14h
+  004D3831  retn    4
+  004D3834  push    edi
+  004D3835  mov     edi, [esp+20h+a2]
+  004D3839  mov     eax, [edi]
+  004D383B  cdq
+  004D383C  and     edx, 0FFh
+  004D3842  add     eax, edx
+  004D3844  mov     ecx, eax
+  004D3846  mov     eax, [edi+4]
+  004D3849  cdq
+  004D384A  and     edx, 0FFh
+  004D3850  pop     edi
+  004D3851  add     eax, edx
+  004D3853  sar     ecx, 8
+  004D3856  sar     eax, 8
+  004D3859  cmp     cx, CurrentLocation.X
+  004D3860  mov     word ptr [esp+1Ch+a2], cx
+  004D3865  mov     word ptr [esp+1Ch+a2+2], ax
+  004D386A  mov     edx, [esp+1Ch+a2]
+  004D386E  mov     dword ptr [esp+1Ch+coords_cell.X], edx
+  004D3872  jnz     short loc_4D3887
+  004D3874  cmp     ax, CurrentLocation.Y
+  004D387B  jnz     short loc_4D3887
+  004D387D  pop     esi
+  004D387E  xor     al, al
+  004D3880  pop     ebx
+  004D3881  add     esp, 14h
+  004D3884  retn    4
+  004D3887  mov     eax, [esi]
+  004D3889  lea     ecx, [esp+1Ch+var_C]
+  004D388D  push    0
+  004D388F  push    ecx
+  004D3890  mov     ecx, esi
+  004D3892  call    dword ptr [eax+4Ch]
+  004D3895  mov     ecx, eax
+  004D3897  mov     eax, [ecx]
+  004D3899  cdq
+  004D389A  and     edx, 0FFh
+  004D38A0  add     eax, edx
+  004D38A2  sar     eax, 8
+  004D38A5  mov     word ptr [esp+1Ch+a2], ax
+  004D38AA  mov     eax, [ecx+4]
+  004D38AD  cdq
+  004D38AE  and     edx, 0FFh
+  004D38B4  mov     ecx, esi
+  004D38B6  add     eax, edx
+  004D38B8  sar     eax, 8
+  004D38BB  mov     word ptr [esp+1Ch+a2+2], ax
+  004D38C0  mov     edx, [esp+1Ch+a2]
+  004D38C4  mov     eax, [esi]
+  004D38C6  mov     dword ptr [esp+1Ch+where.X], edx
+  004D38CA  call    dword ptr [eax+320h]
+  004D38D0  lea     ecx, [esp+1Ch+coords_cell]
+  004D38D4  push    eax; a7
+  004D38D5  push    ecx; coords
+  004D38D6  mov     ecx, offset Map; this
+  004D38DB  call    MapClass::Coord_Cell
+  004D38E0  mov     edx, [eax+140h]
+  004D38E6  mov     eax, [esi]
+  004D38E8  shr     edx, 8
+  004D38EB  and     dl, 1
+  004D38EE  mov     ecx, esi
+  004D38F0  push    edx; boo
+  004D38F1  push    0; boo
+  004D38F3  call    dword ptr [eax+0BCh]
+  004D38F9  push    eax; a5
+  004D38FA  lea     ecx, [esp+28h+coords_cell]
+  004D38FE  push    ebx; MovementZone
+  004D38FF  lea     edx, [esp+2Ch+where]
+  004D3903  push    ecx; position
+  004D3904  push    edx; where
+  004D3905  mov     ecx, offset Map; this
+  004D390A  call    MapClass_wut_0
+  004D390F  pop     esi
+  004D3910  pop     ebx
+  004D3911  add     esp, 14h
+  004D3914  retn    4
+  004D3917  db 9 dup(90h)
+  004D3920  mov     eax, 1F9Ch
+  004D3925  call    __alloca_probe
+  004D392A  mov     eax, [esp+1F9Ch+coords]
+  004D3931  push    ebx
+  004D3932  push    ebp; a16
+  004D3933  push    esi
+  004D3934  test    eax, eax
+  004D3936  mov     ebp, ecx
+  004D3938  jnz     short loc_4D3944
+  004D393A  mov     dword ptr [ebp+5E0h], 0FFFFFFFFh
+   -- 调用目标 --
+      004D3819 call -> 00000084  
+      004D3892 call -> 0000004C  
+      004D38CA call -> 00000320  
+      004D38DB call -> 005657A0  W?Coord_Cell$:MapClass$n(ul)s
+      004D38F3 call -> 000000BC  
+      004D390A call -> 0056D100  MapClass_wut_0
+      004D3925 call -> 007CA650  __alloca_probe
+
+############ 3) 0x4DB810 (summary 所称 FootClass_SetCoords) ############
+  004DB810  push    ebx
+  004DB811  push    esi
+  004DB812  mov     esi, ecx
+  004DB814  push    edi
+  004DB815  mov     edi, [esp+0Ch+arg_Coords]
+  004DB819  lea     eax, [esi+9Ch]
+  004DB81F  mov     ebx, [edi]
+  004DB821  mov     edx, eax
+  004DB823  mov     eax, [edx]
+  004DB825  cmp     ebx, eax
+  004DB827  mov     ecx, [edx+4]
+  004DB82A  mov     edx, [edx+8]
+  004DB82D  jnz     short loc_4DB839
+  004DB82F  cmp     [edi+4], ecx
+  004DB832  jnz     short loc_4DB839
+  004DB834  cmp     [edi+8], edx
+  004DB837  jz      short loc_4DB83D
+  004DB839  mov     bl, 1
+  004DB83B  jmp     short loc_4DB83F
+  004DB83D  xor     bl, bl
+  004DB83F  mov     al, [esi+74h]
+  004DB842  test    al, al
+  004DB844  jz      short loc_4DB868
+  004DB846  mov     eax, [esi]
+  004DB848  push    0
+  004DB84A  mov     ecx, esi
+  004DB84C  call    dword ptr [eax+124h]
+  004DB852  push    edi
+  004DB853  mov     ecx, esi
+  004DB855  call    ObjectClass_SetPosition
+  004DB85A  mov     edx, [esi]
+  004DB85C  push    1
+  004DB85E  mov     ecx, esi
+  004DB860  call    dword ptr [edx+124h]
+  004DB866  jmp     short loc_4DB870
+  004DB868  push    edi
+  004DB869  mov     ecx, esi
+  004DB86B  call    ObjectClass_SetPosition
+  004DB870  test    bl, bl
+  004DB872  jz      short loc_4DB88F
+  004DB874  mov     eax, [esi]
+  004DB876  mov     ecx, esi
+  004DB878  call    dword ptr [eax+84h]
+  004DB87E  mov     cl, [eax+5E4h]
+  004DB884  test    cl, cl
+  004DB886  jz      short loc_4DB88F
+  004DB888  mov     ecx, esi
+  004DB88A  call    sub_7104F0
+  004DB88F  pop     edi
+  004DB890  pop     esi
+  004DB891  pop     ebx
+  004DB892  retn    4
+  004DB895  db 0Bh dup(90h)
+  004DB8A0  sub     esp, 8
+  004DB8A3  push    ebx
+  004DB8A4  push    edi
+  004DB8A5  mov     edi, ecx
+  004DB8A7  mov     ebx, [edi+674h]
+  004DB8AD  test    ebx, ebx
+  004DB8AF  jz      short loc_4DB8B7
+  004DB8B1  mov     eax, [ebx]
+  004DB8B3  push    ebx
+  004DB8B4  call    dword ptr [eax+4]
+  004DB8B7  push    7; int
+  004DB8B9  push    0; pUnkOuter
+  004DB8BB  push    offset CLSID_DropPodLocomotionClass; rclsid
+  004DB8C0  lea     ecx, [esp+1Ch+loco]; ppv
+  004DB8C4  mov     [esp+1Ch+loco.vt], 0
+  004DB8CC  call    LocomotionClass_CreateInstance
+  004DB8D1  test    eax, eax
+  004DB8D3  jge     short loc_4DB8E2
+  004DB8D5  cmp     eax, 80004002h
+  004DB8DA  jz      short loc_4DB8E2
+  004DB8DC  push    eax; HRESULT
+  004DB8DD  call    RaiseError
+  004DB8E2  mov     eax, [esp+10h+loco.vt]
+  004DB8E6  test    eax, eax
+  004DB8E8  jnz     short loc_4DB8F8
+  004DB8EA  push    80004003h; HRESULT
+  004DB8EF  call    RaiseError
+  004DB8F4  mov     eax, [esp+10h+loco.vt]
+  004DB8F8  mov     ecx, [eax]
+  004DB8FA  push    edi
+  004DB8FB  push    eax
+  004DB8FC  call    dword ptr [ecx+0Ch]
+  004DB8FF  mov     eax, [esp+10h+loco.vt]
+  004DB903  mov     [esp+10h+loco.vt2], 0
+  004DB90B  test    eax, eax
+  004DB90D  jz      short loc_4DB936
+  004DB90F  lea     edx, [esp+10h+loco]
+  004DB913  lea     ecx, [esp+10h+loco.vt2]; new
+  004DB917  push    edx; old
+  004DB918  call    LocomotionClass_FillVar
+  004DB91D  test    eax, eax
+  004DB91F  jge     short loc_4DB92E
+  004DB921  cmp     eax, 80004002h
+  004DB926  jz      short loc_4DB92E
+   -- 调用目标 --
+      004DB83B jmp -> 004DB83F  FootClass_SetCoords
+      004DB84C call -> 00000124  
+      004DB855 call -> 005F6940  ObjectClass_SetPosition
+      004DB860 call -> 00000124  
+      004DB866 jmp -> 004DB870  FootClass_SetCoords
+      004DB86B call -> 005F6940  ObjectClass_SetPosition
+      004DB878 call -> 00000084  
+      004DB88A call -> 007104F0  sub_7104F0
+      004DB8B4 call -> 00000004  
+      004DB8CC call -> 0041C250  LocomotionClass_CreateInstance
+      004DB8DD call -> 007DC720  RaiseError
+      004DB8EF call -> 007DC720  RaiseError
+      004DB8FC call -> 0000000C  
+      004DB918 call -> 0045AF20  LocomotionClass_FillVar
+
+############ 4) TechnoClass::Mark (0x4D3799 call 目标) ############
+   TechnoClass::Mark = 0x006F4A70  name=W?Mark$:TechnoClass$n($MarkType$$)i
+
+  006F4A70  mov     eax, [esp+idxLayer]
+  006F4A74  push    esi; BuildingClass *
+  006F4A75  mov     esi, ecx
+  006F4A77  push    eax; idxLayer
+  006F4A78  call    ObjectClass::Mark
+  006F4A7D  test    al, al
+  006F4A7F  jz      short loc_6F4A9D
+  006F4A81  mov     al, [esi+418h]
+  006F4A87  test    al, al
+  006F4A89  jz      short loc_6F4A97
+  006F4A8B  mov     edx, [esi]
+  006F4A8D  push    0Dh; eRadioCommands
+  006F4A8F  mov     ecx, esi; _TechnoClass *
+  006F4A91  call    [edx+vt_TechnoClass.r.Radio_CommandFirstDocked]
+  006F4A97  mov     al, 1
+  006F4A99  pop     esi
+  006F4A9A  retn    4
+  006F4A9D  xor     al, al
+  006F4A9F  pop     esi
+  006F4AA0  retn    4
+  006F4AA3  db 0Dh dup(90h)
+  006F4AB0  sub     esp, 0Ch
+  006F4AB3  push    ebx
+  006F4AB4  mov     ebx, [esp+10h+RC]
+  006F4AB8  push    esi
+  006F4AB9  push    edi
+  006F4ABA  lea     eax, [ebx-3]; switch 29 cases
+  006F4ABD  mov     esi, ecx
+  006F4ABF  cmp     eax, 1Ch
+  006F4AC2  ja      def_6F4AD0; default
+  006F4AC8  xor     ecx, ecx
+  006F4ACA  mov     cl, ds:byte_6F4E88[eax]
+  006F4AD0  jmp     ds:jpt_6F4AD0[ecx*4]; switch jump
+  006F4AD7  mov     edx, [esi]; jumptable 006F4AD0 case 30
+  006F4AD9  mov     ecx, esi
+  006F4ADB  call    dword ptr [edx+3F4h]
+  006F4AE1  test    eax, eax
+  006F4AE3  jz      def_6F4AD0; default
+  006F4AE9  cmp     dword ptr [eax], 0
+  006F4AEC  jz      def_6F4AD0; default
+  006F4AF2  mov     ecx, [esp+18h+val]
+  006F4AF6  mov     eax, [esi]
+  006F4AF8  mov     edx, [ecx]
+  006F4AFA  mov     ecx, esi
+  006F4AFC  push    edx
+  006F4AFD  call    dword ptr [eax+3C8h]
+  006F4B03  mov     eax, [esi]
+  006F4B05  push    0
+  006F4B07  push    1
+  006F4B09  mov     ecx, esi
+  006F4B0B  call    dword ptr [eax+1E8h]
+  006F4B11  pop     edi
+  006F4B12  pop     esi
+  006F4B13  mov     eax, 1
+  006F4B18  pop     ebx
+  006F4B19  add     esp, 0Ch
+  006F4B1C  retn    0Ch
+  006F4B1F  mov     edx, [esi]; jumptable 006F4AD0 case 24
+  006F4B21  mov     ecx, esi
+  006F4B23  call    dword ptr [edx+2Ch]
+  006F4B26  cmp     eax, 2
+  006F4B29  jnz     short loc_6F4B59
+  006F4B2B  test    esi, esi
+  006F4B2D  jnz     short loc_6F4B33
+  006F4B2F  xor     eax, eax
+  006F4B31  jmp     short loc_6F4B45
+  006F4B33  mov     eax, [esi]
+  006F4B35  mov     ecx, esi
+  006F4B37  call    dword ptr [eax+2Ch]
+  006F4B3A  sub     eax, 2
+  006F4B3D  neg     eax
+  006F4B3F  sbb     eax, eax
+  006F4B41  not     eax
+  006F4B43  and     eax, esi
+  006F4B45  mov     ecx, [eax+6C4h]
+  006F4B4B  mov     al, [ecx+AircraftTypeClass.AirportBound]
+  006F4B51  test    al, al
+  006F4B53  jnz     def_6F4AD0; default
+  006F4B59  mov     al, [esi+418h]
+  006F4B5F  test    al, al
+  006F4B61  jnz     def_6F4AD0; default
+  006F4B67  mov     eax, [esp+18h+Techno]
+  006F4B6B  mov     edx, [esi]
+  006F4B6D  push    eax
+  006F4B6E  push    18h
+  006F4B70  mov     ecx, esi
+  006F4B72  mov     byte ptr [esi+418h], 1
+  006F4B79  call    dword ptr [edx+278h]
+  006F4B7F  pop     edi
+  006F4B80  pop     esi
+  006F4B81  mov     eax, 1
+  006F4B86  pop     ebx
+  006F4B87  add     esp, 0Ch
+  006F4B8A  retn    0Ch
+  006F4B8D  mov     al, [esi+418h]; jumptable 006F4AD0 case 25
+  006F4B93  test    al, al
+  006F4B95  jz      def_6F4AD0; default
+  006F4B9B  mov     eax, [esp+18h+Techno]
+  006F4B9F  mov     edx, [esi]
+  006F4BA1  push    eax
+  006F4BA2  push    19h
+  006F4BA4  mov     ecx, esi
+  006F4BA6  mov     byte ptr [esi+418h], 0
+  006F4BAD  call    dword ptr [edx+278h]
+  006F4BB3  pop     edi
+  006F4BB4  pop     esi
+  006F4BB5  mov     eax, 1
+  006F4BBA  pop     ebx
+  006F4BBB  add     esp, 0Ch
+  006F4BBE  retn    0Ch
+  006F4BC1  mov     al, [esi+419h]; jumptable 006F4AD0 case 26
+  006F4BC7  test    al, al
+  006F4BC9  jnz     def_6F4AD0; default
+  006F4BCF  mov     eax, [esp+18h+Techno]
+  006F4BD3  mov     edx, [esi]
+  006F4BD5  push    eax
+  006F4BD6  push    1Ah
+  006F4BD8  mov     ecx, esi
+  006F4BDA  mov     byte ptr [esi+419h], 1
+  006F4BE1  call    dword ptr [edx+278h]
+  006F4BE7  pop     edi
+  006F4BE8  pop     esi
+  006F4BE9  mov     eax, 1
+  006F4BEE  pop     ebx
+  006F4BEF  add     esp, 0Ch
+  006F4BF2  retn    0Ch
+  006F4BF5  mov     al, [esi+419h]; jumptable 006F4AD0 case 27
+  006F4BFB  test    al, al
+  006F4BFD  jz      def_6F4AD0; default
+  006F4C03  mov     eax, [esp+18h+Techno]
+  006F4C07  mov     edx, [esi]
+  006F4C09  push    eax
+  006F4C0A  push    1Bh
+  006F4C0C  mov     ecx, esi
+  006F4C0E  mov     byte ptr [esi+419h], 0
+  006F4C15  call    dword ptr [edx+278h]
+  006F4C1B  pop     edi
+  006F4C1C  pop     esi
+  006F4C1D  mov     eax, 1
+  006F4C22  pop     ebx
+  006F4C23  add     esp, 0Ch
+  006F4C26  retn    0Ch
+  006F4C29  mov     edi, [esp+18h+Techno]; jumptable 006F4AD0 case 8
+  006F4C2D  mov     edx, [esi]
+  006F4C2F  push    edi
+  006F4C30  push    19h
+  006F4C32  mov     ecx, esi
+  006F4C34  call    dword ptr [edx+278h]
+  006F4C3A  mov     eax, [esi]
+  006F4C3C  push    edi
+  006F4C3D  push    3
+  006F4C3F  mov     ecx, esi
+  006F4C41  call    dword ptr [eax+278h]
+  006F4C47  pop     edi
+  006F4C48  pop     esi
+  006F4C49  pop     ebx
+  006F4C4A  add     esp, 0Ch
+  006F4C4D  retn    0Ch
+  006F4C50  mov     al, [esi+418h]; jumptable 006F4AD0 case 3
+  006F4C56  mov     edi, [esp+18h+Techno]
+  006F4C5A  test    al, al
+  006F4C5C  jz      short loc_6F4C80
+  006F4C5E  mov     al, [edi+_TechnoClass.t.field_414]
+  006F4C64  test    al, al
+  006F4C66  jz      short loc_6F4C80
+  006F4C68  mov     edx, [esi]
+  006F4C6A  push    edi
+  006F4C6B  push    19h
+  006F4C6D  jmp     short loc_6F4C78
+  006F4C6F  mov     edi, [esp+18h+Techno]; jumptable 006F4AD0 cases 7,9,22
+  006F4C73  mov     edx, [esi]
+  006F4C75  push    edi
+  006F4C76  push    18h
+  006F4C78  mov     ecx, esi
+  006F4C7A  call    dword ptr [edx+278h]
+  006F4C80  mov     eax, [esp+18h+val]
+  006F4C84  mov     ecx, esi; this
+  006F4C86  push    eax; a4
+  006F4C87  push    ebx; cmd
+  006F4C88  push    edi; source
+  006F4C89  call    RadioClass_ReceivedRadioCommand
+  006F4C8E  pop     edi
+  006F4C8F  pop     esi
+  006F4C90  mov     eax, 1
+  006F4C95  pop     ebx
+  006F4C96  add     esp, 0Ch
+  006F4C99  retn    0Ch
+  006F4C9C  mov     edx, [esi]; jumptable 006F4AD0 case 31
+  006F4C9E  mov     edi, [esi+2FCh]
+  006F4CA4  mov     ecx, esi
+  006F4CA6  call    dword ptr [edx+84h]
+  006F4CAC  cmp     edi, [eax+_TechnoTypeClass.t.Ammo]
+  006F4CB2  jnz     short loc_6F4CC2
+  006F4CB4  pop     edi
+  006F4CB5  pop     esi
+  006F4CB6  mov     eax, 0Ah
+  006F4CBB  pop     ebx
+  006F4CBC  add     esp, 0Ch
+  006F4CBF  retn    0Ch
+  006F4CC2  inc     edi
+  006F4CC3  mov     eax, 1
+  006F4CC8  mov     [esi+2FCh], edi
+  006F4CCE  pop     edi
+  006F4CCF  pop     esi
+  006F4CD0  pop     ebx
+  006F4CD1  add     esp, 0Ch
+  006F4CD4  retn    0Ch
+  006F4CD7  mov     ecx, esi; jumptable 006F4AD0 case 28
+  006F4CD9  call    ObjectClass::Health_Ratio
+  006F4CDE  mov     eax, RulesData
+  006F4CE3  fcomp   qword ptr [eax+16F8h]
+  006F4CE9  fnstsw  ax
+  006F4CEB  test    ah, 1
+  006F4CEE  jz      short loc_6F4CB4
+  006F4CF0  mov     edx, [esi]
+  006F4CF2  mov     ecx, esi
+  006F4CF4  call    dword ptr [edx+84h]
+  006F4CFA  mov     edx, [eax]
+  006F4CFC  mov     ecx, eax
+  006F4CFE  call    dword ptr [edx+0B0h]
+  006F4D04  mov     ebx, eax
+  006F4D06  mov     eax, [esi]
+  006F4D08  mov     ecx, esi
+  006F4D0A  call    dword ptr [eax+84h]
+  006F4D10  mov     edx, [eax]
+  006F4D12  mov     ecx, eax
+  006F4D14  call    dword ptr [edx+0B4h]
+  006F4D1A  mov     edi, eax
+  006F4D1C  cmp     edi, 1
+  006F4D1F  jg      short loc_6F4D26
+  006F4D21  mov     edi, 1
+  006F4D26  mov     eax, [esi+21Ch]
+   -- 调用目标 --
+      006F4A78 call -> 005F5850  W?Mark$:ObjectClass$n($MarkType$$)i
+      006F4A91 call -> 00000274  
+      006F4AD0 jmp -> 006F4E5C  
+      006F4ADB call -> 000003F4  
+      006F4AFD call -> 000003C8  
+      006F4B0B call -> 000001E8  
+      006F4B23 call -> 0000002C  
+      006F4B31 jmp -> 006F4B45  W?Receive_Message$:TechnoClass$n(pn$RadioClass$$$RadioMessageType$$rnl)$3$
+      006F4B37 call -> 0000002C  
+      006F4B79 call -> 00000278  
+      006F4BAD call -> 00000278  
+      006F4BE1 call -> 00000278  
+      006F4C15 call -> 00000278  
+      006F4C34 call -> 00000278  
+      006F4C41 call -> 00000278  
+      006F4C6D jmp -> 006F4C78  W?Receive_Message$:TechnoClass$n(pn$RadioClass$$$RadioMessageType$$rnl)$3$
+      006F4C7A call -> 00000278  
+      006F4C89 call -> 0065A820  RadioClass_ReceivedRadioCommand
+      006F4CA6 call -> 00000084  
+      006F4CD9 call -> 005F5C60  W?Health_Ratio$:ObjectClass$n.x()$fixed$$
+      006F4CF4 call -> 00000084  
+      006F4CFE call -> 000000B0  
+      006F4D0A call -> 00000084  
+      006F4D14 call -> 000000B4  
+
+############ 5) Mark 的一级调用树是否触碰 vec_ObjectsInLayers 0x8A0360 ############
+-- 所有 XrefsTo 0x8A0360 --
+   from 004A8909 type=1 in DisplayClass_InitClear
+   from 004A9752 type=1 in W?Submit$:DisplayClass$n(pnx$ObjectClass$$$LayerType$$)v
+   from 004A9794 type=3 in W?Remove$:DisplayClass$n(pnx$ObjectClass$$$LayerType$$)v
+   from 004A979B type=1 in W?Remove$:DisplayClass$n(pnx$ObjectClass$$$LayerType$$)v
+   from 004AE6F6 type=1 in W?Decode_Pointers$:DisplayClass$n(np$Display$$)
+   from 004AE726 type=1 in sub_4AE720
+
+-- Mark 及其一级被调函数体内是否出现 0x8A0360 --
+   Mark 自身: 未命中
+   -> 005F5850 W?Mark$:ObjectClass$n($MarkType$$)i      : 未命中
+   -> 00000274 ?                                        : 未命中
+   -> 006F4E5C ?                                        : 未命中
+   -> 000003F4 ?                                        : 未命中
+   -> 000003C8 ?                                        : 未命中
+   -> 000001E8 ?                                        : 未命中
+   -> 0000002C ?                                        : 未命中
+   -> 006F4B45 W?Receive_Message$:TechnoClass$n(pn$RadioClass$$$RadioMessageType$$rnl)$3$ : 未命中
+   -> 0000002C ?                                        : 未命中
+   -> 00000278 ?                                        : 未命中
+   -> 00000278 ?                                        : 未命中
+   -> 00000278 ?                                        : 未命中
+   -> 00000278 ?                                        : 未命中
+   -> 00000278 ?                                        : 未命中
+   -> 00000278 ?                                        : 未命中
+   -> 006F4C78 W?Receive_Message$:TechnoClass$n(pn$RadioClass$$$RadioMessageType$$rnl)$3$ : 未命中
+   -> 00000278 ?                                        : 未命中
+   -> 0065A820 RadioClass_ReceivedRadioCommand          : 未命中
+   -> 00000084 ?                                        : 未命中
+   -> 005F5C60 W?Health_Ratio$:ObjectClass$n.x()$fixed$$ : 未命中
+   -> 00000084 ?                                        : 未命中
+   -> 000000B0 ?                                        : 未命中
+   -> 00000084 ?                                        : 未命中
+   -> 000000B4 ?                                        : 未命中
+
+############ 6) 0x5F6940 ObjectClass_SetPosition ############
+  005F6940  mov     eax, [esp+arg_Coords]
+  005F6944  add     ecx, 9Ch
+  005F694A  mov     edx, [eax]
+  005F694C  mov     [ecx], edx
+  005F694E  mov     edx, [eax+4]
+  005F6951  mov     [ecx+4], edx
+  005F6954  mov     eax, [eax+8]
+  005F6957  mov     [ecx+8], eax
+  005F695A  retn    4
+  005F695D  db 3 dup(90h)
+  005F6960  sub     esp, 0Ch
+  005F6963  push    esi
+  005F6964  lea     esi, [ecx+9Ch]
+  005F696A  mov     eax, esi
+  005F696C  mov     ecx, [eax]
+  005F696E  mov     [esp+10h+X], ecx
+  005F6972  lea     ecx, [esp+10h+X]
+  005F6976  mov     edx, [eax+4]
+  005F6979  push    ecx; a2
+  005F697A  mov     ecx, offset Map; this
+
+############ 7) 0x4DAFC0 FootClass_Get_ZAdjustment 中的调用 ############
+      004DAFE2 call -> 007DC720  RaiseError
+      004DAFF0 call -> 00000038  
+      004DAFFD call -> 00000084  
+      004DB007 call -> 00703E70  TechnoClass_GetZFudgeColumn
+      004DB019 call -> 00000084  
+      004DB023 call -> 00704000  TechnoClass_GetZFudgeTunnel
+      004DB035 call -> 00000084  
+      004DB03F call -> 00704240  TechnoClass_GetZFudgeCliff
+      004DB057 call -> 00703B10  TechnoClass_OnBridge
+      004DB064 call -> 00000084  
+      004DB070 jmp -> 004DB076  FootClass_Get_ZAdjustment
+      004DB08C call -> 00704350  TechnoClass_Get_ZAdjustment
+

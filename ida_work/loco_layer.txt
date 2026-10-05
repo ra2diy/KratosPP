@@ -1,0 +1,392 @@
+================================================================================================
+TARGET 0075C7E0
+  func: LocomotionClass_ILocomotion_InWhichLayer   0075C7E0 - 0075C7E8
+    0075C7E0  mov     eax, 2
+    0075C7E5  retn    4
+  XREF  from 007F69F8 type=1  -> vt_ILocomotion_LocomotionClass <offset WalkLocomotionClass_ILocomotion_QueryInterface,\
+    -- callers of slot 007F69F8 (name=??_7WalkLocomotionClass@@6BILocomotion@@@) --
+       call from 0075AAE5 type=1 : mov     dword ptr [esi+4], offset WalkLocomotionClass::`vftable'{for `ILocomotion'}
+          0075AAC9  mov     eax, WalkLocomotionClass_Default_Pos.Z
+          0075AACE  mov     [edx+8], eax
+          0075AAD1  xor     eax, eax
+          0075AAD3  mov     [esi+34h], al
+          0075AAD6  mov     [esi+35h], al
+          0075AAD9  mov     [esi+36h], al
+          0075AADC  mov     [esi+38h], eax
+          0075AADF  mov     dword ptr [esi], offset WalkLocomotionClass::`vftable'{for `WalkLocomotionClass'}
+       call from 0075AB09 type=1 : mov     dword ptr [esi+4], offset WalkLocomotionClass::`vftable'{for `ILocomotion'}
+          0075AAEC  mov     dword ptr [esi+18h], offset WalkLocomotionClass::`vftable'{for `IPiggyback'}
+          0075AAF3  mov     eax, esi
+          0075AAF5  pop     esi
+          0075AAF6  retn
+          0075AAF7  db 9 dup(90h)
+          0075AB00  push    esi
+          0075AB01  mov     esi, ecx
+          0075AB03  mov     dword ptr [esi], offset WalkLocomotionClass::`vftable'{for `WalkLocomotionClass'}
+       call from 0075C6A9 type=1 : mov     dword ptr [esi+4], offset WalkLocomotionClass::`vftable'{for `ILocomotion'}
+          0075C68D  call    Locomotion_Load
+          0075C692  mov     ebx, eax
+          0075C694  test    ebx, ebx
+          0075C696  jl      short loc_75C6F7
+          0075C698  test    esi, esi
+          0075C69A  jz      short loc_75C6B7
+          0075C69C  mov     dword ptr [esi+38h], 0
+          0075C6A3  mov     dword ptr [esi], offset WalkLocomotionClass::`vftable'{for `WalkLocomotionClass'}
+       call from 0075CBE9 type=1 : mov     dword ptr [esi+4], offset WalkLocomotionClass::`vftable'{for `ILocomotion'}
+          0075CBC8  retn    4
+          0075CBCB  db 5 dup(90h)
+          0075CBD0  mov     eax, 3Ch ; '<'
+          0075CBD5  retn
+          0075CBD6  db 0Ah dup(90h)
+          0075CBE0  push    esi
+          0075CBE1  mov     esi, ecx
+          0075CBE3  mov     dword ptr [esi], offset WalkLocomotionClass::`vftable'{for `WalkLocomotionClass'}
+       call from 031896C4 type=1 : 
+          00B98035  pop     eax
+          00B98036  jmp     short Debugger_EndBP
+          00B98038  db 40h dup(0)
+          00B98078  dd 0
+          00B9807C  dd 0
+          00B98080  db 200h dup(0)
+          00B98280  db 200h dup(0)
+          00B98480  align 1000h
+================================================================================================
+TARGET 006A3E50
+  func: sub_6A3E50   006A3E50 - 006A3E58
+    006A3E50  mov     eax, 2
+    006A3E55  retn    4
+  XREF  from 007F2D8C type=1  -> vt_ILocomotion_LocomotionClass <offset sub_6A4300, \
+    -- callers of slot 007F2D8C (name=??_7ShipLocomotionClass@@6BILocomotion@@@) --
+       call from 0069ECD8 type=1 : mov     dword ptr [esi+4], offset ShipLocomotionClass::`vftable'{for `ILocomotion'}
+          0069ECBC  mov     [esi+60h], al
+          0069ECBF  mov     [esi+61h], al
+          0069ECC2  mov     [esi+62h], al
+          0069ECC5  mov     [esi+63h], al
+          0069ECC8  mov     [esi+64h], al
+          0069ECCB  mov     byte ptr [esi+65h], 1
+          0069ECCF  mov     [esi+68h], eax
+          0069ECD2  mov     dword ptr [esi], offset ShipLocomotionClass::`vftable'{for `ShipLocomotionClass'}
+       call from 0069ECF9 type=1 : mov     dword ptr [esi+4], offset ShipLocomotionClass::`vftable'{for `ILocomotion'}
+          0069ECDF  mov     dword ptr [esi+18h], offset ShipLocomotionClass::`vftable'{for `IPiggyback'}
+          0069ECE6  mov     eax, esi
+          0069ECE8  pop     esi
+          0069ECE9  retn
+          0069ECEA  db 6 dup(90h)
+          0069ECF0  push    esi
+          0069ECF1  mov     esi, ecx
+          0069ECF3  mov     dword ptr [esi], offset ShipLocomotionClass::`vftable'{for `ShipLocomotionClass'}
+       call from 0069EEB9 type=1 : mov     dword ptr [esi+4], offset ShipLocomotionClass::`vftable'{for `ILocomotion'}
+          0069EE9D  call    Locomotion_Load
+          0069EEA2  mov     ebx, eax
+          0069EEA4  test    ebx, ebx
+          0069EEA6  jl      short loc_69EF07
+          0069EEA8  test    esi, esi
+          0069EEAA  jz      short loc_69EEC7
+          0069EEAC  mov     dword ptr [esi+68h], 0
+          0069EEB3  mov     dword ptr [esi], offset ShipLocomotionClass::`vftable'{for `ShipLocomotionClass'}
+       call from 006A42B9 type=1 : mov     dword ptr [esi+4], offset ShipLocomotionClass::`vftable'{for `ILocomotion'}
+          006A428E  retn    4
+          006A4291  db 0Fh dup(90h)
+          006A42A0  mov     eax, 70h ; 'p'
+          006A42A5  retn
+          006A42A6  db 0Ah dup(90h)
+          006A42B0  push    esi
+          006A42B1  mov     esi, ecx
+          006A42B3  mov     dword ptr [esi], offset ShipLocomotionClass::`vftable'{for `ShipLocomotionClass'}
+================================================================================================
+TARGET 005B19D0
+  func: sub_5B19D0   005B19D0 - 005B19D8
+    005B19D0  mov     eax, 2
+    005B19D5  retn    4
+  XREF  from 007EDB6C type=1  -> vt_ILocomotion_LocomotionClass <offset LocomotionClass_ILocomotion_QueryInterface,\
+    -- callers of slot 007EDB6C (name=??_7MechLocomotionClass@@6BILocomotion@@@) --
+       call from 005AFF3B type=1 : mov     dword ptr [esi+4], offset MechLocomotionClass::`vftable'{for `ILocomotion'}
+          005AFF19  mov     eax, MechLocomotionClass_Default_Pos.X
+          005AFF1E  mov     [edx], eax
+          005AFF20  mov     ecx, MechLocomotionClass_Default_Pos.Y
+          005AFF26  mov     [edx+4], ecx
+          005AFF29  mov     eax, MechLocomotionClass_Default_Pos.Z
+          005AFF2E  mov     byte ptr [esi+30h], 0
+          005AFF32  mov     dword ptr [esi], offset MechLocomotionClass::`vftable'{for `MechLocomotionClass'}
+          005AFF38  mov     [edx+8], eax
+       call from 005AFF56 type=1 : mov     dword ptr [ecx+4], offset MechLocomotionClass::`vftable'{for `ILocomotion'}
+          005AFF32  mov     dword ptr [esi], offset MechLocomotionClass::`vftable'{for `MechLocomotionClass'}
+          005AFF38  mov     [edx+8], eax
+          005AFF3B  mov     dword ptr [esi+4], offset MechLocomotionClass::`vftable'{for `ILocomotion'}
+          005AFF42  mov     eax, esi
+          005AFF44  pop     esi
+          005AFF45  retn
+          005AFF46  db 0Ah dup(90h)
+          005AFF50  mov     dword ptr [ecx], offset MechLocomotionClass::`vftable'{for `MechLocomotionClass'}
+       call from 005B19BE type=1 : mov     dword ptr [esi+4], offset MechLocomotionClass::`vftable'{for `ILocomotion'}
+          005B19A9  push    eax
+          005B19AA  push    esi
+          005B19AB  call    Locomotion_Load
+          005B19B0  test    eax, eax
+          005B19B2  jl      short loc_5B19C5
+          005B19B4  test    esi, esi
+          005B19B6  jz      short loc_5B19C5
+          005B19B8  mov     dword ptr [esi], offset MechLocomotionClass::`vftable'{for `MechLocomotionClass'}
+       call from 005B1B59 type=1 : mov     dword ptr [esi+4], offset MechLocomotionClass::`vftable'{for `ILocomotion'}
+          005B1B36  retn    10h
+          005B1B39  db 7 dup(90h)
+          005B1B40  mov     eax, 34h ; '4'
+          005B1B45  retn
+          005B1B46  db 0Ah dup(90h)
+          005B1B50  push    esi
+          005B1B51  mov     esi, ecx
+          005B1B53  mov     dword ptr [esi], offset MechLocomotionClass::`vftable'{for `MechLocomotionClass'}
+================================================================================================
+TARGET 00517100
+  func: sub_517100   00517100 - 00517108
+    00517100  mov     eax, 2
+    00517105  retn    4
+  XREF  from 007EACFC type=1  -> vt_ILocomotion_LocomotionClass <offset LocomotionClass_ILocomotion_QueryInterface,\
+    -- callers of slot 007EACFC (name=??_7HoverLocomotionClass@@6BILocomotion@@@) --
+       call from 00513C97 type=1 : mov     dword ptr [esi+4], offset HoverLocomotionClass::`vftable'{for `ILocomotion'}
+          00513C78  mov     [esi+4Ch], ebx
+          00513C7B  mov     [esi+54h], ebx
+          00513C7E  mov     dword ptr [esi+5Ch], 3FF00000h
+          00513C85  mov     [esi+64h], ebx
+          00513C88  mov     [esi+68h], bl
+          00513C8B  mov     [esi+6Ch], ebx
+          00513C8E  mov     [esi+70h], bl
+          00513C91  mov     dword ptr [esi], offset HoverLocomotionClass::`vftable'{for `HoverLocomotionClass'}
+       call from 00513D06 type=1 : mov     dword ptr [ecx+4], offset HoverLocomotionClass::`vftable'{for `ILocomotion'}
+          00513CF2  rep movsd
+          00513CF4  pop     edi
+          00513CF5  pop     esi
+          00513CF6  pop     ebx
+          00513CF7  add     esp, 18h
+          00513CFA  retn    8
+          00513CFD  db 3 dup(90h)
+          00513D00  mov     dword ptr [ecx], offset HoverLocomotionClass::`vftable'{for `HoverLocomotionClass'}
+       call from 005170E6 type=1 : mov     dword ptr [esi+4], offset HoverLocomotionClass::`vftable'{for `ILocomotion'}
+          005170C5  jl      short loc_5170ED
+          005170C7  test    esi, esi
+          005170C9  jz      short loc_5170ED
+          005170CB  lea     ecx, [esi+30h]; Facing
+          005170CE  mov     dword ptr [esi], offset LocomotionClass::`vftable'{for `LocomotionClass'}
+          005170D4  mov     dword ptr [esi+4], offset LocomotionClass::`vftable'{for `ILocomotion'}
+          005170DB  call    Facing_Default
+          005170E0  mov     dword ptr [esi], offset HoverLocomotionClass::`vftable'{for `HoverLocomotionClass'}
+       call from 005172C9 type=1 : mov     dword ptr [esi+4], offset HoverLocomotionClass::`vftable'{for `ILocomotion'}
+          005172A6  retn    10h
+          005172A9  db 7 dup(90h)
+          005172B0  mov     eax, 78h ; 'x'
+          005172B5  retn
+          005172B6  db 0Ah dup(90h)
+          005172C0  push    esi
+          005172C1  mov     esi, ecx
+          005172C3  mov     dword ptr [esi], offset HoverLocomotionClass::`vftable'{for `HoverLocomotionClass'}
+================================================================================================
+TARGET 004B4820
+  func: sub_4B4820   004B4820 - 004B4828
+    004B4820  mov     eax, 2
+    004B4825  retn    4
+  XREF  from 007E7EB0 type=1  -> vt_ILocomotion_LocomotionClass <offset sub_4B4D90, \
+    -- callers of slot 007E7EB0 (name=??_7DriveLocomotionClass@@6BILocomotion@@@) --
+       call from 004AF5C8 type=1 : mov     dword ptr [esi+4], offset DriveLocomotionClass::`vftable'{for `ILocomotion'}
+          004AF5AC  mov     [esi+60h], al
+          004AF5AF  mov     [esi+61h], al
+          004AF5B2  mov     [esi+62h], al
+          004AF5B5  mov     [esi+63h], al
+          004AF5B8  mov     [esi+64h], al
+          004AF5BB  mov     byte ptr [esi+65h], 1
+          004AF5BF  mov     [esi+68h], eax
+          004AF5C2  mov     dword ptr [esi], offset DriveLocomotionClass::`vftable'{for `DriveLocomotionClass'}
+       call from 004AF5E9 type=1 : mov     dword ptr [esi+4], offset DriveLocomotionClass::`vftable'{for `ILocomotion'}
+          004AF5CF  mov     dword ptr [esi+18h], offset DriveLocomotionClass::`vftable'{for `IPiggyback'}
+          004AF5D6  mov     eax, esi
+          004AF5D8  pop     esi
+          004AF5D9  retn
+          004AF5DA  db 6 dup(90h)
+          004AF5E0  push    esi
+          004AF5E1  mov     esi, ecx
+          004AF5E3  mov     dword ptr [esi], offset DriveLocomotionClass::`vftable'{for `DriveLocomotionClass'}
+       call from 004AF7A9 type=1 : mov     dword ptr [esi+4], offset DriveLocomotionClass::`vftable'{for `ILocomotion'}
+          004AF78D  call    Locomotion_Load
+          004AF792  mov     ebx, eax
+          004AF794  test    ebx, ebx
+          004AF796  jl      short loc_4AF7F7
+          004AF798  test    esi, esi
+          004AF79A  jz      short loc_4AF7B7
+          004AF79C  mov     dword ptr [esi+68h], 0
+          004AF7A3  mov     dword ptr [esi], offset DriveLocomotionClass::`vftable'{for `DriveLocomotionClass'}
+       call from 004B4D09 type=1 : mov     dword ptr [esi+4], offset DriveLocomotionClass::`vftable'{for `ILocomotion'}
+          004B4CDE  retn    4
+          004B4CE1  db 0Fh dup(90h)
+          004B4CF0  mov     eax, 70h ; 'p'
+          004B4CF5  retn
+          004B4CF6  db 0Ah dup(90h)
+          004B4D00  push    esi
+          004B4D01  mov     esi, ecx
+          004B4D03  mov     dword ptr [esi], offset DriveLocomotionClass::`vftable'{for `DriveLocomotionClass'}
+       call from 067C8214 type=1 : 
+          00B98035  pop     eax
+          00B98036  jmp     short Debugger_EndBP
+          00B98038  db 40h dup(0)
+          00B98078  dd 0
+          00B9807C  dd 0
+          00B98080  db 200h dup(0)
+          00B98280  db 200h dup(0)
+          00B98480  align 1000h
+       call from 067C9354 type=1 : 
+          00B98035  pop     eax
+          00B98036  jmp     short Debugger_EndBP
+          00B98038  db 40h dup(0)
+          00B98078  dd 0
+          00B9807C  dd 0
+          00B98080  db 200h dup(0)
+          00B98280  db 200h dup(0)
+          00B98480  align 1000h
+       call from 067C9484 type=1 : 
+          00B98035  pop     eax
+          00B98036  jmp     short Debugger_EndBP
+          00B98038  db 40h dup(0)
+          00B98078  dd 0
+          00B9807C  dd 0
+          00B98080  db 200h dup(0)
+          00B98280  db 200h dup(0)
+          00B98480  align 1000h
+       call from 067C95B4 type=1 : 
+          00B98035  pop     eax
+          00B98036  jmp     short Debugger_EndBP
+          00B98038  db 40h dup(0)
+          00B98078  dd 0
+          00B9807C  dd 0
+          00B98080  db 200h dup(0)
+          00B98280  db 200h dup(0)
+          00B98480  align 1000h
+       call from 067D1484 type=1 : 
+          00B98035  pop     eax
+          00B98036  jmp     short Debugger_EndBP
+          00B98038  db 40h dup(0)
+          00B98078  dd 0
+          00B9807C  dd 0
+          00B98080  db 200h dup(0)
+          00B98280  db 200h dup(0)
+          00B98480  align 1000h
+       call from 067D3264 type=1 : 
+          00B98035  pop     eax
+          00B98036  jmp     short Debugger_EndBP
+          00B98038  db 40h dup(0)
+          00B98078  dd 0
+          00B9807C  dd 0
+          00B98080  db 200h dup(0)
+          00B98280  db 200h dup(0)
+          00B98480  align 1000h
+       call from 068CF064 type=1 : 
+          00B98035  pop     eax
+          00B98036  jmp     short Debugger_EndBP
+          00B98038  db 40h dup(0)
+          00B98078  dd 0
+          00B9807C  dd 0
+          00B98080  db 200h dup(0)
+          00B98280  db 200h dup(0)
+          00B98480  align 1000h
+       call from 068CF194 type=1 : 
+          00B98035  pop     eax
+          00B98036  jmp     short Debugger_EndBP
+          00B98038  db 40h dup(0)
+          00B98078  dd 0
+          00B9807C  dd 0
+          00B98080  db 200h dup(0)
+          00B98280  db 200h dup(0)
+          00B98480  align 1000h
+       call from 068CF2C4 type=1 : 
+          00B98035  pop     eax
+          00B98036  jmp     short Debugger_EndBP
+          00B98038  db 40h dup(0)
+          00B98078  dd 0
+          00B9807C  dd 0
+          00B98080  db 200h dup(0)
+          00B98280  db 200h dup(0)
+          00B98480  align 1000h
+       call from 068CF3F4 type=1 : 
+          00B98035  pop     eax
+          00B98036  jmp     short Debugger_EndBP
+          00B98038  db 40h dup(0)
+          00B98078  dd 0
+          00B9807C  dd 0
+          00B98080  db 200h dup(0)
+          00B98280  db 200h dup(0)
+          00B98480  align 1000h
+       call from 068DA014 type=1 : 
+          00B98035  pop     eax
+          00B98036  jmp     short Debugger_EndBP
+          00B98038  db 40h dup(0)
+          00B98078  dd 0
+          00B9807C  dd 0
+          00B98080  db 200h dup(0)
+          00B98280  db 200h dup(0)
+          00B98480  align 1000h
+       call from 0854C454 type=1 : 
+          00B98035  pop     eax
+          00B98036  jmp     short Debugger_EndBP
+          00B98038  db 40h dup(0)
+          00B98078  dd 0
+          00B9807C  dd 0
+          00B98080  db 200h dup(0)
+          00B98280  db 200h dup(0)
+          00B98480  align 1000h
+       call from 08634014 type=1 : 
+          00B98035  pop     eax
+          00B98036  jmp     short Debugger_EndBP
+          00B98038  db 40h dup(0)
+          00B98078  dd 0
+          00B9807C  dd 0
+          00B98080  db 200h dup(0)
+          00B98280  db 200h dup(0)
+          00B98480  align 1000h
+       call from 08635D04 type=1 : 
+          00B98035  pop     eax
+          00B98036  jmp     short Debugger_EndBP
+          00B98038  db 40h dup(0)
+          00B98078  dd 0
+          00B9807C  dd 0
+          00B98080  db 200h dup(0)
+          00B98280  db 200h dup(0)
+          00B98480  align 1000h
+================================================================================================
+CONTEXT @0x4DA87A (FootClass::AI UpdateLayer 调用点)
+  004DA87A  cmp     [esi+90h], bl
+  004DA880  jz      loc_4DAF00
+  004DA886  cmp     esi, ebx
+  004DA888  jnz     short loc_4DA88E
+  004DA88A  xor     edi, edi
+  004DA88C  jmp     short loc_4DA8A0
+  004DA88E  mov     edx, [esi]
+  004DA890  mov     ecx, esi
+  004DA892  call    dword ptr [edx+2Ch]
+  004DA895  mov     edi, eax
+  004DA897  dec     edi
+  004DA898  neg     edi
+  004DA89A  sbb     edi, edi
+  004DA89C  not     edi
+  004DA89E  and     edi, esi
+  004DA8A0  cmp     [esi+674h], ebx
+  004DA8A6  jnz     short loc_4DA8B2
+  004DA8A8  push    80004003h; HRESULT
+  004DA8AD  call    RaiseError
+  004DA8B2  mov     eax, [esi+674h]
+  004DA8B8  push    eax
+  004DA8B9  mov     ecx, [eax]
+  004DA8BB  call    dword ptr [ecx+80h]
+  004DA8C1  test    al, al
+  004DA8C3  jz      short loc_4DA8D3
+  004DA8C5  mov     edx, [esi]
+  004DA8C7  mov     ecx, esi
+  004DA8C9  call    dword ptr [edx+1D8h]
+  004DA8CF  test    al, al
+  004DA8D1  jz      short loc_4DA8FC
+  004DA8D3  cmp     [esi+2B4h], ebx
+  004DA8D9  jz      short loc_4DA940
+  004DA8DB  mov     eax, [esi]
+  004DA8DD  mov     ecx, esi
+  004DA8DF  call    dword ptr [eax+84h]
+  004DA8E5  cmp     [eax+_TechnoTypeClass.t.HoverAttack], bl
+  004DA8EB  jz      short loc_4DA940
+  004DA8ED  cmp     edi, ebx
+  004DA8EF  jz      short loc_4DA940
+  004DA8F1  mov     ecx, edi; a1

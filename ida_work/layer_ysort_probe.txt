@@ -1,0 +1,104 @@
+== AnimClass::InWhichLayer 区域（Phobos kernel 落点 0x424CB0/6字节）  0x00424C90..0x00424CE0 ==
+   00424C90: 8B 44 24 04 89 81 7C 01        | mov     )!eax!)	,	 *	[	!esp!	+	Bullet	]	*
+   00424C94: 89 81 7C 01 00 00 C2 04        | mov     )	[	!ecx!	+	AnimClass.AttachedBullet	]	)	,	 *!eax!*
+   00424C9A: C2 04 00 90 90 90 8B 44        | retn    )4)
+   00424C9D: 90 90 90 8B 44 24 04 89        |  db   3 dup(90h) 
+   00424CA0: 8B 44 24 04 89 81 80 01        | mov     )!eax!)	,	 *	[	!esp!	+	owner	]	*
+   00424CA4: 89 81 80 01 00 00 C2 04        | mov     )	[	!ecx!	+	AnimClass.OwnerHouse	]	)	,	 *!eax!*
+   00424CAA: C2 04 00 90 90 90 8B 81        | retn    )4)
+   00424CAD: 90 90 90 8B 81 CC 00 00        |  db   3 dup(90h) 
+>> 00424CB0: 8B 81 CC 00 00 00 85 C0        | mov     )!eax!)	,	 *	[	!ecx!	+	0CCh	]	*
+   00424CB6: 85 C0 74 06 B8 02 00 00        | test    )!eax!)	,	 *!eax!*
+   00424CB8: 74 06 B8 02 00 00 00 C3        | jz       short  )(00424CC0loc_424CC0)
+   00424CBA: B8 02 00 00 00 C3 8B 81        | mov     )!eax!)	,	 *2*
+   00424CBF: C3 8B 81 C8 00 00 00 85        | retn
+   00424CC0: 8B 81 C8 00 00 00 85 C0        | mov     )!eax!)	,	 *	[	!ecx!	+	0C8h	]	*
+   00424CC6: 85 C0 74 07 8B 80 64 03        | test    )!eax!)	,	 *!eax!*
+   00424CC8: 74 07 8B 80 64 03 00 00        | jz       short  )(00424CD1loc_424CD1)
+   00424CCA: 8B 80 64 03 00 00 C3 B8        | mov     )!eax!)	,	 *	[	!eax!	+	364h	]	*
+   00424CD0: C3 B8 03 00 00 00 C3 90        | retn
+   00424CD1: B8 03 00 00 00 C3 90 90        | mov     )!eax!)	,	 *3*
+   00424CD6: C3 90 90 90 90 90 90 90        | retn
+   00424CD7: 90 90 90 90 90 90 90 90        |  db   9 dup(90h) 
+
+== DisplayClass::Remove  0x004A9770..0x004A97D0 ==
+>> 004A9770: 56 57 8B 7C 24 0C 85 FF        | push    )!esi!)
+   004A9771: 57 8B 7C 24 0C 85 FF 0F        | push    )!edi!)
+   004A9772: 8B 7C 24 0C 85 FF 0F 84        | mov     )!edi!)	,	 *	[	!esp!	+	8	+	a1	]	*
+   004A9776: 85 FF 0F 84 B8 00 00 00        | test    )!edi!)	,	 *!edi!*
+   004A9778: 0F 84 B8 00 00 00 8B 87        | jz      )(004A9836loc_4A9836)
+   004A977E: 8B 87 94 00 00 00 83 F8        | mov     )!eax!)	,	 *	[	!edi!	+	94h	]	*
+   004A9784: 83 F8 FF 0F 84 A9 00 00        | cmp     )!eax!)	,	 *0FFFFFFFFh*
+   004A9787: 0F 84 A9 00 00 00 8D 04        | jz      )(004A9836loc_4A9836)
+   004A978D: 8D 04 40 89 7C 24 0C 8B        | lea     )!eax!)	,	 *	[	!eax!	+	!eax!	*2]	*
+   004A9790: 89 7C 24 0C 8B 14 C5 60        | mov     )	[	!esp!	+	8	+	a1	]	)	,	 *!edi!*
+   004A9794: 8B 14 C5 60 03 8A 00 8D        | mov     )!edx!)	,	 *(008A0360vec_ObjectsInLayers.vt	[	!eax!	*8]	*
+   004A979B: 8D 34 C5 60 03 8A 00 8D        | lea     )!esi!)	,	 *(008A0360vec_ObjectsInLayers.vt	[	!eax!	*8]	*
+   004A97A2: 8D 44 24 0C 8B CE 50 FF        | lea     )!eax!)	,	 *	[	!esp!	+	8	+	a1	]	*
+   004A97A6: 8B CE 50 FF 52 10 83 F8        | mov     )!ecx!)	,	 *!esi!*
+   004A97A8: 50 FF 52 10 83 F8 FF 74        | push    )!eax!)
+   004A97A9: FF 52 10 83 F8 FF 74 2B        | call    ) dword ptr  	[	!edx!	+	10h	]	)
+   004A97AC: 83 F8 FF 74 2B 8B 4E 10        | cmp     )!eax!)	,	 *0FFFFFFFFh*
+   004A97AF: 74 2B 8B 4E 10 3B C1 7D        | jz       short  )(004A97DCloc_4A97DC)
+   004A97B1: 8B 4E 10 3B C1 7D 24 49        | mov     )!ecx!)	,	 *	[	!esi!	+	10h	]	*
+   004A97B4: 3B C1 7D 24 49 3B C1 89        | cmp     )!eax!)	,	 *!ecx!*
+   004A97B6: 7D 24 49 3B C1 89 4E 10        | jge      short  )(004A97DCloc_4A97DC)
+   004A97B8: 49 3B C1 89 4E 10 7D 12        | dec     )!ecx!)
+   004A97B9: 3B C1 89 4E 10 7D 12 8B        | cmp     )!eax!)	,	 *!ecx!*
+   004A97BB: 89 4E 10 7D 12 8B 4E 04        | mov     )	[	!esi!	+	10h	]	)	,	 *!ecx!*
+   004A97BE: 7D 12 8B 4E 04 40 8B 14        | jge      short  )(004A97D2loc_4A97D2)
+   004A97C0: 8B 4E 04 40 8B 14 81 89        | mov     )!ecx!)	,	 *	[	!esi!	+	4	]	*
+   004A97C3: 40 8B 14 81 89 54 81 FC        | inc     )!eax!)
+   004A97C4: 8B 14 81 89 54 81 FC 8B        | mov     )!edx!)	,	 *	[	!ecx!	+	!eax!	*4]	*
+   004A97C7: 89 54 81 FC 8B 4E 10 3B        | mov     )	[	!ecx!	+	!eax!	*4-	4	]	)	,	 *!edx!*
+   004A97CB: 8B 4E 10 3B C1 7C EE C7        | mov     )!ecx!)	,	 *	[	!esi!	+	10h	]	*
+   004A97CE: 3B C1 7C EE C7 87 94 00        | cmp     )!eax!)	,	 *!ecx!*
+
+== FootClass::GetZAdjustment 区域  0x004DB080..0x004DB0C0 ==
+   004DB080: 8B FD 5D 3B F8 5B 7F 02        | mov     )!edi!)	,	 *!ebp!*
+   004DB082: 5D 3B F8 5B 7F 02 8B F8        | pop     )!ebp!)
+   004DB083: 3B F8 5B 7F 02 8B F8 8B        | cmp     )!edi!)	,	 *!eax!*
+   004DB085: 5B 7F 02 8B F8 8B CE E8        | pop     )!ebx!)
+   004DB086: 7F 02 8B F8 8B CE E8 BF        | jg       short  )(004DB08Aloc_4DB08A)
+   004DB088: 8B F8 8B CE E8 BF 92 22        | mov     )!edi!)	,	 *!eax!*
+   004DB08A: 8B CE E8 BF 92 22 00 8B        | mov     )!ecx!)	,	 *!esi!*
+   004DB08C: E8 BF 92 22 00 8B 4C 24        | call    )%(00704350TechnoClass_Get_ZAdjustment%)
+>> 004DB091: 8B 4C 24 08 03 C7 5F 03        | mov     )!ecx!)	,	 *	[	!esp!	+	10h	+	Z_Adjust	]	*
+   004DB095: 03 C7 5F 03 C1 5E 83 C4        | add     )!eax!)	,	 *!edi!*
+   004DB097: 5F 03 C1 5E 83 C4 08 C3        | pop     )!edi!)
+   004DB098: 03 C1 5E 83 C4 08 C3 90        | add     )!eax!)	,	 *!ecx!*
+   004DB09A: 5E 83 C4 08 C3 90 56 8B        | pop     )!esi!)
+   004DB09B: 83 C4 08 C3 90 56 8B F1        | add     )!esp!)	,	 *8*
+   004DB09E: C3 90 56 8B F1 8B 86 74        | retn
+   004DB09F: 90 56 8B F1 8B 86 74 06        |  align  10h
+   004DB0A0: 56 8B F1 8B 86 74 06 00        | push    )!esi!)
+   004DB0A1: 8B F1 8B 86 74 06 00 00        | mov     )!esi!)	,	 *!ecx!*
+   004DB0A3: 8B 86 74 06 00 00 85 C0        | mov     )!eax!)	,	 *	[	!esi!	+	674h	]	*
+   004DB0A9: 85 C0 74 1C 85 C0 75 0A        | test    )!eax!)	,	 *!eax!*
+   004DB0AB: 74 1C 85 C0 75 0A 68 03        | jz       short  )(004DB0C9loc_4DB0C9)
+   004DB0AD: 85 C0 75 0A 68 03 40 00        | test    )!eax!)	,	 *!eax!*
+   004DB0AF: 75 0A 68 03 40 00 80 E8        | jnz      short  )(004DB0BBloc_4DB0BB)
+   004DB0B1: 68 03 40 00 80 E8 65 16        | push    )80004003h); HRESULT
+   004DB0B6: E8 65 16 30 00 8B B6 74        | call    )%(007DC720RaiseError%)
+   004DB0BB: 8B B6 74 06 00 00 56 8B        | mov     )!esi!)	,	 *	[	!esi!	+	674h	]	*
+
+---- 谁的数据表里出现 0x424CB0（含 vtable 槽） ----
+
+---- 直接 call DisplayClass::Submit(0x4A9720) 的位置 ----
+   call @00424C00   in W?Attach_To$:AnimClass$n(pn$ObjectClass$$)v
+   call @00424C7C   in W?Attach_To$:AnimClass$n(pn$ObjectClass$$)v
+   call @00468B6D   in BulletClass_SetMovement
+   call @004CD4E7   in sub_4CD2A0
+   call @004CD792   in sub_4CD600
+   call @0054B18E   in JumpjetLocomotionClass_Process
+   call @0054CC0D   in sub_54CA90
+   call @005F400E   in ObjectClass_Update
+   call @005F4196   in TechnoClass_EC
+   call @005F4FE2   in W?Unlimbo$:ObjectClass$n(ul$DirType$$)i
+   call @0066242C   in RocketLocomotionClass_ILocomotion_Process
+   call @0066290D   in RocketLocomotionClass_ILocomotion_Process
+   call @0075F952   in W?Unlimbo$:WaveClass$n(ul$DirType$$)i
+
+---- 直接 call ObjectClass::GetYSort(0x5F6BD0) 的位置 ----
+   call @00422BC3   in AnimClass_ReturnRealYSort
+   call @00449413   in BuildingClass_B8
