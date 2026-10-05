@@ -60,6 +60,7 @@
     <ClCompile Include="src\Ext\Common\PaintballSyncManager.cpp" />
     <ClCompile Include="src\Ext\Common\PreOccupancyManager.cpp" />
     <ClCompile Include="src\Ext\Common\PrintTextManager.cpp" />
+    <ClCompile Include="src\Ext\Common\SyncEventManager.cpp" />
     <ClCompile Include="src\Ext\EBoltType\EBoltStatus.cpp" />
     <ClCompile Include="src\Ext\EffectType\AttachEffectScript.cpp" />
     <ClCompile Include="src\Ext\EffectType\EffectScript.cpp" />
@@ -122,6 +123,7 @@
     <ClCompile Include="src\Ext\StateType\State\ScatterState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\TeleportState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\TransformState.cpp" />
+    <ClCompile Include="src\Ext\SyncEventType\AttachEffectEvent.cpp" />
     <ClCompile Include="src\Ext\TechnoType\AircraftAttitude.cpp" />
     <ClCompile Include="src\Ext\TechnoType\AircraftDive.cpp" />
     <ClCompile Include="src\Ext\TechnoType\AircraftGuard.cpp" />
@@ -177,6 +179,7 @@
     <ClCompile Include="src\Hooks\HouseExtHook.cpp" />
     <ClCompile Include="src\Hooks\GeneralHook.cpp" />
     <ClCompile Include="src\Hooks\GScreenHook.cpp" />
+    <ClCompile Include="src\Hooks\HotKeyHook.cpp" />
     <ClCompile Include="src\Hooks\InfantryExtHook.cpp" />
     <ClCompile Include="src\Hooks\KratosHook.cpp" />
     <ClCompile Include="src\Hooks\LaserDrawHook.cpp" />
@@ -187,6 +190,7 @@
     <ClCompile Include="src\Hooks\SpawnManagerExtHook.cpp" />
     <ClCompile Include="src\Hooks\StandExtHook.cpp" />
     <ClCompile Include="src\Hooks\SuperWeaponTypeHook.cpp" />
+    <ClCompile Include="src\Hooks\SyncEventHook.cpp" />
     <ClCompile Include="src\Hooks\TechnoExtHook.cpp" />
     <ClCompile Include="src\Hooks\TechnoTypeExtHook.cpp" />
     <ClCompile Include="src\Hooks\TerrainExtHook.cpp" />
@@ -270,6 +274,7 @@
     <ClInclude Include="src\Ext\Common\PaintballSyncManager.h" />
     <ClInclude Include="src\Ext\Common\PrintTextData.h" />
     <ClInclude Include="src\Ext\Common\PrintTextManager.h" />
+    <ClInclude Include="src\Ext\Common\SyncEventManager.h" />
     <ClInclude Include="src\Ext\EBoltType\EBoltStatus.h" />
     <ClInclude Include="src\Ext\EffectType\AttachEffectData.h" />
     <ClInclude Include="src\Ext\EffectType\AttachEffectScript.h" />
@@ -377,6 +382,7 @@
     <ClInclude Include="src\Ext\StateType\State\TeleportState.h" />
     <ClInclude Include="src\Ext\StateType\State\TransformData.h" />
     <ClInclude Include="src\Ext\StateType\State\TransformState.h" />
+    <ClInclude Include="src\Ext\SyncEventType\AttachEffectEvent.h" />
     <ClInclude Include="src\Ext\TechnoType\AircraftAttitude.h" />
     <ClInclude Include="src\Ext\TechnoType\AircraftAttitudeData.h" />
     <ClInclude Include="src\Ext\TechnoType\AircraftDive.h" />
@@ -402,6 +408,7 @@
     <ClInclude Include="src\Ext\TechnoType\FireFLHData.h" />
     <ClInclude Include="src\Ext\TechnoType\HealthText.h" />
     <ClInclude Include="src\Ext\TechnoType\HealthTextData.h" />
+    <ClInclude Include="src\Ext\TechnoType\HotKeyAttachData.h" />
     <ClInclude Include="src\Ext\TechnoType\JumpjetCarryall.h" />
     <ClInclude Include="src\Ext\TechnoType\JumpjetFacing.h" />
     <ClInclude Include="src\Ext\TechnoType\JumpjetFacingData.h" />

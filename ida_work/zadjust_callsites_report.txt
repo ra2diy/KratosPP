@@ -1,0 +1,408 @@
+=== 被 hook 的函数 0x004DAFC0（FootClass_Get_ZAdjustment）全文 ===
+    0x004DAFC0  sub     esp, 8
+    0x004DAFC3  push    esi
+    0x004DAFC4  mov     esi, ecx
+    0x004DAFC6  push    edi
+    0x004DAFC7  mov     [esp+10h+Z_Adjust], 0
+    0x004DAFCF  mov     eax, [esi+674h]
+    0x004DAFD5  test    eax, eax
+    0x004DAFD7  jz      short loc_4DAFF7
+    0x004DAFD9  test    eax, eax
+    0x004DAFDB  jnz     short loc_4DAFE7
+    0x004DAFDD  push    80004003h; HRESULT
+    0x004DAFE2  call    RaiseError
+    0x004DAFE7  mov     eax, [esi+674h]
+    0x004DAFED  push    eax
+    0x004DAFEE  mov     ecx, [eax]
+    0x004DAFF0  call    dword ptr [ecx+38h]
+    0x004DAFF3  mov     [esp+10h+Z_Adjust], eax
+    0x004DAFF7  mov     edx, [esi]
+    0x004DAFF9  push    ebx
+    0x004DAFFA  push    ebp
+    0x004DAFFB  mov     ecx, esi
+    0x004DAFFD  call    dword ptr [edx+84h]
+    0x004DB003  mov     ecx, esi
+    0x004DB005  mov     edi, eax
+    0x004DB007  call    TechnoClass_GetZFudgeColumn
+    0x004DB00C  mov     edi, [edi+_TechnoTypeClass.t.ZFudgeColumn]
+    0x004DB012  mov     ecx, esi
+    0x004DB014  imul    edi, eax
+    0x004DB017  mov     eax, [esi]
+    0x004DB019  call    dword ptr [eax+84h]
+    0x004DB01F  mov     ecx, esi; this
+    0x004DB021  mov     ebx, eax
+    0x004DB023  call    TechnoClass_GetZFudgeTunnel
+    0x004DB028  mov     ebx, [ebx+0DC8h]
+    0x004DB02E  mov     edx, [esi]
+    0x004DB030  mov     ecx, esi
+    0x004DB032  imul    ebx, eax
+    0x004DB035  call    dword ptr [edx+84h]
+    0x004DB03B  mov     ecx, esi; this
+    0x004DB03D  mov     ebp, eax
+    0x004DB03F  call    TechnoClass_GetZFudgeCliff
+    0x004DB044  mov     ebp, [ebp+0DC0h]
+    0x004DB04A  mov     ecx, esi
+    0x004DB04C  imul    ebp, eax
+    0x004DB04F  mov     [esp+18h+var_4], 0
+    0x004DB057  call    TechnoClass_OnBridge
+    0x004DB05C  test    al, al
+    0x004DB05E  jz      short loc_4DB072
+    0x004DB060  mov     eax, [esi]
+    0x004DB062  mov     ecx, esi
+    0x004DB064  call    dword ptr [eax+84h]
+    0x004DB06A  mov     eax, [eax+_TechnoTypeClass.t.ZFudgeBridge]
+    0x004DB070  jmp     short loc_4DB076
+    0x004DB072  mov     eax, [esp+18h+var_4]
+    0x004DB076  cmp     edi, ebx
+    0x004DB078  jg      short loc_4DB07C
+    0x004DB07A  mov     edi, ebx
+    0x004DB07C  cmp     edi, ebp
+    0x004DB07E  jg      short loc_4DB082
+    0x004DB080  mov     edi, ebp
+    0x004DB082  pop     ebp
+    0x004DB083  cmp     edi, eax
+    0x004DB085  pop     ebx
+    0x004DB086  jg      short loc_4DB08A
+    0x004DB088  mov     edi, eax
+    0x004DB08A  mov     ecx, esi
+    0x004DB08C  call    TechnoClass_Get_ZAdjustment
+    0x004DB091  mov     ecx, [esp+10h+Z_Adjust]
+    0x004DB095  add     eax, edi
+    0x004DB097  pop     edi
+    0x004DB098  add     eax, ecx
+    0x004DB09A  pop     esi
+    0x004DB09B  add     esp, 8
+    0x004DB09E  retn
+
+=== 10 处 call [reg+2ECh] 的宿主函数 ===
+
+--- 调用点 0x005191D8   宿主 = InfantryClass_Draw (0x00518F90..0x00519629)
+    0x00519198  mov     ecx, [eax]
+    0x00519199  mov     edx, [eax+4]
+    0x0051919C  mov     eax, [edi]
+    0x0051919E  add     eax, ecx
+    0x005191A0  mov     ecx, [edi+4]
+    0x005191A3  mov     [esp+54h+pos], eax
+    0x005191A7  mov     eax, [ebx]
+    0x005191A9  add     ecx, edx
+    0x005191AB  test    eax, eax
+    0x005191AD  mov     [esp+54h+var_28], ecx
+    0x005191B1  jnz     short loc_5191BD
+    0x005191B3  push    80004003h; HRESULT
+    0x005191B8  call    RaiseError
+    0x005191BD  xor     eax, eax
+    0x005191BF  mov     edx, [ebp+0]
+    0x005191C2  push    eax; ZS_Y
+    0x005191C3  mov     esi, [ebx]
+    0x005191C5  push    eax; ZS_X
+    0x005191C6  push    eax; _DWORD
+    0x005191C7  push    eax; BUILDINGZ_SHA
+    0x005191C8  mov     eax, [esp+64h+TintColor]
+    0x005191CC  push    eax; TintColor
+    0x005191CD  push    3E8h; _DWORD
+    0x005191D2  push    0; _DWORD
+    0x005191D4  mov     ecx, ebp; this
+    0x005191D6  call    [edx+vt_TechnoClass.Get_Z_Adjustment]
+    0x005191DC  mov     edx, [esi]
+    0x005191DE  sub     eax, 2
+    0x005191E1  push    eax; _DWORD
+    0x005191E2  mov     eax, [esp+74h+OtherSurface]
+    0x005191E6  push    0; _DWORD
+    0x005191E8  push    2E01h; flags
+    0x005191ED  lea     ecx, [esp+7Ch+pos]
+
+--- 调用点 0x00706020   宿主 = SHPClass_Draw (0x00705E00..0x0070660C)
+    0x00705FE0  call    Draw_AdjustForBuildingZ
+    0x00705FE5  sub     ebp, eax
+    0x00705FE7  mov     [esp+54h+arg_8], ebp
+    0x00705FEB  jmp     short loc_706048
+    0x00705FED  mov     eax, [esi+6C4h]
+    0x00705FF3  mov     cl, [eax+UnitTypeClass.SmallVisceroid]
+    0x00705FF9  test    cl, cl
+    0x00705FFB  jnz     short loc_706007
+    0x00705FFD  mov     cl, [eax+UnitTypeClass.LargeVisceroid]
+    0x00706003  test    cl, cl
+    0x00706005  jz      short loc_70600C
+    0x00706007  mov     [esp+54h+HasShadow], 0
+    0x0070600C  mov     edx, [esi]
+    0x0070600E  mov     ecx, esi
+    0x00706010  call    dword ptr [edx+1C8h]
+    0x00706016  test    eax, eax
+    0x00706018  jnz     short loc_70602C
+    0x0070601A  mov     eax, [esi]
+    0x0070601C  mov     ecx, esi
+    0x0070601E  call    dword ptr [eax+2ECh]
+    0x00706024  add     eax, ebp
+    0x00706026  mov     [esp+54h+arg_8], eax
+    0x0070602A  jmp     short loc_706048
+    0x0070602C  mov     edx, [esi]
+    0x0070602E  mov     ecx, esi
+    0x00706030  call    dword ptr [edx+1D0h]
+    0x00706036  mov     ecx, eax; a1
+
+--- 调用点 0x00707208   宿主 = TechnoClass_706ED0 (0x00706ED0..0x0070727A)
+    0x007071C8  mov     ecx, 190h
+    0x007071C9  idiv    ecx
+    0x007071CB  mov     eax, [edi]
+    0x007071CD  mov     ecx, [esp+13Ch+var_108]
+    0x007071D1  add     eax, ecx
+    0x007071D3  mov     ecx, [edi+4]
+    0x007071D6  mov     edi, [esp+13Ch+var_104]
+    0x007071DA  push    edx
+    0x007071DB  mov     edx, [esp+140h+arg_20]
+    0x007071E2  add     ecx, edi
+    0x007071E4  mov     [esp+140h+a3.T], eax
+    0x007071E8  mov     eax, [esp+140h+arg_1C]
+    0x007071EF  push    edx
+    0x007071F0  mov     edx, [ebp+0]
+    0x007071F3  mov     [esp+144h+a3.L], ecx
+    0x007071F7  push    eax
+    0x007071F8  mov     ecx, ebp
+    0x007071FA  call    dword ptr [edx+2F0h]
+    0x00707200  push    eax
+    0x00707201  mov     eax, [ebp+0]
+    0x00707204  mov     ecx, ebp
+    0x00707206  call    dword ptr [eax+2ECh]
+    0x0070720C  push    eax
+    0x0070720D  push    ebx; flags
+    0x0070720E  mov     ecx, esi; this
+    0x00707210  call    LightConvertClass_SelectBlitter0
+    0x00707215  push    eax
+    0x00707216  lea     ecx, [esp+154h+a2]
+    0x0070721A  push    0
+    0x0070721C  lea     edx, [esp+158h+a3]
+
+--- 调用点 0x007073F3   宿主 = TechnoClass_707280 (0x00707280..0x00707476)
+    0x007073B3  push    ecx
+    0x007073B4  mov     ecx, eax
+    0x007073B6  call    dword ptr [edx+78h]
+    0x007073B9  mov     ecx, [esp+0ECh+arg_8]
+    0x007073C0  mov     edx, [esp+0ECh+var_D8]
+    0x007073C4  mov     esi, [esp+0ECh+var_DC]
+    0x007073C8  push    0
+    0x007073CA  mov     eax, [ecx]
+    0x007073CC  mov     ecx, [ecx+4]
+    0x007073CF  add     ecx, edx
+    0x007073D1  mov     edx, [ebx]
+    0x007073D3  add     eax, esi
+    0x007073D5  mov     [esp+0F0h+var_C0], ecx
+    0x007073D9  push    0
+    0x007073DB  push    3E8h
+    0x007073E0  mov     ecx, ebx
+    0x007073E2  mov     [esp+0F8h+var_C4], eax
+    0x007073E6  call    dword ptr [edx+2F0h]
+    0x007073EC  push    eax
+    0x007073ED  mov     eax, [ebx]
+    0x007073EF  mov     ecx, ebx
+    0x007073F1  call    dword ptr [eax+2ECh]
+    0x007073F7  mov     ecx, [esp+0F8h+flags]
+    0x007073FE  push    eax
+    0x007073FF  push    ecx; flags
+    0x00707400  mov     ecx, StandardPalette; this
+    0x00707406  call    LightConvertClass_SelectBlitter0
+
+--- 调用点 0x00707708   宿主 = sub_707480 (0x00707480..0x0070774E)
+    0x007076C8  mov     ax, [esi+4]
+    0x007076CC  add     ecx, ebp
+    0x007076CE  mov     [esp+60h+var_2C], ecx
+    0x007076D2  mov     [esp+60h+var_28], eax
+    0x007076D6  mov     eax, [esp+78h]
+    0x007076DA  xor     ecx, ecx
+    0x007076DC  mov     cx, [esi+6]
+    0x007076E0  xor     edx, edx
+    0x007076E2  push    eax; a15
+    0x007076E3  mov     eax, [edi]
+    0x007076E5  mov     [esp+64h+var_24], ecx
+    0x007076E9  mov     ecx, [esp+64h+a11]
+    0x007076ED  push    ebx; a14
+    0x007076EE  push    edx; a13
+    0x007076EF  mov     edx, [esp+6Ch+a10]
+    0x007076F6  push    ebx; a12
+    0x007076F7  push    ecx; a11
+    0x007076F8  push    edx; a10
+    0x007076F9  mov     ecx, edi
+    0x007076FB  call    dword ptr [eax+2F0h]
+    0x00707701  mov     edx, [edi]
+    0x00707703  push    eax; a9
+    0x00707704  mov     ecx, edi
+    0x00707706  call    dword ptr [edx+2ECh]
+    0x0070770C  push    eax; a8
+    0x0070770D  mov     eax, [esp+80h+BLITTER]
+    0x00707714  lea     ecx, [esp+80h+a6]
+    0x00707718  push    eax; BLITTER
+    0x00707719  lea     edx, [esp+84h+a5]
+    0x0070771D  push    ecx; a6
+    0x0070771E  lea     eax, [esp+88h+a4]
+
+--- 调用点 0x0073B33F   宿主 = UnitClass_55C (0x0073B140..0x0073B455)
+    0x0073B2FF  jz      loc_73B3F4
+    0x0073B304  cmp     eax, 10h
+    0x0073B307  jle     loc_73B3F4
+    0x0073B30D  mov     ebx, [esp+58h+arg_C]
+    0x0073B311  mov     [esp+58h+var_40], ecx
+    0x0073B315  mov     ecx, [esp+58h+var_48]
+    0x0073B319  mov     dword ptr [esp+58h+a11.X], edx
+    0x0073B31D  mov     edx, [esp+58h+a2]
+    0x0073B321  mov     [esp+58h+coords], eax
+    0x0073B325  add     eax, 0FFFFFFF0h
+    0x0073B328  push    ecx; a11
+    0x0073B329  mov     [esp+5Ch+var_24], eax
+    0x0073B32D  mov     [esp+5Ch+coords], eax
+    0x0073B331  mov     eax, [esi]
+    0x0073B333  push    edx; a12
+    0x0073B334  push    ebx; a11
+    0x0073B335  push    0; a10
+    0x0073B337  mov     ecx, esi
+    0x0073B339  mov     [esp+68h+var_3C], ebp
+    0x0073B33D  call    dword ptr [eax+2ECh]
+    0x0073B343  sub     eax, 5
+    0x0073B346  lea     ecx, [esp+68h+var_40]
+    0x0073B34A  push    eax; a9
+    0x0073B34B  push    edi; a8
+    0x0073B34C  push    ecx; a7
+    0x0073B34D  mov     ecx, TempSurface
+    0x0073B353  lea     eax, [esp+74h+var_20]
+
+--- 调用点 0x0073B3B4   宿主 = UnitClass_55C (0x0073B140..0x0073B455)
+    0x0073B374  lea     edx, [esp+84h+var_4]; a2
+    0x0073B375  mov     ecx, ebp; this
+    0x0073B377  call    sub_4373B0
+    0x0073B37C  mov     eax, [esp+5Ch+a7]
+    0x0073B380  mov     ecx, [esp+5Ch+var_30]
+    0x0073B384  mov     edx, [esp+5Ch+var_40]
+    0x0073B388  add     ecx, eax
+    0x0073B38A  add     edx, eax
+    0x0073B38C  mov     eax, 10h
+    0x0073B391  mov     [esp+5Ch+a7], eax
+    0x0073B395  mov     dword ptr [esp+5Ch+a11.X], eax
+    0x0073B399  mov     eax, [esp+5Ch+var_4C]
+    0x0073B39D  mov     [esp+5Ch+var_30], ecx
+    0x0073B3A1  mov     ecx, [esp+5Ch+arg_C]
+    0x0073B3A5  push    eax
+    0x0073B3A6  mov     [esp+60h+var_40], edx
+    0x0073B3AA  mov     edx, [esi]
+    0x0073B3AC  push    ecx; a12
+    0x0073B3AD  push    ebx; a11
+    0x0073B3AE  push    2; a10
+    0x0073B3B0  mov     ecx, esi
+    0x0073B3B2  call    dword ptr [edx+2ECh]
+    0x0073B3B8  mov     ecx, TempSurface
+    0x0073B3BE  push    eax; a9
+    0x0073B3BF  lea     eax, [esp+70h+var_44]
+    0x0073B3C3  push    edi; a8
+    0x0073B3C4  mov     edx, [ecx]
+    0x0073B3C6  push    eax; a7
+    0x0073B3C7  lea     eax, [esp+78h+var_24]
+    0x0073B3CB  push    eax; a6
+
+--- 调用点 0x0073B414   宿主 = UnitClass_55C (0x0073B140..0x0073B455)
+    0x0073B3D4  mov     ecx, TempSurface
+    0x0073B3D5  push    eax; a5
+    0x0073B3D6  lea     edx, [esp+80h+a11]
+    0x0073B3DA  push    ecx; a4
+    0x0073B3DB  push    edx; a3
+    0x0073B3DC  lea     edx, [esp+88h+a6]; a2
+    0x0073B3E3  mov     ecx, ebp; this
+    0x0073B3E5  call    sub_4373B0
+    0x0073B3EA  pop     edi
+    0x0073B3EB  pop     esi
+    0x0073B3EC  pop     ebp
+    0x0073B3ED  pop     ebx
+    0x0073B3EE  add     esp, 38h
+    0x0073B3F1  retn    24h ; '$'
+    0x0073B3F4  mov     eax, [esp+58h+var_48]
+    0x0073B3F8  mov     ecx, [esp+58h+a2]
+    0x0073B3FC  mov     edx, [esp+58h+arg_C]
+    0x0073B400  push    eax; a12
+    0x0073B401  mov     eax, [esi]
+    0x0073B403  push    ecx; a12
+    0x0073B404  push    edx; a11
+    0x0073B405  mov     ecx, esi
+    0x0073B407  call    dword ptr [eax+2F0h]
+    0x0073B40D  mov     edx, [esi]
+    0x0073B40F  push    eax; a10
+    0x0073B410  mov     ecx, esi
+    0x0073B412  call    dword ptr [edx+2ECh]
+    0x0073B418  mov     ecx, TempSurface
+    0x0073B41E  push    eax; a9
+    0x0073B41F  push    edi; a8
+    0x0073B420  lea     edx, [esp+70h+var_20]
+    0x0073B424  mov     eax, [ecx]
+    0x0073B426  push    offset dword_B1CFC0; a7
+    0x0073B42B  push    edx; a6
+
+--- 调用点 0x0073C774   宿主 = UnitClass_DrawSHP (0x0073C5F0..0x0073CEC0)
+    0x0073C734  mov     eax, [esp+128h+arg0]
+    0x0073C73A  mov     cl, [ebp+UnitClass.f.t.field_420]
+    0x0073C740  mov     [esp+128h+a7.Z], eax
+    0x0073C744  mov     eax, [esp+128h+a3]
+    0x0073C74B  test    cl, cl
+    0x0073C74D  mov     [esp+4Ch], eax
+    0x0073C751  jz      short loc_73C75A
+    0x0073C753  add     eax, 0FFFFFFF2h
+    0x0073C756  mov     [esp+4Ch], eax
+    0x0073C75A  xor     ecx, ecx
+    0x0073C75C  mov     edx, [ebp+0]
+    0x0073C75F  xor     eax, eax
+    0x0073C761  push    ecx; ZS_Y
+    0x0073C762  movsx   esi, word ptr [edi+6]
+    0x0073C766  push    eax; ZS_X
+    0x0073C767  push    ecx; _DWORD
+    0x0073C768  push    ecx; BUILDINGZ_SHA
+    0x0073C769  push    ecx; TintColor
+    0x0073C76A  push    3E8h; _DWORD
+    0x0073C76F  push    ecx; _DWORD
+    0x0073C770  mov     ecx, ebp; this
+    0x0073C772  call    [edx+vt_TechnoClass.Get_Z_Adjustment]
+    0x0073C778  sub     eax, 2
+    0x0073C77B  lea     ecx, [esp+144h+a7.Z]
+    0x0073C77F  push    eax; _DWORD
+    0x0073C780  push    0; _DWORD
+    0x0073C782  lea     eax, [esp+14Ch+boundingRect]
+    0x0073C789  push    2E01h; flags
+
+--- 调用点 0x0073D238   宿主 = UnitClass_DrawAt (0x0073CEC0..0x0073D449)
+    0x0073D1F8  shr     edx, 1
+    0x0073D1FA  and     edx, 7
+    0x0073D1FD  sub     edi, edx
+    0x0073D1FF  test    eax, eax
+    0x0073D201  jnz     loc_73D28E
+    0x0073D207  mov     eax, [esi]
+    0x0073D209  mov     ecx, esi
+    0x0073D20B  call    dword ptr [eax+1D4h]
+    0x0073D211  test    al, al
+    0x0073D213  jnz     short loc_73D28E
+    0x0073D215  mov     edx, [esi]
+    0x0073D217  mov     ecx, esi
+    0x0073D219  call    dword ptr [edx+1D8h]
+    0x0073D21F  test    al, al
+    0x0073D221  jnz     short loc_73D28E
+    0x0073D223  xor     ecx, ecx
+    0x0073D225  mov     edx, [esi]
+    0x0073D227  xor     eax, eax
+    0x0073D229  push    ecx; ZS_Y
+    0x0073D22A  push    eax; ZS_X
+    0x0073D22B  mov     eax, [esp+64h+var_8]
+    0x0073D22F  push    ecx; _DWORD
+    0x0073D230  push    ecx; BUILDINGZ_SHA
+    0x0073D231  push    ecx; TintColor
+    0x0073D232  push    eax; _DWORD
+    0x0073D233  push    ecx; _DWORD
+    0x0073D234  mov     ecx, esi
+    0x0073D236  call    dword ptr [edx+2ECh]
+    0x0073D23C  mov     ebx, [esp+78h+boundingRect]
+    0x0073D240  mov     ebp, Frame
+    0x0073D246  sub     eax, 2
+    0x0073D249  mov     ecx, 0Fh
+    0x0073D24E  push    eax; _DWORD
+    0x0073D24F  push    0; _DWORD
+
+=== 统计：同一函数内出现多次的调用点 ===
+  UnitClass_55C                                  x3
+  InfantryClass_Draw                             x1
+  SHPClass_Draw                                  x1
+  TechnoClass_706ED0                             x1
+  TechnoClass_707280                             x1
+  sub_707480                                     x1
+  UnitClass_DrawSHP                              x1
+  UnitClass_DrawAt                               x1

@@ -1,0 +1,3584 @@
+===== 1) EventNames @ 0x82091C =====
+  [ 0] 00820BE8  PTR .data  EMPTY
+  [ 1] 00820BE0  PTR .data  POWERON
+  [ 2] 00820BD4  PTR .data  POWEROFF
+  [ 3] 00820BCC  PTR .data  ALLY
+  [ 4] 00820BC0  PTR .data  MEGAMISSION
+  [ 5] 00820BB0  PTR .data  MEGAMISSION_F
+  [ 6] 00820BA8  PTR .data  IDLE
+  [ 7] 00820BA0  PTR .data  SCATTER
+  [ 8] 00820B94  PTR .data  DESTRUCT
+  [ 9] 00820B8C  PTR .data  DEPLOY
+  [10] 00820B80  PTR .data  DETONATE
+  [11] 00820B78  PTR .data  PLACE
+  [12] 00820B70  PTR .data  OPTIONS
+  [13] 00820B64  PTR .data  GAMESPEED
+  [14] 00820B5C  PTR .data  PRODUCE
+  [15] 00820B54  PTR .data  SUSPEND
+  [16] 00820B4C  PTR .data  ABANDON
+  [17] 00820B44  PTR .data  PRIMARY
+  [18] 00820B34  PTR .data  SPECIAL_PLACE
+  [19] 00820B2C  PTR .data  EXIT
+  [20] 00820B20  PTR .data  ANIMATION
+  [21] 00820B18  PTR .data  REPAIR
+  [22] 00820B10  PTR .data  SELL
+  [23] 00820B04  PTR .data  SELLCELL
+  [24] 00820AFC  PTR .data  SPECIAL
+  [25] 00820AF0  PTR .data  FRAMESYNC
+  [26] 00820AE8  PTR .data  MESSAGE
+  [27] 00820AD8  PTR .data  RESPONSE_TIME
+  [28] 00820ACC  PTR .data  FRAMEINFO
+  [29] 00820AC0  PTR .data  SAVEGAME
+  [30] 00820AB8  PTR .data  ARCHIVE
+  [31] 00820AAC  PTR .data  ADDPLAYER
+  [32] 00820AA4  PTR .data  TIMING
+  [33] 00820A94  PTR .data  PROCESS_TIME
+  [34] 00820A88  PTR .data  PAGEUSER
+  [35] 00820A78  PTR .data  REMOVEPLAYER
+  [36] 00820A68  PTR .data  LATENCYFUDGE
+  [37] 00820A58  PTR .data  MEGAFRAMEINFO
+  [38] 00820A48  PTR .data  PACKETTIMING
+  [39] 00820A3C  PTR .data  ABOUTTOEXIT
+  [40] 00820A2C  PTR .data  FALLBACKHOST
+  [41] 00820A1C  PTR .data  ADDRESSCHANGE
+  [42] 00820A10  PTR .data  PLANCONNECT
+  [43] 00820A04  PTR .data  PLANCOMMIT
+  [44] 008209F4  PTR .data  PLANNODEDELETE
+  [45] 008209E8  PTR .data  ALLCHEER
+  [46] 008209DC  PTR .data  ABANDON_ALL
+  [47] FFFFFFFF  ---- (not a ptr)  
+  [48] 4E414241  ---- (not a ptr)  
+  [49] 5F4E4F44  ---- (not a ptr)  
+  [50] 004C4C41  ---- (not a ptr)  
+  [51] 434C4C41  ---- (not a ptr)  
+  [52] 52454548  ---- (not a ptr)  
+  [53] 00000000  ---- (not a ptr)  
+  [54] 4E414C50  ---- (not a ptr)  
+  [55] 45444F4E  ---- (not a ptr)  
+  => 连续像指针的项数 = 47
+
+===== OutList @ 00A802C8 (.data) =====
+  xrefs = 143
+  - from 00443499  W?Active_Click_With$:BuildingClass$n($ActionType$$s)v
+    func W?Active_Click_With$:BuildingClass$n($ActionType$$s)v @ 00443410..004436EB 
+      00443410  mov     eax, [esp+act]
+      00443414  sub     esp, 8Ch
+      0044341A  cmp     eax, 5
+      0044341D  push    ebx
+      0044341E  push    esi
+      0044341F  push    edi
+      00443420  mov     ebx, ecx
+      00443422  jnz     short loc_443450
+      00443424  mov     eax, [esp+98h+a2]
+      0044342B  test    eax, eax
+      0044342D  jz      loc_4436DD
+      00443433  mov     edx, [ebx]
+      00443435  push    0
+      00443437  push    0
+      00443439  push    eax
+      0044343A  push    1
+      0044343C  call    dword ptr [edx+378h]
+      00443442  mov     al, 1
+      00443444  pop     edi
+      00443445  pop     esi
+      00443446  pop     ebx
+      00443447  add     esp, 8Ch
+      0044344D  retn    0Ch
+      00443450  cmp     eax, 4
+      00443453  jnz     loc_443576
+      00443459  mov     eax, [ebx+520h]
+      0044345F  mov     ecx, [eax+0EB8h]
+      00443465  test    ecx, ecx
+      00443467  jz      loc_4434F2
+      0044346D  push    ebx; a2
+      0044346E  lea     ecx, [esp+9Ch+var_8C]; this
+      00443472  call    TargetClass::TargetClass
+      00443477  mov     edx, [eax]
+      00443479  sub     esp, 8
+      0044347C  mov     ecx, esp
+      0044347E  mov     al, [eax+4]
+      00443481  push    11h
+      00443483  mov     [ecx], edx
+      00443485  mov     edx, [ebx]
+      00443487  mov     [ecx+4], al
+      0044348A  mov     ecx, ebx
+      0044348C  call    dword ptr [edx+38h]
+      0044348F  push    eax
+      00443490  lea     ecx, [esp+0A8h+this]
+      00443494  call    sub_4C65E0
+      00443499  cmp     LastEventIdx, 80h ; '€'
+      004434A3  jge     short loc_4434F2
+      004434A5  mov     ecx, Networking_FirstUnusedPacket
+      004434AB  mov     esi, eax
+      004434AD  lea     edx, [ecx+ecx*8]
+      004434B0  lea     ecx, [ecx+edx*4]
+      004434B3  lea     edi, NetworkPackets0.ev.EventKind[ecx+ecx*2]
+      004434BA  mov     ecx, 1Bh
+      004434BF  rep movsd
+      004434C1  movsw
+      004434C3  movsb
+      004434C4  call    ds:__imp_timeGetTime; Get system time, in milliseconds
+      004434CA  mov     ecx, Networking_FirstUnusedPacket
+      004434D0  mov     Networking_Timestamps[ecx*4], eax
+      004434D7  mov     edx, Networking_FirstUnusedPacket
+      004434DD  mov     eax, LastEventIdx
+      004434E2  inc     edx
+      004434E3  and     edx, 7Fh
+      004434E6  inc     eax
+      004434E7  mov     Networking_FirstUnusedPacket, edx
+      004434ED  mov     LastEventIdx, eax
+      004434F2  mov     eax, [ebx+520h]
+      004434F8  mov     esi, [esp+98h+a2]
+      004434FF  mov     cl, [eax+_TechnoTypeClass.t.GapGenerator]
+      00443505  test    cl, cl
+      00443507  jz      short loc_44351A
+      00443509  mov     edx, [ebx]
+      0044350B  push    0; a5
+      0044350D  push    0; cell
+      0044350F  push    esi; target
+      00443510  push    10h; mission
+      00443512  mov     ecx, ebx; this
+      00443514  call    [edx+vt_TechnoClass.ClickedMission]
+      0044351A  mov     eax, [ebx+520h]
+      00443520  mov     cl, [eax+BuildingTypeClass.UnitAbsorb]
+  - from 004434DD  W?Active_Click_With$:BuildingClass$n($ActionType$$s)v
+  - from 004434ED  W?Active_Click_With$:BuildingClass$n($ActionType$$s)v
+  - from 004435AD  W?Active_Click_With$:BuildingClass$n($ActionType$$s)v
+  - from 004435F5  W?Active_Click_With$:BuildingClass$n($ActionType$$s)v
+  - from 004435FF  W?Active_Click_With$:BuildingClass$n($ActionType$$s)v
+  - from 004437F5  W?Active_Click_With$:BuildingClass$n($ActionType$$pn$ObjectClass$$)v
+    func W?Active_Click_With$:BuildingClass$n($ActionType$$pn$ObjectClass$$)v @ 004436F0..00443859 
+      004436F0  mov     eax, [esp+act]
+      004436F4  sub     esp, 78h
+      004436F7  cmp     eax, 5
+      004436FA  push    ebx
+      004436FB  push    esi
+      004436FC  push    edi
+      004436FD  mov     esi, ecx
+      004436FF  jnz     short loc_44372F
+      00443701  mov     eax, [esp+84h+coords]
+      00443708  mov     edi, [esi]
+      0044370A  push    0; a5
+      0044370C  push    0; cell
+      0044370E  push    eax; coords
+      0044370F  mov     ecx, offset Map; this
+      00443714  call    MapClass::Coord_Cell
+      00443719  push    eax; target
+      0044371A  push    1; mission
+      0044371C  mov     ecx, esi; this
+      0044371E  call    [edi+vt_TechnoClass.ClickedMission]
+      00443724  mov     al, 1
+      00443726  pop     edi
+      00443727  pop     esi
+      00443728  pop     ebx
+      00443729  add     esp, 78h
+      0044372C  retn    10h
+      0044372F  cmp     eax, 6
+      00443732  jz      short loc_44373D
+      00443734  cmp     eax, 1
+      00443737  jnz     loc_44384E
+      0044373D  mov     ecx, [esi+520h]
+      00443743  xor     bl, bl
+      00443745  mov     al, [ecx+BuildingTypeClass.ConstructionYard]
+      0044374B  test    al, al
+      0044374D  jz      short loc_44377E
+      0044374F  mov     ecx, [esi+21Ch]; this
+      00443755  call    HouseClass::Is_Human
+      0044375A  test    al, al
+      0044375C  jz      short loc_44377A
+      0044375E  mov     eax, Session
+      00443763  test    eax, eax
+      00443765  jz      short loc_44377A
+      00443767  mov     al, byte ptr gMCVRedeploy
+      0044376C  test    al, al
+      0044376E  jz      short loc_44377A
+      00443770  mov     eax, [esi+2C0h]
+      00443776  test    eax, eax
+      00443778  jz      short loc_44377E
+      0044377A  mov     bl, 1
+      0044377C  jmp     short loc_4437AD
+      0044377E  mov     edx, [esi+520h]
+      00443784  mov     eax, [edx+408h]
+      0044378A  test    eax, eax
+      0044378C  jnz     short loc_44379C
+      0044378E  mov     eax, [esi]
+      00443790  mov     ecx, esi
+      00443792  call    dword ptr [eax+284h]
+      00443798  test    al, al
+      0044379A  jz      short loc_4437AD
+      0044379C  mov     ecx, [esp+84h+coords]
+      004437A3  push    1
+      004437A5  push    ecx
+      004437A6  mov     ecx, esi
+      004437A8  call    BuildingClass_Set_Rally_To_Point
+      004437AD  mov     edx, [esi+520h]
+      004437B3  mov     eax, [edx+408h]
+      004437B9  test    eax, eax
+      004437BB  jz      loc_44384E
+      004437C1  test    bl, bl
+      004437C3  jnz     loc_44384E
+      004437C9  push    esi; a2
+      004437CA  lea     ecx, [esp+88h+var_78]; this
+      004437CE  call    TargetClass::TargetClass
+      004437D3  mov     edx, [eax]
+      004437D5  sub     esp, 8
+      004437D8  mov     ecx, esp
+      004437DA  mov     al, [eax+4]
+      004437DD  push    16h
+      004437DF  mov     [ecx], edx
+      004437E1  mov     edx, [esi]
+      004437E3  mov     [ecx+4], al
+  - from 00443839  W?Active_Click_With$:BuildingClass$n($ActionType$$pn$ObjectClass$$)v
+  - from 00443849  W?Active_Click_With$:BuildingClass$n($ActionType$$pn$ObjectClass$$)v
+  - from 004439D2  BuildingClass_Set_Rally_To_Point
+    func BuildingClass_Set_Rally_To_Point @ 00443860..00443B86 
+      00443860  sub     esp, 94h
+      00443866  mov     eax, [esp+94h+coords]
+      0044386D  push    ebx
+      0044386E  push    ebp
+      0044386F  push    esi
+      00443870  mov     ebp, ecx
+      00443872  push    edi
+      00443873  xor     ebx, ebx
+      00443875  push    eax; coords
+      00443876  mov     ecx, offset Map; this
+      0044387B  mov     [esp+0A8h+SpeedType], ebx
+      0044387F  xor     esi, esi
+      00443881  call    MapClass::Coord_Cell
+      00443886  mov     ecx, [eax+CellClass.flags]
+      0044388C  mov     eax, [ebp+BuildingClass.BuildingType]
+      00443892  shr     ecx, 8
+      00443895  and     cl, 1
+      00443898  mov     [esp+0A4h+this], cl
+      0044389C  mov     ecx, [eax+BuildingTypeClass.Factory]
+      004438A2  cmp     ecx, 3
+      004438A5  jnz     short loc_4438B4
+      004438A7  mov     [esp+0A4h+SpeedType], 4
+      004438AF  mov     esi, 9
+      004438B4  cmp     [eax+BuildingTypeClass.t.Naval], bl
+      004438BA  jz      short loc_4438C9
+      004438BC  mov     [esp+0A4h+SpeedType], 6
+      004438C4  mov     esi, 4
+      004438C9  lea     edx, [ebp+9Ch]
+      004438CF  mov     edi, dword ptr [esp+0A4h+this]
+      004438D3  push    edi; boo
+      004438D4  push    esi; MovementZone
+      004438D5  mov     eax, [edx]
+      004438D7  mov     ecx, [edx+4]
+      004438DA  mov     edx, [edx+8]
+      004438DD  mov     [esp+0ACh+var_74], edx
+      004438E1  cdq
+      004438E2  and     edx, 0FFh
+      004438E8  add     eax, edx
+      004438EA  sar     eax, 8
+      004438ED  mov     word ptr [esp+0ACh+position], ax
+      004438F2  mov     eax, ecx
+      004438F4  cdq
+      004438F5  and     edx, 0FFh
+      004438FB  lea     ecx, [esp+0ACh+position]
+      004438FF  add     eax, edx
+      00443901  push    ecx; position
+      00443902  sar     eax, 8
+      00443905  mov     word ptr [esp+0B0h+position+2], ax
+      0044390A  mov     eax, [esp+0B0h+position]
+      0044390E  mov     ecx, offset Map; this
+      00443913  mov     [esp+0B0h+position], eax
+      00443917  call    MapClass_CanLocationBeReached
+      0044391C  push    ebx; a16
+      0044391D  mov     word ptr [esp+0A8h+position], bx
+      00443922  mov     word ptr [esp+0A8h+position+2], bx
+      00443927  push    ebx; a6
+      00443928  lea     ebx, [esp+0ACh+position]
+      0044392C  mov     ecx, 1
+      00443931  push    ebx; a14
+      00443932  push    ecx; a4
+      00443933  push    0; a12
+      00443935  mov     edx, ecx
+      00443937  push    0; a11
+      00443939  push    0; a10
+      0044393B  push    edx; a9
+      0044393C  mov     edx, [esp+0C4h+SpeedType]
+      00443940  push    ecx; a8
+      00443941  push    edi; InAir
+      00443942  push    esi; MovementZone
+      00443943  push    eax; a5
+      00443944  mov     eax, [esp+0D4h+coords]
+      0044394B  push    edx; SpeedType
+      0044394C  lea     ecx, [esp+0D8h+this]
+      00443950  push    eax; position
+      00443951  push    ecx; a2
+      00443952  mov     ecx, offset Map; this
+      00443957  call    MapClass::Nearby_Location
+      0044395C  mov     eax, [eax]
+      0044395E  cmp     ax, BuildingClass_Default_CellCoords.X
+      00443965  mov     dword ptr [esp+0A4h+var_80.X], eax
+  - from 00443A16  BuildingClass_Set_Rally_To_Point
+  - from 00443A26  BuildingClass_Set_Rally_To_Point
+  - from 00443B1C  BuildingClass_Set_Rally_To_Point
+  - from 00443B67  BuildingClass_Set_Rally_To_Point
+  - from 00443B77  BuildingClass_Set_Rally_To_Point
+  - from 0048CA48  sub_48C8B0
+    func sub_48C8B0 @ 0048C8B0..0048CC82 
+      0048C8B0  mov     eax, dword_A8EDA0
+      0048C8B5  sub     esp, 158h
+      0048C8BB  push    ebp
+      0048C8BC  xor     ebp, ebp
+      0048C8BE  cmp     eax, ebp
+      0048C8C0  jz      loc_48CC7A
+      0048C8C6  cmp     Session, ebp
+      0048C8CC  jz      short loc_48C918
+      0048C8CE  mov     eax, HouseClass_PlayerPtr
+      0048C8D3  mov     cl, [eax+1F8h]
+      0048C8D9  test    cl, cl
+      0048C8DB  jnz     loc_48C98A
+      0048C8E1  mov     cl, [eax+1F7h]
+      0048C8E7  test    cl, cl
+      0048C8E9  jnz     loc_48C98A
+      0048C8EF  mov     cl, [eax+1F6h]
+      0048C8F5  test    cl, cl
+      0048C8F7  jnz     loc_48C98A
+      0048C8FD  mov     cl, byte_822CFC
+      0048C903  test    cl, cl
+      0048C905  jnz     short loc_48C918
+      0048C907  mov     cl, [eax+1F5h]
+      0048C90D  test    cl, cl
+      0048C90F  jz      short loc_48C98A
+      0048C911  mov     byte_822CFC, 1
+      0048C918  call    ScenarioClass_Pause
+      0048C91D  mov     ecx, WWMouse
+      0048C923  mov     eax, [ecx]
+      0048C925  call    dword ptr [eax+14h]
+      0048C928  mov     ecx, WWMouse
+      0048C92E  mov     edx, [ecx]
+      0048C930  call    dword ptr [edx+28h]
+      0048C933  test    eax, eax
+      0048C935  jz      short loc_48C951
+      0048C937  mov     ecx, WWMouse
+      0048C93D  mov     eax, [ecx]
+      0048C93F  call    dword ptr [eax+10h]
+      0048C942  mov     ecx, WWMouse
+      0048C948  mov     edx, [ecx]
+      0048C94A  call    dword ptr [edx+28h]
+      0048C94D  test    eax, eax
+      0048C94F  jnz     short loc_48C937
+      0048C951  mov     eax, dword_A8EDA0
+      0048C956  push    esi
+      0048C957  cmp     eax, ebp
+      0048C959  push    edi
+      0048C95A  jz      loc_48CC37
+      0048C960  lea     ecx, [eax-1]; switch 9 cases
+      0048C963  cmp     ecx, 8
+      0048C966  ja      short def_48C968; default
+      0048C968  jmp     ds:jpt_48C968[ecx*4]; switch jump
+      0048C96F  mov     ecx, Scenario; case 0x9
+      0048C975  call    sub_65F520
+      0048C97A  mov     eax, dword_A8EDA0
+      0048C97F  cmp     eax, 9
+      0048C982  jz      def_48CA2D; default
+      0048C988  jmp     short def_48C968; default
+      0048C98A  mov     dword_A8EDA0, ebp
+      0048C990  pop     ebp
+      0048C991  add     esp, 158h
+      0048C997  retn
+      0048C998  mov     ecx, offset Map; case 0x8
+      0048C99D  call    sub_6586D0
+      0048C9A2  mov     eax, dword_A8EDA0
+      0048C9A7  cmp     eax, 8
+      0048C9AA  jz      def_48CA2D; default
+      0048C9B0  cmp     eax, ebp; default
+      0048C9B2  jz      loc_48CC37
+      0048C9B8  jmp     short loc_48C960
+      0048C9BA  call    sub_4F10E0; case 0x1
+      0048C9BF  mov     eax, dword_A8EDA0
+      0048C9C4  cmp     eax, 1
+      0048C9C7  jmp     short loc_48C9AA
+      0048C9C9  lea     ecx, [esp+164h+var_154]; case 0x5
+      0048C9CD  call    sub_4E1D00
+      0048C9D2  mov     eax, dword_A8EDA0
+      0048C9D7  cmp     eax, 5
+      0048C9DA  jnz     short def_48C968; default
+      0048C9DC  mov     eax, 1
+      0048C9E1  mov     dword_A8EDA0, eax
+  - from 0048CA8C  sub_48C8B0
+  - from 0048CA9C  sub_48C8B0
+  - from 0048CAC9  sub_48C8B0
+  - from 0048CB0D  sub_48C8B0
+  - from 0048CB1D  sub_48C8B0
+  - from 0048CBC5  sub_48C8B0
+  - from 0048CC09  sub_48C8B0
+  - from 0048CC19  sub_48C8B0
+  - from 004ABB5A  W?Mouse_Left_Release$:DisplayClass$n(siipn$ObjectClass$$$ActionType$$i)v
+    func W?Mouse_Left_Release$:DisplayClass$n(siipn$ObjectClass$$$ActionType$$i)v @ 004AB9B0..004AC304 
+      004AB9B0  sub     esp, 7Ch
+      004AB9B3  push    ebx
+      004AB9B4  push    ebp
+      004AB9B5  push    esi
+      004AB9B6  mov     esi, [esp+88h+currentOccupant]
+      004AB9BD  test    esi, esi
+      004AB9BF  push    edi; a4
+      004AB9C0  mov     ebp, ecx
+      004AB9C2  jz      short loc_4AB9F1
+      004AB9C4  mov     al, byte ptr dword_A8ED5C
+      004AB9C9  test    al, al
+      004AB9CB  jz      short loc_4AB9F1
+      004AB9CD  mov     al, GameActive
+      004AB9D2  test    al, al
+      004AB9D4  jz      short loc_4AB9F1
+      004AB9D6  mov     al, Debug_Map
+      004AB9DB  test    al, al
+      004AB9DD  jnz     short loc_4AB9F1
+      004AB9DF  mov     eax, [esi]
+      004AB9E1  push    0
+      004AB9E3  push    0
+      004AB9E5  mov     ecx, esi
+      004AB9E7  call    dword ptr [eax+68h]
+      004AB9EA  cmp     eax, 5
+      004AB9ED  jnz     short loc_4AB9F1
+      004AB9EF  xor     esi, esi
+      004AB9F1  mov     eax, [ebp+11A4h]
+      004AB9F7  test    eax, eax
+      004AB9F9  jz      loc_4ABC94
+      004AB9FF  mov     ecx, [ebp+11A8h]
+      004ABA05  mov     edx, [ecx]
+      004ABA07  call    dword ptr [edx+2Ch]
+      004ABA0A  mov     ebx, [esp+8Ch+Action]
+      004ABA11  cmp     eax, 7
+      004ABA14  jnz     short loc_4ABA64
+      004ABA16  mov     ax, [ebx]
+      004ABA19  mov     cx, [ebp+MapClass.anonymous_46.Y]
+      004ABA20  add     ax, [ebp+MapClass.anonymous_46.X]
+      004ABA27  add     cx, [ebx+2]
+      004ABA2B  mov     [esp+8Ch+loc.X], ax
+      004ABA30  mov     [esp+8Ch+loc.Y], cx
+      004ABA35  mov     edx, dword ptr [esp+8Ch+loc.X]
+      004ABA39  mov     ecx, [ebp+MapClass.FoundationData]
+      004ABA3F  lea     eax, [esp+8Ch+coords]
+      004ABA43  mov     dword ptr [esp+8Ch+coords.X], edx
+      004ABA47  mov     edx, [ebp+MapClass.PlacingDownType]
+      004ABA4D  push    eax; coords
+      004ABA4E  mov     eax, [ebp+MapClass.PlacingDownObject]
+      004ABA54  push    ecx; FoundationStart
+      004ABA55  push    edx; idxHouse
+      004ABA56  push    eax; a1
+      004ABA57  mov     ecx, ebp; this
+      004ABA59  call    DisplayClass::Passes_Proximity_Check
+      004ABA5E  mov     [ebp+MapClass.PlacingDown_CanDoHere1], al
+      004ABA64  mov     ecx, [ebp+MapClass.PlacingDownObject]
+      004ABA6A  mov     edx, [ecx]
+      004ABA6C  call    dword ptr [edx+2Ch]
+      004ABA6F  cmp     eax, 7
+      004ABA72  jnz     short loc_4ABAA4
+      004ABA74  test    esi, esi
+      004ABA76  jz      short loc_4ABAA4
+      004ABA78  mov     eax, [esi]
+      004ABA7A  mov     ecx, esi
+      004ABA7C  call    dword ptr [eax+2Ch]
+      004ABA7F  cmp     eax, 6
+      004ABA82  jnz     short loc_4ABAA4
+      004ABA84  mov     ecx, HouseClass_PlayerPtr
+      004ABA8A  mov     edx, [ebp+MapClass.PlacingDownObject]
+      004ABA90  push    ecx; a3
+      004ABA91  push    edx; a2
+      004ABA92  mov     ecx, esi; this
+      004ABA94  call    BuildingClass_CanReceiveUpgrade
+      004ABA99  test    al, al
+      004ABA9B  jz      short loc_4ABAA4
+      004ABA9D  mov     [ebp+MapClass.PlacingDown_CanDoHere1], 1
+      004ABAA4  mov     al, [ebp+MapClass.PlacingDown_CanDoHere1]
+      004ABAAA  test    al, al
+      004ABAAC  jz      loc_4ABC76
+      004ABAB2  mov     al, [ebp+MapClass.PlacingDown_CanDoHere2]
+      004ABAB8  test    al, al
+  - from 004ABB9E  W?Mouse_Left_Release$:DisplayClass$n(siipn$ObjectClass$$$ActionType$$i)v
+  - from 004ABBAE  W?Mouse_Left_Release$:DisplayClass$n(siipn$ObjectClass$$$ActionType$$i)v
+  - from 004AC18C  W?Mouse_Left_Release$:DisplayClass$n(siipn$ObjectClass$$$ActionType$$i)v
+  - from 004AC1B7  W?Mouse_Left_Release$:DisplayClass$n(siipn$ObjectClass$$$ActionType$$i)v
+  - from 004AC1F7  W?Mouse_Left_Release$:DisplayClass$n(siipn$ObjectClass$$$ActionType$$i)v
+  - from 004AC207  W?Mouse_Left_Release$:DisplayClass$n(siipn$ObjectClass$$$ActionType$$i)v
+  - from 004AC23F  W?Mouse_Left_Release$:DisplayClass$n(siipn$ObjectClass$$$ActionType$$i)v
+  - from 004AC27F  W?Mouse_Left_Release$:DisplayClass$n(siipn$ObjectClass$$$ActionType$$i)v
+  - from 004AC28F  W?Mouse_Left_Release$:DisplayClass$n(siipn$ObjectClass$$$ActionType$$i)v
+  - from 004C7D5B  Networking_RespondToEvent
+    func Networking_RespondToEvent @ 004C6CB0..004C8114 
+      004C6CB0  sub     esp, 370h
+      004C6CB6  xor     eax, eax
+      004C6CB8  push    ebx
+      004C6CB9  push    ebp
+      004C6CBA  push    esi
+      004C6CBB  mov     esi, ecx
+      004C6CBD  mov     ecx, vec_Houses.Vector
+      004C6CC3  push    edi
+      004C6CC4  movsx   ebx, byte ptr [esi+2]
+      004C6CC8  mov     al, [esi]
+      004C6CCA  mov     edi, [ecx+ebx*4]
+      004C6CCD  dec     eax; switch 46 cases
+      004C6CCE  cmp     eax, 2Dh; switch 46 cases
+      004C6CD1  ja      HandleEvent_ev_PACKETTIMING; default
+      004C6CD7  jmp     ds:jpt_4C6CD7[eax*4]; switch jump
+      004C6CDE  mov     ecx, esi; case 0x29
+      004C6CE0  call    Networking_RespondTo_PlanningEvent
+      004C6CE5  pop     edi
+      004C6CE6  pop     esi
+      004C6CE7  pop     ebp
+      004C6CE8  pop     ebx
+      004C6CE9  add     esp, 370h
+      004C6CEF  retn
+      004C6CF0  lea     ecx, [esi+7]; case 0x0
+      004C6CF3  call    sub_6E7A80
+      004C6CF8  mov     esi, eax
+      004C6CFA  xor     edx, edx
+      004C6CFC  mov     ecx, esi
+      004C6CFE  call    sub_6386E0
+      004C6D03  test    esi, esi
+      004C6D05  jz      HandleEvent_ev_PACKETTIMING; default
+      004C6D0B  mov     al, [esi+_TechnoClass.t.r.m.o.Alive]
+      004C6D11  test    al, al
+      004C6D13  jz      HandleEvent_ev_PACKETTIMING; default
+      004C6D19  mov     al, [esi+_TechnoClass.t.r.m.o.InLimbo]
+      004C6D1F  test    al, al
+      004C6D21  jnz     HandleEvent_ev_PACKETTIMING; default
+      004C6D27  mov     eax, [esi+BuildingClass.BuildingType]
+      004C6D2D  mov     cl, [eax+BuildingTypeClass.FirestormWall]
+      004C6D33  test    cl, cl
+      004C6D35  jnz     HandleEvent_ev_PACKETTIMING; default
+      004C6D3B  mov     ecx, esi
+      004C6D3D  call    BuildingClass_GoOnline
+      004C6D42  pop     edi
+      004C6D43  pop     esi
+      004C6D44  pop     ebp
+      004C6D45  pop     ebx
+      004C6D46  add     esp, 370h
+      004C6D4C  retn
+      004C6D4D  lea     ecx, [esi+7]; case 0x1
+      004C6D50  call    sub_6E7A80
+      004C6D55  mov     esi, eax
+      004C6D57  xor     edx, edx
+      004C6D59  mov     ecx, esi
+      004C6D5B  call    sub_6386E0
+      004C6D60  test    esi, esi
+      004C6D62  jz      HandleEvent_ev_PACKETTIMING; default
+      004C6D68  mov     al, [esi+_TechnoClass.t.r.m.o.Alive]
+      004C6D6E  test    al, al
+      004C6D70  jz      HandleEvent_ev_PACKETTIMING; default
+      004C6D76  mov     al, [esi+_TechnoClass.t.r.m.o.InLimbo]
+      004C6D7C  test    al, al
+      004C6D7E  jnz     HandleEvent_ev_PACKETTIMING; default
+      004C6D84  mov     ecx, [esi+BuildingClass.BuildingType]
+      004C6D8A  mov     al, [ecx+BuildingTypeClass.FirestormWall]
+      004C6D90  test    al, al
+      004C6D92  jnz     HandleEvent_ev_PACKETTIMING; default
+      004C6D98  mov     ecx, esi; this
+      004C6D9A  call    BuildingClass_GoOffline
+      004C6D9F  pop     edi
+      004C6DA0  pop     esi
+      004C6DA1  pop     ebp
+      004C6DA2  pop     ebx
+      004C6DA3  add     esp, 370h
+      004C6DA9  retn
+      004C6DAA  lea     ecx, [esi+7]; case 0x1D
+      004C6DAD  call    TargetClass::As_Techno
+      004C6DB2  mov     edi, eax
+      004C6DB4  xor     edx, edx
+      004C6DB6  mov     ecx, edi
+  - from 004C7DA8  Networking_RespondToEvent
+  - from 004C7DAE  Networking_RespondToEvent
+  - from 004D7633  FootClass_ClickedMission
+    func FootClass_ClickedMission @ 004D74E0..004D7CCF 
+      004D74E0  sub     esp, 0F8h
+      004D74E6  push    ebx
+      004D74E7  push    ebp
+      004D74E8  push    esi
+      004D74E9  mov     esi, ecx
+      004D74EB  push    edi
+      004D74EC  mov     al, [esi+298h]
+      004D74F2  test    al, al
+      004D74F4  jnz     loc_4D77EC; jumptable 004D753C cases 51,54
+      004D74FA  mov     eax, [esi+2A8h]
+      004D7500  test    eax, eax
+      004D7502  jz      short loc_4D751A
+      004D7504  mov     eax, [esi]
+      004D7506  call    dword ptr [eax+84h]
+      004D750C  mov     cl, [eax+_TechnoTypeClass.t.Pushy]
+      004D7512  test    cl, cl
+      004D7514  jz      loc_4D77EC; jumptable 004D753C cases 51,54
+      004D751A  mov     ebp, [esp+108h+act]
+      004D7521  lea     eax, [ebp-1]; switch 71 cases
+      004D7524  cmp     eax, 46h
+      004D7527  ja      def_4D753C; jumptable 004D753C default case, cases 6-8,10,12-15,17-25,27-50,57,58,60,61,65-70
+      004D752D  mov     ebx, [esp+108h+this]
+      004D7534  xor     ecx, ecx
+      004D7536  mov     cl, ds:byte_4D7D04[eax]
+      004D753C  jmp     ds:jpt_4D753C[ecx*4]; switch jump
+      004D7543  mov     edx, [esi]; jumptable 004D753C case 26
+      004D7545  mov     ecx, esi
+      004D7547  call    dword ptr [edx+9Ch]
+      004D754D  test    al, al
+      004D754F  jz      loc_4D77EC; jumptable 004D753C cases 51,54
+      004D7555  mov     eax, [esi]
+      004D7557  mov     ecx, esi
+      004D7559  call    dword ptr [eax+0A0h]
+      004D755F  test    al, al
+      004D7561  jz      loc_4D77EC; jumptable 004D753C cases 51,54
+      004D7567  mov     edx, [esi]
+      004D7569  mov     ecx, esi
+      004D756B  call    dword ptr [edx+2Ch]
+      004D756E  mov     edi, [esp+108h+this]
+      004D7575  cmp     eax, 0Fh
+      004D7578  jnz     short loc_4D758A
+      004D757A  mov     eax, [esi+6C0h]
+      004D7580  mov     cl, [eax+InfantryTypeClass.C4]
+      004D7586  test    cl, cl
+      004D7588  jnz     short loc_4D7597
+      004D758A  push    C4; idxAbility
+      004D758C  mov     ecx, esi; this
+      004D758E  call    TechnoClass_HasAbility; C4
+      004D7593  test    al, al
+      004D7595  jz      short loc_4D75D3
+      004D7597  mov     edx, [edi]
+      004D7599  mov     ecx, edi
+      004D759B  call    dword ptr [edx+2Ch]
+      004D759E  cmp     eax, 6
+      004D75A1  jnz     short loc_4D75D3
+      004D75A3  mov     ecx, [esi+21Ch]; this
+      004D75A9  push    edi; a2
+      004D75AA  call    HouseClass::Is_Ally
+      004D75AF  test    al, al
+      004D75B1  jnz     short loc_4D75D3
+      004D75B3  mov     eax, [esi]
+      004D75B5  push    0
+      004D75B7  push    edi
+      004D75B8  push    0
+      004D75BA  push    11h
+      004D75BC  mov     ecx, esi
+      004D75BE  call    dword ptr [eax+378h]
+      004D75C4  mov     al, 1
+      004D75C6  pop     edi
+      004D75C7  pop     esi
+      004D75C8  pop     ebp
+      004D75C9  pop     ebx
+      004D75CA  add     esp, 0F8h
+      004D75D0  retn    0Ch
+      004D75D3  mov     edx, [esi]
+      004D75D5  push    0
+      004D75D7  push    0
+      004D75D9  push    edi
+      004D75DA  push    0Bh
+      004D75DC  jmp     loc_4D7CB8
+  - from 004D767B  FootClass_ClickedMission
+  - from 004D7685  FootClass_ClickedMission
+  - from 004E1E59  sub_4E1DE0
+    func sub_4E1DE0 @ 004E1DE0..004E1FDF 
+      004E1DE0  sub     esp, 70h
+      004E1DE3  push    ebx
+      004E1DE4  push    ebp
+      004E1DE5  mov     ebp, ecx
+      004E1DE7  push    esi
+      004E1DE8  push    edi
+      004E1DE9  mov     edi, ds:GetDlgItem
+      004E1DEF  mov     eax, [ebp+0]
+      004E1DF2  push    529h; nIDDlgItem
+      004E1DF7  push    eax; hDlg
+      004E1DF8  call    edi ; GetDlgItem
+      004E1DFA  mov     ebx, ds:SendMessageA
+      004E1E00  test    eax, eax
+      004E1E02  jz      loc_4E1EC0
+      004E1E08  push    0; lParam
+      004E1E0A  push    0; wParam
+      004E1E0C  push    400h; Msg
+      004E1E11  push    eax; hWnd
+      004E1E12  call    ebx ; SendMessageA
+      004E1E14  mov     ecx, 6
+      004E1E19  sub     ecx, eax
+      004E1E1B  mov     eax, Options
+      004E1E20  cmp     eax, ecx
+      004E1E22  jz      loc_4E1EC0
+      004E1E28  cmp     GameActive, 1
+      004E1E2F  jnz     loc_4E1EBA
+      004E1E35  mov     eax, Session
+      004E1E3A  test    eax, eax
+      004E1E3C  jz      short loc_4E1EBA
+      004E1E3E  cmp     eax, 5
+      004E1E41  jz      short loc_4E1EBA
+      004E1E43  push    ecx
+      004E1E44  mov     ecx, HouseClass_PlayerPtr
+      004E1E4A  push    0Dh
+      004E1E4C  mov     edx, [ecx+30h]
+      004E1E4F  lea     ecx, [esp+88h+var_70]
+      004E1E53  push    edx
+      004E1E54  call    sub_4C6720
+      004E1E59  cmp     LastEventIdx, 80h ; '€'
+      004E1E63  jge     short loc_4E1EC0
+      004E1E65  mov     ecx, Networking_FirstUnusedPacket
+      004E1E6B  mov     esi, eax
+      004E1E6D  lea     edx, [ecx+ecx*8]
+      004E1E70  lea     ecx, [ecx+edx*4]
+      004E1E73  lea     edi, NetworkPackets0.ev.EventKind[ecx+ecx*2]
+      004E1E7A  mov     ecx, 1Bh
+      004E1E7F  rep movsd
+      004E1E81  movsw
+      004E1E83  movsb
+      004E1E84  call    ds:__imp_timeGetTime; Get system time, in milliseconds
+      004E1E8A  mov     ecx, Networking_FirstUnusedPacket
+      004E1E90  mov     edi, ds:GetDlgItem
+      004E1E96  mov     Networking_Timestamps[ecx*4], eax
+      004E1E9D  mov     edx, Networking_FirstUnusedPacket
+      004E1EA3  mov     eax, LastEventIdx
+      004E1EA8  inc     edx
+      004E1EA9  and     edx, 7Fh
+      004E1EAC  inc     eax
+      004E1EAD  mov     Networking_FirstUnusedPacket, edx
+      004E1EB3  mov     LastEventIdx, eax
+      004E1EB8  jmp     short loc_4E1EC0
+      004E1EBA  mov     Options, ecx
+      004E1EC0  mov     eax, [ebp+0]
+      004E1EC3  push    52Ah; nIDDlgItem
+      004E1EC8  push    eax; hDlg
+      004E1EC9  call    edi ; GetDlgItem
+      004E1ECB  test    eax, eax
+      004E1ECD  jz      short loc_4E1EE8
+      004E1ECF  push    0; lParam
+      004E1ED1  push    0; wParam
+      004E1ED3  push    400h; Msg
+      004E1ED8  push    eax; hWnd
+      004E1ED9  call    ebx ; SendMessageA
+      004E1EDB  mov     ecx, 6
+      004E1EE0  sub     ecx, eax
+      004E1EE2  mov     dword_A8EB70, ecx
+      004E1EE8  mov     edx, [ebp+0]
+      004E1EEB  push    52Bh; nIDDlgItem
+      004E1EF0  push    edx; hDlg
+      004E1EF1  call    edi ; GetDlgItem
+  - from 004E1EA3  sub_4E1DE0
+  - from 004E1EB3  sub_4E1DE0
+  - from 004E7EB4  InitList_1132
+    func InitList_1132 @ 004E7EA0..004E7EC7 
+      004E7EA0  mov     eax, offset NetworkPackets0
+      004E7EA5  mov     ecx, 80h ; '€'
+      004E7EAA  xor     edx, edx
+      004E7EAC  mov     [eax], dl
+      004E7EAE  add     eax, 6Fh ; 'o'
+      004E7EB1  dec     ecx
+      004E7EB2  jnz     short loc_4E7EAC
+      004E7EB4  mov     LastEventIdx, edx
+      004E7EBA  mov     dword_A802CC, edx
+      004E7EC0  mov     Networking_FirstUnusedPacket, edx
+      004E7EC6  retn
+  - from 004F13EB  sub_4F11B0
+    func sub_4F11B0 @ 004F11B0..004F1700 
+      004F11B0  sub     esp, 614h
+      004F11B6  push    ebx
+      004F11B7  mov     ebx, [esp+618h+arg_4]
+      004F11BE  push    ebp
+      004F11BF  mov     ebp, [esp+61Ch+arg_C]
+      004F11C6  push    esi
+      004F11C7  mov     esi, [esp+620h+hDlg]
+      004F11CE  push    edi
+      004F11CF  mov     edi, [esp+624h+arg_8]
+      004F11D6  push    ebp; int
+      004F11D7  push    edi; int
+      004F11D8  mov     edx, ebx
+      004F11DA  mov     ecx, esi; hWnd
+      004F11DC  call    Dialog_HandleGeneralMessages
+      004F11E1  test    eax, eax
+      004F11E3  jnz     loc_4F16F3
+      004F11E9  sub     ebx, 111h
+      004F11EF  jz      loc_4F12A3
+      004F11F5  sub     ebx, 3
+      004F11F8  jz      short loc_4F121C
+      004F11FA  sub     ebx, 383h
+      004F1200  jnz     loc_4F16F1
+      004F1206  mov     ecx, esi; hDlg
+      004F1208  call    sub_4F1720
+      004F120D  pop     edi
+      004F120E  pop     esi
+      004F120F  pop     ebp
+      004F1210  xor     eax, eax
+      004F1212  pop     ebx
+      004F1213  add     esp, 614h
+      004F1219  retn    10h
+      004F121C  cmp     di, 5
+      004F1220  jnz     loc_4F16F1
+      004F1226  mov     ebx, ds:GetDlgItem
+      004F122C  push    529h; nIDDlgItem
+      004F1231  push    esi; hDlg
+      004F1232  shr     edi, 10h
+      004F1235  call    ebx ; GetDlgItem
+      004F1237  cmp     ebp, eax
+      004F1239  jnz     short loc_4F1249
+      004F123B  mov     edi, off_822730[edi*4]; "TXT_SLOWEST"
+      004F1242  push    671h
+      004F1247  jmp     short loc_4F1265
+      004F1249  push    3EFh; nIDDlgItem
+      004F124E  push    esi; hDlg
+      004F124F  call    ebx ; GetDlgItem
+      004F1251  cmp     ebp, eax
+      004F1253  jnz     loc_4F16F1
+      004F1259  mov     edi, off_823FD4[edi*4]; "TXT_WORST_CONNECTION"
+      004F1260  push    672h; nIDDlgItem
+      004F1265  push    esi; hDlg
+      004F1266  call    ebx ; GetDlgItem
+      004F1268  mov     esi, eax
+      004F126A  test    esi, esi
+      004F126C  jz      loc_4F16F1
+      004F1272  push    0C4h; int
+      004F1277  push    offset aDRa2mdpostGopt; "D:\\ra2mdpost\\GOptions.CPP"
+      004F127C  xor     edx, edx; a2
+      004F127E  mov     ecx, edi; Format
+      004F1280  call    Get_String; ecx =
+      004F1285  push    eax; lParam
+      004F1286  push    0; wParam
+      004F1288  push    4B2h; Msg
+      004F128D  push    esi; hWnd
+      004F128E  call    ds:SendMessageA
+      004F1294  pop     edi
+      004F1295  pop     esi
+      004F1296  pop     ebp
+      004F1297  xor     eax, eax
+      004F1299  pop     ebx
+      004F129A  add     esp, 614h
+      004F12A0  retn    10h
+      004F12A3  mov     ebx, edi
+      004F12A5  push    8; nIndex
+      004F12A7  push    esi; hWnd
+      004F12A8  shr     ebx, 10h
+      004F12AB  call    ds:GetWindowLongA
+      004F12B1  mov     ebp, eax
+      004F12B3  mov     al, byte_A8EDF8
+      004F12B8  test    al, 1
+  - from 004F15CC  sub_4F11B0
+  - from 004F1675  sub_4F11B0
+  - from 0052D9F6  W?Select_Game$n(i)i
+    func W?Select_Game$n(i)i @ 0052D9A0..0052EB58 
+      0052D9A0  sub     esp, 110h
+      0052D9A6  mov     ecx, offset Theme
+      0052D9AB  push    ebx
+      0052D9AC  push    ebp
+      0052D9AD  push    esi
+      0052D9AE  push    edi
+      0052D9AF  push    offset aIntro_0; "INTRO"
+      0052D9B4  call    ThemeClass::From_Name
+      0052D9B9  mov     ecx, offset Theme
+      0052D9BE  push    eax
+      0052D9BF  call    ThemeClass::Play_Song
+      0052D9C4  xor     ebx, ebx
+      0052D9C6  or      ebp, 0FFFFFFFFh
+      0052D9C9  mov     edx, Scenario
+      0052D9CF  xor     eax, eax
+      0052D9D1  add     edx, ScenarioClass.MissionTimer
+      0052D9D7  mov     GameActive, 1
+      0052D9DE  mov     HouseClass_PlayerPtr, ebx
+      0052D9E4  mov     dword_8B41F8, ebx
+      0052D9EA  mov     dword_8B41FC, ebx
+      0052D9F0  mov     dword_8B4200, ebx
+      0052D9F6  mov     LastEventIdx, ebx
+      0052D9FC  mov     dword_A802CC, ebx
+      0052DA02  mov     Networking_FirstUnusedPacket, ebx
+      0052DA08  mov     Frame, ebx
+      0052DA0E  mov     [edx], eax
+      0052DA10  mov     eax, [esp+120h+var_FC]
+      0052DA14  xor     ecx, ecx
+      0052DA16  mov     [esp+120h+var_10D], 0
+      0052DA1B  mov     [edx+4], eax
+      0052DA1E  mov     [esp+120h+var_10E], 1
+      0052DA23  mov     [edx+8], ecx
+      0052DA26  mov     ecx, Scenario
+      0052DA2C  lea     eax, [ecx+ScenarioClass.MissionTimer]
+      0052DA32  mov     ecx, [ecx+ScenarioClass.MissionTimer.TimeStart]
+      0052DA38  cmp     ecx, ebp
+      0052DA3A  jz      short loc_52DA56
+      0052DA3C  mov     esi, Frame
+      0052DA42  mov     edx, [eax+8]
+      0052DA45  sub     esi, ecx
+      0052DA47  cmp     esi, edx
+      0052DA49  jge     short loc_52DA4F
+      0052DA4B  sub     edx, esi
+      0052DA4D  jmp     short loc_52DA51
+      0052DA4F  xor     edx, edx
+      0052DA51  mov     [eax+8], edx
+      0052DA54  mov     [eax], ebp
+      0052DA56  mov     edx, Scenario
+      0052DA5C  mov     edi, 1
+      0052DA61  push    ebx
+      0052DA62  mov     ecx, offset Map
+      0052DA67  mov     [edx+ScenarioClass.DifficultyNonHuman], edi
+      0052DA6D  mov     eax, Scenario
+      0052DA72  mov     [eax+ScenarioClass.Difficulty], edi
+      0052DA78  mov     byte_A83D49, 0
+      0052DA7F  mov     byte_A8ECD0, 0
+      0052DA86  mov     byte_8B41C0, 0
+      0052DA8D  mov     byte_A83D48, 0
+      0052DA94  mov     Player_MuteSWLaunches, ebx
+      0052DA9A  call    DisplayClass::Set_Cursor_Shape
+      0052DA9F  mov     dword_88098C, ebx
+      0052DAA5  mov     ptr_BuildingTypeClass_ToPlace, ebx
+      0052DAAB  mov     dword_880994, ebp; idx of HouseClass
+      0052DAB1  mov     dword_A8B560, ebx
+      0052DAB7  mov     dword_A8B564, ebx
+      0052DABD  mov     const_int_30, 30
+      0052DAC7  mov     dword_A8B1F8, ebx
+      0052DACD  mov     dword_A8B1DC, ebx
+      0052DAD3  xor     eax, eax
+      0052DAD5  mov     ecx, dword_A8D588
+      0052DADB  lea     edx, [eax+ecx]
+      0052DADE  add     eax, 1Ch
+      0052DAE1  cmp     eax, 70h ; 'p'
+      0052DAE4  mov     dword ptr byte_A8D23C[edx*4], ebp
+      0052DAEB  jl      short loc_52DAD5
+      0052DAED  push    ebx; a3
+      0052DAEE  push    ebx; a2
+      0052DAEF  mov     ecx, offset Map; this
+      0052DAF4  call    sub_5BDA80
+      0052DAF9  mov     ecx, CCToolTip
+  - from 0055CFFE  sub_55CFD0
+    func sub_55CFD0 @ 0055CFD0..0055D35A 
+      0055CFD0  mov     eax, Frame
+      0055CFD5  sub     esp, 7Ch
+      0055CFD8  test    eax, 3FFh
+      0055CFDD  push    ebx
+      0055CFDE  push    esi
+      0055CFDF  jnz     short loc_55D059
+      0055CFE1  call    CopyProtection_CheckProtectedData
+      0055CFE6  test    al, al
+      0055CFE8  jnz     short loc_55D059
+      0055CFEA  mov     eax, HouseClass_PlayerPtr
+      0055CFEF  push    ev_DESTRUCT; eventKind
+      0055CFF1  mov     ecx, [eax+30h]
+      0055CFF4  push    ecx; PlayerNumber
+      0055CFF5  lea     ecx, [esp+8Ch+var_70]; this
+      0055CFF9  call    Networking_AddEvent_Noopt
+      0055CFFE  cmp     LastEventIdx, 80h ; '€'
+      0055D008  jge     short loc_55D059
+      0055D00A  mov     ecx, Networking_FirstUnusedPacket
+      0055D010  push    edi
+      0055D011  mov     esi, eax
+      0055D013  lea     edx, [ecx+ecx*8]
+      0055D016  lea     ecx, [ecx+edx*4]
+      0055D019  lea     edi, NetworkPackets0.ev.EventKind[ecx+ecx*2]
+      0055D020  mov     ecx, 1Bh
+      0055D025  rep movsd
+      0055D027  movsw
+      0055D029  movsb
+      0055D02A  call    ds:__imp_timeGetTime; Get system time, in milliseconds
+      0055D030  mov     ecx, Networking_FirstUnusedPacket
+      0055D036  pop     edi
+      0055D037  mov     Networking_Timestamps[ecx*4], eax
+      0055D03E  mov     edx, Networking_FirstUnusedPacket
+      0055D044  mov     eax, LastEventIdx
+      0055D049  inc     edx
+      0055D04A  and     edx, 7Fh
+      0055D04D  inc     eax
+      0055D04E  mov     Networking_FirstUnusedPacket, edx
+      0055D054  mov     LastEventIdx, eax
+      0055D059  mov     al, byte_A83D49
+      0055D05E  xor     ebx, ebx
+      0055D060  cmp     al, bl
+      0055D062  jnz     short loc_55D080
+      0055D064  cmp     byte_A8ECD0, bl
+      0055D06A  jnz     short loc_55D080
+      0055D06C  cmp     byte_8B41C0, bl
+      0055D072  jnz     short loc_55D080
+      0055D074  cmp     byte_A83D48, bl
+      0055D07A  jz      loc_55D347
+      0055D080  inc     dword_A8DAB4
+      0055D086  call    sub_684240
+      0055D08B  mov     al, byte_A83D49
+      0055D090  cmp     al, bl
+      0055D092  jnz     short loc_55D0A0
+      0055D094  cmp     byte_A8ECD0, bl
+      0055D09A  jz      loc_55D20C
+      0055D0A0  mov     ecx, CCToolTip
+      0055D0A6  cmp     ecx, ebx
+      0055D0A8  jz      short loc_55D0B5
+      0055D0AA  push    ebx
+      0055D0AB  call    ToolTipManager_Toggle_State
+      0055D0B0  mov     al, byte_A83D49
+      0055D0B5  cmp     al, bl
+      0055D0B7  jnz     short loc_55D0C5
+      0055D0B9  cmp     byte_A8ECD0, bl
+      0055D0BF  jz      loc_55D20C
+      0055D0C5  mov     ecx, GlobalMPGameModeClass
+      0055D0CB  mov     edx, Session
+      0055D0D1  cmp     ecx, ebx
+      0055D0D3  jz      short loc_55D0F3
+      0055D0D5  cmp     edx, 3
+      0055D0D8  jz      short loc_55D0DF
+      0055D0DA  cmp     edx, 4
+      0055D0DD  jnz     short loc_55D0F3
+      0055D0DF  mov     edx, [ecx]
+      0055D0E1  push    eax
+      0055D0E2  call    dword ptr [edx+0A0h]
+      0055D0E8  mov     al, byte_A83D49
+      0055D0ED  mov     edx, Session
+      0055D0F3  cmp     al, bl
+      0055D0F5  jz      loc_55D17D
+  - from 0055D044  sub_55CFD0
+  - from 0055D054  sub_55CFD0
+  - from 005C4BD1  MPCoop_funcAC
+    func MPCoop_funcAC @ 005C46E0..005C4C69 
+      005C46E0  sub     esp, 30h
+      005C46E3  mov     eax, dword_84A234
+      005C46E8  push    ebx
+      005C46E9  push    ebp
+      005C46EA  mov     ebp, ecx
+      005C46EC  push    esi
+      005C46ED  xor     ebx, ebx
+      005C46EF  push    edi
+      005C46F0  mov     ecx, offset dword_B73E40
+      005C46F5  mov     a4, ebx
+      005C46FB  mov     dword_B77D6C, eax
+      005C4700  mov     dword_B779C4, ebx
+      005C4706  mov     byte_A8F900, bl
+      005C470C  call    sub_7B5400
+      005C4711  mov     edi, eax
+      005C4713  or      ecx, 0FFFFFFFFh
+      005C4716  xor     eax, eax
+      005C4718  repne scasb
+      005C471A  not     ecx
+      005C471C  sub     edi, ecx
+      005C471E  mov     eax, NameNodeTypes.data
+      005C4723  mov     edx, ecx
+      005C4725  mov     esi, edi
+      005C4727  mov     edi, offset byte_B77830
+      005C472C  shr     ecx, 2
+      005C472F  rep movsd
+      005C4731  mov     ecx, edx
+      005C4733  and     ecx, 3
+      005C4736  rep movsb
+      005C4738  mov     ecx, [ebp+54h]
+      005C473B  mov     edx, [eax+ecx*4]
+      005C473E  add     edx, 28h ; '('
+      005C4741  mov     ecx, [edx]
+      005C4743  mov     stru_A8BB1C.field_0, ecx
+      005C4749  mov     ecx, [edx+4]
+      005C474C  mov     stru_A8BB1C.field_4, ecx
+      005C4752  mov     edx, [edx+8]
+      005C4755  mov     dword ptr stru_A8BB1C.field_8, edx
+      005C475B  mov     ecx, [ebp+54h]
+      005C475E  mov     edx, [eax+ecx*4]
+      005C4761  push    edx; wchar_t *
+      005C4762  push    offset GameHostHouseName; wchar_t *
+      005C4767  call    _wcscpy
+      005C476C  mov     ecx, UDP
+      005C4772  mov     dword_A8E2AC, 0FFFFFFFFh
+      005C477C  mov     eax, [ebp+70h]
+      005C477F  add     esp, 8
+      005C4782  mov     dword_A8B3AC, eax
+      005C4787  mov     edx, [ecx]
+      005C4789  call    dword ptr [edx+30h]
+      005C478C  mov     ecx, dword ptr axxx__0; "xxx."
+      005C4792  mov     eax, dword ptr axxx_; "xxx."
+      005C4797  mov     edx, dword ptr axxx__1; "xxx."
+      005C479D  mov     [esp+40h+var_1C], ecx
+      005C47A1  xor     ecx, ecx
+      005C47A3  mov     [esp+40h+var_20], eax
+      005C47A7  mov     eax, dword ptr axxx; "xxx"
+      005C47AC  mov     [esp+40h+var_10], ecx
+      005C47B0  mov     [esp+40h+var_14], eax
+      005C47B4  mov     eax, NameNodeTypes.length
+      005C47B9  mov     [esp+40h+var_C], ecx
+      005C47BD  mov     esi, 1
+      005C47C2  mov     [esp+40h+var_8], ecx
+      005C47C6  cmp     eax, esi
+      005C47C8  mov     [esp+40h+var_18], edx
+      005C47CC  mov     [esp+40h+var_4], ecx
+      005C47D0  jle     short loc_5C4811
+      005C47D2  lea     edx, [esp+40h+var_30]
+      005C47D6  lea     eax, [esp+40h+var_28]
+      005C47DA  push    edx
+      005C47DB  mov     edx, NameNodeTypes.data
+      005C47E1  lea     ecx, [esp+44h+var_2C]
+      005C47E5  push    eax
+      005C47E6  push    ecx
+      005C47E7  mov     ecx, [edx+esi*4]
+      005C47EA  add     ecx, 28h ; '('
+      005C47ED  call    sub_53ED60
+      005C47F2  mov     edx, [esp+40h+var_30]
+      005C47F6  mov     ecx, UDP
+      005C47FC  push    edx
+  - from 005DA898  Game_PlayerLeftMP
+    func Game_PlayerLeftMP @ 005DA750..005DAB76 
+      005DA750  sub     esp, 120h
+      005DA756  mov     eax, vec_Houses.Vector
+      005DA75B  push    ebx
+      005DA75C  push    ebp
+      005DA75D  mov     ebp, ecx
+      005DA75F  push    esi
+      005DA760  mov     esi, edx
+      005DA762  mov     ebx, [eax+ebp*4]
+      005DA765  mov     al, byte_A8ED74
+      005DA76A  test    al, al
+      005DA76C  mov     [esp+12Ch+a2], ebp
+      005DA770  jz      short loc_5DA787
+      005DA772  lea     ecx, [ebx+1602Ah]
+      005DA778  push    ecx
+      005DA779  push    ebp
+      005DA77A  push    offset aDestroyingConn; "Destroying connection for house %d (%ls"...
+      005DA77F  call    WWDebugString; Destroying connection for house %d (%ls)
+      005DA784  add     esp, 0Ch
+      005DA787  test    ebx, ebx
+      005DA789  jz      loc_5DAB6C
+      005DA78F  mov     al, [ebx+1ECh]
+      005DA795  test    al, al
+      005DA797  jz      loc_5DAB6C
+      005DA79D  cmp     esi, 1
+      005DA7A0  mov     [esp+12Ch+Str], 0
+      005DA7A7  jnz     short loc_5DA7CE
+      005DA7A9  lea     edx, [ebx+1602Ah]
+      005DA7AF  mov     ecx, offset aTxt_connection; "TXT_CONNECTION_LOST"
+      005DA7B4  push    edx
+      005DA7B5  push    1D0h; int
+      005DA7BA  push    offset aDRa2mdpostNetd; "D:\\ra2mdpost\\NetDlg.CPP"
+      005DA7BF  xor     edx, edx; a2
+      005DA7C1  call    Get_String; ecx =
+      005DA7C6  push    eax
+      005DA7C7  lea     eax, [esp+134h+Str]
+      005DA7CB  push    eax
+      005DA7CC  jmp     short loc_5DA7F5
+      005DA7CE  test    esi, esi
+      005DA7D0  jnz     short loc_5DA7FD
+      005DA7D2  lea     ecx, [ebx+1602Ah]
+      005DA7D8  xor     edx, edx; a2
+      005DA7DA  push    ecx; Format
+      005DA7DB  push    1D2h; int
+      005DA7E0  push    offset aDRa2mdpostNetd; "D:\\ra2mdpost\\NetDlg.CPP"
+      005DA7E5  mov     ecx, offset aTxt_left_game; "TXT_LEFT_GAME"
+      005DA7EA  call    Get_String; ecx = TXT_LEFT_GAME
+      005DA7EF  lea     edx, [esp+130h+Str]
+      005DA7F3  push    eax; wchar_t *
+      005DA7F4  push    edx; wchar_t *
+      005DA7F5  call    _swprintf
+      005DA7FA  add     esp, 0Ch
+      005DA7FD  lea     eax, [esp+12Ch+Str]
+      005DA801  push    eax; wchar_t *
+      005DA802  call    _wcslen
+      005DA807  add     esp, 4
+      005DA80A  test    eax, eax
+      005DA80C  jz      short loc_5DA856
+      005DA80E  mov     ecx, RulesData
+      005DA814  push    0; int
+      005DA816  fld     qword ptr [ecx+14C0h]
+      005DA81C  fmul    ds:double_900; 900
+      005DA822  call    Float_To_Int_Floor
+      005DA827  mov     edx, [ebx+34h]
+      005DA82A  push    eax; char
+      005DA82B  push    4046h; int
+      005DA830  lea     ecx, [esp+138h+Str]
+      005DA834  mov     eax, [edx+0C0h]
+      005DA83A  push    eax; int
+      005DA83B  push    ecx; wchar_t *
+      005DA83C  push    0; int
+      005DA83E  push    0; wchar_t *
+      005DA840  mov     ecx, offset unk_A8BC60
+      005DA845  call    MessageListClass_PrintMessage
+      005DA84A  mov     ecx, offset Map; this
+      005DA84F  push    0; a2
+      005DA851  call    GScreen_FlagToRedraw
+      005DA856  push    edi
+      005DA857  push    ebp
+      005DA858  mov     ecx, offset IPXManager
+      005DA85D  call    sub_540F00
+  - from 005DA8E0  Game_PlayerLeftMP
+  - from 005DA8F0  Game_PlayerLeftMP
+  - from 00646EF5  W?Queue_Mission$n($TargetClass$$$MissionType$$ll)i
+    func W?Queue_Mission$n($TargetClass$$$MissionType$$ll)i @ 00646E90..00646F62 
+      00646E90  sub     esp, 70h
+      00646E93  xor     al, al
+      00646E95  push    esi
+      00646E96  push    edi
+      00646E97  mov     edi, [esp+78h+arg_0]
+      00646E9B  sub     esp, 8
+      00646E9E  mov     esi, esp
+      00646EA0  sub     esp, 8
+      00646EA3  mov     [esi], edi
+      00646EA5  mov     [esi+4], al
+      00646EA8  mov     eax, [esp+88h+arg_8]
+      00646EAF  mov     esi, esp
+      00646EB1  sub     esp, 8
+      00646EB4  mov     edi, [eax]
+      00646EB6  mov     [esi], edi
+      00646EB8  mov     al, [eax+4]
+      00646EBB  mov     [esi+4], al
+      00646EBE  mov     esi, [edx]
+      00646EC0  mov     dl, [edx+4]
+      00646EC3  mov     eax, esp
+      00646EC5  push    ecx; a5
+      00646EC6  mov     ecx, [esp+94h+arg_0]
+      00646ECD  mov     [eax], esi
+      00646ECF  sub     esp, 8
+      00646ED2  mov     [eax+4], dl
+      00646ED5  mov     dl, [esp+9Ch+arg_4]
+      00646EDC  mov     eax, esp
+      00646EDE  mov     [eax], ecx
+      00646EE0  mov     [eax+4], dl
+      00646EE3  mov     eax, HouseClass_PlayerPtr
+      00646EE8  mov     ecx, [eax+30h]
+      00646EEB  push    ecx; a2
+      00646EEC  lea     ecx, [esp+0A0h+this]; this
+      00646EF0  call    Networking_FillEvent
+      00646EF5  cmp     LastEventIdx, 80h ; '€'
+      00646EFF  jge     short loc_646F58
+      00646F01  mov     ecx, Networking_FirstUnusedPacket
+      00646F07  mov     esi, eax
+      00646F09  lea     edx, [ecx+ecx*8]
+      00646F0C  lea     ecx, [ecx+edx*4]
+      00646F0F  lea     edi, NetworkPackets0.ev.EventKind[ecx+ecx*2]
+      00646F16  mov     ecx, 1Bh
+      00646F1B  rep movsd
+      00646F1D  movsw
+      00646F1F  movsb
+      00646F20  call    ds:__imp_timeGetTime; Get system time, in milliseconds
+      00646F26  mov     ecx, Networking_FirstUnusedPacket
+      00646F2C  mov     Networking_Timestamps[ecx*4], eax
+      00646F33  mov     edx, Networking_FirstUnusedPacket
+      00646F39  mov     eax, LastEventIdx
+      00646F3E  inc     edx
+      00646F3F  and     edx, 7Fh
+      00646F42  inc     eax
+      00646F43  mov     LastEventIdx, eax
+      00646F48  mov     Networking_FirstUnusedPacket, edx
+      00646F4E  mov     al, 1
+      00646F50  pop     edi
+      00646F51  pop     esi
+      00646F52  add     esp, 70h
+      00646F55  retn    0Ch
+      00646F58  pop     edi
+      00646F59  xor     al, al
+      00646F5B  pop     esi
+      00646F5C  add     esp, 70h
+      00646F5F  retn    0Ch
+  - from 00646F39  W?Queue_Mission$n($TargetClass$$$MissionType$$ll)i
+  - from 00646F43  W?Queue_Mission$n($TargetClass$$$MissionType$$ll)i
+  - from 00646FD2  ?
+    (no function at 00646FD2)
+  - from 00647016  ?
+    (no function at 00647016)
+  - from 00647020  ?
+    (no function at 00647020)
+  - from 00647079  sub_647040
+    func sub_647040 @ 00647040..006470E2 
+      00647040  mov     eax, HouseClass_PlayerPtr
+      00647045  sub     esp, 70h
+      00647048  mov     cl, [eax+1F7h]
+      0064704E  test    cl, cl
+      00647050  jnz     loc_6470DC
+      00647056  mov     cl, [eax+1F8h]
+      0064705C  test    cl, cl
+      0064705E  jnz     short loc_6470DC
+      00647060  mov     cl, [eax+1F6h]
+      00647066  test    cl, cl
+      00647068  jnz     short loc_6470DC
+      0064706A  mov     eax, [eax+30h]
+      0064706D  push    ev_OPTIONS; eventKind
+      0064706F  push    eax; PlayerNumber
+      00647070  lea     ecx, [esp+78h+var_70]; this
+      00647074  call    Networking_AddEvent_Noopt
+      00647079  cmp     LastEventIdx, 80h ; '€'
+      00647083  jge     short loc_6470DC
+      00647085  mov     ecx, Networking_FirstUnusedPacket
+      0064708B  push    esi
+      0064708C  push    edi
+      0064708D  mov     esi, eax
+      0064708F  lea     edx, [ecx+ecx*8]
+      00647092  lea     ecx, [ecx+edx*4]
+      00647095  lea     edi, NetworkPackets0.ev.EventKind[ecx+ecx*2]
+      0064709C  mov     ecx, 1Bh
+      006470A1  rep movsd
+      006470A3  movsw
+      006470A5  movsb
+      006470A6  call    ds:__imp_timeGetTime; Get system time, in milliseconds
+      006470AC  mov     ecx, Networking_FirstUnusedPacket
+      006470B2  pop     edi
+      006470B3  pop     esi
+      006470B4  mov     Networking_Timestamps[ecx*4], eax
+      006470BB  mov     edx, Networking_FirstUnusedPacket
+      006470C1  mov     eax, LastEventIdx
+      006470C6  inc     edx
+      006470C7  and     edx, 7Fh
+      006470CA  inc     eax
+      006470CB  mov     LastEventIdx, eax
+      006470D0  mov     Networking_FirstUnusedPacket, edx
+      006470D6  mov     al, 1
+      006470D8  add     esp, 70h
+      006470DB  retn
+      006470DC  xor     al, al
+      006470DE  add     esp, 70h
+      006470E1  retn
+  - from 006470C1  sub_647040
+  - from 006470CB  sub_647040
+  - from 00647129  sub_6470F0
+    func sub_6470F0 @ 006470F0..00647192 
+      006470F0  mov     eax, HouseClass_PlayerPtr
+      006470F5  sub     esp, 70h
+      006470F8  mov     cl, [eax+1F7h]
+      006470FE  test    cl, cl
+      00647100  jnz     loc_64718C
+      00647106  mov     cl, [eax+1F8h]
+      0064710C  test    cl, cl
+      0064710E  jnz     short loc_64718C
+      00647110  mov     cl, [eax+1F6h]
+      00647116  test    cl, cl
+      00647118  jnz     short loc_64718C
+      0064711A  mov     eax, [eax+30h]
+      0064711D  push    ev_PAGEUSER; eventKind
+      0064711F  push    eax; PlayerNumber
+      00647120  lea     ecx, [esp+78h+var_70]; this
+      00647124  call    Networking_AddEvent_Noopt
+      00647129  cmp     LastEventIdx, 80h ; '€'
+      00647133  jge     short loc_64718C
+      00647135  mov     ecx, Networking_FirstUnusedPacket
+      0064713B  push    esi
+      0064713C  push    edi
+      0064713D  mov     esi, eax
+      0064713F  lea     edx, [ecx+ecx*8]
+      00647142  lea     ecx, [ecx+edx*4]
+      00647145  lea     edi, NetworkPackets0.ev.EventKind[ecx+ecx*2]
+      0064714C  mov     ecx, 1Bh
+      00647151  rep movsd
+      00647153  movsw
+      00647155  movsb
+      00647156  call    ds:__imp_timeGetTime; Get system time, in milliseconds
+      0064715C  mov     ecx, Networking_FirstUnusedPacket
+      00647162  pop     edi
+      00647163  pop     esi
+      00647164  mov     Networking_Timestamps[ecx*4], eax
+      0064716B  mov     edx, Networking_FirstUnusedPacket
+      00647171  mov     eax, LastEventIdx
+      00647176  inc     edx
+      00647177  and     edx, 7Fh
+      0064717A  inc     eax
+      0064717B  mov     LastEventIdx, eax
+      00647180  mov     Networking_FirstUnusedPacket, edx
+      00647186  mov     al, 1
+      00647188  add     esp, 70h
+      0064718B  retn
+      0064718C  xor     al, al
+      0064718E  add     esp, 70h
+      00647191  retn
+  - from 00647171  sub_6470F0
+  - from 0064717B  sub_6470F0
+  - from 006471F1  sub_6471A0
+    func sub_6471A0 @ 006471A0..0064725A 
+      006471A0  sub     esp, 74h
+      006471A3  mov     eax, Session
+      006471A8  mov     byte ptr [esp+74h+eventKind], 13h
+      006471AD  cmp     eax, 4
+      006471B0  jnz     short loc_6471D9
+      006471B2  mov     al, byte_A8DBA0
+      006471B7  test    al, al
+      006471B9  jz      short loc_6471D9
+      006471BB  cmp     NameNodeTypes.length, 2
+      006471C2  jle     short loc_6471D9
+      006471C4  push    0; a2
+      006471C6  mov     ecx, offset Session; this
+      006471CB  call    SessionClass::Am_I_Master
+      006471D0  test    al, al
+      006471D2  jz      short loc_6471D9
+      006471D4  mov     byte ptr [esp+74h+eventKind], 27h ; '''
+      006471D9  mov     ecx, HouseClass_PlayerPtr
+      006471DF  mov     eax, [esp+74h+eventKind]
+      006471E3  push    eax; eventKind
+      006471E4  mov     edx, [ecx+30h]
+      006471E7  lea     ecx, [esp+78h+var_70]; this
+      006471EB  push    edx; PlayerNumber
+      006471EC  call    Networking_AddEvent_Noopt
+      006471F1  cmp     LastEventIdx, 80h ; '€'
+      006471FB  jge     short loc_647254
+      006471FD  mov     ecx, Networking_FirstUnusedPacket
+      00647203  push    esi
+      00647204  push    edi
+      00647205  mov     esi, eax
+      00647207  lea     edx, [ecx+ecx*8]
+      0064720A  lea     ecx, [ecx+edx*4]
+      0064720D  lea     edi, NetworkPackets0.ev.EventKind[ecx+ecx*2]
+      00647214  mov     ecx, 1Bh
+      00647219  rep movsd
+      0064721B  movsw
+      0064721D  movsb
+      0064721E  call    ds:__imp_timeGetTime; Get system time, in milliseconds
+      00647224  mov     ecx, Networking_FirstUnusedPacket
+      0064722A  pop     edi
+      0064722B  pop     esi
+      0064722C  mov     Networking_Timestamps[ecx*4], eax
+      00647233  mov     edx, Networking_FirstUnusedPacket
+      00647239  mov     eax, LastEventIdx
+      0064723E  inc     edx
+      0064723F  and     edx, 7Fh
+      00647242  inc     eax
+      00647243  mov     LastEventIdx, eax
+      00647248  mov     Networking_FirstUnusedPacket, edx
+      0064724E  mov     al, 1
+      00647250  add     esp, 74h
+      00647253  retn
+      00647254  xor     al, al
+      00647256  add     esp, 74h
+      00647259  retn
+  - from 00647239  sub_6471A0
+  - from 00647243  sub_6471A0
+  - from 006474DC  sub_647260
+    func sub_647260 @ 00647260..006475D5 
+      00647260  mov     al, byte ptr arg_ATTRACT_Flags
+      00647265  sub     esp, 74h
+      00647268  test    al, 2
+      0064726A  push    ebx
+      0064726B  push    ebp
+      0064726C  push    esi
+      0064726D  push    edi; OffendingEvent
+      0064726E  jz      loc_6474C7
+      00647274  mov     ecx, Keyboard
+      0064727A  mov     byte ptr [esp+84h+var_70], 0
+      0064727F  call    sub_54F000
+      00647284  test    ax, ax
+      00647287  mov     ebx, 4
+      0064728C  jz      short loc_6472B6
+      0064728E  mov     ecx, Keyboard
+      00647294  call    sub_54F050
+      00647299  cmp     ax, 1Bh
+      0064729D  jz      short loc_6472A7
+      0064729F  test    byte ptr arg_ATTRACT_Flags, bl
+      006472A5  jz      short loc_6472FC
+      006472A7  pop     edi
+      006472A8  pop     esi
+      006472A9  pop     ebp
+      006472AA  mov     GameActive, 0
+      006472B1  pop     ebx
+      006472B2  add     esp, 74h
+      006472B5  retn
+      006472B6  test    byte ptr arg_ATTRACT_Flags, bl
+      006472BC  jz      short loc_6472FC
+      006472BE  mov     eax, Frame
+      006472C3  test    eax, eax
+      006472C5  jle     short loc_6472FC
+      006472C7  mov     ecx, WWMouse
+      006472CD  mov     eax, [ecx]
+      006472CF  call    dword ptr [eax+2Ch]
+      006472D2  cmp     dword_AC50F8, eax
+      006472D8  jnz     short loc_6472ED
+      006472DA  mov     ecx, WWMouse
+      006472E0  mov     edx, [ecx]
+      006472E2  call    dword ptr [edx+30h]
+      006472E5  cmp     dword_AC5200, eax
+      006472EB  jz      short loc_6472FC
+      006472ED  pop     edi
+      006472EE  pop     esi
+      006472EF  pop     ebp
+      006472F0  mov     GameActive, 0
+      006472F7  pop     ebx
+      006472F8  add     esp, 74h
+      006472FB  retn
+      006472FC  mov     ecx, WWMouse
+      00647302  mov     eax, [ecx]
+      00647304  call    dword ptr [eax+2Ch]
+      00647307  mov     ecx, WWMouse
+      0064730D  mov     dword_AC50F8, eax
+      00647312  mov     edx, [ecx]
+      00647314  call    dword ptr [edx+30h]
+      00647317  mov     dword_AC5200, eax
+      0064731C  call    sub_64DAB0
+      00647321  mov     ecx, Frame
+      00647327  mov     edx, dword_AC51FC
+      0064732D  mov     eax, ecx
+      0064732F  and     eax, 0FFh
+      00647334  mov     dword_B04474[eax*4], edx
+      0064733B  mov     eax, dword_A8E30C
+      00647340  cmp     ecx, eax
+      00647342  jl      short loc_64737F
+      00647344  mov     al, MPSYNCDEBUG
+      00647349  test    al, al
+      0064734B  jz      short loc_647366
+      0064734D  xor     edx, edx
+      0064734F  and     ecx, 800000FFh
+      00647355  jns     short loc_64735F
+      00647357  dec     ecx
+      00647358  or      ecx, 0FFFFFF00h
+      0064735E  inc     ecx
+      0064735F  call    Multiplay_LogToSync_MPDEBUG
+      00647364  jmp     short loc_64736D
+      00647366  xor     ecx, ecx
+      00647368  call    Multiplay_LogToSYNC_NOMPDEBUG
+      0064736D  call    Emergency_Exit
+  - from 0064756F  sub_647260
+  - from 00647579  sub_647260
+  - from 0064778F  sub_6475F0
+    func sub_6475F0 @ 006475F0..0064831B 
+      006475F0  mov     eax, Session
+      006475F5  sub     esp, 8Ch
+      006475FB  cmp     eax, 5
+      006475FE  push    ebx
+      006475FF  push    ebp
+      00647600  push    esi
+      00647601  push    edi
+      00647602  jz      loc_648310
+      00647608  mov     cl, byte_AFA268
+      0064760E  xor     edi, edi
+      00647610  test    cl, 1
+      00647613  jnz     short loc_647642
+      00647615  mov     eax, Frame
+      0064761A  mov     dl, cl
+      0064761C  or      dl, 1
+      0064761F  push    offset nullsub_31; void (*)(void)
+      00647624  mov     byte_AFA268, dl
+      0064762A  mov     dword_AFA450, eax
+      0064762F  mov     dword_AFA458, edi
+      00647635  call    _atexit
+      0064763A  mov     eax, Session
+      0064763F  add     esp, 4
+      00647642  cmp     eax, 3
+      00647645  jl      short loc_647665
+      00647647  cmp     eax, 4
+      0064764A  jg      short loc_647665
+      0064764C  mov     ecx, dword_A8DA40
+      00647652  mov     [esp+9Ch+var_80], offset unk_A8D812
+      0064765A  mov     [esp+9Ch+var_8C], ecx
+      0064765E  mov     ebp, offset IPXManager
+      00647663  jmp     short loc_647680
+      00647665  mov     eax, dword_A8EA78
+      0064766A  mov     edx, dword_A8EA74
+      00647670  add     eax, 0FFFFFFF2h
+      00647673  mov     [esp+9Ch+var_80], edx
+      00647677  mov     [esp+9Ch+var_8C], eax
+      0064767B  mov     ebp, offset dword_A8EA70
+      00647680  mov     [esp+9Ch+var_84], ebp
+      00647684  call    sub_64DAB0
+      00647689  mov     ecx, Frame
+      0064768F  mov     esi, dword_AC51FC
+      00647695  mov     ebx, dword_A8B8B8
+      0064769B  mov     edx, ecx
+      0064769D  and     edx, 0FFh
+      006476A3  cmp     ecx, edi
+      006476A5  mov     dword_B04474[edx*4], esi
+      006476AC  mov     edx, 14h
+      006476B1  jz      loc_647825
+      006476B7  cmp     ebx, edi
+      006476B9  jnz     loc_647825
+      006476BF  test    cl, 7Fh
+      006476C2  jnz     loc_647B82
+      006476C8  mov     eax, [ebp+0]
+      006476CB  mov     ecx, ebp
+      006476CD  call    dword ptr [eax+30h]
+      006476D0  mov     esi, eax
+      006476D2  mov     eax, Latency
+      006476D7  cmp     eax, 3; switch 4 cases
+      006476DA  ja      short def_6476DC; default
+      006476DC  jmp     ds:jpt_6476DC[eax*4]; switch jump
+      006476E3  mov     ecx, esi; case 0x1
+      006476E5  shr     ecx, 1
+      006476E7  add     esi, ecx
+      006476E9  jmp     short loc_6476F2; case 0x0
+      006476EB  add     esi, esi; case 0x2
+      006476ED  jmp     short loc_6476F2; case 0x0
+      006476EF  lea     esi, [esi+esi*2]; case 0x3
+      006476F2  push    esi; case 0x0
+      006476F3  push    offset aResponseTimeD; "Response time = %d\n"
+      006476F8  call    WWDebugString; Response time = %d
+      006476FD  add     esp, 8
+      00647700  lea     eax, ds:0Fh[esi*8]; default
+      00647707  cmp     eax, 78h ; 'x'
+      0064770A  jnb     short loc_647711
+      0064770C  mov     eax, 78h ; 'x'
+      00647711  mov     edx, [ebp+0]
+      00647714  push    0
+      00647716  push    eax
+      00647717  add     esi, 0Ah
+      0064771A  push    0FFFFFFFFh
+  - from 006477D8  sub_6475F0
+  - from 006477E8  sub_6475F0
+  - from 00647DED  sub_6475F0
+  - from 00647E44  sub_6475F0
+  - from 00647E4A  sub_6475F0
+  - from 00647ECE  sub_6475F0
+  - from 00647F1F  sub_6475F0
+  - from 00647F25  sub_6475F0
+  - from 00649CAF  sub_649CA0
+    func sub_649CA0 @ 00649CA0..00649FFC 
+      00649CA0  sub     esp, 1Ch
+      00649CA3  push    ebx
+      00649CA4  push    ebp
+      00649CA5  mov     ebp, dword_8B41F8
+      00649CAB  push    esi
+      00649CAC  push    edi
+      00649CAD  mov     edi, ecx
+      00649CAF  mov     ecx, LastEventIdx
+      00649CB5  mov     eax, 2000h
+      00649CBA  mov     ebx, edx
+      00649CBC  mov     esi, ecx
+      00649CBE  sub     eax, ebp
+      00649CC0  xor     edx, edx
+      00649CC2  cmp     esi, eax
+      00649CC4  mov     [esp+2Ch+var_C], edi
+      00649CC8  mov     [esp+2Ch+var_10], edx
+      00649CCC  mov     [esp+2Ch+var_1C], esi
+      00649CD0  jle     short loc_649CD6
+      00649CD2  mov     [esp+2Ch+var_1C], eax
+      00649CD6  mov     [esp+2Ch+var_4], ecx
+      00649CDA  jmp     short loc_649CDE
+      00649CDC  xor     edx, edx
+      00649CDE  cmp     [esp+2Ch+var_1C], edx
+      00649CE2  jz      short loc_649CFB
+      00649CE4  cmp     ecx, edx
+      00649CE6  jz      short loc_649CFB
+      00649CE8  mov     ecx, gPlayerCount
+      00649CEE  mov     eax, 1
+      00649CF3  cmp     ecx, eax
+      00649CF5  mov     [esp+2Ch+var_14], eax
+      00649CF9  jnz     short loc_649CFF
+      00649CFB  mov     [esp+2Ch+var_14], edx
+      00649CFF  mov     byte ptr [ebx], 1Ch
+      00649D02  mov     eax, dword_A8B24C
+      00649D07  cmp     eax, 2
+      00649D0A  mov     [esp+2Ch+var_8], edx
+      00649D0E  jnz     short loc_649D32
+      00649D10  mov     esi, FrameSendRate
+      00649D16  mov     eax, Frame
+      00649D1B  mov     ecx, [esp+2Ch+arg_4]
+      00649D1F  lea     edx, [esi+eax]
+      00649D22  lea     eax, [edx+ecx-1]
+      00649D26  xor     edx, edx
+      00649D28  div     esi
+      00649D2A  imul    eax, esi
+      00649D2D  mov     [ebx+3], eax
+      00649D30  jmp     short loc_649D40
+      00649D32  mov     eax, Frame
+      00649D37  mov     ecx, [esp+2Ch+arg_4]
+      00649D3B  add     eax, ecx
+      00649D3D  mov     [ebx+3], eax
+      00649D40  mov     edx, HouseClass_PlayerPtr
+      00649D46  mov     al, [edx+30h]
+      00649D49  mov     [ebx+2], al
+      00649D4C  mov     edx, dword_AC51FC
+      00649D52  mov     ax, [esp+2Ch+arg_8]
+      00649D57  mov     [ebx+7], edx
+      00649D5A  mov     [ebx+0Bh], ax
+      00649D5E  mov     [ebx+0Dh], cl
+      00649D61  mov     eax, dword_A8B24C
+      00649D66  mov     ebp, eax
+      00649D68  neg     ebp
+      00649D6A  sbb     ebp, ebp
+      00649D6C  and     ebp, 0FFFFFF9Fh
+      00649D6F  add     ebp, 6Fh ; 'o'
+      00649D72  test    eax, eax
+      00649D74  jz      short loc_649DA2
+      00649D76  jle     short loc_649D9B
+      00649D78  cmp     eax, 2
+      00649D7B  jg      short loc_649D9B
+      00649D7D  mov     eax, [esp+2Ch+var_1C]
+      00649D81  lea     edx, [esp+2Ch+var_8]
+      00649D85  push    edx
+      00649D86  mov     edx, [esp+30h+arg_0]
+      00649D8A  push    eax
+      00649D8B  push    ebp
+      00649D8C  push    ecx
+      00649D8D  mov     ecx, ebx
+      00649D8F  call    sub_64B660
+      00649D94  mov     ebp, eax
+  - from 00649DA2  sub_649CA0
+  - from 00649F29  sub_649CA0
+  - from 00649F42  sub_649CA0
+  - from 00649FB8  sub_649CA0
+  - from 0064A306  sub_64A0C0
+    func sub_64A0C0 @ 0064A0C0..0064A621 
+      0064A0C0  sub     esp, 88h
+      0064A0C6  mov     eax, [ecx]
+      0064A0C8  push    ebx
+      0064A0C9  push    ebp
+      0064A0CA  push    esi
+      0064A0CB  push    edi
+      0064A0CC  mov     edi, edx
+      0064A0CE  mov     edx, [esp+98h+arg_0]
+      0064A0D5  xor     ebx, ebx
+      0064A0D7  push    edx
+      0064A0D8  mov     [esp+9Ch+var_7C], edi
+      0064A0DC  mov     [esp+9Ch+var_84], ecx
+      0064A0E0  mov     [esp+9Ch+var_78], ebx
+      0064A0E4  call    dword ptr [eax+18h]
+      0064A0E7  mov     esi, eax
+      0064A0E9  mov     al, byte_A8DBA0
+      0064A0EE  test    al, al
+      0064A0F0  jz      loc_64A3A7
+      0064A0F6  mov     al, [edi]
+      0064A0F8  cmp     al, 25h ; '%'
+      0064A0FA  jz      short loc_64A104
+      0064A0FC  cmp     al, 26h ; '&'
+      0064A0FE  jnz     loc_64A3A7
+      0064A104  movsx   esi, byte ptr [edi+2]
+      0064A108  cmp     al, 26h ; '&'
+      0064A10A  mov     [esp+98h+var_74], esi
+      0064A10E  mov     [esp+98h+var_88], ebx
+      0064A112  jnz     short loc_64A11B
+      0064A114  push    offset aReceivedPack_0; "Received PACKETTIMING packet\n"
+      0064A119  jmp     short loc_64A124
+      0064A11B  cmp     al, 25h ; '%'
+      0064A11D  jnz     short loc_64A12C
+      0064A11F  push    offset aReceivedMegafr; "Received MEGAFRAMEINFO packet\n"
+      0064A124  call    WWDebugString; Received MEGAFRAMEINFO packet
+      0064A129  add     esp, 4
+      0064A12C  cmp     esi, ebx
+      0064A12E  jnz     short loc_64A13F
+      0064A130  push    offset aMegaframeinfoI; "MEGAFRAMEINFO is part of a pserver port"...
+      0064A135  call    WWDebugString; MEGAFRAMEINFO is part of a pserver port blitz!
+      0064A13A  add     esp, 4
+      0064A13D  cmp     esi, ebx
+      0064A13F  jle     loc_64A380
+      0064A145  lea     ebx, [edi+7]
+      0064A148  mov     [esp+98h+var_80], esi
+      0064A14C  mov     ebp, ebx
+      0064A14E  cmp     byte ptr [edi], 25h ; '%'
+      0064A151  jnz     loc_64A257
+      0064A157  mov     ecx, [esp+98h+var_84]
+      0064A15B  movsx   edx, byte ptr [ebp+0Bh]
+      0064A15F  mov     eax, [ecx]
+      0064A161  push    edx
+      0064A162  call    dword ptr [eax+18h]
+      0064A165  cmp     eax, 0FFFFFFFFh
+      0064A168  jz      loc_64A363
+      0064A16E  mov     ecx, [ebp+0]
+      0064A171  mov     esi, [esp+98h+arg_8]
+      0064A178  xor     edx, edx
+      0064A17A  mov     dl, [ebp+0Ah]
+      0064A17D  sub     ecx, edx
+      0064A17F  lea     edx, [eax+eax*2]
+      0064A182  lea     esi, [esi+edx*8]
+      0064A185  cmp     [esi], ecx
+      0064A187  jge     short loc_64A1F3
+      0064A189  mov     [esi], ecx
+      0064A18B  mov     ecx, [esp+98h+arg_8]
+      0064A192  mov     edx, eax
+      0064A194  call    sub_652110
+      0064A199  movsx   eax, byte ptr [ebp+0Bh]
+      0064A19D  push    eax
+      0064A19E  mov     ecx, offset IPXManager
+      0064A1A3  call    sub_540FC0
+      0064A1A8  test    eax, eax
+      0064A1AA  jz      short loc_64A1D3
+      0064A1AC  movsx   edx, byte ptr [ebp+0Bh]
+      0064A1B0  mov     ecx, [esi]
+      0064A1B2  push    ecx
+      0064A1B3  push    edx
+      0064A1B4  mov     ecx, offset IPXManager
+      0064A1B9  call    sub_540FC0
+      0064A1BE  mov     ecx, eax; src
+  - from 0064A34E  sub_64A0C0
+  - from 0064A35E  sub_64A0C0
+  - from 0064B6C2  sub_64B660
+    func sub_64B660 @ 0064B660..0064BDC8 
+      0064B660  sub     esp, 94h
+      0064B666  push    ebx
+      0064B667  push    ebp
+      0064B668  push    esi
+      0064B669  mov     ebx, ecx
+      0064B66B  push    edi
+      0064B66C  mov     ecx, 1Bh
+      0064B671  xor     eax, eax
+      0064B673  lea     edi, [esp+0A4h+var_70]
+      0064B677  mov     byte ptr [esp+0A4h+var_70], 0
+      0064B67C  xor     esi, esi
+      0064B67E  rep stosd
+      0064B680  stosw
+      0064B682  stosb
+      0064B683  mov     al, byte_A8ED74
+      0064B688  mov     [esp+0A4h+var_74], edx
+      0064B68C  test    al, al
+      0064B68E  mov     [esp+0A4h+var_7C], esi
+      0064B692  mov     [esp+0A4h+var_88], esi
+      0064B696  mov     byte ptr [esp+0A4h+var_90], 0
+      0064B69B  mov     [esp+0A4h+var_91], 0
+      0064B6A0  mov     [esp+0A4h+var_89], 0
+      0064B6A5  mov     [esp+0A4h+var_84], esi
+      0064B6A9  mov     [esp+0A4h+var_80], esi
+      0064B6AD  jz      short loc_64B6C2
+      0064B6AF  mov     eax, Frame
+      0064B6B4  push    eax
+      0064B6B5  push    offset aFrameDBuilding; "\nFrame %d: Building Send Packet\n"
+      0064B6BA  call    WWDebugString;
+      0064B6BF  add     esp, 8
+      0064B6C2  cmp     LastEventIdx, esi
+      0064B6C8  jz      loc_64BDA7
+      0064B6CE  mov     ecx, dword_A802CC
+      0064B6D4  mov     edx, [esp+0A4h+var_7C]
+      0064B6D8  mov     eax, [esp+0A4h+arg_8]
+      0064B6DF  cmp     edx, eax
+      0064B6E1  jge     loc_64BDA7
+      0064B6E7  lea     eax, [ecx+ecx*8]
+      0064B6EA  xor     edx, edx
+      0064B6EC  lea     esi, [ecx+eax*4]
+      0064B6EF  mov     al, byte ptr NetworkPackets0.ev.EventKind[esi+esi*2]
+      0064B6F6  mov     byte ptr [esp+0A4h+var_78], al
+      0064B6FA  mov     edi, [esp+0A4h+var_78]
+      0064B6FE  and     edi, 0FFh
+      0064B704  cmp     al, 1Fh
+      0064B706  mov     dl, byte_8208EC[edi]
+      0064B70C  mov     ebp, edx
+      0064B70E  jnz     short loc_64B71D
+      0064B710  mov     edx, dword ptr NetworkPackets0.ev.altLoc.X[esi+esi*2]
+      0064B717  lea     edi, [edx+ebp+1]
+      0064B71B  jmp     short loc_64B720
+      0064B71D  lea     edi, [ebp+1]
+      0064B720  cmp     byte ptr [esp+0A4h+var_70], 4
+      0064B725  jnz     loc_64B926
+      0064B72B  cmp     al, 4
+      0064B72D  jnz     loc_64B8CF
+      0064B733  mov     al, [esp+0A4h+var_89]
+      0064B737  test    al, al
+      0064B739  jnz     loc_64B856
+      0064B73F  mov     al, [esi+esi*2+0A802E0h]
+      0064B746  mov     dl, [esp+0A4h+var_64]
+      0064B74A  cmp     al, dl
+      0064B74C  mov     [esp+0A4h+var_89], al
+      0064B750  jnz     loc_64B856
+      0064B756  mov     al, byte ptr (NetworkPackets0.ev.field_F+3)[esi+esi*2]
+      0064B75D  lea     edx, [esi+esi*2+0A802E2h]
+      0064B764  cmp     al, [esp+0A4h+var_5E]
+      0064B768  jnz     loc_64B856
+      0064B76E  mov     eax, [edx]
+      0064B770  cmp     eax, [esp+0A4h+var_62]
+      0064B774  jnz     loc_64B856
+      0064B77A  mov     al, NetworkPackets0.ev.field_17[esi+esi*2]
+      0064B781  lea     esi, NetworkPackets0.ev.loc.X[esi+esi*2]
+      0064B788  cmp     al, [esp+0A4h+var_59]
+      0064B78C  jnz     loc_64B856
+      0064B792  mov     eax, [esi]
+      0064B794  cmp     eax, [esp+0A4h+var_5D]
+      0064B798  jnz     loc_64B856
+      0064B79E  mov     al, byte_A8ED74
+      0064B7A3  test    al, al
+  - from 0064BBFC  sub_64B660
+  - from 0064BD29  sub_64B660
+  - from 0064BD44  sub_64B660
+  - from 006521C9  Networking_AddEvent_Generic
+    func Networking_AddEvent_Generic @ 006521C0..0065222F 
+      006521C0  mov     eax, Frame
+      006521C5  mov     [esp+Packet+3], eax
+      006521C9  mov     eax, LastEventIdx
+      006521CE  cmp     eax, 80h ; '€'
+      006521D3  jge     short loc_65222A
+      006521D5  mov     eax, Networking_FirstUnusedPacket
+      006521DA  push    esi
+      006521DB  push    edi
+      006521DC  lea     esi, [esp+8+Packet]
+      006521E0  lea     ecx, [eax+eax*8]
+      006521E3  lea     eax, [eax+ecx*4]
+      006521E6  mov     ecx, 1Bh
+      006521EB  lea     edi, NetworkPackets0.ev.EventKind[eax+eax*2]
+      006521F2  rep movsd
+      006521F4  movsw
+      006521F6  movsb
+      006521F7  call    ds:__imp_timeGetTime; Get system time, in milliseconds
+      006521FD  mov     edx, Networking_FirstUnusedPacket
+      00652203  pop     edi
+      00652204  pop     esi
+      00652205  mov     Networking_Timestamps[edx*4], eax
+      0065220C  mov     eax, Networking_FirstUnusedPacket
+      00652211  inc     eax
+      00652212  and     eax, 7Fh
+      00652215  mov     Networking_FirstUnusedPacket, eax
+      0065221A  mov     eax, LastEventIdx
+      0065221F  inc     eax
+      00652220  mov     LastEventIdx, eax
+      00652225  mov     al, 1
+      00652227  retn    70h ; 'p'
+      0065222A  xor     al, al
+      0065222C  retn    70h ; 'p'
+  - from 0065221A  Networking_AddEvent_Generic
+  - from 00652220  Networking_AddEvent_Generic
+  - from 006641AC  sub_6640E0
+    func sub_6640E0 @ 006640E0..00664231 
+      006640E0  sub     esp, 9Ch
+      006640E6  lea     ecx, [esp+9Ch+var_80]; byte *
+      006640EA  call    sub_53ECB0
+      006640EF  mov     eax, Frame
+      006640F4  test    eax, eax
+      006640F6  jle     loc_66422A
+      006640FC  lea     eax, [esp+9Ch+a3]
+      00664100  lea     ecx, [esp+9Ch+var_80]
+      00664104  push    eax
+      00664105  lea     edx, [esp+0A0h+var_90]
+      00664109  push    ecx
+      0066410A  push    edx
+      0066410B  push    offset dword_B04E9C
+      00664110  mov     ecx, offset IPXManager
+      00664115  call    sub_541480
+      0066411A  test    eax, eax
+      0066411C  jz      loc_66422A
+      00664122  push    ebx
+      00664123  mov     ebx, ds:__imp_timeGetTime; Get system time, in milliseconds
+      00664129  push    esi
+      0066412A  push    edi
+      0066412B  mov     eax, dword_B04E9C
+      00664130  cmp     al, 5
+      00664132  jz      short loc_66414C
+      00664134  and     eax, 0FFh
+      00664139  push    eax
+      0066413A  push    offset aGotSpuriousMes; "Got spurious message %d from the router"...
+      0066413F  call    WWDebugString; Got spurious message %d from the router
+      00664144  add     esp, 8
+      00664147  jmp     loc_664201
+      0066414C  push    offset aReceivedChange; "Received change of address notification"...
+      00664151  call    WWDebugString; Received change of address notification.
+      00664156  mov     ecx, dword_B04E9C+2
+      0066415C  xor     eax, eax
+      0066415E  movsx   esi, byte ptr dword_B04E9C+1
+      00664165  mov     [esp+0ACh+a3+2], eax
+      00664169  mov     [esp+0ACh+a3+2], ecx
+      0066416D  add     esp, 4
+      00664170  lea     ecx, [esp+0A8h+this]; byte *
+      00664174  mov     [esp+0A8h+var_94], ax
+      00664179  call    sub_53ECB0
+      0066417E  lea     edx, [esp+0A8h+a3+2]
+      00664182  push    0; a4
+      00664184  lea     eax, [esp+0ACh+a2]
+      00664188  push    edx; a3
+      00664189  push    eax; a2
+      0066418A  lea     ecx, [esp+0B4h+this]; this
+      0066418E  call    sub_53ED20
+      00664193  mov     edx, HouseClass_PlayerPtr
+      00664199  lea     ecx, [esp+0A8h+this]
+      0066419D  push    esi
+      0066419E  push    ecx
+      0066419F  mov     eax, [edx+30h]
+      006641A2  lea     ecx, [esp+0B0h+var_70]
+      006641A6  push    eax
+      006641A7  call    sub_4C6C50
+      006641AC  cmp     LastEventIdx, 80h ; '€'
+      006641B6  jge     short loc_664201
+      006641B8  mov     ecx, Networking_FirstUnusedPacket
+      006641BE  mov     esi, eax
+      006641C0  lea     edx, [ecx+ecx*8]
+      006641C3  lea     ecx, [ecx+edx*4]
+      006641C6  lea     edi, NetworkPackets0.ev.EventKind[ecx+ecx*2]
+      006641CD  mov     ecx, 1Bh
+      006641D2  rep movsd
+      006641D4  movsw
+      006641D6  movsb
+      006641D7  call    ebx ; __imp_timeGetTime; Get system time, in milliseconds
+      006641D9  mov     ecx, Networking_FirstUnusedPacket
+      006641DF  mov     Networking_Timestamps[ecx*4], eax
+      006641E6  mov     edx, Networking_FirstUnusedPacket
+      006641EC  mov     eax, LastEventIdx
+      006641F1  inc     edx
+      006641F2  and     edx, 7Fh
+      006641F5  inc     eax
+      006641F6  mov     Networking_FirstUnusedPacket, edx
+      006641FC  mov     LastEventIdx, eax
+      00664201  lea     eax, [esp+0A8h+a3]
+      00664205  lea     ecx, [esp+0A8h+var_80]
+      00664209  push    eax
+  - from 006641EC  sub_6640E0
+  - from 006641FC  sub_6640E0
+  - from 006A8EED  W?AI$:StripClass$:SidebarClass$n(rn$KeyNumType$$ii)i
+    func W?AI$:StripClass$:SidebarClass$n(rn$KeyNumType$$ii)i @ 006A8B30..006A92C2 
+      006A8B30  sub     esp, 88h
+      006A8B36  push    ebx
+      006A8B37  mov     ebx, ecx
+      006A8B39  push    ebp
+      006A8B3A  push    esi
+      006A8B3B  mov     al, [ebx+3Fh]
+      006A8B3E  push    edi
+      006A8B3F  test    al, al
+      006A8B41  mov     [esp+98h+var_80], ebx
+      006A8B45  mov     [esp+98h+var_85], 0
+      006A8B4A  jnz     loc_6A8C2C
+      006A8B50  mov     edi, [ebx+48h]
+      006A8B53  test    edi, edi
+      006A8B55  jz      loc_6A8C25
+      006A8B5B  mov     eax, Scenario
+      006A8B60  mov     ecx, [eax+34B8h]
+      006A8B66  mov     eax, 1Ah
+      006A8B6B  test    ecx, ecx
+      006A8B6D  jz      short loc_6A8B74
+      006A8B6F  mov     eax, 12h
+      006A8B74  mov     ecx, someRect.B
+      006A8B7A  mov     edx, someRect.L
+      006A8B80  sub     ecx, eax
+      006A8B82  mov     eax, dword_B0B4F8
+      006A8B87  sub     ecx, eax
+      006A8B89  mov     eax, 51EB851Fh
+      006A8B8E  mov     ebp, HouseClass_PlayerPtr
+      006A8B94  lea     ecx, [ecx+edx-7]
+      006A8B98  imul    ecx
+      006A8B9A  sar     edx, 4
+      006A8B9D  mov     eax, edx
+      006A8B9F  mov     ecx, [ebx+54h]
+      006A8BA2  shr     eax, 1Fh
+      006A8BA5  add     edx, eax
+      006A8BA7  cmp     ebp, someHouse
+      006A8BAD  mov     eax, edx
+      006A8BAF  mov     edx, 2
+      006A8BB4  lea     esi, [eax+eax]
+      006A8BB7  jnz     short loc_6A8BCB
+      006A8BB9  mov     ecx, dword_884CF8
+      006A8BBF  cdq
+      006A8BC0  sub     eax, edx
+      006A8BC2  mov     edx, 1
+      006A8BC7  sar     eax, 1
+      006A8BC9  mov     esi, eax
+      006A8BCB  cmp     ecx, esi
+      006A8BCD  jg      short loc_6A8BD8
+      006A8BCF  mov     dword ptr [ebx+48h], 0
+      006A8BD6  jmp     short loc_6A8C25
+      006A8BD8  xor     esi, esi
+      006A8BDA  cmp     edi, esi
+      006A8BDC  jge     short loc_6A8BFF
+      006A8BDE  mov     eax, [ebx+44h]
+      006A8BE1  cmp     eax, esi
+      006A8BE3  jnz     short loc_6A8BEA
+      006A8BE5  mov     [ebx+48h], esi
+      006A8BE8  jmp     short loc_6A8C25
+      006A8BEA  inc     edi
+      006A8BEB  dec     eax
+      006A8BEC  mov     [ebx+48h], edi
+      006A8BEF  mov     byte ptr [ebx+3Eh], 0
+      006A8BF3  mov     byte ptr [ebx+3Fh], 1
+      006A8BF7  mov     [ebx+44h], eax
+      006A8BFA  mov     [ebx+4Ch], esi
+      006A8BFD  jmp     short loc_6A8C25
+      006A8BFF  mov     ebp, [ebx+44h]
+      006A8C02  add     ebp, eax
+      006A8C04  imul    ebp, edx
+      006A8C07  cmp     ebp, ecx
+      006A8C09  jl      short loc_6A8C10
+      006A8C0B  mov     [ebx+48h], esi
+      006A8C0E  jmp     short loc_6A8C25
+      006A8C10  dec     edi
+      006A8C11  mov     [ebx+48h], edi
+      006A8C14  mov     ecx, dword_B0B500
+      006A8C1A  mov     [ebx+4Ch], ecx
+      006A8C1D  mov     byte ptr [ebx+3Eh], 1
+      006A8C21  mov     byte ptr [ebx+3Fh], 1
+      006A8C25  mov     al, [ebx+3Fh]
+      006A8C28  test    al, al
+  - from 006A8F2D  W?AI$:StripClass$:SidebarClass$n(rn$KeyNumType$$ii)i
+  - from 006A8F3D  W?AI$:StripClass$:SidebarClass$n(rn$KeyNumType$$ii)i
+  - from 006AA7EC  sub_6AA600
+    func sub_6AA600 @ 006AA600..006AACAF 
+      006AA600  mov     al, Debug_Map
+      006AA605  sub     esp, 144h
+      006AA60B  test    al, al
+      006AA60D  push    ebp
+      006AA60E  push    edi
+      006AA60F  mov     ebp, ecx
+      006AA611  jnz     loc_6AACA4
+      006AA617  mov     eax, [ebp+TabCameoListClass.CameoCount]
+      006AA61A  xor     edi, edi
+      006AA61C  cmp     eax, edi
+      006AA61E  jz      loc_6AACA4
+      006AA624  mov     eax, Scenario
+      006AA629  mov     [esp+14Ch+var_13D], 0
+      006AA62E  mov     ecx, [eax+34B8h]
+      006AA634  mov     eax, 1Ah
+      006AA639  cmp     ecx, edi
+      006AA63B  jz      short loc_6AA642
+      006AA63D  mov     eax, 12h
+      006AA642  mov     ecx, someRect.B
+      006AA648  mov     edx, someRect.L
+      006AA64E  sub     ecx, eax
+      006AA650  mov     eax, dword_B0B4F8
+      006AA655  sub     ecx, eax
+      006AA657  mov     eax, 51EB851Fh
+      006AA65C  push    ebx
+      006AA65D  push    esi
+      006AA65E  lea     ecx, [ecx+edx-7]
+      006AA662  imul    ecx
+      006AA664  sar     edx, 4
+      006AA667  mov     eax, edx
+      006AA669  shr     eax, 1Fh
+      006AA66C  add     edx, eax
+      006AA66E  shl     edx, 1
+      006AA670  mov     ebx, edx
+      006AA672  mov     [esp+154h+var_124], ebx
+      006AA676  lea     ecx, [ebx+ebx*2]
+      006AA679  lea     edx, [ebx+ecx*4]
+      006AA67C  lea     eax, ds:4[edx*4]
+      006AA683  push    eax; unsigned int
+      006AA684  call    new
+      006AA689  add     esp, 4
+      006AA68C  cmp     eax, edi
+      006AA68E  jz      short loc_6AA6C7
+      006AA690  mov     [eax], ebx
+      006AA692  lea     ecx, [ebx-1]
+      006AA695  add     eax, 4
+      006AA698  cmp     ecx, edi
+      006AA69A  mov     [esp+154h+var_138], eax
+      006AA69E  jl      short loc_6AA6C1
+      006AA6A0  inc     ecx
+      006AA6A1  lea     esi, [eax+14h]
+      006AA6A4  mov     [esp+154h+var_144], ecx
+      006AA6A8  mov     ecx, esi
+      006AA6AA  call    sub_6AC870
+      006AA6AF  mov     eax, [esp+154h+var_144]
+      006AA6B3  add     esi, 34h ; '4'
+      006AA6B6  dec     eax
+      006AA6B7  mov     [esp+154h+var_144], eax
+      006AA6BB  jnz     short loc_6AA6A8
+      006AA6BD  mov     eax, [esp+154h+var_138]
+      006AA6C1  mov     [esp+154h+var_138], eax
+      006AA6C5  jmp     short loc_6AA6CB
+      006AA6C7  mov     [esp+154h+var_138], edi
+      006AA6CB  xor     edx, edx
+      006AA6CD  cmp     ebx, edi
+      006AA6CF  jle     short loc_6AA711
+      006AA6D1  mov     ecx, [esp+154h+var_138]
+      006AA6D5  mov     [esp+154h+var_144], ecx
+      006AA6D9  mov     eax, [ebp+44h]
+      006AA6DC  mov     ecx, [ebp+54h]
+      006AA6DF  lea     eax, [edx+eax*2]
+      006AA6E2  cmp     eax, ecx
+      006AA6E4  jge     short loc_6AA701
+      006AA6E6  mov     edi, [esp+154h+var_144]
+      006AA6EA  lea     ecx, [eax+eax*2]
+      006AA6ED  mov     ebx, [esp+154h+var_124]
+      006AA6F1  lea     eax, [eax+ecx*4]
+      006AA6F4  mov     ecx, 0Dh
+      006AA6F9  lea     esi, [ebp+eax*4+58h]
+      006AA6FD  rep movsd
+  - from 006AA834  sub_6AA600
+  - from 006AA844  sub_6AA600
+  - from 006AA8D2  sub_6AA600
+  - from 006AA91A  sub_6AA600
+  - from 006AA92A  sub_6AA600
+  - from 006AB02F  SidebarClass_ProcessCameoClick
+    func SidebarClass_ProcessCameoClick @ 006AAD00..006AB987 
+      006AAD00  sub     esp, 9Ch
+      006AAD06  push    edi
+      006AAD07  mov     edi, ecx
+      006AAD09  mov     [esp+0A0h+Map], edi
+      006AAD0D  mov     eax, [edi+2Ch]
+      006AAD10  test    eax, eax
+      006AAD12  jnz     short loc_6AAD23
+      006AAD14  mov     eax, 1
+      006AAD19  pop     edi
+      006AAD1A  add     esp, 9Ch
+      006AAD20  retn    0Ch
+      006AAD23  mov     ecx, [eax+TabCameoListClass.CurrentRow]
+      006AAD26  mov     edx, [edi+30h]
+      006AAD29  push    ebx
+      006AAD2A  push    ebp
+      006AAD2B  push    esi
+      006AAD2C  lea     esi, [edx+ecx*2]
+      006AAD2F  push    0; a4
+      006AAD31  push    0; idxPointer
+      006AAD33  lea     ecx, [esi+esi*2]
+      006AAD36  mov     [esp+0B4h+cameoIdx_], esi
+      006AAD3A  lea     ebx, [esi+ecx*4]
+      006AAD3D  shl     ebx, 2
+      006AAD40  mov     edx, [ebx+eax+58h]
+      006AAD44  mov     ecx, [ebx+eax+60h]
+      006AAD48  mov     ebp, [ebx+eax+5Ch]
+      006AAD4C  mov     [esp+0B4h+idx], edx
+      006AAD50  mov     edx, [ebx+eax+64h]
+      006AAD54  mov     [esp+0B4h+buildcat], ecx
+      006AAD58  mov     ecx, offset Map; this
+      006AAD5D  mov     [esp+0B4h+Fact_], edx
+      006AAD61  call    MouseClass_SetPointer
+      006AAD66  mov     al, [esp+0ACh+a4]
+      006AAD6D  and     al, 1
+      006AAD6F  mov     [esp+0ACh+var_99], al
+      006AAD73  mov     eax, [edi+2Ch]
+      006AAD76  cmp     esi, [eax+54h]
+      006AAD79  jge     loc_6AB94F
+      006AAD7F  cmp     ebp, 1Fh
+      006AAD82  jz      loc_6AAE6D
+      006AAD88  mov     edx, [esp+0ACh+idx]; idx
+      006AAD8C  mov     ecx, ebp; abstractID
+      006AAD8E  call    Fetch_Techno_Type
+      006AAD93  mov     edi, eax
+      006AAD95  test    edi, edi
+      006AAD97  mov     [esp+0ACh+var_84], edi
+      006AAD9B  jz      loc_6AB94F
+      006AADA1  mov     eax, [esp+0ACh+a2]
+      006AADA8  test    al, 8
+      006AADAA  jz      short loc_6AADB5
+      006AADAC  and     al, 0F7h
+      006AADAE  mov     [esp+0ACh+a2], eax
+      006AADB5  test    al, 10h
+      006AADB7  jz      loc_6AB28F
+      006AADBD  mov     eax, [esp+0ACh+Fact_]
+      006AADC1  test    eax, eax
+      006AADC3  jz      loc_6AB0AC
+      006AADC9  mov     ecx, dword_88098C; this
+      006AADCF  test    ecx, ecx
+      006AADD1  jz      short loc_6AADFD
+      006AADD3  call    Is_Techno
+      006AADD8  test    eax, eax
+      006AADDA  jz      short loc_6AADFD
+      006AADDC  xor     eax, eax
+      006AADDE  mov     ecx, offset Map
+      006AADE3  push    eax
+      006AADE4  mov     dword_88098C, eax
+      006AADE9  mov     ptr_BuildingTypeClass_ToPlace, eax
+      006AADEE  mov     dword_880994, 0FFFFFFFFh; idx of HouseClass
+      006AADF8  call    DisplayClass::Set_Cursor_Shape
+      006AADFD  mov     eax, [esp+0ACh+Fact_]
+      006AAE01  mov     ecx, [eax+38h]
+      006AAE04  test    ecx, ecx
+      006AAE06  jz      short loc_6AAE13
+      006AAE08  mov     cl, [eax+70h]
+      006AAE0B  test    cl, cl
+      006AAE0D  jz      loc_6AAFE1
+      006AAE13  mov     eax, RulesData
+      006AAE18  push    0; int
+      006AAE1A  mov     edx, 2000h; int
+  - from 006AB073  SidebarClass_ProcessCameoClick
+  - from 006AB083  SidebarClass_ProcessCameoClick
+  - from 006AB130  SidebarClass_ProcessCameoClick
+  - from 006AB178  SidebarClass_ProcessCameoClick
+  - from 006AB188  SidebarClass_ProcessCameoClick
+  - from 006AB204  SidebarClass_ProcessCameoClick
+  - from 006AB236  SidebarClass_ProcessCameoClick
+  - from 006AB27A  SidebarClass_ProcessCameoClick
+  - from 006AB28A  SidebarClass_ProcessCameoClick
+  - from 006AB34E  SidebarClass_ProcessCameoClick
+  - from 006AB392  SidebarClass_ProcessCameoClick
+  - from 006AB3A2  SidebarClass_ProcessCameoClick
+  - from 006AB401  SidebarClass_ProcessCameoClick
+  - from 006AB449  SidebarClass_ProcessCameoClick
+  - from 006AB459  SidebarClass_ProcessCameoClick
+  - from 006AB516  SidebarClass_ProcessCameoClick
+  - from 006AB55E  SidebarClass_ProcessCameoClick
+  - from 006AB56E  SidebarClass_ProcessCameoClick
+  - from 006AB773  SidebarClass_ProcessCameoClick
+  - from 006AB7B7  SidebarClass_ProcessCameoClick
+  - from 006AB7C7  SidebarClass_ProcessCameoClick
+  - from 006FFE55  TechnoClass_374
+    func TechnoClass_374 @ 006FFE00..006FFEB7 
+      006FFE00  sub     esp, 78h
+      006FFE03  push    esi
+      006FFE04  push    edi
+      006FFE05  push    ecx; a2
+      006FFE06  lea     ecx, [esp+84h+var_78]; this
+      006FFE0A  call    TargetClass::TargetClass
+      006FFE0F  mov     edx, [eax]
+      006FFE11  sub     esp, 8
+      006FFE14  mov     ecx, esp
+      006FFE16  mov     al, [eax+4]
+      006FFE19  mov     [ecx], edx
+      006FFE1B  mov     edx, HouseClass_PlayerPtr
+      006FFE21  mov     [ecx+4], al
+      006FFE24  mov     ecx, [esp+88h+arg_0]
+      006FFE2B  mov     eax, [edx+30h]
+      006FFE2E  push    ecx
+      006FFE2F  push    eax
+      006FFE30  lea     ecx, [esp+90h+var_70]
+      006FFE34  call    sub_4C65E0
+      006FFE39  call    MapClass_IsPlanningModeActive
+      006FFE3E  test    al, al
+      006FFE40  jz      short loc_6FFE55
+      006FFE42  lea     ecx, [esp+80h+var_70]
+      006FFE46  call    sub_639FD0
+      006FFE4B  xor     al, al
+      006FFE4D  pop     edi
+      006FFE4E  pop     esi
+      006FFE4F  add     esp, 78h
+      006FFE52  retn    4
+      006FFE55  cmp     LastEventIdx, 80h ; '€'
+      006FFE5F  jge     short loc_6FFEAD
+      006FFE61  mov     eax, Networking_FirstUnusedPacket
+      006FFE66  lea     esi, [esp+80h+var_70]
+      006FFE6A  lea     ecx, [eax+eax*8]
+      006FFE6D  lea     eax, [eax+ecx*4]
+      006FFE70  mov     ecx, 1Bh
+      006FFE75  lea     edi, NetworkPackets0.ev.EventKind[eax+eax*2]
+      006FFE7C  rep movsd
+      006FFE7E  movsw
+      006FFE80  movsb
+      006FFE81  call    ds:__imp_timeGetTime; Get system time, in milliseconds
+      006FFE87  mov     edx, Networking_FirstUnusedPacket
+      006FFE8D  mov     Networking_Timestamps[edx*4], eax
+      006FFE94  mov     eax, Networking_FirstUnusedPacket
+      006FFE99  inc     eax
+      006FFE9A  and     eax, 7Fh
+      006FFE9D  mov     Networking_FirstUnusedPacket, eax
+      006FFEA2  mov     eax, LastEventIdx
+      006FFEA7  inc     eax
+      006FFEA8  mov     LastEventIdx, eax
+      006FFEAD  pop     edi
+      006FFEAE  mov     al, 1
+      006FFEB0  pop     esi
+      006FFEB1  add     esp, 78h
+      006FFEB4  retn    4
+  - from 006FFEA2  TechnoClass_374
+  - from 006FFEA8  TechnoClass_374
+  - from 00730F71  CheerCommandClass_Execute
+    func CheerCommandClass_Execute @ 00730F30..00730FDC 
+      00730F30  mov     eax, Player_MuteSWLaunches
+      00730F35  sub     esp, 70h
+      00730F38  test    eax, eax
+      00730F3A  jnz     loc_730FD8
+      00730F40  mov     eax, RulesData
+      00730F45  mov     edx, LastCheerFrame
+      00730F4B  mov     ecx, [eax+580h]
+      00730F51  mov     eax, Frame
+      00730F56  add     ecx, edx
+      00730F58  cmp     ecx, eax
+      00730F5A  jge     short loc_730FD8
+      00730F5C  mov     edx, HouseClass_PlayerPtr
+      00730F62  push    ev_ALLCHEER; eventKind
+      00730F64  lea     ecx, [esp+74h+var_70]; this
+      00730F68  mov     eax, [edx+30h]
+      00730F6B  push    eax; PlayerNumber
+      00730F6C  call    Networking_AddEvent_Noopt
+      00730F71  cmp     LastEventIdx, 80h ; '€'
+      00730F7B  jge     short loc_730FCE
+      00730F7D  mov     ecx, Networking_FirstUnusedPacket
+      00730F83  push    esi
+      00730F84  push    edi
+      00730F85  mov     esi, eax
+      00730F87  lea     edx, [ecx+ecx*8]
+      00730F8A  lea     ecx, [ecx+edx*4]
+      00730F8D  lea     edi, NetworkPackets0.ev.EventKind[ecx+ecx*2]
+      00730F94  mov     ecx, 1Bh
+      00730F99  rep movsd
+      00730F9B  movsw
+      00730F9D  movsb
+      00730F9E  call    ds:__imp_timeGetTime; Get system time, in milliseconds
+      00730FA4  mov     ecx, Networking_FirstUnusedPacket
+      00730FAA  pop     edi
+      00730FAB  pop     esi
+      00730FAC  mov     Networking_Timestamps[ecx*4], eax
+      00730FB3  mov     edx, Networking_FirstUnusedPacket
+      00730FB9  mov     eax, LastEventIdx
+      00730FBE  inc     edx
+      00730FBF  and     edx, 7Fh
+      00730FC2  inc     eax
+      00730FC3  mov     Networking_FirstUnusedPacket, edx
+      00730FC9  mov     LastEventIdx, eax
+      00730FCE  mov     eax, Frame
+      00730FD3  mov     LastCheerFrame, eax
+      00730FD8  add     esp, 70h
+      00730FDB  retn
+  - from 00730FB9  CheerCommandClass_Execute
+  - from 00730FC9  CheerCommandClass_Execute
+  - from 0073188F  sub_731840
+    func sub_731840 @ 00731840..007318F0 
+      00731840  mov     eax, Session
+      00731845  sub     esp, 70h
+      00731848  test    eax, eax
+      0073184A  jz      loc_7318EC
+      00731850  mov     eax, Scenario
+      00731855  mov     edx, [eax]
+      00731857  test    dh, 4
+      0073185A  jnz     loc_7318EC
+      00731860  mov     eax, RulesData
+      00731865  mov     dl, [eax+14B5h]
+      0073186B  test    dl, dl
+      0073186D  jz      short loc_7318EC
+      0073186F  mov     dl, [eax+14BBh]
+      00731875  test    dl, dl
+      00731877  jz      short loc_7318EC
+      00731879  push    ecx
+      0073187A  mov     ecx, HouseClass_PlayerPtr
+      00731880  push    3
+      00731882  mov     edx, [ecx+30h]
+      00731885  lea     ecx, [esp+78h+var_70]
+      00731889  push    edx
+      0073188A  call    sub_4C6720
+      0073188F  cmp     LastEventIdx, 80h ; '€'
+      00731899  jge     short loc_7318EC
+      0073189B  mov     ecx, Networking_FirstUnusedPacket
+      007318A1  push    esi
+      007318A2  push    edi
+      007318A3  mov     esi, eax
+      007318A5  lea     edx, [ecx+ecx*8]
+      007318A8  lea     ecx, [ecx+edx*4]
+      007318AB  lea     edi, NetworkPackets0.ev.EventKind[ecx+ecx*2]
+      007318B2  mov     ecx, 1Bh
+      007318B7  rep movsd
+      007318B9  movsw
+      007318BB  movsb
+      007318BC  call    ds:__imp_timeGetTime; Get system time, in milliseconds
+      007318C2  mov     ecx, Networking_FirstUnusedPacket
+      007318C8  pop     edi
+      007318C9  pop     esi
+      007318CA  mov     Networking_Timestamps[ecx*4], eax
+      007318D1  mov     edx, Networking_FirstUnusedPacket
+      007318D7  mov     eax, LastEventIdx
+      007318DC  inc     edx
+      007318DD  and     edx, 7Fh
+      007318E0  inc     eax
+      007318E1  mov     Networking_FirstUnusedPacket, edx
+      007318E7  mov     LastEventIdx, eax
+      007318EC  add     esp, 70h
+      007318EF  retn
+  - from 007318D7  sub_731840
+  - from 007318E7  sub_731840
+  - from 007319A1  sub_7318F0
+    func sub_7318F0 @ 007318F0..00731A02 
+      007318F0  mov     eax, v_CurrentObjects.__.ActiveCount
+      007318F5  sub     esp, 70h
+      007318F8  test    eax, eax
+      007318FA  jz      loc_7319FE
+      00731900  mov     eax, HouseClass_PlayerPtr
+      00731905  mov     cl, [eax+1F5h]
+      0073190B  test    cl, cl
+      0073190D  jnz     loc_7319FE
+      00731913  mov     ecx, v_CurrentObjects._.data
+      00731919  mov     ecx, [ecx]
+      0073191B  mov     edx, [ecx]
+      0073191D  call    dword ptr [edx+3Ch]
+      00731920  cmp     eax, HouseClass_PlayerPtr
+      00731926  jz      loc_7319FE
+      0073192C  mov     eax, v_CurrentObjects._.data
+      00731931  mov     ecx, [eax]
+      00731933  mov     edx, [ecx]
+      00731935  call    dword ptr [edx+3Ch]
+      00731938  mov     cl, [eax+1ECh]
+      0073193E  test    cl, cl
+      00731940  jz      loc_7319FE
+      00731946  mov     eax, v_CurrentObjects._.data
+      0073194B  mov     ecx, [eax]
+      0073194D  mov     edx, [ecx]
+      0073194F  call    dword ptr [edx+38h]
+      00731952  mov     ecx, Session
+      00731958  test    ecx, ecx
+      0073195A  jz      loc_7319FE
+      00731960  mov     ecx, Scenario
+      00731966  mov     edx, [ecx]
+      00731968  test    dh, 4
+      0073196B  jnz     loc_7319FE
+      00731971  mov     ecx, RulesData
+      00731977  mov     dl, [ecx+14B5h]
+      0073197D  test    dl, dl
+      0073197F  jz      short loc_7319FE
+      00731981  mov     dl, [ecx+14BBh]
+      00731987  test    dl, dl
+      00731989  jz      short loc_7319FE
+      0073198B  mov     edx, HouseClass_PlayerPtr
+      00731991  push    eax
+      00731992  push    3
+      00731994  lea     ecx, [esp+78h+var_70]
+      00731998  mov     eax, [edx+30h]
+      0073199B  push    eax
+      0073199C  call    sub_4C6720
+      007319A1  cmp     LastEventIdx, 80h ; '€'
+      007319AB  jge     short loc_7319FE
+      007319AD  mov     ecx, Networking_FirstUnusedPacket
+      007319B3  push    esi
+      007319B4  push    edi
+      007319B5  mov     esi, eax
+      007319B7  lea     edx, [ecx+ecx*8]
+      007319BA  lea     ecx, [ecx+edx*4]
+      007319BD  lea     edi, NetworkPackets0.ev.EventKind[ecx+ecx*2]
+      007319C4  mov     ecx, 1Bh
+      007319C9  rep movsd
+      007319CB  movsw
+      007319CD  movsb
+      007319CE  call    ds:__imp_timeGetTime; Get system time, in milliseconds
+      007319D4  mov     ecx, Networking_FirstUnusedPacket
+      007319DA  pop     edi
+      007319DB  pop     esi
+      007319DC  mov     Networking_Timestamps[ecx*4], eax
+      007319E3  mov     edx, Networking_FirstUnusedPacket
+      007319E9  mov     eax, LastEventIdx
+      007319EE  inc     edx
+      007319EF  and     edx, 7Fh
+      007319F2  inc     eax
+      007319F3  mov     Networking_FirstUnusedPacket, edx
+      007319F9  mov     LastEventIdx, eax
+      007319FE  add     esp, 70h
+      00731A01  retn
+  - from 007319E9  sub_7318F0
+  - from 007319F9  sub_7318F0
+
+===== DoList @ 008B41F8 (.data) =====
+  xrefs = 39
+  - from 004E7EE4  InitList_1133
+    func InitList_1133 @ 004E7ED0..004E7EF7 
+      004E7ED0  mov     eax, offset NetworkPackets1
+      004E7ED5  mov     ecx, 4000h
+      004E7EDA  xor     edx, edx
+      004E7EDC  mov     [eax], dl
+      004E7EDE  add     eax, 6Fh ; 'o'
+      004E7EE1  dec     ecx
+      004E7EE2  jnz     short loc_4E7EDC
+      004E7EE4  mov     dword_8B41F8, edx
+      004E7EEA  mov     dword_8B41FC, edx
+      004E7EF0  mov     dword_8B4200, edx
+      004E7EF6  retn
+  - from 0052D9E4  W?Select_Game$n(i)i
+    func W?Select_Game$n(i)i @ 0052D9A0..0052EB58 
+      0052D9A0  sub     esp, 110h
+      0052D9A6  mov     ecx, offset Theme
+      0052D9AB  push    ebx
+      0052D9AC  push    ebp
+      0052D9AD  push    esi
+      0052D9AE  push    edi
+      0052D9AF  push    offset aIntro_0; "INTRO"
+      0052D9B4  call    ThemeClass::From_Name
+      0052D9B9  mov     ecx, offset Theme
+      0052D9BE  push    eax
+      0052D9BF  call    ThemeClass::Play_Song
+      0052D9C4  xor     ebx, ebx
+      0052D9C6  or      ebp, 0FFFFFFFFh
+      0052D9C9  mov     edx, Scenario
+      0052D9CF  xor     eax, eax
+      0052D9D1  add     edx, ScenarioClass.MissionTimer
+      0052D9D7  mov     GameActive, 1
+      0052D9DE  mov     HouseClass_PlayerPtr, ebx
+      0052D9E4  mov     dword_8B41F8, ebx
+      0052D9EA  mov     dword_8B41FC, ebx
+      0052D9F0  mov     dword_8B4200, ebx
+      0052D9F6  mov     LastEventIdx, ebx
+      0052D9FC  mov     dword_A802CC, ebx
+      0052DA02  mov     Networking_FirstUnusedPacket, ebx
+      0052DA08  mov     Frame, ebx
+      0052DA0E  mov     [edx], eax
+      0052DA10  mov     eax, [esp+120h+var_FC]
+      0052DA14  xor     ecx, ecx
+      0052DA16  mov     [esp+120h+var_10D], 0
+      0052DA1B  mov     [edx+4], eax
+      0052DA1E  mov     [esp+120h+var_10E], 1
+      0052DA23  mov     [edx+8], ecx
+      0052DA26  mov     ecx, Scenario
+      0052DA2C  lea     eax, [ecx+ScenarioClass.MissionTimer]
+      0052DA32  mov     ecx, [ecx+ScenarioClass.MissionTimer.TimeStart]
+      0052DA38  cmp     ecx, ebp
+      0052DA3A  jz      short loc_52DA56
+      0052DA3C  mov     esi, Frame
+      0052DA42  mov     edx, [eax+8]
+      0052DA45  sub     esi, ecx
+      0052DA47  cmp     esi, edx
+      0052DA49  jge     short loc_52DA4F
+      0052DA4B  sub     edx, esi
+      0052DA4D  jmp     short loc_52DA51
+      0052DA4F  xor     edx, edx
+      0052DA51  mov     [eax+8], edx
+      0052DA54  mov     [eax], ebp
+      0052DA56  mov     edx, Scenario
+      0052DA5C  mov     edi, 1
+      0052DA61  push    ebx
+      0052DA62  mov     ecx, offset Map
+      0052DA67  mov     [edx+ScenarioClass.DifficultyNonHuman], edi
+      0052DA6D  mov     eax, Scenario
+      0052DA72  mov     [eax+ScenarioClass.Difficulty], edi
+      0052DA78  mov     byte_A83D49, 0
+      0052DA7F  mov     byte_A8ECD0, 0
+      0052DA86  mov     byte_8B41C0, 0
+      0052DA8D  mov     byte_A83D48, 0
+      0052DA94  mov     Player_MuteSWLaunches, ebx
+      0052DA9A  call    DisplayClass::Set_Cursor_Shape
+      0052DA9F  mov     dword_88098C, ebx
+      0052DAA5  mov     ptr_BuildingTypeClass_ToPlace, ebx
+      0052DAAB  mov     dword_880994, ebp; idx of HouseClass
+      0052DAB1  mov     dword_A8B560, ebx
+      0052DAB7  mov     dword_A8B564, ebx
+      0052DABD  mov     const_int_30, 30
+      0052DAC7  mov     dword_A8B1F8, ebx
+      0052DACD  mov     dword_A8B1DC, ebx
+      0052DAD3  xor     eax, eax
+      0052DAD5  mov     ecx, dword_A8D588
+      0052DADB  lea     edx, [eax+ecx]
+      0052DADE  add     eax, 1Ch
+      0052DAE1  cmp     eax, 70h ; 'p'
+      0052DAE4  mov     dword ptr byte_A8D23C[edx*4], ebp
+      0052DAEB  jl      short loc_52DAD5
+      0052DAED  push    ebx; a3
+      0052DAEE  push    ebx; a2
+      0052DAEF  mov     ecx, offset Map; this
+      0052DAF4  call    sub_5BDA80
+      0052DAF9  mov     ecx, CCToolTip
+  - from 005C4BBF  MPCoop_funcAC
+    func MPCoop_funcAC @ 005C46E0..005C4C69 
+      005C46E0  sub     esp, 30h
+      005C46E3  mov     eax, dword_84A234
+      005C46E8  push    ebx
+      005C46E9  push    ebp
+      005C46EA  mov     ebp, ecx
+      005C46EC  push    esi
+      005C46ED  xor     ebx, ebx
+      005C46EF  push    edi
+      005C46F0  mov     ecx, offset dword_B73E40
+      005C46F5  mov     a4, ebx
+      005C46FB  mov     dword_B77D6C, eax
+      005C4700  mov     dword_B779C4, ebx
+      005C4706  mov     byte_A8F900, bl
+      005C470C  call    sub_7B5400
+      005C4711  mov     edi, eax
+      005C4713  or      ecx, 0FFFFFFFFh
+      005C4716  xor     eax, eax
+      005C4718  repne scasb
+      005C471A  not     ecx
+      005C471C  sub     edi, ecx
+      005C471E  mov     eax, NameNodeTypes.data
+      005C4723  mov     edx, ecx
+      005C4725  mov     esi, edi
+      005C4727  mov     edi, offset byte_B77830
+      005C472C  shr     ecx, 2
+      005C472F  rep movsd
+      005C4731  mov     ecx, edx
+      005C4733  and     ecx, 3
+      005C4736  rep movsb
+      005C4738  mov     ecx, [ebp+54h]
+      005C473B  mov     edx, [eax+ecx*4]
+      005C473E  add     edx, 28h ; '('
+      005C4741  mov     ecx, [edx]
+      005C4743  mov     stru_A8BB1C.field_0, ecx
+      005C4749  mov     ecx, [edx+4]
+      005C474C  mov     stru_A8BB1C.field_4, ecx
+      005C4752  mov     edx, [edx+8]
+      005C4755  mov     dword ptr stru_A8BB1C.field_8, edx
+      005C475B  mov     ecx, [ebp+54h]
+      005C475E  mov     edx, [eax+ecx*4]
+      005C4761  push    edx; wchar_t *
+      005C4762  push    offset GameHostHouseName; wchar_t *
+      005C4767  call    _wcscpy
+      005C476C  mov     ecx, UDP
+      005C4772  mov     dword_A8E2AC, 0FFFFFFFFh
+      005C477C  mov     eax, [ebp+70h]
+      005C477F  add     esp, 8
+      005C4782  mov     dword_A8B3AC, eax
+      005C4787  mov     edx, [ecx]
+      005C4789  call    dword ptr [edx+30h]
+      005C478C  mov     ecx, dword ptr axxx__0; "xxx."
+      005C4792  mov     eax, dword ptr axxx_; "xxx."
+      005C4797  mov     edx, dword ptr axxx__1; "xxx."
+      005C479D  mov     [esp+40h+var_1C], ecx
+      005C47A1  xor     ecx, ecx
+      005C47A3  mov     [esp+40h+var_20], eax
+      005C47A7  mov     eax, dword ptr axxx; "xxx"
+      005C47AC  mov     [esp+40h+var_10], ecx
+      005C47B0  mov     [esp+40h+var_14], eax
+      005C47B4  mov     eax, NameNodeTypes.length
+      005C47B9  mov     [esp+40h+var_C], ecx
+      005C47BD  mov     esi, 1
+      005C47C2  mov     [esp+40h+var_8], ecx
+      005C47C6  cmp     eax, esi
+      005C47C8  mov     [esp+40h+var_18], edx
+      005C47CC  mov     [esp+40h+var_4], ecx
+      005C47D0  jle     short loc_5C4811
+      005C47D2  lea     edx, [esp+40h+var_30]
+      005C47D6  lea     eax, [esp+40h+var_28]
+      005C47DA  push    edx
+      005C47DB  mov     edx, NameNodeTypes.data
+      005C47E1  lea     ecx, [esp+44h+var_2C]
+      005C47E5  push    eax
+      005C47E6  push    ecx
+      005C47E7  mov     ecx, [edx+esi*4]
+      005C47EA  add     ecx, 28h ; '('
+      005C47ED  call    sub_53ED60
+      005C47F2  mov     edx, [esp+40h+var_30]
+      005C47F6  mov     ecx, UDP
+      005C47FC  push    edx
+  - from 00647407  sub_647260
+    func sub_647260 @ 00647260..006475D5 
+      00647260  mov     al, byte ptr arg_ATTRACT_Flags
+      00647265  sub     esp, 74h
+      00647268  test    al, 2
+      0064726A  push    ebx
+      0064726B  push    ebp
+      0064726C  push    esi
+      0064726D  push    edi; OffendingEvent
+      0064726E  jz      loc_6474C7
+      00647274  mov     ecx, Keyboard
+      0064727A  mov     byte ptr [esp+84h+var_70], 0
+      0064727F  call    sub_54F000
+      00647284  test    ax, ax
+      00647287  mov     ebx, 4
+      0064728C  jz      short loc_6472B6
+      0064728E  mov     ecx, Keyboard
+      00647294  call    sub_54F050
+      00647299  cmp     ax, 1Bh
+      0064729D  jz      short loc_6472A7
+      0064729F  test    byte ptr arg_ATTRACT_Flags, bl
+      006472A5  jz      short loc_6472FC
+      006472A7  pop     edi
+      006472A8  pop     esi
+      006472A9  pop     ebp
+      006472AA  mov     GameActive, 0
+      006472B1  pop     ebx
+      006472B2  add     esp, 74h
+      006472B5  retn
+      006472B6  test    byte ptr arg_ATTRACT_Flags, bl
+      006472BC  jz      short loc_6472FC
+      006472BE  mov     eax, Frame
+      006472C3  test    eax, eax
+      006472C5  jle     short loc_6472FC
+      006472C7  mov     ecx, WWMouse
+      006472CD  mov     eax, [ecx]
+      006472CF  call    dword ptr [eax+2Ch]
+      006472D2  cmp     dword_AC50F8, eax
+      006472D8  jnz     short loc_6472ED
+      006472DA  mov     ecx, WWMouse
+      006472E0  mov     edx, [ecx]
+      006472E2  call    dword ptr [edx+30h]
+      006472E5  cmp     dword_AC5200, eax
+      006472EB  jz      short loc_6472FC
+      006472ED  pop     edi
+      006472EE  pop     esi
+      006472EF  pop     ebp
+      006472F0  mov     GameActive, 0
+      006472F7  pop     ebx
+      006472F8  add     esp, 74h
+      006472FB  retn
+      006472FC  mov     ecx, WWMouse
+      00647302  mov     eax, [ecx]
+      00647304  call    dword ptr [eax+2Ch]
+      00647307  mov     ecx, WWMouse
+      0064730D  mov     dword_AC50F8, eax
+      00647312  mov     edx, [ecx]
+      00647314  call    dword ptr [edx+30h]
+      00647317  mov     dword_AC5200, eax
+      0064731C  call    sub_64DAB0
+      00647321  mov     ecx, Frame
+      00647327  mov     edx, dword_AC51FC
+      0064732D  mov     eax, ecx
+      0064732F  and     eax, 0FFh
+      00647334  mov     dword_B04474[eax*4], edx
+      0064733B  mov     eax, dword_A8E30C
+      00647340  cmp     ecx, eax
+      00647342  jl      short loc_64737F
+      00647344  mov     al, MPSYNCDEBUG
+      00647349  test    al, al
+      0064734B  jz      short loc_647366
+      0064734D  xor     edx, edx
+      0064734F  and     ecx, 800000FFh
+      00647355  jns     short loc_64735F
+      00647357  dec     ecx
+      00647358  or      ecx, 0FFFFFF00h
+      0064735E  inc     ecx
+      0064735F  call    Multiplay_LogToSync_MPDEBUG
+      00647364  jmp     short loc_64736D
+      00647366  xor     ecx, ecx
+      00647368  call    Multiplay_LogToSYNC_NOMPDEBUG
+      0064736D  call    Emergency_Exit
+  - from 0064744F  sub_647260
+  - from 00647462  sub_647260
+  - from 0064750B  sub_647260
+  - from 00647564  sub_647260
+  - from 0064756A  sub_647260
+  - from 006482BD  sub_6475F0
+    func sub_6475F0 @ 006475F0..0064831B 
+      006475F0  mov     eax, Session
+      006475F5  sub     esp, 8Ch
+      006475FB  cmp     eax, 5
+      006475FE  push    ebx
+      006475FF  push    ebp
+      00647600  push    esi
+      00647601  push    edi
+      00647602  jz      loc_648310
+      00647608  mov     cl, byte_AFA268
+      0064760E  xor     edi, edi
+      00647610  test    cl, 1
+      00647613  jnz     short loc_647642
+      00647615  mov     eax, Frame
+      0064761A  mov     dl, cl
+      0064761C  or      dl, 1
+      0064761F  push    offset nullsub_31; void (*)(void)
+      00647624  mov     byte_AFA268, dl
+      0064762A  mov     dword_AFA450, eax
+      0064762F  mov     dword_AFA458, edi
+      00647635  call    _atexit
+      0064763A  mov     eax, Session
+      0064763F  add     esp, 4
+      00647642  cmp     eax, 3
+      00647645  jl      short loc_647665
+      00647647  cmp     eax, 4
+      0064764A  jg      short loc_647665
+      0064764C  mov     ecx, dword_A8DA40
+      00647652  mov     [esp+9Ch+var_80], offset unk_A8D812
+      0064765A  mov     [esp+9Ch+var_8C], ecx
+      0064765E  mov     ebp, offset IPXManager
+      00647663  jmp     short loc_647680
+      00647665  mov     eax, dword_A8EA78
+      0064766A  mov     edx, dword_A8EA74
+      00647670  add     eax, 0FFFFFFF2h
+      00647673  mov     [esp+9Ch+var_80], edx
+      00647677  mov     [esp+9Ch+var_8C], eax
+      0064767B  mov     ebp, offset dword_A8EA70
+      00647680  mov     [esp+9Ch+var_84], ebp
+      00647684  call    sub_64DAB0
+      00647689  mov     ecx, Frame
+      0064768F  mov     esi, dword_AC51FC
+      00647695  mov     ebx, dword_A8B8B8
+      0064769B  mov     edx, ecx
+      0064769D  and     edx, 0FFh
+      006476A3  cmp     ecx, edi
+      006476A5  mov     dword_B04474[edx*4], esi
+      006476AC  mov     edx, 14h
+      006476B1  jz      loc_647825
+      006476B7  cmp     ebx, edi
+      006476B9  jnz     loc_647825
+      006476BF  test    cl, 7Fh
+      006476C2  jnz     loc_647B82
+      006476C8  mov     eax, [ebp+0]
+      006476CB  mov     ecx, ebp
+      006476CD  call    dword ptr [eax+30h]
+      006476D0  mov     esi, eax
+      006476D2  mov     eax, Latency
+      006476D7  cmp     eax, 3; switch 4 cases
+      006476DA  ja      short def_6476DC; default
+      006476DC  jmp     ds:jpt_6476DC[eax*4]; switch jump
+      006476E3  mov     ecx, esi; case 0x1
+      006476E5  shr     ecx, 1
+      006476E7  add     esi, ecx
+      006476E9  jmp     short loc_6476F2; case 0x0
+      006476EB  add     esi, esi; case 0x2
+      006476ED  jmp     short loc_6476F2; case 0x0
+      006476EF  lea     esi, [esi+esi*2]; case 0x3
+      006476F2  push    esi; case 0x0
+      006476F3  push    offset aResponseTimeD; "Response time = %d\n"
+      006476F8  call    WWDebugString; Response time = %d
+      006476FD  add     esp, 8
+      00647700  lea     eax, ds:0Fh[esi*8]; default
+      00647707  cmp     eax, 78h ; 'x'
+      0064770A  jnb     short loc_647711
+      0064770C  mov     eax, 78h ; 'x'
+      00647711  mov     edx, [ebp+0]
+      00647714  push    0
+      00647716  push    eax
+      00647717  add     esi, 0Ah
+      0064771A  push    0FFFFFFFFh
+  - from 006482FB  sub_6475F0
+  - from 00649CA5  sub_649CA0
+    func sub_649CA0 @ 00649CA0..00649FFC 
+      00649CA0  sub     esp, 1Ch
+      00649CA3  push    ebx
+      00649CA4  push    ebp
+      00649CA5  mov     ebp, dword_8B41F8
+      00649CAB  push    esi
+      00649CAC  push    edi
+      00649CAD  mov     edi, ecx
+      00649CAF  mov     ecx, LastEventIdx
+      00649CB5  mov     eax, 2000h
+      00649CBA  mov     ebx, edx
+      00649CBC  mov     esi, ecx
+      00649CBE  sub     eax, ebp
+      00649CC0  xor     edx, edx
+      00649CC2  cmp     esi, eax
+      00649CC4  mov     [esp+2Ch+var_C], edi
+      00649CC8  mov     [esp+2Ch+var_10], edx
+      00649CCC  mov     [esp+2Ch+var_1C], esi
+      00649CD0  jle     short loc_649CD6
+      00649CD2  mov     [esp+2Ch+var_1C], eax
+      00649CD6  mov     [esp+2Ch+var_4], ecx
+      00649CDA  jmp     short loc_649CDE
+      00649CDC  xor     edx, edx
+      00649CDE  cmp     [esp+2Ch+var_1C], edx
+      00649CE2  jz      short loc_649CFB
+      00649CE4  cmp     ecx, edx
+      00649CE6  jz      short loc_649CFB
+      00649CE8  mov     ecx, gPlayerCount
+      00649CEE  mov     eax, 1
+      00649CF3  cmp     ecx, eax
+      00649CF5  mov     [esp+2Ch+var_14], eax
+      00649CF9  jnz     short loc_649CFF
+      00649CFB  mov     [esp+2Ch+var_14], edx
+      00649CFF  mov     byte ptr [ebx], 1Ch
+      00649D02  mov     eax, dword_A8B24C
+      00649D07  cmp     eax, 2
+      00649D0A  mov     [esp+2Ch+var_8], edx
+      00649D0E  jnz     short loc_649D32
+      00649D10  mov     esi, FrameSendRate
+      00649D16  mov     eax, Frame
+      00649D1B  mov     ecx, [esp+2Ch+arg_4]
+      00649D1F  lea     edx, [esi+eax]
+      00649D22  lea     eax, [edx+ecx-1]
+      00649D26  xor     edx, edx
+      00649D28  div     esi
+      00649D2A  imul    eax, esi
+      00649D2D  mov     [ebx+3], eax
+      00649D30  jmp     short loc_649D40
+      00649D32  mov     eax, Frame
+      00649D37  mov     ecx, [esp+2Ch+arg_4]
+      00649D3B  add     eax, ecx
+      00649D3D  mov     [ebx+3], eax
+      00649D40  mov     edx, HouseClass_PlayerPtr
+      00649D46  mov     al, [edx+30h]
+      00649D49  mov     [ebx+2], al
+      00649D4C  mov     edx, dword_AC51FC
+      00649D52  mov     ax, [esp+2Ch+arg_8]
+      00649D57  mov     [ebx+7], edx
+      00649D5A  mov     [ebx+0Bh], ax
+      00649D5E  mov     [ebx+0Dh], cl
+      00649D61  mov     eax, dword_A8B24C
+      00649D66  mov     ebp, eax
+      00649D68  neg     ebp
+      00649D6A  sbb     ebp, ebp
+      00649D6C  and     ebp, 0FFFFFF9Fh
+      00649D6F  add     ebp, 6Fh ; 'o'
+      00649D72  test    eax, eax
+      00649D74  jz      short loc_649DA2
+      00649D76  jle     short loc_649D9B
+      00649D78  cmp     eax, 2
+      00649D7B  jg      short loc_649D9B
+      00649D7D  mov     eax, [esp+2Ch+var_1C]
+      00649D81  lea     edx, [esp+2Ch+var_8]
+      00649D85  push    edx
+      00649D86  mov     edx, [esp+30h+arg_0]
+      00649D8A  push    eax
+      00649D8B  push    ebp
+      00649D8C  push    ecx
+      00649D8D  mov     ecx, ebx
+      00649D8F  call    sub_64B660
+      00649D94  mov     ebp, eax
+  - from 00649E41  sub_649CA0
+  - from 00649E9B  sub_649CA0
+  - from 00649EAE  sub_649CA0
+  - from 0064A49B  sub_64A0C0
+    func sub_64A0C0 @ 0064A0C0..0064A621 
+      0064A0C0  sub     esp, 88h
+      0064A0C6  mov     eax, [ecx]
+      0064A0C8  push    ebx
+      0064A0C9  push    ebp
+      0064A0CA  push    esi
+      0064A0CB  push    edi
+      0064A0CC  mov     edi, edx
+      0064A0CE  mov     edx, [esp+98h+arg_0]
+      0064A0D5  xor     ebx, ebx
+      0064A0D7  push    edx
+      0064A0D8  mov     [esp+9Ch+var_7C], edi
+      0064A0DC  mov     [esp+9Ch+var_84], ecx
+      0064A0E0  mov     [esp+9Ch+var_78], ebx
+      0064A0E4  call    dword ptr [eax+18h]
+      0064A0E7  mov     esi, eax
+      0064A0E9  mov     al, byte_A8DBA0
+      0064A0EE  test    al, al
+      0064A0F0  jz      loc_64A3A7
+      0064A0F6  mov     al, [edi]
+      0064A0F8  cmp     al, 25h ; '%'
+      0064A0FA  jz      short loc_64A104
+      0064A0FC  cmp     al, 26h ; '&'
+      0064A0FE  jnz     loc_64A3A7
+      0064A104  movsx   esi, byte ptr [edi+2]
+      0064A108  cmp     al, 26h ; '&'
+      0064A10A  mov     [esp+98h+var_74], esi
+      0064A10E  mov     [esp+98h+var_88], ebx
+      0064A112  jnz     short loc_64A11B
+      0064A114  push    offset aReceivedPack_0; "Received PACKETTIMING packet\n"
+      0064A119  jmp     short loc_64A124
+      0064A11B  cmp     al, 25h ; '%'
+      0064A11D  jnz     short loc_64A12C
+      0064A11F  push    offset aReceivedMegafr; "Received MEGAFRAMEINFO packet\n"
+      0064A124  call    WWDebugString; Received MEGAFRAMEINFO packet
+      0064A129  add     esp, 4
+      0064A12C  cmp     esi, ebx
+      0064A12E  jnz     short loc_64A13F
+      0064A130  push    offset aMegaframeinfoI; "MEGAFRAMEINFO is part of a pserver port"...
+      0064A135  call    WWDebugString; MEGAFRAMEINFO is part of a pserver port blitz!
+      0064A13A  add     esp, 4
+      0064A13D  cmp     esi, ebx
+      0064A13F  jle     loc_64A380
+      0064A145  lea     ebx, [edi+7]
+      0064A148  mov     [esp+98h+var_80], esi
+      0064A14C  mov     ebp, ebx
+      0064A14E  cmp     byte ptr [edi], 25h ; '%'
+      0064A151  jnz     loc_64A257
+      0064A157  mov     ecx, [esp+98h+var_84]
+      0064A15B  movsx   edx, byte ptr [ebp+0Bh]
+      0064A15F  mov     eax, [ecx]
+      0064A161  push    edx
+      0064A162  call    dword ptr [eax+18h]
+      0064A165  cmp     eax, 0FFFFFFFFh
+      0064A168  jz      loc_64A363
+      0064A16E  mov     ecx, [ebp+0]
+      0064A171  mov     esi, [esp+98h+arg_8]
+      0064A178  xor     edx, edx
+      0064A17A  mov     dl, [ebp+0Ah]
+      0064A17D  sub     ecx, edx
+      0064A17F  lea     edx, [eax+eax*2]
+      0064A182  lea     esi, [esi+edx*8]
+      0064A185  cmp     [esi], ecx
+      0064A187  jge     short loc_64A1F3
+      0064A189  mov     [esi], ecx
+      0064A18B  mov     ecx, [esp+98h+arg_8]
+      0064A192  mov     edx, eax
+      0064A194  call    sub_652110
+      0064A199  movsx   eax, byte ptr [ebp+0Bh]
+      0064A19D  push    eax
+      0064A19E  mov     ecx, offset IPXManager
+      0064A1A3  call    sub_540FC0
+      0064A1A8  test    eax, eax
+      0064A1AA  jz      short loc_64A1D3
+      0064A1AC  movsx   edx, byte ptr [ebp+0Bh]
+      0064A1B0  mov     ecx, [esi]
+      0064A1B2  push    ecx
+      0064A1B3  push    edx
+      0064A1B4  mov     ecx, offset IPXManager
+      0064A1B9  call    sub_540FC0
+      0064A1BE  mov     ecx, eax; src
+  - from 0064A4E1  sub_64A0C0
+  - from 0064A4F8  sub_64A0C0
+  - from 0064B9F7  sub_64B660
+    func sub_64B660 @ 0064B660..0064BDC8 
+      0064B660  sub     esp, 94h
+      0064B666  push    ebx
+      0064B667  push    ebp
+      0064B668  push    esi
+      0064B669  mov     ebx, ecx
+      0064B66B  push    edi
+      0064B66C  mov     ecx, 1Bh
+      0064B671  xor     eax, eax
+      0064B673  lea     edi, [esp+0A4h+var_70]
+      0064B677  mov     byte ptr [esp+0A4h+var_70], 0
+      0064B67C  xor     esi, esi
+      0064B67E  rep stosd
+      0064B680  stosw
+      0064B682  stosb
+      0064B683  mov     al, byte_A8ED74
+      0064B688  mov     [esp+0A4h+var_74], edx
+      0064B68C  test    al, al
+      0064B68E  mov     [esp+0A4h+var_7C], esi
+      0064B692  mov     [esp+0A4h+var_88], esi
+      0064B696  mov     byte ptr [esp+0A4h+var_90], 0
+      0064B69B  mov     [esp+0A4h+var_91], 0
+      0064B6A0  mov     [esp+0A4h+var_89], 0
+      0064B6A5  mov     [esp+0A4h+var_84], esi
+      0064B6A9  mov     [esp+0A4h+var_80], esi
+      0064B6AD  jz      short loc_64B6C2
+      0064B6AF  mov     eax, Frame
+      0064B6B4  push    eax
+      0064B6B5  push    offset aFrameDBuilding; "\nFrame %d: Building Send Packet\n"
+      0064B6BA  call    WWDebugString;
+      0064B6BF  add     esp, 8
+      0064B6C2  cmp     LastEventIdx, esi
+      0064B6C8  jz      loc_64BDA7
+      0064B6CE  mov     ecx, dword_A802CC
+      0064B6D4  mov     edx, [esp+0A4h+var_7C]
+      0064B6D8  mov     eax, [esp+0A4h+arg_8]
+      0064B6DF  cmp     edx, eax
+      0064B6E1  jge     loc_64BDA7
+      0064B6E7  lea     eax, [ecx+ecx*8]
+      0064B6EA  xor     edx, edx
+      0064B6EC  lea     esi, [ecx+eax*4]
+      0064B6EF  mov     al, byte ptr NetworkPackets0.ev.EventKind[esi+esi*2]
+      0064B6F6  mov     byte ptr [esp+0A4h+var_78], al
+      0064B6FA  mov     edi, [esp+0A4h+var_78]
+      0064B6FE  and     edi, 0FFh
+      0064B704  cmp     al, 1Fh
+      0064B706  mov     dl, byte_8208EC[edi]
+      0064B70C  mov     ebp, edx
+      0064B70E  jnz     short loc_64B71D
+      0064B710  mov     edx, dword ptr NetworkPackets0.ev.altLoc.X[esi+esi*2]
+      0064B717  lea     edi, [edx+ebp+1]
+      0064B71B  jmp     short loc_64B720
+      0064B71D  lea     edi, [ebp+1]
+      0064B720  cmp     byte ptr [esp+0A4h+var_70], 4
+      0064B725  jnz     loc_64B926
+      0064B72B  cmp     al, 4
+      0064B72D  jnz     loc_64B8CF
+      0064B733  mov     al, [esp+0A4h+var_89]
+      0064B737  test    al, al
+      0064B739  jnz     loc_64B856
+      0064B73F  mov     al, [esi+esi*2+0A802E0h]
+      0064B746  mov     dl, [esp+0A4h+var_64]
+      0064B74A  cmp     al, dl
+      0064B74C  mov     [esp+0A4h+var_89], al
+      0064B750  jnz     loc_64B856
+      0064B756  mov     al, byte ptr (NetworkPackets0.ev.field_F+3)[esi+esi*2]
+      0064B75D  lea     edx, [esi+esi*2+0A802E2h]
+      0064B764  cmp     al, [esp+0A4h+var_5E]
+      0064B768  jnz     loc_64B856
+      0064B76E  mov     eax, [edx]
+      0064B770  cmp     eax, [esp+0A4h+var_62]
+      0064B774  jnz     loc_64B856
+      0064B77A  mov     al, NetworkPackets0.ev.field_17[esi+esi*2]
+      0064B781  lea     esi, NetworkPackets0.ev.loc.X[esi+esi*2]
+      0064B788  cmp     al, [esp+0A4h+var_59]
+      0064B78C  jnz     loc_64B856
+      0064B792  mov     eax, [esi]
+      0064B794  cmp     eax, [esp+0A4h+var_5D]
+      0064B798  jnz     loc_64B856
+      0064B79E  mov     al, byte_A8ED74
+      0064B7A3  test    al, al
+  - from 0064BA61  sub_64B660
+  - from 0064BA6A  sub_64B660
+  - from 0064BFE8  sub_64BDD0
+    func sub_64BDD0 @ 0064BDD0..0064C37F 
+      0064BDD0  sub     esp, 9Ch
+      0064BDD6  push    ebx
+      0064BDD7  push    ebp
+      0064BDD8  push    esi
+      0064BDD9  mov     esi, ecx
+      0064BDDB  push    edi
+      0064BDDC  xor     ebx, ebx
+      0064BDDE  mov     ecx, 1Bh
+      0064BDE3  xor     eax, eax
+      0064BDE5  lea     edi, [esp+0ACh+var_70]
+      0064BDE9  mov     byte ptr [esp+0ACh+var_70], bl
+      0064BDED  rep stosd
+      0064BDEF  stosw
+      0064BDF1  stosb
+      0064BDF2  movsx   eax, byte ptr [esi+2]
+      0064BDF6  cmp     edx, 0Eh
+      0064BDF9  mov     [esp+0ACh+var_88], esi
+      0064BDFD  mov     [esp+0ACh+var_98], edx
+      0064BE01  mov     [esp+0ACh+var_94], ebx
+      0064BE05  mov     [esp+0ACh+var_99], bl
+      0064BE09  mov     ebp, 0Dh
+      0064BE0E  mov     edi, esi
+      0064BE10  mov     [esp+0ACh+var_84], eax
+      0064BE14  jb      loc_64C370
+      0064BE1A  mov     edx, dword_8B4200
+      0064BE20  mov     al, [edi]
+      0064BE22  cmp     al, 19h
+      0064BE24  mov     [esp+0ACh+var_74], al
+      0064BE28  jz      loc_64C335
+      0064BE2E  cmp     al, 1Ch
+      0064BE30  jnz     short loc_64BE4C
+      0064BE32  mov     al, [edi+2]
+      0064BE35  mov     ecx, [edi+3]
+      0064BE38  mov     byte ptr [esp+0ACh+var_70+2], al
+      0064BE3C  mov     eax, [esp+0ACh+var_98]
+      0064BE40  add     ebx, 6
+      0064BE43  mov     [esp+0ACh+var_70+3], ecx
+      0064BE47  sub     eax, 6
+      0064BE4A  jmp     short loc_64BE5E
+      0064BE4C  cmp     al, 4
+      0064BE4E  jnz     short loc_64BE62
+      0064BE50  mov     cl, [ebx+esi+1]
+      0064BE54  mov     eax, [esp+0ACh+var_98]
+      0064BE58  inc     ebx
+      0064BE59  mov     [esp+0ACh+var_99], cl
+      0064BE5D  dec     eax
+      0064BE5E  mov     [esp+0ACh+var_98], eax
+      0064BE62  mov     ecx, 1Ah
+      0064BE67  xor     eax, eax
+      0064BE69  lea     edi, [esp+0ACh+Memory]
+      0064BE6D  rep stosd
+      0064BE6F  mov     al, [esp+0ACh+var_74]
+      0064BE73  xor     ecx, ecx
+      0064BE75  mov     byte ptr [esp+0ACh+var_70], al
+      0064BE79  mov     edi, [esp+0ACh+var_70]
+      0064BE7D  and     edi, 0FFh
+      0064BE83  cmp     al, 4
+      0064BE85  mov     cl, byte_8208EC[edi]
+      0064BE8B  mov     ebp, ecx
+      0064BE8D  mov     [esp+0ACh+var_8C], ebp
+      0064BE91  jz      loc_64BF1A
+      0064BE97  cmp     al, 1Bh
+      0064BE99  jz      short loc_64BF0E
+      0064BE9B  cmp     al, 1Fh
+      0064BE9D  lea     esi, [ebx+esi+1]
+      0064BEA1  jz      short loc_64BEBE
+      0064BEA3  lea     edi, [esp+0ACh+Memory]
+      0064BEA7  mov     eax, ecx
+      0064BEA9  shr     ecx, 2
+      0064BEAC  rep movsd
+      0064BEAE  mov     ecx, eax
+      0064BEB0  and     ecx, 3
+      0064BEB3  rep movsb
+      0064BEB5  mov     ebp, [esp+0ACh+Memory]
+      0064BEB9  jmp     loc_64C256
+      0064BEBE  mov     edx, ecx
+      0064BEC0  lea     edi, [esp+0ACh+sz]
+      0064BEC4  shr     ecx, 2
+      0064BEC7  rep movsd
+      0064BEC9  mov     ecx, edx
+  - from 0064C035  sub_64BDD0
+  - from 0064C051  sub_64BDD0
+  - from 0064C191  sub_64BDD0
+  - from 0064C1DE  sub_64BDD0
+  - from 0064C1F3  sub_64BDD0
+  - from 0064C27F  sub_64BDD0
+  - from 0064C2C9  sub_64BDD0
+  - from 0064C2F0  sub_64BDD0
+  - from 0064C38D  DoList
+    func DoList @ 0064C380..0064CD2A 
+      0064C380  sub     esp, 40h
+      0064C383  push    ebx
+      0064C384  mov     ebx, vec_Houses.length
+      0064C38A  push    ebp
+      0064C38B  push    esi
+      0064C38C  push    edi; OffendingEvent
+      0064C38D  mov     edi, dword_8B41F8
+      0064C393  xor     ebp, ebp
+      0064C395  xor     esi, esi
+      0064C397  cmp     edi, ebp
+      0064C399  mov     [esp+50h+var_34], edi
+      0064C39D  mov     [esp+50h+var_30], ebx
+      0064C3A1  jle     short @@3
+      0064C3A3  mov     ecx, dword_A8B1DC
+      0064C3A9  mov     eax, dword_8B41FC
+      0064C3AE  add     eax, esi
+      0064C3B0  and     eax, 3FFFh
+      0064C3B5  lea     edx, [eax+eax*8]
+      0064C3B8  lea     eax, [eax+edx*4]
+      0064C3BB  cmp     byte ptr NetworkPackets1.ev.EventKind[eax+eax*2], 1Ch
+      0064C3C3  jz      short @@2
+      0064C3C5  mov     eax, [eax+eax*2+8B4207h]
+      0064C3CC  mov     edx, dword_A8B1F8
+      0064C3D2  cmp     eax, edx
+      0064C3D4  jle     short @@2
+      0064C3D6  cmp     eax, ecx
+      0064C3D8  jge     short @@2
+      0064C3DA  push    ecx
+      0064C3DB  push    eax
+      0064C3DC  push    offset aDolistMovingEv; "DoList: Moving event from frame %d to f"...
+      0064C3E1  call    WWDebugString; DoList: Moving event from frame %d to frame %d
+      0064C3E6  mov     eax, dword_8B41FC
+      0064C3EB  add     esp, 0Ch
+      0064C3EE  add     eax, esi
+      0064C3F0  and     eax, 3FFFh
+      0064C3F5  lea     ecx, [eax+eax*8]
+      0064C3F8  lea     eax, [eax+ecx*4]
+      0064C3FB  mov     ecx, dword_A8B1DC
+      0064C401  mov     [eax+eax*2+8B4207h], ecx
+      0064C408  inc     esi
+      0064C409  cmp     esi, edi
+      0064C40B  jl      short @@1
+      0064C40D  cmp     dword_A8E2D8, ebp
+      0064C413  jz      @@7
+      0064C419  mov     ecx, dword_A8E2DC
+      0064C41F  cmp     ecx, ebp
+      0064C421  jz      @@7
+      0064C427  cmp     dword_A8E2E0, 0FFFFFFFFh
+      0064C42E  jz      @@7
+      0064C434  xor     esi, esi
+      0064C436  cmp     edi, ebp
+      0064C438  jle     short @@6
+      0064C43A  mov     edx, dword_8B41FC
+      0064C440  lea     eax, [edx+esi]
+      0064C443  and     eax, 3FFFh
+      0064C448  lea     edx, [eax+eax*8]
+      0064C44B  lea     eax, [eax+edx*4]
+      0064C44E  cmp     byte ptr NetworkPackets1.ev.EventKind[eax+eax*2], 13h
+      0064C456  jnz     short @@5
+      0064C458  movsx   edx, byte ptr [eax+eax*2+8B4206h]
+      0064C460  cmp     edx, dword_A8E2E0
+      0064C466  jnz     short @@5
+      0064C468  mov     eax, [eax+eax*2+8B4207h]
+      0064C46F  mov     edx, dword_A8E2D8
+      0064C475  cmp     eax, edx
+      0064C477  jle     short @@5
+      0064C479  cmp     eax, ecx
+      0064C47B  jge     short @@5
+      0064C47D  push    ecx
+      0064C47E  push    eax
+      0064C47F  push    offset aDolistMovingEx; "DoList: Moving EXIT event from frame %d"...
+      0064C484  call    WWDebugString; DoList: Moving EXIT event from frame %d to frame %d
+      0064C489  mov     eax, dword_8B41FC
+      0064C48E  add     esp, 0Ch
+      0064C491  add     eax, esi
+      0064C493  and     eax, 3FFFh
+      0064C498  lea     ecx, [eax+eax*8]
+      0064C49B  lea     eax, [eax+ecx*4]
+      0064C49E  mov     ecx, dword_A8E2DC
+      0064C4A4  mov     [eax+eax*2+8B4207h], ecx
+  - from 0064D990  sub_64D990
+    func sub_64D990 @ 0064D990..0064D9D9 
+      0064D990  mov     edx, dword_8B41F8
+      0064D996  push    esi
+      0064D997  test    edx, edx
+      0064D999  jz      short loc_64D9D7
+      0064D99B  mov     esi, Frame
+      0064D9A1  mov     eax, dword_8B41FC
+      0064D9A6  lea     ecx, [eax+eax*8]
+      0064D9A9  lea     ecx, [eax+ecx*4]
+      0064D9AC  test    byte ptr [ecx+ecx*2+8B4205h], 1
+      0064D9B4  jnz     short loc_64D9BF
+      0064D9B6  cmp     esi, [ecx+ecx*2+8B4207h]
+      0064D9BD  jle     short loc_64D9D7
+      0064D9BF  test    edx, edx
+      0064D9C1  jz      short loc_64D9D7
+      0064D9C3  inc     eax
+      0064D9C4  and     eax, 3FFFh
+      0064D9C9  dec     edx
+      0064D9CA  mov     dword_8B41FC, eax
+      0064D9CF  mov     dword_8B41F8, edx
+      0064D9D5  jnz     short loc_64D9A6
+      0064D9D7  pop     esi
+      0064D9D8  retn
+  - from 0064D9CF  sub_64D990
+  - from 0064D9FA  sub_64D9E0
+    func sub_64D9E0 @ 0064D9E0..0064DAAD 
+      0064D9E0  push    ecx
+      0064D9E1  mov     edx, Frame
+      0064D9E7  push    ebx
+      0064D9E8  test    edx, edx
+      0064D9EA  push    esi
+      0064D9EB  jnz     short loc_64D9FA
+      0064D9ED  mov     eax, Session
+      0064D9F2  test    eax, eax
+      0064D9F4  jnz     loc_64DAA9
+      0064D9FA  mov     eax, dword_8B41F8
+      0064D9FF  push    edi
+      0064DA00  xor     edi, edi
+      0064DA02  mov     bl, 1
+      0064DA04  test    eax, eax
+      0064DA06  mov     [esp+10h+Buffer], edi
+      0064DA0A  jle     short loc_64DA3E
+      0064DA0C  mov     ecx, dword_8B41FC
+      0064DA12  push    ebp
+      0064DA13  mov     esi, eax
+      0064DA15  mov     eax, ecx
+      0064DA17  and     eax, 3FFFh
+      0064DA1C  lea     ebp, [eax+eax*8]
+      0064DA1F  lea     eax, [eax+ebp*4]
+      0064DA22  cmp     edx, [eax+eax*2+8B4207h]
+      0064DA29  jnz     short loc_64DA35
+      0064DA2B  test    [eax+eax*2+8B4205h], bl
+      0064DA32  jnz     short loc_64DA35
+      0064DA34  inc     edi
+      0064DA35  inc     ecx
+      0064DA36  dec     esi
+      0064DA37  jnz     short loc_64DA15
+      0064DA39  mov     [esp+14h+Buffer], edi
+      0064DA3D  pop     ebp
+      0064DA3E  lea     eax, [esp+10h+Buffer]
+      0064DA42  push    4; nNumberOfBytesToWrite
+      0064DA44  push    eax; lpBuffer
+      0064DA45  mov     ecx, offset FileQ
+      0064DA4A  call    CCFileClass_WriteBytes
+      0064DA4F  mov     eax, dword_8B41F8
+      0064DA54  xor     esi, esi
+      0064DA56  test    eax, eax
+      0064DA58  pop     edi
+      0064DA59  jle     short loc_64DAA9
+      0064DA5B  mov     ecx, dword_8B41FC
+      0064DA61  lea     eax, [ecx+esi]
+      0064DA64  mov     ecx, Frame
+      0064DA6A  and     eax, 3FFFh
+      0064DA6F  lea     edx, [eax+eax*8]
+      0064DA72  lea     eax, [eax+edx*4]
+      0064DA75  cmp     ecx, [eax+eax*2+8B4207h]
+      0064DA7C  jnz     short loc_64DA9F
+      0064DA7E  test    [eax+eax*2+8B4205h], bl
+      0064DA85  jnz     short loc_64DA9F
+      0064DA87  lea     edx, NetworkPackets1.ev.EventKind[eax+eax*2]
+      0064DA8E  push    6Fh ; 'o'; nNumberOfBytesToWrite
+      0064DA90  push    edx; lpBuffer
+      0064DA91  mov     ecx, offset FileQ
+      0064DA96  call    CCFileClass_WriteBytes
+      0064DA9B  dec     [esp+0Ch+Buffer]
+      0064DA9F  mov     eax, dword_8B41F8
+      0064DAA4  inc     esi
+      0064DAA5  cmp     esi, eax
+      0064DAA7  jl      short loc_64DA5B
+      0064DAA9  pop     esi
+      0064DAAA  pop     ebx
+      0064DAAB  pop     ecx
+      0064DAAC  retn
+  - from 0064DA4F  sub_64D9E0
+  - from 0064DA9F  sub_64D9E0
+  - from 0065225B  sub_652230
+    func sub_652230 @ 00652230..00652394 
+      00652230  push    ecx
+      00652231  mov     edx, Frame
+      00652237  push    esi
+      00652238  mov     esi, ecx
+      0065223A  mov     ecx, dword_A8B24C
+      00652240  lea     eax, [edx+1]
+      00652243  cmp     ecx, 2
+      00652246  jnz     short loc_652258
+      00652248  mov     ecx, FrameSendRate
+      0065224E  lea     eax, [ecx+edx]
+      00652251  xor     edx, edx
+      00652253  div     ecx
+      00652255  imul    eax, ecx
+      00652258  mov     [esi+3], eax
+      0065225B  mov     eax, dword_8B41F8
+      00652260  cmp     eax, 4000h
+      00652265  jge     short loc_6522B7
+      00652267  mov     eax, dword_8B41FC
+      0065226C  test    eax, eax
+      0065226E  jnz     short loc_652277
+      00652270  mov     eax, 3FFFh
+      00652275  jmp     short loc_652278
+      00652277  dec     eax
+      00652278  lea     ecx, [eax+eax*8]
+      0065227B  mov     dword_8B41FC, eax
+      00652280  push    edi
+      00652281  lea     eax, [eax+ecx*4]
+      00652284  mov     ecx, 1Bh
+      00652289  lea     edi, NetworkPackets1.ev.EventKind[eax+eax*2]
+      00652290  rep movsd
+      00652292  movsw
+      00652294  movsb
+      00652295  call    ds:__imp_timeGetTime; Get system time, in milliseconds
+      0065229B  mov     edx, dword_8B41FC
+      006522A1  pop     edi
+      006522A2  pop     esi
+      006522A3  mov     dword_A70204[edx*4], eax
+      006522AA  mov     eax, dword_8B41F8
+      006522AF  inc     eax
+      006522B0  mov     dword_8B41F8, eax
+      006522B5  pop     ecx
+      006522B6  retn
+      006522B7  mov     eax, Session
+      006522BC  test    eax, eax
+      006522BE  jz      loc_652391
+      006522C4  cmp     eax, 5
+      006522C7  jz      loc_652391
+      006522CD  cmp     eax, 4
+      006522D0  jnz     short loc_6522D7
+      006522D2  call    sub_6C8820
+      006522D7  mov     edx, dword_A8DAB4
+      006522DD  push    0; int
+      006522DF  inc     edx
+      006522E0  push    0; int
+      006522E2  push    0; int
+      006522E4  mov     dword_A8DAB4, edx
+      006522EA  push    22AEh; int
+      006522EF  push    offset aDRa2mdpostQueu; "D:\\ra2mdpost\\Queue.CPP"
+      006522F4  xor     edx, edx; a2
+      006522F6  mov     ecx, offset aTxt_ok; "TXT_OK"
+      006522FB  mov     [esp+1Ch+var_4], offset wstr_space; " "
+      00652303  call    Get_String; ecx =
+      00652308  xor     edx, edx; a2
+      0065230A  mov     ecx, offset aTxt_queue_full; "TXT_QUEUE_FULL"
+      0065230F  push    eax; int
+      00652310  push    22AEh; int
+      00652315  push    offset aDRa2mdpostQueu; "D:\\ra2mdpost\\Queue.CPP"
+      0065231A  call    Get_String; ecx =
+      0065231F  lea     ecx, [esp+18h+var_4]
+      00652323  push    eax; lParam
+      00652324  call    MsgBox
+      00652329  mov     ecx, dword_A8DAB4
+      0065232F  mov     eax, dword_B04874
+      00652334  dec     ecx
+      00652335  mov     dword_A8B8B8, 0
+      0065233F  test    eax, eax
+      00652341  mov     dword_A8DAB4, ecx
+      00652347  mov     dword_A8B8BC, 0
+      00652351  mov     GameActive, 0
+      00652358  jz      short loc_65235F
+  - from 006522AA  sub_652230
+  - from 006522B0  sub_652230
+
+===== MegaMissionList? @ 00A83ED0 (.data) =====
+  xrefs = 10
+  - from 004E7F14  InitList_1134
+    func InitList_1134 @ 004E7F00..004E7F27 
+      004E7F00  mov     eax, offset NetworkPackets2
+      004E7F05  mov     ecx, 100h
+      004E7F0A  xor     edx, edx
+      004E7F0C  mov     [eax], dl
+      004E7F0E  add     eax, 6Fh ; 'o'
+      004E7F11  dec     ecx
+      004E7F12  jnz     short loc_4E7F0C
+      004E7F14  mov     dword_A83ED0, edx
+      004E7F1A  mov     dword_A83ED4, edx
+      004E7F20  mov     dword_A83ED8, edx
+      004E7F26  retn
+  - from 0064C739  DoList
+    func DoList @ 0064C380..0064CD2A 
+      0064C380  sub     esp, 40h
+      0064C383  push    ebx
+      0064C384  mov     ebx, vec_Houses.length
+      0064C38A  push    ebp
+      0064C38B  push    esi
+      0064C38C  push    edi; OffendingEvent
+      0064C38D  mov     edi, dword_8B41F8
+      0064C393  xor     ebp, ebp
+      0064C395  xor     esi, esi
+      0064C397  cmp     edi, ebp
+      0064C399  mov     [esp+50h+var_34], edi
+      0064C39D  mov     [esp+50h+var_30], ebx
+      0064C3A1  jle     short @@3
+      0064C3A3  mov     ecx, dword_A8B1DC
+      0064C3A9  mov     eax, dword_8B41FC
+      0064C3AE  add     eax, esi
+      0064C3B0  and     eax, 3FFFh
+      0064C3B5  lea     edx, [eax+eax*8]
+      0064C3B8  lea     eax, [eax+edx*4]
+      0064C3BB  cmp     byte ptr NetworkPackets1.ev.EventKind[eax+eax*2], 1Ch
+      0064C3C3  jz      short @@2
+      0064C3C5  mov     eax, [eax+eax*2+8B4207h]
+      0064C3CC  mov     edx, dword_A8B1F8
+      0064C3D2  cmp     eax, edx
+      0064C3D4  jle     short @@2
+      0064C3D6  cmp     eax, ecx
+      0064C3D8  jge     short @@2
+      0064C3DA  push    ecx
+      0064C3DB  push    eax
+      0064C3DC  push    offset aDolistMovingEv; "DoList: Moving event from frame %d to f"...
+      0064C3E1  call    WWDebugString; DoList: Moving event from frame %d to frame %d
+      0064C3E6  mov     eax, dword_8B41FC
+      0064C3EB  add     esp, 0Ch
+      0064C3EE  add     eax, esi
+      0064C3F0  and     eax, 3FFFh
+      0064C3F5  lea     ecx, [eax+eax*8]
+      0064C3F8  lea     eax, [eax+ecx*4]
+      0064C3FB  mov     ecx, dword_A8B1DC
+      0064C401  mov     [eax+eax*2+8B4207h], ecx
+      0064C408  inc     esi
+      0064C409  cmp     esi, edi
+      0064C40B  jl      short @@1
+      0064C40D  cmp     dword_A8E2D8, ebp
+      0064C413  jz      @@7
+      0064C419  mov     ecx, dword_A8E2DC
+      0064C41F  cmp     ecx, ebp
+      0064C421  jz      @@7
+      0064C427  cmp     dword_A8E2E0, 0FFFFFFFFh
+      0064C42E  jz      @@7
+      0064C434  xor     esi, esi
+      0064C436  cmp     edi, ebp
+      0064C438  jle     short @@6
+      0064C43A  mov     edx, dword_8B41FC
+      0064C440  lea     eax, [edx+esi]
+      0064C443  and     eax, 3FFFh
+      0064C448  lea     edx, [eax+eax*8]
+      0064C44B  lea     eax, [eax+edx*4]
+      0064C44E  cmp     byte ptr NetworkPackets1.ev.EventKind[eax+eax*2], 13h
+      0064C456  jnz     short @@5
+      0064C458  movsx   edx, byte ptr [eax+eax*2+8B4206h]
+      0064C460  cmp     edx, dword_A8E2E0
+      0064C466  jnz     short @@5
+      0064C468  mov     eax, [eax+eax*2+8B4207h]
+      0064C46F  mov     edx, dword_A8E2D8
+      0064C475  cmp     eax, edx
+      0064C477  jle     short @@5
+      0064C479  cmp     eax, ecx
+      0064C47B  jge     short @@5
+      0064C47D  push    ecx
+      0064C47E  push    eax
+      0064C47F  push    offset aDolistMovingEx; "DoList: Moving EXIT event from frame %d"...
+      0064C484  call    WWDebugString; DoList: Moving EXIT event from frame %d to frame %d
+      0064C489  mov     eax, dword_8B41FC
+      0064C48E  add     esp, 0Ch
+      0064C491  add     eax, esi
+      0064C493  and     eax, 3FFFh
+      0064C498  lea     ecx, [eax+eax*8]
+      0064C49B  lea     eax, [eax+ecx*4]
+      0064C49E  mov     ecx, dword_A8E2DC
+      0064C4A4  mov     [eax+eax*2+8B4207h], ecx
+  - from 0064C799  DoList
+  - from 0064C7AC  DoList
+  - from 0064CAE8  DoList
+  - from 0064CBC2  DoList
+  - from 0064CBE6  DoList
+  - from 0064CBF4  DoList
+  - from 0064CC0F  DoList
+  - from 0064CC2E  DoList
+
+===== 5) 0x4C66C0 反汇编 =====
+  func=True  start=0x4c66c0 end=0x4c6717
+    004C66C0  push    ebx
+    004C66C1  mov     ebx, [esp+4+eventKind]
+    004C66C5  mov     eax, ebx
+    004C66C7  push    esi
+    004C66C8  and     eax, 0FFh
+    004C66CD  mov     esi, ecx
+    004C66CF  mov     ecx, netpacketTypes[eax*4]
+    004C66D6  push    ecx
+    004C66D7  push    offset aAddingEventS; "Adding event %s\n"
+    004C66DC  call    WWDebugString; Adding event %s
+    004C66E1  mov     eax, [esp+10h+PlayerNumber]
+    004C66E5  add     esp, 8
+    004C66E8  test    eax, eax
+    004C66EA  jl      short loc_4C6701
+    004C66EC  mov     [esi+2], al
+    004C66EF  mov     [esi], bl
+    004C66F1  mov     edx, Frame
+    004C66F7  mov     eax, esi
+    004C66F9  mov     [esi+3], edx
+    004C66FC  pop     esi
+    004C66FD  pop     ebx
+    004C66FE  retn    8
+    004C6701  mov     byte ptr [esi+2], 0FFh
+    004C6705  mov     byte ptr [esi], 0
+    004C6708  mov     eax, Frame
+    004C670D  mov     [esi+3], eax
+    004C6710  mov     eax, esi
+    004C6712  pop     esi
+    004C6713  pop     ebx
+    004C6714  retn    8
+    004C6717  db 9 dup(90h)
+    004C6720  push    ebx
+    004C6721  mov     ebx, [esp+4+arg_4]
+    004C6725  mov     eax, ebx
+    004C6727  push    esi
+    004C6728  and     eax, 0FFh
+    004C672D  mov     esi, ecx
+    004C672F  mov     ecx, netpacketTypes[eax*4]
+    004C6736  push    ecx
+    004C6737  push    offset aAddingEventS; "Adding event %s\n"
+
+  [db] 已写注释/重命名：OutList / DoList / EventNames / MegaMissionList / 0x4C66C0

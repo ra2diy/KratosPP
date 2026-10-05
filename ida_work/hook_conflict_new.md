@@ -50,6 +50,7 @@
 | 0x004C25D0 | EBolt_DrawSecond_Color | Hooks/EBoltExtHook.cpp:130 | EBolt_DrawSecond_Color | Ext/EBolt/Hooks.cpp:78 |
 | 0x004C26D5 | EBolt_DrawThird_Color | Hooks/EBoltExtHook.cpp:140 | EBolt_DrawThird_Color | Ext/EBolt/Hooks.cpp:88 |
 | 0x004C2951 | EBolt_DTOR | Hooks/EBoltExtHook.cpp:31 | EBolt_DTOR | Ext/EBolt/Body.cpp:88 |
+| 0x004C6CC8 | Networking_RespondToEvent_SyncEvent | Hooks/SyncEventHook.cpp:8 | Networking_RespondToEvent | Ext/Event/Body.cpp:136 |
 | 0x004C9300 | FacingClass_Set_SyncLog | Utilities/SyncLogging.cpp:295 | FacingClass_Set_SyncLog | Misc/SyncLogging.cpp:416 |
 | 0x004D8F40 | FootClass_OverrideMission_SyncLog | Utilities/SyncLogging.cpp:402 | FootClass_OverrideMission_SyncLog | Misc/SyncLogging.cpp:523 |
 | 0x004DDD66 | FootClass_IsLandZoneClear_ReplaceHardcode | Hooks/AircraftExtHook.cpp:577 | FootClass_IsLandZoneClear_ReplaceHardcode | Ext/Aircraft/Hooks.cpp:532 |
@@ -62,10 +63,14 @@
 | 0x0051B1F0 | InfantryClass_AssignTarget_SyncLog | Utilities/SyncLogging.cpp:307 | InfantryClass_AssignTarget_SyncLog | Misc/SyncLogging.cpp:428 |
 | 0x0051EAE0 | InfantryClass_WhatAction_Cursor | Hooks/AirstrikeExtHook.cpp:33 | TechnoClass_WhatAction_AllowAirstrike | Ext/Techno/Hooks.Airstrike.cpp:160 |
 | 0x0052F639 | YR_CmdLineParse | Hooks/GeneralHook.cpp:45 | _YR_CmdLineParse | Phobos.cpp:289 |
+| 0x00533066 | CommandClassCallback_Register | Hooks/HotKeyHook.cpp:64 | CommandClassCallback_Register | Commands/Commands.cpp:26 |
 | 0x0054D600 | JumpjetLocomotionClass_MovingUpdate_DontTurnInCell | Hooks/TechnoExtHook.cpp:1137 | JumpjetLocomotionClass_MovementAI_JumpjetStraightAscend | Ext/Unit/Hooks.Jumpjet.cpp:402 |
 | 0x00550D1F | LaserDrawClass_DrawInHouseColor_Context_Set | Hooks/LaserDrawHook.cpp:19 | LaserDrawClass_DrawInHouseColor_Context_Set | Misc/Hooks.LaserDraw.cpp:12 |
 | 0x00550F47 | LaserDrawClass_DrawInHouseColor_BetterDrawing | Hooks/LaserDrawHook.cpp:26 | LaserDrawClass_DrawInHouseColor_BetterDrawing | Misc/Hooks.LaserDraw.cpp:19 |
 | 0x0064736D | Queue_AI_WriteDesyncLog | Utilities/SyncLogging.cpp:245 | Queue_AI_WriteDesyncLog | Misc/SyncLogging.cpp:350 |
+| 0x0064B6FE | sub_64B660_GetEventSize_SyncEvent | Hooks/SyncEventHook.cpp:16 | sub_64B660_GetEventSize | Ext/Event/Body.cpp:146 |
+| 0x0064BE7D | sub_64BDD0_GetEventSize1_SyncEvent | Hooks/SyncEventHook.cpp:29 | sub_64BDD0_GetEventSize1 | Ext/Event/Body.cpp:162 |
+| 0x0064C30E | sub_64BDD0_GetEventSize2_SyncEvent | Hooks/SyncEventHook.cpp:44 | sub_64BDD0_GetEventSize2 | Ext/Event/Body.cpp:180 |
 | 0x0064CD11 | ExecuteDoList_WriteDesyncLog | Utilities/SyncLogging.cpp:260 | ExecuteDoList_WriteDesyncLog | Misc/SyncLogging.cpp:369 |
 | 0x0065C7D0 | Random2Class_Random_SyncLog | Utilities/SyncLogging.cpp:271 | Random2Class_Random_SyncLog | Misc/SyncLogging.cpp:392 |
 | 0x0065C88A | Random2Class_RandomRanged_SyncLog | Utilities/SyncLogging.cpp:281 | Random2Class_RandomRanged_SyncLog | Misc/SyncLogging.cpp:402 |

@@ -402,79 +402,50 @@ DEFINE_HOOK(0x4A9768, DisplayClass_Submit_KeepStandAboveMaster, 0x5)
 }
 
 
-// ③ 精灵的屏幕纵向偏移（`FootClass::GetZAdjustment` `0x4DB091`）：替身从 Master 取 ZAdjust。
-//    `pSkip / pStand / zAdjust` 是"跨调用记忆"缓存 —— 报告 §12.6(3) 判定：
-//    渲染路径、不进校验值，风险等级低，**待单独评估**（本轮先不动）。
-namespace StandZAdjust
-{
-	TechnoClass* pSkip = nullptr;
-	TechnoClass* pStand = nullptr;
-	int zAdjust = -1;
-}
-
 DEFINE_HOOK(0x4DB091, FootClass_GetZAdjustment, 0x6)
 {
 	GET(TechnoClass*, pTechno, ESI);
-	if (pTechno == StandZAdjust::pStand)
+
+	TechnoStatus* status = nullptr;
+	if (TryGetStatus<TechnoExt>(pTechno, status) && status->AmIStand() && status->pMyMaster && !status->MyStandData.IsTrain)
 	{
+		// 从JOJO身上获取ZAdjust
+		TechnoClass* pMaster = status->pMyMaster;
+		int z = pMaster->GetZAdjustment();
+		if (BuildingClass* pBuilding = abstract_cast<BuildingClass*, true>(pMaster))
+		{
+			if (status->MyStandData.ZOffset < 0)
+			{
+				z += 3;
+			}
+			else
+			{
+				// 加上自身的zAdjust
+				int zz = pTechno->GetZ();
+				int zzz = -TacticalClass::Instance->AdjustForZ(zz);
+				z += zzz;
+				// 加上建筑动画的zAdjust
+				BuildingTypeClass* pType = pBuilding->Type;
+				int bZ = 0;
+				for (int i = 0; i < 0x15; i++)
+				{
+					int zAdjust = pType->BuildingAnim[i].ZAdjust;
+					if (bZ > zAdjust)
+					{
+						bZ = zAdjust;
+					}
+				}
+				// 再加上一层，每一层高度是15
+				z += bZ - 14;
+			}
+		}
+
+		// 三个加数置零 + 写 EAX ⇒ 重放后 `add eax,edi` / `add eax,ecx` 加的都是 0
 		R->EDI(0);
 		R->Stack(0x8, 0);
-		R->EAX(StandZAdjust::zAdjust);
+		R->EAX(z);
 	}
-	else if (pTechno == StandZAdjust::pSkip)
-	{
-		// 什么都不做
-	}
-	else
-	{
-		TechnoStatus* status = nullptr;
-		if (TryGetStatus<TechnoExt>(pTechno, status) && status->AmIStand() && status->pMyMaster && !status->MyStandData.IsTrain)
-		{
-			// 从JOJO身上获取ZAdjust
-			TechnoClass* pMaster = status->pMyMaster;
-			int z = pMaster->GetZAdjustment();
-			if (BuildingClass* pBuilding = abstract_cast<BuildingClass*, true>(pMaster))
-			{
-				if (status->MyStandData.ZOffset < 0)
-				{
-					z += 3;
-				}
-				else
-				{
-					// 加上自身的zAdjust
-					int zz = pTechno->GetZ();
-					int zzz = -TacticalClass::Instance->AdjustForZ(zz);
-					z += zzz;
-					// 加上建筑动画的zAdjust
-					BuildingTypeClass* pType = pBuilding->Type;
-					int bZ = 0;
-					for (int i = 0; i < 0x15; i++)
-					{
-						int zAdjust = pType->BuildingAnim[i].ZAdjust;
-						if (bZ > zAdjust)
-						{
-							bZ = zAdjust;
-						}
-					}
-					// 再加上一层，每一层高度是15
-					z += bZ - 14;
-				}
-			}
-
-			StandZAdjust::pSkip = nullptr;
-			StandZAdjust::pStand = pTechno;
-			StandZAdjust::zAdjust = z;
-			R->EDI(0);
-			R->Stack(0x8, 0);
-			R->EAX(z);
-		}
-		else
-		{
-			StandZAdjust::pSkip = pTechno;
-			StandZAdjust::pStand = nullptr;
-			StandZAdjust::zAdjust = -1;
-		}
-	}
+	// 非替身：什么都不做，原指令照常重放
 	return 0;
 }
 

@@ -1,0 +1,16 @@
+函数 0x004DAFC0 名 = FootClass_Get_ZAdjustment（范围 0x004DAFC0..0x004DB09F）
+hook 落点 0x4DB091 是否在本函数内: True
+
+槽 0x007E2590 -> 虚表 ??_7AircraftClass@@6BAircraftClass@@@ @0x007E22A4  槽偏移 = +0x2EC
+槽 0x007E8F80 -> 虚表 ??_7FootClass@@6BFootClass@@@ @0x007E8C94  槽偏移 = +0x2EC
+槽 0x007EB344 -> 虚表 ??_7InfantryClass@@6BInfantryClass@@@ @0x007EB058  槽偏移 = +0x2EC
+槽 0x007F5F5C -> 虚表 ??_7UnitClass@@6BUnitClass@@@ @0x007F5C70  槽偏移 = +0x2EC
+
+★ 槽偏移集合 = +0x2EC
+
+--- 谁引用该函数入口（XrefsTo 0x004DAFC0）---
+  0x007E2590  type=1  dd offset FootClass_Get_ZAdjustment
+  0x007E8C94  type=1  vt_FootClass <<<<<<offset AbstractClass_QueryInterface, \; 2 = "this", dock with "dock"
+  0x007EB058  type=1  vt_InfantryClass <<<<<<<offset AbstractClass_QueryInterface,\; 2 = "this", dock with "dock"
+  0x007F5F5C  type=1  dd offset FootClass_Get_ZAdjustment
+共 4 处

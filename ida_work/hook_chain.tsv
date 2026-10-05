@@ -49,6 +49,7 @@ HOOK	004C25D0	EBolt_DrawSecond_Color	Hooks/EBoltExtHook.cpp:130	ALLPATHS	0x4C25F
 STATIC	004C26CF	0x4C26D5	Hooks/EBoltExtHook.cpp:139	JUMP:DEFINE_JUMP		
 HOOK	004C26D5	EBolt_DrawThird_Color	Hooks/EBoltExtHook.cpp:140	ALLPATHS	0x4C26EE,0x4C2710	
 HOOK	004C2951	EBolt_DTOR	Hooks/EBoltExtHook.cpp:31	ZERO		
+HOOK	004C6CC8	Networking_RespondToEvent_SyncEvent	Hooks/SyncEventHook.cpp:8	ZERO		
 HOOK	004C9300	FacingClass_Set_SyncLog	Utilities/SyncLogging.cpp:295	ZERO		
 HOOK	004D8F40	FootClass_OverrideMission_SyncLog	Utilities/SyncLogging.cpp:402	ZERO		
 HOOK	004DDD66	FootClass_IsLandZoneClear_ReplaceHardcode	Hooks/AircraftExtHook.cpp:577	ALLPATHS	SkipGameCode	
@@ -61,10 +62,14 @@ HOOK	0051AA40	InfantryClass_AssignDestination_SyncLog	Utilities/SyncLogging.cpp:
 HOOK	0051B1F0	InfantryClass_AssignTarget_SyncLog	Utilities/SyncLogging.cpp:307	ZERO		
 HOOK	0051EAE0	InfantryClass_WhatAction_Cursor	Hooks/AirstrikeExtHook.cpp:33	ALLPATHS	0x51EB06	
 HOOK	0052F639	YR_CmdLineParse	Hooks/GeneralHook.cpp:45	ZERO		
+HOOK	00533066	CommandClassCallback_Register	Hooks/HotKeyHook.cpp:64	ZERO		
 HOOK	0054D600	JumpjetLocomotionClass_MovingUpdate_DontTurnInCell	Hooks/TechnoExtHook.cpp:1137	ZERO		Y
 HOOK	00550D1F	LaserDrawClass_DrawInHouseColor_Context_Set	Hooks/LaserDrawHook.cpp:19	ZERO		
 HOOK	00550F47	LaserDrawClass_DrawInHouseColor_BetterDrawing	Hooks/LaserDrawHook.cpp:26	ALLPATHS	0x550F9D	
 HOOK	0064736D	Queue_AI_WriteDesyncLog	Utilities/SyncLogging.cpp:245	ALLPATHS	0x647372	
+HOOK	0064B6FE	sub_64B660_GetEventSize_SyncEvent	Hooks/SyncEventHook.cpp:16	BRANCH	0x64B71D	
+HOOK	0064BE7D	sub_64BDD0_GetEventSize1_SyncEvent	Hooks/SyncEventHook.cpp:29	BRANCH	0x64BE97	
+HOOK	0064C30E	sub_64BDD0_GetEventSize2_SyncEvent	Hooks/SyncEventHook.cpp:44	BRANCH	0x64C321	
 HOOK	0064CD11	ExecuteDoList_WriteDesyncLog	Utilities/SyncLogging.cpp:260	ZERO		
 HOOK	0065C7D0	Random2Class_Random_SyncLog	Utilities/SyncLogging.cpp:271	ZERO		
 HOOK	0065C88A	Random2Class_RandomRanged_SyncLog	Utilities/SyncLogging.cpp:281	ZERO		

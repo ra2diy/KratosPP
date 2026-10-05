@@ -61,12 +61,12 @@
 <!-- AUTO:STATS -->
 | 指标 | KratosPP | Phobos |
 | --- | --- | --- |
-| 内存改写指令合计 | **437** | **1903** |
-| `DEFINE_HOOK` + `DEFINE_HOOK_AGAIN` | 430 | 1654 |
+| 内存改写指令合计 | **442** | **1903** |
+| `DEFINE_HOOK` + `DEFINE_HOOK_AGAIN` | 435 | 1654 |
 | `DEFINE_JUMP` / `_FUNCTION_JUMP` / `_DYNAMIC_JUMP` / `_NAKED_HOOK` | 5 | 203 |
 | `DEFINE_PATCH` / `_DYNAMIC_PATCH(_TYPED)` | 2 | 46 |
 
-- 同址 **hook × hook**：**136** 个地址 / **140** 对
+- 同址 **hook × hook**：**141** 个地址 / **145** 对
 - 同址（含 JUMP / PATCH 等其他改写）：另有 **8** 处
 - 区间部分重叠（起始不同，真正的「相邻打架」）：**0** 对
 <!-- /AUTO:STATS -->
@@ -132,6 +132,7 @@
 | 0x004C25D0 | EBolt_DrawSecond_Color | Hooks/EBoltExtHook.cpp:130 | EBolt_DrawSecond_Color | Ext/EBolt/Hooks.cpp:78 |
 | 0x004C26D5 | EBolt_DrawThird_Color | Hooks/EBoltExtHook.cpp:140 | EBolt_DrawThird_Color | Ext/EBolt/Hooks.cpp:88 |
 | 0x004C2951 | EBolt_DTOR | Hooks/EBoltExtHook.cpp:31 | EBolt_DTOR | Ext/EBolt/Body.cpp:88 |
+| 0x004C6CC8 | Networking_RespondToEvent_SyncEvent | Hooks/SyncEventHook.cpp:8 | Networking_RespondToEvent | Ext/Event/Body.cpp:136 |
 | 0x004C9300 | FacingClass_Set_SyncLog | Utilities/SyncLogging.cpp:295 | FacingClass_Set_SyncLog | Misc/SyncLogging.cpp:416 |
 | 0x004D8F40 | FootClass_OverrideMission_SyncLog | Utilities/SyncLogging.cpp:402 | FootClass_OverrideMission_SyncLog | Misc/SyncLogging.cpp:523 |
 | 0x004DDD66 | FootClass_IsLandZoneClear_ReplaceHardcode | Hooks/AircraftExtHook.cpp:577 | FootClass_IsLandZoneClear_ReplaceHardcode | Ext/Aircraft/Hooks.cpp:532 |
@@ -144,10 +145,14 @@
 | 0x0051B1F0 | InfantryClass_AssignTarget_SyncLog | Utilities/SyncLogging.cpp:307 | InfantryClass_AssignTarget_SyncLog | Misc/SyncLogging.cpp:428 |
 | 0x0051EAE0 | InfantryClass_WhatAction_Cursor | Hooks/AirstrikeExtHook.cpp:33 | TechnoClass_WhatAction_AllowAirstrike | Ext/Techno/Hooks.Airstrike.cpp:160 |
 | 0x0052F639 | YR_CmdLineParse | Hooks/GeneralHook.cpp:45 | _YR_CmdLineParse | Phobos.cpp:289 |
+| 0x00533066 | CommandClassCallback_Register | Hooks/HotKeyHook.cpp:64 | CommandClassCallback_Register | Commands/Commands.cpp:26 |
 | 0x0054D600 | JumpjetLocomotionClass_MovingUpdate_DontTurnInCell | Hooks/TechnoExtHook.cpp:1137 | JumpjetLocomotionClass_MovementAI_JumpjetStraightAscend | Ext/Unit/Hooks.Jumpjet.cpp:402 |
 | 0x00550D1F | LaserDrawClass_DrawInHouseColor_Context_Set | Hooks/LaserDrawHook.cpp:19 | LaserDrawClass_DrawInHouseColor_Context_Set | Misc/Hooks.LaserDraw.cpp:12 |
 | 0x00550F47 | LaserDrawClass_DrawInHouseColor_BetterDrawing | Hooks/LaserDrawHook.cpp:26 | LaserDrawClass_DrawInHouseColor_BetterDrawing | Misc/Hooks.LaserDraw.cpp:19 |
 | 0x0064736D | Queue_AI_WriteDesyncLog | Utilities/SyncLogging.cpp:245 | Queue_AI_WriteDesyncLog | Misc/SyncLogging.cpp:350 |
+| 0x0064B6FE | sub_64B660_GetEventSize_SyncEvent | Hooks/SyncEventHook.cpp:16 | sub_64B660_GetEventSize | Ext/Event/Body.cpp:146 |
+| 0x0064BE7D | sub_64BDD0_GetEventSize1_SyncEvent | Hooks/SyncEventHook.cpp:29 | sub_64BDD0_GetEventSize1 | Ext/Event/Body.cpp:162 |
+| 0x0064C30E | sub_64BDD0_GetEventSize2_SyncEvent | Hooks/SyncEventHook.cpp:44 | sub_64BDD0_GetEventSize2 | Ext/Event/Body.cpp:180 |
 | 0x0064CD11 | ExecuteDoList_WriteDesyncLog | Utilities/SyncLogging.cpp:260 | ExecuteDoList_WriteDesyncLog | Misc/SyncLogging.cpp:369 |
 | 0x0065C7D0 | Random2Class_Random_SyncLog | Utilities/SyncLogging.cpp:271 | Random2Class_Random_SyncLog | Misc/SyncLogging.cpp:392 |
 | 0x0065C88A | Random2Class_RandomRanged_SyncLog | Utilities/SyncLogging.cpp:281 | Random2Class_RandomRanged_SyncLog | Misc/SyncLogging.cpp:402 |
@@ -465,19 +470,19 @@ Kratos 源码里已留了提醒注释：
 
 | 地址 | Kratos hook | 位置 | 说明 |
 | --- | --- | --- | --- |
-| `0x4A9768` | `DisplayClass_Submit_KeepStandAboveMaster` | `Hooks/StandExtHook.cpp:334` | **提交时刻**按 `Stand.ZOffset` 正负把替身摆到其 Master 的正确一侧（**取代**原 `0x55DBC3` 每帧整层排序，见报告 §12.4.1/§12.9）。★ 2026-10-04 修正：落点原为 `0x4A975E`（size `0x2`），**违反 Syringe 落点契约（`max(size,5)` 覆盖 + `return 0` 跳 `addr+5`）会造成执行流损坏**，已搬到 `Submit` 公共出口 `pop edi/pop esi/retn 4`（恰 5 字节）——详见 `docs/开局崩溃归因-2026-10-04.md`。★ 同日二次修正：原分区方向写反（把替身排到 Master **之前**=下层）；并补上 `Stand.ZOffset` 正负语义（Air 层不被引擎排序，故 ZOffset 对空中替身只能由本 Hook 实现）——详见 `docs/替身渲染层级与遮挡-2026-10-04.md` |
+| `0x4A9768` | `DisplayClass_Submit_KeepStandAboveMaster` | `Hooks/StandExtHook.cpp:294` | **提交时刻**按 `Stand.ZOffset` 正负把替身摆到其 Master 的正确一侧（**取代**原 `0x55DBC3` 每帧整层排序，见报告 §12.4.1/§12.9）。★ 2026-10-04 修正：落点原为 `0x4A975E`（size `0x2`），**违反 Syringe 落点契约（`max(size,5)` 覆盖 + `return 0` 跳 `addr+5`）会造成执行流损坏**，已搬到 `Submit` 公共出口 `pop edi/pop esi/retn 4`（恰 5 字节）——详见 `docs/开局崩溃归因-2026-10-04.md`。★ 同日二次修正：原分区方向写反（把替身排到 Master **之前**=下层）；并补上 `Stand.ZOffset` 正负语义（Air 层不被引擎排序，故 ZOffset 对空中替身只能由本 Hook 实现）——详见 `docs/替身渲染层级与遮挡-2026-10-04.md` |
 | `0x4DA87A` | ~~`FootClass_Update_UpdateLayer`~~ | ~~`Hooks/StandExtHook.cpp`~~ | ✅ **2026-10-05 已整条删除**（P1）。三条理由独立成立：① 引擎 `ObjectClass::Update`(`0x5F400E`) 本来就做同一件事，且 `FootClass::AI`(`0x4DA539 call TechnoClass_Update`) 先跑 ⇒ 本 Hook 恒为空转；② 与 `InWhichLayer()` 非纯函数叠加会**同帧 Submit 两次**；③ 原版此处 `cmp [esi+90h], bl` 是 **`IsAlive` 守卫**（`+0x90` = `IsAlive`，`LastLayer` 在 `+0x94`），**并非层比较** —— 原注释把字段偏移读错了。落点实测 `38 9E 90 00 00 00 \| 0F 84 ...`。见报告 §13.3 / §13.5 / **§16.1**。**该地址已不在 Kratos Hook 集合内**（DLL 自检计数 = 0） |
-| `0x5F6BF7` | `ObjectClass_GetYSort` | `Hooks/StandExtHook.cpp:550` | 层内排序键（`vt[0xB8]`），**校验函数的输入之一** |
+| `0x5F6BF7` | `ObjectClass_GetYSort` | `Hooks/StandExtHook.cpp:467` | 层内排序键（`vt[0xB8]`），**校验函数的输入之一** |
 | `0x4D94B0` | `FootClass_SetDestination_Stand` | `Hooks/StandExtHook.cpp:58` | 替身寻路 |
 | `0x6FCDBE` | `TechnoClass_SetTarget_Stand` | `Hooks/StandExtHook.cpp:141` | 替身锁定目标 |
 | `0x4D9947` | `FootClass_Greatest_Threat_GetTarget` | `Hooks/StandExtHook.cpp:160` | 威胁搜索 |
-| `0x75C7E0` | `WalkLocomotionClass_In_Which_Layer` | `Hooks/StandExtHook.cpp:660` | ✅ **2026-10-05 已修复**（P1，实质 P0）：`StandLayer::GetLayer` **改为纯函数**（去掉单槽静态缓存）。旧实现里 `layer = layer;` 是**自赋值空操作**，导致缓存命中分支**跳过"替身跟随 Master 层"逻辑** ⇒ 同一替身同帧两次调用可能返回不同层 ⇒ `Submit` 翻转 ⇒ 层数组顺序分叉 ⇒ 校验值不同 ⇒ 失同步。步兵用的就是这个。见报告 §13.4 / **§16.2** |
-| `0x6A3E50` | `ShipLocomotionClass_In_Which_Layer` | `:668` | 同上（原版同为 `mov eax,2; retn 4`） |
-| `0x5B19D0` | `MechLocomotionClass_In_Which_Layer` | `:676` | 同上 |
-| `0x517100` | `HoverLocomotionClass_In_Which_Layer` | `:684` | 同上 |
-| `0x4B4820` | `DriveLocomotionClass_In_Which_Layer` | `:692` | 同上（原版同为 `mov eax,2; retn 4`）。原 `KRATOS_STAND_LAYER_STRICT` 二分开关已于 2026-10-05 移除（无条件走纯函数版） |
-| `0x54B8E9` | `JumpjetLocomotionClass_In_Which_Layer_Deviation` | `Hooks/StandExtHook.cpp:701` | 喷气机层恒为 Air |
-| `0x51BB17` | `InfantryClass_Update_SkipCreateChronoSparkleAnimOnStand` | `:752` | 替身不生成超时空特效 |
+| `0x75C7E0` | `WalkLocomotionClass_In_Which_Layer` | `Hooks/StandExtHook.cpp:506` | ✅ **2026-10-05 已修复**（P1，实质 P0）：`StandLayer::GetLayer` **改为纯函数**（去掉单槽静态缓存）。旧实现里 `layer = layer;` 是**自赋值空操作**，导致缓存命中分支**跳过"替身跟随 Master 层"逻辑** ⇒ 同一替身同帧两次调用可能返回不同层 ⇒ `Submit` 翻转 ⇒ 层数组顺序分叉 ⇒ 校验值不同 ⇒ 失同步。步兵用的就是这个。见报告 §13.4 / **§16.2** |
+| `0x6A3E50` | `ShipLocomotionClass_In_Which_Layer` | `:514` | 同上（原版同为 `mov eax,2; retn 4`） |
+| `0x5B19D0` | `MechLocomotionClass_In_Which_Layer` | `:522` | 同上 |
+| `0x517100` | `HoverLocomotionClass_In_Which_Layer` | `:530` | 同上 |
+| `0x4B4820` | `DriveLocomotionClass_In_Which_Layer` | `:538` | 同上（原版同为 `mov eax,2; retn 4`）。原 `KRATOS_STAND_LAYER_STRICT` 二分开关已于 2026-10-05 移除（无条件走纯函数版） |
+| `0x54B8E9` | `JumpjetLocomotionClass_In_Which_Layer_Deviation` | `Hooks/StandExtHook.cpp:547` | 喷气机层恒为 Air |
+| `0x51BB17` | `InfantryClass_Update_SkipCreateChronoSparkleAnimOnStand` | `:598` | 替身不生成超时空特效 |
 | `0x51BBDF` | `TechnoClass_WarpUpdate` | `Hooks/TechnoExtHook.cpp:166` | `DEFINE_HOOK_AGAIN`，Infantry 侧 |
 | `0x4B0521` / `0x69FC31` | `LocomotionClass_Update_Ramp` | `Hooks/TechnoExtHook.cpp:1020/1021` | 坡道速度 |
 
@@ -639,7 +644,7 @@ Syringe 把它们**串成一条链**，按**注册顺序（= DLL 加载顺序）
 | 0x0070E92F | `TechnoClass_Update_Airstrike_Tint_Timer` | `ContinueTintIntensity,NonAirstrike` | Hooks/AirstrikeExtHook.cpp:421 |
 | 0x0071A88D | `TemporalClass_Update` | `0x71A895,0x71AB08` | Hooks/TechnoExtHook.cpp:181 |
 
-### D.2 条件掐断（14 处）：体内同时存在 `return <非0>` 与 `return 0`，是否掐断取决于运行分支 / 门控开关
+### D.2 条件掐断（17 处）：体内同时存在 `return <非0>` 与 `return 0`，是否掐断取决于运行分支 / 门控开关
 
 | 地址 | Kratos hook | Kratos 返回值 | 位置 |
 | --- | --- | --- | --- |
@@ -652,13 +657,16 @@ Syringe 把它们**串成一条链**，按**注册顺序（= DLL 加载顺序）
 | 0x004690C1 | `BulletClass_Detonate` | `0x46A2FB` | Hooks/BulletExtHook.cpp:139 |
 | 0x0048A551 | `WarheadTypeClass_AnimList_SplashList` | `0x48A5AD` | Hooks/WarheadTypeExtHook.cpp:71 |
 | 0x005194EF | `InfantryClass_DrawIt_InAir_Shadow_Skip` | `0x51958A` | Hooks/InfantryExtHook.cpp:17 |
+| 0x0064B6FE | `sub_64B660_GetEventSize_SyncEvent` | `0x64B71D` | Hooks/SyncEventHook.cpp:16 |
+| 0x0064BE7D | `sub_64BDD0_GetEventSize1_SyncEvent` | `0x64BE97` | Hooks/SyncEventHook.cpp:29 |
+| 0x0064C30E | `sub_64BDD0_GetEventSize2_SyncEvent` | `0x64C321` | Hooks/SyncEventHook.cpp:44 |
 | 0x0065E97F | `HouseClass_CreateAirstrike_SetTargetForUnit` | `SkipGameCode` | Hooks/AirstrikeExtHook.cpp:230 |
 | 0x0065E997 | `Airstrike_Supported_Reinforcements_Put` | `result ? SkipGameCode : SkipGameCodeNoSuccess` | Hooks/AirstrikeExtHook.cpp:263 |
 | 0x006FC339 | `TechnoClass_CanFire` | `0x6FCB7E,dw->Data.DisableWithTarget ? 0x6FC0DF : 0x6FCB7E` | Hooks/TechnoExtHook.cpp:402 |
 | 0x00702299 | `TechnoClass_Destroy_VxlDebris_Remap` | `0x7023E5` | Hooks/TechnoExtHook.cpp:692 |
 | 0x0073C47A | `UnitClass_DrawAsVXL_Shadow_SkipPhobos` | `0x73C485,0x73C5C9` | Hooks/AircraftExtHook.cpp:42 |
 
-### D.3 安全（92 处）：Kratos 全部 `return 0`，Phobos 可正常执行
+### D.3 安全（94 处）：Kratos 全部 `return 0`，Phobos 可正常执行
 
 | 地址 | Kratos hook | 位置 |
 | --- | --- | --- |
@@ -684,6 +692,7 @@ Syringe 把它们**串成一条链**，按**注册顺序（= DLL 加载顺序）
 | 0x0046C8B6 | `BulletTypeClass_SDDTOR` | Hooks/BulletTypeExtHook.cpp:21 |
 | 0x004C1E42 | `EBolt_CTOR` | Hooks/EBoltExtHook.cpp:23 |
 | 0x004C2951 | `EBolt_DTOR` | Hooks/EBoltExtHook.cpp:31 |
+| 0x004C6CC8 | `Networking_RespondToEvent_SyncEvent` | Hooks/SyncEventHook.cpp:8 |
 | 0x004C9300 | `FacingClass_Set_SyncLog` | Utilities/SyncLogging.cpp:295 |
 | 0x004D8F40 | `FootClass_OverrideMission_SyncLog` | Utilities/SyncLogging.cpp:402 |
 | 0x004F4583 | `GScreenClass_Render_Late` | Hooks/GScreenHook.cpp:27 |
@@ -693,6 +702,7 @@ Syringe 把它们**串成一条链**，按**注册顺序（= DLL 加载顺序）
 | 0x0051AA40 | `InfantryClass_AssignDestination_SyncLog` | Utilities/SyncLogging.cpp:367 |
 | 0x0051B1F0 | `InfantryClass_AssignTarget_SyncLog` | Utilities/SyncLogging.cpp:307 |
 | 0x0052F639 | `YR_CmdLineParse` | Hooks/GeneralHook.cpp:45 |
+| 0x00533066 | `CommandClassCallback_Register` | Hooks/HotKeyHook.cpp:64 |
 | 0x0054D600 | `JumpjetLocomotionClass_MovingUpdate_DontTurnInCell` | Hooks/TechnoExtHook.cpp:1137 |
 | 0x00550D1F | `LaserDrawClass_DrawInHouseColor_Context_Set` | Hooks/LaserDrawHook.cpp:19 |
 | 0x0064CD11 | `ExecuteDoList_WriteDesyncLog` | Utilities/SyncLogging.cpp:260 |

@@ -47,6 +47,7 @@ ADDR	KRATOS_KIND	KRATOS_NAME	KRATOS_LOC	PHOBOS_KIND	PHOBOS_NAME	PHOBOS_LOC
 004C25D0	HOOK	EBolt_DrawSecond_Color	Hooks/EBoltExtHook.cpp:130	HOOK	EBolt_DrawSecond_Color	Ext/EBolt/Hooks.cpp:78
 004C26D5	HOOK	EBolt_DrawThird_Color	Hooks/EBoltExtHook.cpp:140	HOOK	EBolt_DrawThird_Color	Ext/EBolt/Hooks.cpp:88
 004C2951	HOOK	EBolt_DTOR	Hooks/EBoltExtHook.cpp:31	HOOK	EBolt_DTOR	Ext/EBolt/Body.cpp:88
+004C6CC8	HOOK	Networking_RespondToEvent_SyncEvent	Hooks/SyncEventHook.cpp:8	HOOK	Networking_RespondToEvent	Ext/Event/Body.cpp:136
 004C9300	HOOK	FacingClass_Set_SyncLog	Utilities/SyncLogging.cpp:295	HOOK	FacingClass_Set_SyncLog	Misc/SyncLogging.cpp:416
 004D8F40	HOOK	FootClass_OverrideMission_SyncLog	Utilities/SyncLogging.cpp:402	HOOK	FootClass_OverrideMission_SyncLog	Misc/SyncLogging.cpp:523
 004DDD66	HOOK	FootClass_IsLandZoneClear_ReplaceHardcode	Hooks/AircraftExtHook.cpp:577	HOOK	FootClass_IsLandZoneClear_ReplaceHardcode	Ext/Aircraft/Hooks.cpp:532
@@ -59,10 +60,14 @@ ADDR	KRATOS_KIND	KRATOS_NAME	KRATOS_LOC	PHOBOS_KIND	PHOBOS_NAME	PHOBOS_LOC
 0051B1F0	HOOK	InfantryClass_AssignTarget_SyncLog	Utilities/SyncLogging.cpp:307	HOOK	InfantryClass_AssignTarget_SyncLog	Misc/SyncLogging.cpp:428
 0051EAE0	HOOK	InfantryClass_WhatAction_Cursor	Hooks/AirstrikeExtHook.cpp:33	HOOK	TechnoClass_WhatAction_AllowAirstrike	Ext/Techno/Hooks.Airstrike.cpp:160
 0052F639	HOOK	YR_CmdLineParse	Hooks/GeneralHook.cpp:45	HOOK	_YR_CmdLineParse	Phobos.cpp:289
+00533066	HOOK	CommandClassCallback_Register	Hooks/HotKeyHook.cpp:64	HOOK	CommandClassCallback_Register	Commands/Commands.cpp:26
 0054D600	HOOK	JumpjetLocomotionClass_MovingUpdate_DontTurnInCell	Hooks/TechnoExtHook.cpp:1137	HOOK	JumpjetLocomotionClass_MovementAI_JumpjetStraightAscend	Ext/Unit/Hooks.Jumpjet.cpp:402
 00550D1F	HOOK	LaserDrawClass_DrawInHouseColor_Context_Set	Hooks/LaserDrawHook.cpp:19	HOOK	LaserDrawClass_DrawInHouseColor_Context_Set	Misc/Hooks.LaserDraw.cpp:12
 00550F47	HOOK	LaserDrawClass_DrawInHouseColor_BetterDrawing	Hooks/LaserDrawHook.cpp:26	HOOK	LaserDrawClass_DrawInHouseColor_BetterDrawing	Misc/Hooks.LaserDraw.cpp:19
 0064736D	HOOK	Queue_AI_WriteDesyncLog	Utilities/SyncLogging.cpp:245	HOOK	Queue_AI_WriteDesyncLog	Misc/SyncLogging.cpp:350
+0064B6FE	HOOK	sub_64B660_GetEventSize_SyncEvent	Hooks/SyncEventHook.cpp:16	HOOK	sub_64B660_GetEventSize	Ext/Event/Body.cpp:146
+0064BE7D	HOOK	sub_64BDD0_GetEventSize1_SyncEvent	Hooks/SyncEventHook.cpp:29	HOOK	sub_64BDD0_GetEventSize1	Ext/Event/Body.cpp:162
+0064C30E	HOOK	sub_64BDD0_GetEventSize2_SyncEvent	Hooks/SyncEventHook.cpp:44	HOOK	sub_64BDD0_GetEventSize2	Ext/Event/Body.cpp:180
 0064CD11	HOOK	ExecuteDoList_WriteDesyncLog	Utilities/SyncLogging.cpp:260	HOOK	ExecuteDoList_WriteDesyncLog	Misc/SyncLogging.cpp:369
 0065C7D0	HOOK	Random2Class_Random_SyncLog	Utilities/SyncLogging.cpp:271	HOOK	Random2Class_Random_SyncLog	Misc/SyncLogging.cpp:392
 0065C88A	HOOK	Random2Class_RandomRanged_SyncLog	Utilities/SyncLogging.cpp:281	HOOK	Random2Class_RandomRanged_SyncLog	Misc/SyncLogging.cpp:402
