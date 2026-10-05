@@ -92,6 +92,9 @@ void BulletStatus::Awake()
 	// 初始化生命
 	this->life.Health = health;
 	this->life.Read(reader);
+	// 消失时给发射者附加的 AE 清单与成功率（清单为空 = 该弹体没配这条，收尾时直接返回，零成本）
+	this->AttachToOwnerOnExplode = reader->GetList("AttachToOwnerOnExplode", AttachToOwnerOnExplode);
+	this->AttachToOwnerOnExplodeChances = reader->GetChanceList("AttachToOwnerOnExplodeChances", AttachToOwnerOnExplodeChances);
 	// 初始化伤害
 	this->damage.Damage = health;
 	if (TechnoStatus* sourceStatue = GetStatus<TechnoExt, TechnoStatus>(pSource))
@@ -124,6 +127,35 @@ void BulletStatus::Awake()
 void BulletStatus::Destroy()
 {
 	EventSystems::General.RemoveHandler(Events::ObjectUnInitEvent, this, &BulletStatus::OnTechnoDelete);
+}
+
+void BulletStatus::OnUnInit()
+{
+	// 弹体以任何方式移除（被引爆、寿命耗尽、被反导打掉、无害处置、被强制移除）最终都走到这里，
+	// 所以"移除时给发射者附加 AE"挂这一个点即可覆盖全部方式。
+	// 没配清单的弹体（绝大多数）在第一步就返回。
+	if (AttachToOwnerOnExplode.empty())
+	{
+		return;
+	}
+	// 读档重载、关卡结束清场不是游戏内的"移除"，跳过，免得凭空多贴一份。
+	if (Common::IsLoadGame || Common::IsScenarioClear)
+	{
+		return;
+	}
+	// 发射者已经没了（发射者销毁时，弹体手里记的发射者会被清空）或本来就没有（地图脚本直接生成的弹体）→ 不贴。
+	if (!pSource || IsDeadOrInvisible(pSource))
+	{
+		return;
+	}
+	AttachEffect* ownerAEM = nullptr;
+	if (!TryGetAEManager<TechnoExt>(pSource, ownerAEM))
+	{
+		return;
+	}
+	// 来源记发射者自己（弹体此后的消失不影响这份 AE）；
+	// 不传附加位置：避免被打上"来自弹头附加"标记，也不影响 ECM / 泵 这类会看附加位置的 AE。
+	ownerAEM->Attach(AttachToOwnerOnExplode, AttachToOwnerOnExplodeChances, false, pSource, pSourceHouse);
 }
 
 void BulletStatus::TakeDamage(int damage, bool eliminate, bool harmless, bool checkInterceptable)
