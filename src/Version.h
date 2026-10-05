@@ -16,10 +16,10 @@
 #define VERSION_MINOR 2
 
 // Indicates minor changes, like vanilla bugfixes, unhardcodings or hacks
-#define VERSION_REVISION 3
+#define VERSION_REVISION 4
 
 // Indicates Kratos-related bugfixes only
-#define VERSION_PATCH 4
+#define VERSION_PATCH 0
 
 #pragma endregion
 
