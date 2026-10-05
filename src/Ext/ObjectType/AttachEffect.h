@@ -211,6 +211,12 @@ public:
 
 	void OnGScreenRender(EventSystem* sender, Event e, void* args);
 
+	/// <summary>
+	/// 逻辑帧晚阶段（EventArgsLate）回调：执行替身定位（含火车车厢）与动画 offset。
+	/// 这两件事原来写在渲染回调里 ⇒ 失焦那端 0 次渲染就不更新 ⇒ 进校验值分叉。
+	/// </summary>
+	void OnLogicUpdate(EventSystem* sender, Event e, void* args);
+
 	virtual void ExtChanged() override
 	{
 		// 宿主可能已经被 InheritAE 换成了另一个对象，先重新识别宿主类型
@@ -255,11 +261,17 @@ public:
 	virtual void Awake() override
 	{
 		EventSystems::Render.AddHandler(Events::GScreenRenderEvent, this, &AttachEffect::OnGScreenRender);
+		// 替身定位（含火车车厢）搬到这里：Events::LogicUpdateEvent + EventArgsLate =
+		// LogicClass_Update_Late(0x55B719)，即"所有对象 AI/移动之后、每逻辑帧恰好一次、
+		// 且在 SyncCheck_ComputeFrameHash(0x55DE40) 之前"。原来只在渲染回调里更新，
+		// 失焦（0 次渲染）那端不更新 ⇒ 当帧校验值立即分叉。
+		EventSystems::Logic.AddHandler(Events::LogicUpdateEvent, this, &AttachEffect::OnLogicUpdate);
 	}
 
 	virtual void Destroy() override
 	{
 		EventSystems::Render.RemoveHandler(Events::GScreenRenderEvent, this, &AttachEffect::OnGScreenRender);
+		EventSystems::Logic.RemoveHandler(Events::LogicUpdateEvent, this, &AttachEffect::OnLogicUpdate);
 		((TechnoExt::ExtData*)_extData)->SetExtStatus(nullptr);
 	}
 
@@ -311,6 +323,7 @@ public:
 	{
 		Component::Load(stream, registerForChange);
 		EventSystems::Render.AddHandler(Events::GScreenRenderEvent, this, &AttachEffect::OnGScreenRender);
+		EventSystems::Logic.AddHandler(Events::LogicUpdateEvent, this, &AttachEffect::OnLogicUpdate);
 		return this->Serialize(stream);
 	}
 	virtual bool Save(ExStreamWriter& stream) const override

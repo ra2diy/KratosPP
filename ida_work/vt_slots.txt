@@ -1,0 +1,62 @@
+[symbols]
+  0x005F6A10 raw='TechnoClass_GetCell1'
+            short=None
+            long =None
+  0x006FFBE0 raw='W?Player_Assign_Mission$:TechnoClass$n($MissionType$$ll)v'
+            short='TechnoClass::Player_Assign_Mission'
+            long ='TechnoClass::Player_Assign_Mission'
+  0x006FFE00 raw='TechnoClass_374'
+            short=None
+            long =None
+  0x005F6B20 raw='loc_5F6B20'
+            short=None
+            long =None
+  0x006F6AC0 raw='W?Limbo$:TechnoClass$n()i'
+            short='TechnoClass::Limbo'
+            long ='TechnoClass::Limbo'
+  0x00708D90 raw='TechnoClass_QueueVoice'
+            short=None
+            long =None
+  0x006FBDC0 raw='TechnoClass_IsCloakedByOthers'
+            short=None
+            long =None
+
+[vtable count] 832
+[??_7ObjectClass@@6B@] NOT FOUND
+
+[ObjectClass-derived vtables and their +0x1C4 / +0x378] count=0
+
+### slot +0x1C4  (expect 0x005F6A10 = YRpp ObjectClass::GetCellAgain)
+
+### slot +0x378  (expect 0x006FFBE0 = YRpp TechnoClass::ClickedMission)
+
+[xrefs to A]
+   from 0x007E2468 seg=.rdata
+   from 0x007E3354 seg=.rdata
+   from 0x007E3AD0 seg=.rdata
+   from 0x007E4080 seg=.rdata
+   from 0x007E46E4 seg=.rdata
+   from 0x007E8C94 seg=.rdata
+   from 0x007EB058 seg=.rdata
+   from 0x007EC258 seg=.rdata
+   from 0x007EDCC0 seg=.rdata
+   from 0x007EF060 seg=.rdata
+   from 0x007EF3D4 seg=.rdata
+   from 0x007EF954 seg=.rdata
+   from 0x007EFB9C seg=.rdata
+   from 0x007F0508 seg=.rdata
+   from 0x007F32FC seg=.rdata
+   from 0x007F4960 seg=.rdata
+   from 0x007F522C seg=.rdata
+   from 0x007F5E34 seg=.rdata
+   from 0x007F6318 seg=.rdata
+   from 0x007F66A8 seg=.rdata
+   from 0x007F6BF4 seg=.rdata
+[xrefs to B]
+   from 0x00417CB4 seg=.text in sub_417CA0
+   from 0x007E4234 seg=.rdata in ?
+   from 0x007E8C94 seg=.rdata in ?
+   from 0x007EB058 seg=.rdata in ?
+   from 0x007F4960 seg=.rdata in ?
+   from 0x007F5FE8 seg=.rdata in ?
+[done]

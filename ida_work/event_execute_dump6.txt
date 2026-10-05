@@ -1,0 +1,54 @@
+occurrences of 00738890: ['0x7F5DB4(.rdata)']
+
+=== candidate slot 0x7F5DB4 in .rdata ===
+  -024  0x0070ADC0  TechnoClass_See
+  -020  0x004D3780  FootClass_SetLayer
+  -01C  0x005F4730  TechnoClass_128
+  -018  0x005F4870  ObjectClass_12C
+  -014  0x0041BE80  ObjectClass_DrawRadialIndicator
+  -010  0x005F4D10  TechnoClass_134
+  -00C  0x004DFA50  FootClass_138
+  -008  0x006FC030  TechnoClass_CanBeSelectedNow
+  -004  0x00738910  UnitClass_140
+  +000  0x00738890  UnitClass_ClickedMission
+  +004  0x006F9DD0  TechnoClass_BlinkDisguise
+  +008  0x006FBFA0  TechnoClass_14C
+  +00C  0x005F44A0  ObjectClass_Deselect
+  +010  0x004DEAE0  FootClass_IronCurtain
+  +014  0x0070E340  TechnoClass_StopAirstrikeTimer
+  +018  0x0070E300  TechnoClass_StartAirstrikeTimer
+  +01C  0x0041BF40  TechnoClass_160
+  +020  0x006F7970  TechnoClass_164
+  +024  0x007012C0  TechnoClass_168
+
+  walk-back base=0x7F5C70  (ClickedMission index = 81 = 0x144)
+
+=== callers of 0x4C66C0 ===
+   from 0x48CA43 in sub_48C8B0
+   from 0x48CAC4 in sub_48C8B0
+   from 0x48CBC0 in sub_48C8B0
+   from 0x4F13E5 in sub_4F11B0
+   from 0x55CFF9 in sub_55CFD0
+   from 0x637A30 in sub_637A10
+   from 0x647074 in sub_647040
+   from 0x647124 in sub_6470F0
+   from 0x6471EC in sub_6471A0
+   from 0x730F6C in CheerCommandClass_Execute
+
+=== callers of 0x4C65E0 ===
+   from 0x443494 in W?Active_Click_With$:BuildingClass$n($ActionType$$s)v
+   from 0x4435A8 in W?Active_Click_With$:BuildingClass$n($ActionType$$s)v
+   from 0x4437F0 in W?Active_Click_With$:BuildingClass$n($ActionType$$pn$ObjectClass$$)v
+   from 0x4AC187 in W?Mouse_Left_Release$:DisplayClass$n(siipn$ObjectClass$$$ActionType$$i)v
+   from 0x4D762E in FootClass_ClickedMission
+   from 0x637D7B in sub_731A10
+   from 0x6FFE34 in TechnoClass_374
+
+=== callers of 0x4C6AE0 ===
+   from 0x4ABB55 in W?Mouse_Left_Release$:DisplayClass$n(siipn$ObjectClass$$$ActionType$$i)v
+   from 0x6A8EE8 in W?AI$:StripClass$:SidebarClass$n(rn$KeyNumType$$ii)i
+   from 0x6AB3FC in SidebarClass_ProcessCameoClick
+
+=== callers of 0x4C6860 ===
+   from 0x646EF0 in W?Queue_Mission$n($TargetClass$$$MissionType$$ll)i
+   from 0x6FFC8E in W?Player_Assign_Mission$:TechnoClass$n($MissionType$$ll)v

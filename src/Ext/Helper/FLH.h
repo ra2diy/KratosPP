@@ -83,7 +83,10 @@ CoordStruct GetFLHAbsoluteCoords(ObjectClass* pObject, CoordStruct flh, bool isO
 #pragma region RelativeLocation
 DirStruct GetRelativeDir(TechnoClass* pMaster, int dir, bool isOnTurret);
 
-LocationMark GetRelativeLocation(ObjectClass* pOwner, OffsetData data, CoordStruct offset = CoordStruct::Empty);
+/// @param predictBulletNextFrame 抛射体宿主是否按"下一帧位置"外推（原渲染期行为）。
+///        替身定位路径（火车记录点 / 每帧替身定位）必须传 false —— 它们现在跑在逻辑期，
+///        要的是**当帧**实际坐标，否则替身永远比弹体领先一帧。
+LocationMark GetRelativeLocation(ObjectClass* pOwner, OffsetData data, CoordStruct offset = CoordStruct::Empty, bool predictBulletNextFrame = true);
 DirStruct GetRelativeDirection(ObjectClass* pOwner, int dir = 0, bool isOnTurret = false, bool isOnWorld = false);
 #pragma endregion
 

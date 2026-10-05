@@ -38,6 +38,9 @@
 ///   · 处理器只能依赖**同步状态**；引用对象必须用 `TargetClass`（RTTI+ID）重新解析，
 ///     **绝不能用发起端的本地指针**（本地选中集之类的状态一律不可信）；
 ///   · "参照玩家"必须用 `GetEventHouse()`（事件里的 house），**不能用本地 `CurrentPlayer`**；
+///     唯一例外是 `TechnoScriptCommandEvent::IsCurrentInitiator()`：它读本地 `CurrentPlayer`
+///     只为判定"原版命令由**哪一台**补发"（发起端＝按下热键的那台，各机不同正是设计要求），
+///     不参与任何模拟量计算；见 `Ext/SyncEventType/TechnoScriptCommandEvent.h`；
 ///   · 随机数只能用引擎共享 RNG（`ScenarioClass::Instance->Random`）。
 /// </summary>
 #pragma pack(push, 1)
@@ -72,6 +75,11 @@ public:
 	{
 		/// <summary>给目标附加 AE（触发方式：快捷键）</summary>
 		AttachEffectToTarget = 1,
+
+		/// <summary>把"停止 / 警戒"派发给某个 techno（必要时含它的替身）的脚本。
+		/// 载荷 = TechnoScriptCommandEvent::EventData = 6 字节（TargetClass 5B + 命令字节 1B）
+		/// ⇒ 不超过 SmallPayloadMax(6) ⇒ 自动走**小隧道 0x50**（0x51 大隧道仍空闲）</summary>
+		TechnoScriptCommand = 2,
 	};
 
 	/// <summary>隧道内层信封头</summary>

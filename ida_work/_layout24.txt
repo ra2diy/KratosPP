@@ -1,0 +1,357 @@
+### AbstractClass.h starts slot 0 = 0x0
+  69        0 0x000  QueryInterface                    
+  70        1 0x004  AddRef                            
+  71        2 0x008  Release                           
+  74        3 0x00C  GetClassID                        
+  77        4 0x010  IsDirty                           
+  78        5 0x014  Load                              
+  79        6 0x018  Save                              
+  81        7 0x01C  GetSizeMax                        
+  84     SECONDARY-vtable (no primary slot)  What_Am_I
+  85     SECONDARY-vtable (no primary slot)  Fetch_ID
+  86     SECONDARY-vtable (no primary slot)  Create_ID
+  89     SECONDARY-vtable (no primary slot)  INoticeSink_Unknown
+  92     SECONDARY-vtable (no primary slot)  INoticeSource_Unknown
+  95        8 0x020  virtual ~AbstractClass() RX;      
+  98        9 0x024  Init                              
+  99       10 0x028  PointerExpired                    
+  100      11 0x02C  WhatAmI                           
+  101      12 0x030  Size                              
+  102      13 0x034  ComputeCRC                        
+  103      14 0x038  GetOwningHouseIndex               
+  104      15 0x03C  GetOwningHouse                    
+  105      16 0x040  GetArrayIndex                     
+  106      17 0x044  IsDead                            
+  107      18 0x048  GetCoords                         
+  108      19 0x04C  GetDestination                    
+  109      20 0x050  IsOnFloor                         
+  110      21 0x054  IsInAir                           
+  111      22 0x058  GetCenterCoords                   
+  112      23 0x05C  Update                            
+### ObjectClass.h starts slot 24 = 0x60
+  45       24 0x060  virtual ~ObjectClass() RX;        
+  50       25 0x064  AnimPointerExpired                
+  51       26 0x068  IsSelectable                      
+  52       27 0x06C  VisualCharacter                   
+  53       28 0x070  GetImage                          
+  54       29 0x074  MouseOverCell                     
+  55       30 0x078  MouseOverObject                   
+  56       31 0x07C  InWhichLayer                      
+  57       32 0x080  IsSurfaced                        
+  81       33 0x084  IsStrange                         
+  83       34 0x088  GetTechnoType                     
+  84       35 0x08C  GetType                           
+  85       36 0x090  GetTypeOwners                     
+  86       37 0x094  GetUIName                         
+  87       38 0x098  CanBeRepaired                     
+  88       39 0x09C  CanBeSold                         
+  89       40 0x0A0  IsActive                          
+  92       41 0x0A4  IsControllable                    
+  95       42 0x0A8  GetTargetCoords                   
+  97       43 0x0AC  GetDockCoords                     
+  98       44 0x0B0  GetRenderCoords                   
+  99       45 0x0B4  GetFLH                            
+  100      46 0x0B8  GetExitCoords                     
+  101      47 0x0BC  GetYSort                          
+  102      48 0x0C0  IsOnBridge                        
+  103      49 0x0C4  IsStandingStill                   
+  104      50 0x0C8  IsDisguised                       
+  105      51 0x0CC  IsDisguisedAs                     
+  106      52 0x0D0  GetDisguise                       
+  107      53 0x0D4  GetDisguiseHouse                  
+  110      54 0x0D8  Limbo                             
+  113      55 0x0DC  Unlimbo                           
+  116      56 0x0E0  Disappear                         
+  118      57 0x0E4  RegisterDestruction               
+  121      58 0x0E8  RegisterKill                      
+  123      59 0x0EC  SpawnParachuted                   
+  124      60 0x0F0  DropAsBomb                        
+  125      61 0x0F4  MarkAllOccupationBits             
+  126      62 0x0F8  UnmarkAllOccupationBits           
+  127      63 0x0FC  UnInit                            
+  128      64 0x100  Reveal                            
+  129      65 0x104  KickOutUnit                       
+  130      66 0x108  DrawIfVisible                     
+  131      67 0x10C  GetFoundationData                 
+  132      68 0x110  DrawBehind                        
+  133      69 0x114  DrawExtras                        
+  134      70 0x118  DrawIt                            
+  135      71 0x11C  DrawAgain                         
+  136      72 0x120  Undiscover                        
+  137      73 0x124  See                               
+  138      74 0x128  UpdatePlacement                   
+  139      75 0x12C  GetDimensions                     
+  140      76 0x130  GetRenderDimensions               
+  141      77 0x134  DrawRadialIndicator               
+  142      78 0x138  MarkForRedraw                     
+  143      79 0x13C  CanBeSelected                     
+  144      80 0x140  CanBeSelectedNow                  
+  145      81 0x144  CellClickedAction                 
+  146      82 0x148  ObjectClickedAction               
+  147      83 0x14C  Flash                             
+  148      84 0x150  Select                            
+  149      85 0x154  Deselect                          
+  150      86 0x158  IronCurtain                       
+  151      87 0x15C  StopAirstrikeTimer                
+  152      88 0x160  StartAirstrikeTimer               
+  153      89 0x164  IsIronCurtained                   
+  154      90 0x168  IsCloseEnough3D                   
+  155      91 0x16C  GetWeaponRange                    
+  156      92 0x170  ReceiveDamage                     
+  158      93 0x174  Destroy                           
+  159      94 0x178  Scatter                           
+  160      95 0x17C  Ignite                            
+  161      96 0x180  Extinguish                        
+  162      97 0x184  GetPointsValue                    
+  163      98 0x188  GetCurrentMission                 
+  164      99 0x18C  RestoreMission                    
+  165     100 0x190  UpdatePosition                    
+  166     101 0x194  FindFactory                       
+  167     102 0x198  ReceiveCommand                    
+  168     103 0x19C  DiscoveredBy                      
+  169     104 0x1A0  SetRepairState                    
+  170     105 0x1A4  Sell                              
+  171     106 0x1A8  AssignPlanningPath                
+  172     107 0x1AC  vt_entry_1A8                        label=0x1A8 *** MISMATCH by +1 slots
+  173     108 0x1B0  IsCellOccupied                    
+  174     109 0x1B4  vt_entry_1B0                        label=0x1B0 *** MISMATCH by +1 slots
+  175     110 0x1B8  SetLocation                       
+  178     111 0x1BC  GetMapCoords                      
+  179     112 0x1C0  GetCell                           
+  182     113 0x1C4  GetMapCoordsAgain                    <<<<< GAME SLOT 0x1C4
+  183     114 0x1C8  GetCellAgain                      
+  185     115 0x1CC  GetHeight                         
+  186     116 0x1D0  SetHeight                         
+  187     117 0x1D4  GetZ                              
+  188     118 0x1D8  IsBeingWarpedOut                  
+  189     119 0x1DC  IsWarpingIn                       
+  190     120 0x1E0  IsWarpingSomethingOut             
+  191     121 0x1E4  IsNotWarping                      
+  192     122 0x1E8  GetRemapColour                    
+### MissionClass.h starts slot 123 = 0x1EC
+  51      123 0x1EC  virtual ~MissionClass() { /* ~ObjectClass() */ }
+  54      124 0x1F0  QueueMission                      
+  55      125 0x1F4  NextMission                       
+  56      126 0x1F8  ForceMission                      
+  58      127 0x1FC  Override_Mission                  
+  59      128 0x200  Mission_Revert                    
+  60      129 0x204  MissionIsOverriden                
+  61      130 0x208  ReadyToNextMission                
+  63      131 0x20C  Mission_Sleep                     
+  64      132 0x210  Mission_Harmless                  
+  65      133 0x214  Mission_Ambush                    
+  66      134 0x218  Mission_Attack                    
+  67      135 0x21C  Mission_Capture                   
+  68      136 0x220  Mission_Eaten                     
+  69      137 0x224  Mission_Guard                     
+  70      138 0x228  Mission_AreaGuard                 
+  71      139 0x22C  Mission_Harvest                   
+  72      140 0x230  Mission_Hunt                      
+  73      141 0x234  Mission_Move                      
+  74      142 0x238  Mission_Retreat                   
+  75      143 0x23C  Mission_Return                    
+  76      144 0x240  Mission_Stop                      
+  77      145 0x244  Mission_Unload                    
+  78      146 0x248  Mission_Enter                     
+  79      147 0x24C  Mission_Construction              
+  80      148 0x250  Mission_Selling                   
+  81      149 0x254  Mission_Repair                    
+  82      150 0x258  Mission_Missile                   
+  83      151 0x25C  Mission_Open                      
+  84      152 0x260  Mission_Rescue                    
+  85      153 0x264  Mission_Patrol                    
+  86      154 0x268  Mission_ParaDropApproach          
+  87      155 0x26C  Mission_ParaDropOverfly           
+  88      156 0x270  Mission_Wait                      
+  89      157 0x274  Mission_SpyPlaneApproach          
+  90      158 0x278  Mission_SpyPlaneOverfly           
+### RadioClass.h starts slot 159 = 0x27C
+  20      159 0x27C  virtual ~RadioClass() RX;         
+  25      160 0x280  SendToFirstLink                   
+  26      161 0x284  SendCommand                       
+  27      162 0x288  SendCommandWithData               
+  28      163 0x28C  SendToEachLink                    
+### TechnoClass.h starts slot 164 = 0x290
+  179     164 0x290  virtual ~TechnoClass() RX;        
+  185     165 0x294  IsUnitFactory                     
+  186     166 0x298  IsCloakable                       
+  187     167 0x29C  CanScatter                        
+  188     168 0x2A0  BelongsToATeam                    
+  189     169 0x2A4  ShouldSelfHealOneStep             
+  190     170 0x2A8  IsVoxel                           
+  191     171 0x2AC  vt_entry_29C                        label=0x29C *** MISMATCH by +4 slots
+  192     172 0x2B0  IsReadyToCloak                    
+  193     173 0x2B4  ShouldNotBeCloaked                
+  194     174 0x2B8  TurretFacing                      
+  195     175 0x2BC  IsArmed                           
+  196     176 0x2C0  vt_entry_2B0                        label=0x2B0 *** MISMATCH by +4 slots
+  197     177 0x2C4  GetStoragePercentage              
+  198     178 0x2C8  GetPipFillLevel                   
+  199     179 0x2CC  GetRefund                         
+  200     180 0x2D0  GetThreatValue                    
+  201     181 0x2D4  vt_entry_2C4                        label=0x2C4 *** MISMATCH by +4 slots
+  202     182 0x2D8  vt_entry_2C8                        label=0x2C8 *** MISMATCH by +4 slots
+  203     183 0x2DC  CanReachLocation                  
+  204     184 0x2E0  GetCrewCount                      
+  205     185 0x2E4  GetAntiAirValue                   
+  206     186 0x2E8  GetAntiArmorValue                 
+  207     187 0x2EC  GetAntiInfantryValue              
+  208     188 0x2F0  GotHijacked                       
+  209     189 0x2F4  SelectWeapon                      
+  210     190 0x2F8  SelectNavalTargeting              
+  211     191 0x2FC  GetZAdjustment                    
+  212     192 0x300  GetZGradient                      
+  213     193 0x304  GetSomeCellStruct                 
+  214     194 0x308  SetSomeCellStruct                 
+  215     195 0x30C  vt_entry_2FC                        label=0x2FC *** MISMATCH by +4 slots
+  216     196 0x310  vt_entry_300                        label=0x300 *** MISMATCH by +4 slots
+  217     197 0x314  vt_entry_304                        label=0x304 *** MISMATCH by +4 slots
+  218     198 0x318  GetRealFacing                     
+  219     199 0x31C  GetCrew                           
+  220     200 0x320  vt_entry_310                        label=0x310 *** MISMATCH by +4 slots
+  221     201 0x324  CanDeploySlashUnload              
+  222     202 0x328  GetROF                            
+  223     203 0x32C  GetGuardRange                     
+  224     204 0x330  vt_entry_320                        label=0x320 *** MISMATCH by +4 slots
+  225     205 0x334  IsRadarVisible                    
+  226     206 0x338  IsSensorVisibleToPlayer           
+  227     207 0x33C  IsSensorVisibleToHouse            
+  228     208 0x340  IsEngineer                        
+  229     209 0x344  ProceedToNextPlanningWaypoint     
+  230     210 0x348  ScanForTiberium                   
+  231     211 0x34C  EnterGrinder                      
+  232     212 0x350  EnterBioReactor                   
+  233     213 0x354  EnterTankBunker                   
+  234     214 0x358  EnterBattleBunker                 
+  235     215 0x35C  GarrisonStructure                 
+  236     216 0x360  IsPowerOnline                     
+  237     217 0x364  QueueVoice                        
+  238     218 0x368  VoiceEnter                        
+  239     219 0x36C  VoiceHarvest                      
+  240     220 0x370  VoiceSelect                       
+  241     221 0x374  VoiceCapture                      
+  242     222 0x378  VoiceMove                            <<<<< GAME SLOT 0x378
+  243     223 0x37C  VoiceDeploy                       
+  244     224 0x380  VoiceAttack                       
+  245     225 0x384  ClickedEvent                      
+  248     226 0x388  ClickedMission                    
+  249     227 0x38C  IsUnderEMP                        
+  250     228 0x390  IsParalyzed                       
+  251     229 0x394  CanCheer                          
+  252     230 0x398  Cheer                             
+  253     231 0x39C  GetDefaultSpeed                   
+  254     232 0x3A0  DecreaseAmmo                      
+  255     233 0x3A4  AddPassenger                      
+  256     234 0x3A8  CanDisguiseAs                     
+  257     235 0x3AC  TargetAndEstimateDamage           
+  258     236 0x3B0  Stun                              
+  259     237 0x3B4  TriggersCellInset                 
+  260     238 0x3B8  IsCloseEnough                     
+  261     239 0x3BC  IsCloseEnoughToAttack             
+  262     240 0x3C0  IsCloseEnoughToAttackCoords       
+  263     241 0x3C4  vt_entry_3B4                        label=0x3B4 *** MISMATCH by +4 slots
+  264     242 0x3C8  Destroyed                         
+  265     243 0x3CC  GetFireErrorWithoutRange          
+  266     244 0x3D0  GetFireError                      
+  267     245 0x3D4  SelectAutoTarget                  
+  268     246 0x3D8  SetTarget                         
+  269     247 0x3DC  Fire                              
+  270     248 0x3E0  Guard                             
+  271     249 0x3E4  SetOwningHouse                    
+  272     250 0x3E8  vt_entry_3D8                        label=0x3D8 *** MISMATCH by +4 slots
+  273     251 0x3EC  Crash                             
+  274     252 0x3F0  IsAreaFire                        
+  275     253 0x3F4  IsNotSprayAttack                  
+  276     254 0x3F8  vt_entry_3E8                        label=0x3E8 *** MISMATCH by +4 slots
+  277     255 0x3FC  IsNotSprayAttack2                 
+  278     256 0x400  GetDeployWeapon                   
+  279     257 0x404  GetTurretWeapon                   
+  280     258 0x408  GetWeapon                         
+  281     259 0x40C  HasTurret                         
+  282     260 0x410  CanOccupyFire                     
+  283     261 0x414  GetOccupyRangeBonus               
+  284     262 0x418  GetOccupantCount                  
+  285     263 0x41C  OnFinishRepair                    
+  286     264 0x420  UpdateCloak                       
+  287     265 0x424  CreateGap                         
+  288     266 0x428  DestroyGap                        
+  289     267 0x42C  vt_entry_41C                        label=0x41C *** MISMATCH by +4 slots
+  290     268 0x430  Sensed                            
+  291     269 0x434  Reload                            
+  292     270 0x438  vt_entry_428                        label=0x428 *** MISMATCH by +4 slots
+  294     271 0x43C  GetAttackCoordinates              
+  295     272 0x440  IsNotWarpingIn                    
+  296     273 0x444  vt_entry_434                        label=0x434 *** MISMATCH by +4 slots
+  297     274 0x448  DrawActionLines                   
+  298     275 0x44C  GetDisguiseFlags                  
+  299     276 0x450  IsClearlyVisibleTo                
+  300     277 0x454  DrawVoxel                         
+  303     278 0x458  vt_entry_448                        label=0x448 *** MISMATCH by +4 slots
+  304     279 0x45C  DrawHealthBar                     
+  305     280 0x460  DrawPipScalePips                  
+  306     281 0x464  DrawVeterancyPips                 
+  307     282 0x468  DrawExtraInfo                     
+  308     283 0x46C  Uncloak                           
+  309     284 0x470  Cloak                             
+  310     285 0x474  vt_entry_464                        label=0x464 *** MISMATCH by +4 slots
+  311     286 0x478  UpdateRefinerySmokeSystems        
+  312     287 0x47C  DisguiseAs                        
+  313     288 0x480  ClearDisguise                     
+  314     289 0x484  IsItTimeForIdleActionYet          
+  315     290 0x488  UpdateIdleAction                  
+  316     291 0x48C  vt_entry_47C                        label=0x47C *** MISMATCH by +4 slots
+  317     292 0x490  SetDestination                    
+  318     293 0x494  EnterIdleMode                     
+  319     294 0x498  UpdateSight                       
+  320     295 0x49C  vt_entry_48C                        label=0x48C *** MISMATCH by +4 slots
+  321     296 0x4A0  ForceCreate                       
+  322     297 0x4A4  RadarTrackingStart                
+  323     298 0x4A8  RadarTrackingStop                 
+  324     299 0x4AC  RadarTrackingFlash                
+  325     300 0x4B0  RadarTrackingUpdate               
+  326     301 0x4B4  vt_entry_4A4                        label=0x4A4 *** MISMATCH by +4 slots
+  327     302 0x4B8  vt_entry_4A8                        label=0x4A8 *** MISMATCH by +4 slots
+  328     303 0x4BC  vt_entry_4AC                        label=0x4AC *** MISMATCH by +4 slots
+  329     304 0x4C0  vt_entry_4B0                        label=0x4B0 *** MISMATCH by +4 slots
+  330     305 0x4C4  vt_entry_4B4                        label=0x4B4 *** MISMATCH by +4 slots
+  331     306 0x4C8  vt_entry_4B8                        label=0x4B8 *** MISMATCH by +4 slots
+  332     307 0x4CC  CanUseWaypoint                    
+  333     308 0x4D0  CanAttackOnTheMove                
+  334     309 0x4D4  vt_entry_4C4                        label=0x4C4 *** MISMATCH by +4 slots
+  335     310 0x4D8  vt_entry_4C8                        label=0x4C8 *** MISMATCH by +4 slots
+  336     311 0x4DC  vt_entry_4CC                        label=0x4CC *** MISMATCH by +4 slots
+  337     312 0x4E0  vt_entry_4D0                        label=0x4D0 *** MISMATCH by +4 slots
+### FootClass.h starts slot 313 = 0x4E4
+  24      313 0x4E4  virtual ~FootClass() RX;          
+  34      314 0x4E8  ReceiveGunner                     
+  35      315 0x4EC  RemoveGunner                      
+  36      316 0x4F0  IsLeavingMap                      
+  37      317 0x4F4  vt_entry_4E0                        label=0x4E0 *** MISMATCH by +5 slots
+  38      318 0x4F8  CanDeployNow                      
+  39      319 0x4FC  AddSensorsAt                      
+  40      320 0x500  RemoveSensorsAt                   
+  41      321 0x504  vt_entry_4F0                        label=0x4F0 *** MISMATCH by +5 slots
+  42      322 0x508  vt_entry_4F4                        label=0x4F4 *** MISMATCH by +5 slots
+  43      323 0x50C  vt_entry_4F8                        label=0x4F8 *** MISMATCH by +5 slots
+  44      324 0x510  MoveTo                            
+  45      325 0x514  StopMoving                        
+  46      326 0x518  vt_entry_504                        label=0x504 *** MISMATCH by +5 slots
+  47      327 0x51C  ChronoWarpTo                      
+  48      328 0x520  Draw_A_SHP                        
+  54      329 0x524  Draw_A_VXL                        
+  58      330 0x528  GoBerzerk                         
+  59      331 0x52C  Panic                             
+  60      332 0x530  UnPanic                           
+  61      333 0x534  PlayIdleAnim                      
+  62      334 0x538  vt_entry_524                        label=0x524 *** MISMATCH by +5 slots
+  63      335 0x53C  vt_entry_528                        label=0x528 *** MISMATCH by +5 slots
+  64      336 0x540  vt_entry_52C                        label=0x52C *** MISMATCH by +5 slots
+  65      337 0x544  vt_entry_530                        label=0x530 *** MISMATCH by +5 slots
+  66      338 0x548  vt_entry_534                        label=0x534 *** MISMATCH by +5 slots
+  67      339 0x54C  GetCurrentSpeed                   
+  68      340 0x550  vt_entry_53C                        label=0x53C *** MISMATCH by +5 slots
+  69      341 0x554  vt_entry_540                        label=0x540 *** MISMATCH by +5 slots
+  70      342 0x558  SetSpeedPercentage                
+  71      343 0x55C  vt_entry_548                        label=0x548 *** MISMATCH by +5 slots
+  72      344 0x560  vt_entry_54C                        label=0x54C *** MISMATCH by +5 slots
+  73      345 0x564  vt_entry_550                        label=0x550 *** MISMATCH by +5 slots

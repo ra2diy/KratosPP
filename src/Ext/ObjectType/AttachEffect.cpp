@@ -1017,7 +1017,10 @@ void AttachEffect::CheckDurationAndDisable(bool silence)
 		if (auto ae = dynamic_cast<AttachEffectScript*>(c))
 		{
 			// 执行IsAlive时，检查AE的生命状态，失效的AE会在这里被标记为Deactivate
-			if (!ae->IsAlive())
+			// ⚠ IsAlive 带副作用，同一逻辑帧只调用这一次；结果缓存给渲染分支与逻辑晚阶段读
+			bool alive = ae->IsAlive();
+			ae->AliveCached = alive;
+			if (!alive)
 			{
 				const AttachEffectData& data = ae->AEData;
 				// 结束AE
@@ -1327,8 +1330,10 @@ CoordStruct AttachEffect::MarkLocation()
 			_lastLocation = location;
 			double tempMileage = _totalMileage + mileage;
 			// 记录下当前的位置
+			// 抛射体宿主取当帧实际坐标（不做"下一帧"外推）：这条记录会经
+			// UpdateTrainStandLocation → UpdateStandLocation 直接写进替身坐标（进校验值）
 			OffsetData offset{};
-			LocationMark mark = GetRelativeLocation(pObject, offset);
+			LocationMark mark = GetRelativeLocation(pObject, offset, CoordStruct::Empty, false);
 			// 插入队头
 			_locationMarks.insert(_locationMarks.begin(), mark);
 			// 检查容量(当前AE数量+1)，弹出队尾
@@ -1439,58 +1444,26 @@ void AttachEffect::OnGScreenRender(EventSystem* sender, Event e, void* args)
 	else
 	{
 		// BeginRender
-		// 替身的定位偏移
-		static StackOffsetMap<std::string, CoordStruct> standMarks{};
-		static StackOffsetMap<std::string, CoordStruct> standGroupMarks{};
-		static StackOffsetMap<std::string, CoordStruct> standGroupFirstMarks{};
-		// 动画的定位偏移
-		static StackOffsetMap<std::string, CoordStruct> animMarks{};
-		static StackOffsetMap<std::string, CoordStruct> animGroupMarks{};
-		static StackOffsetMap<std::string, CoordStruct> animGroupFirstMarks{};
-		// 叠层信息
+		// 叠层信息：InfoEffect::UpdateLocationOffset 只是把 offset 存进 _offset，
+		// 唯一的消费者是 InfoEffect::OnGScreenRenderEnd（纯渲染）⇒ 留在渲染期无妨
 		static StackOffsetMap<std::string, CoordStruct> stackMarks{};
 		static StackOffsetMap<std::string, CoordStruct> stackGroupMarks{};
 		static StackOffsetMap<std::string, CoordStruct> stackGroupFirstMarks{};
 
 		// 清空偏移记录
-		standMarks.clear();
-		standGroupMarks.clear();
-		standGroupFirstMarks.clear();
-		animMarks.clear();
-		animGroupMarks.clear();
-		animGroupFirstMarks.clear();
 		stackMarks.clear();
 		stackGroupMarks.clear();
 		stackGroupFirstMarks.clear();
 
-		// 火车的位置索引
-		int markIndex = 0;
 		ForeachChild([&](Component* c) {
 			if (auto ae = dynamic_cast<AttachEffectScript*>(c))
 			{
-				if (ae->IsAlive())
+				// ⚠ 这里不能调 ae->IsAlive()：它带副作用（EnableEffects/PauseEffects/Deactivate），
+				// 同一逻辑帧只允许调用一次，已经在 CheckDurationAndDisable 里调用并缓存。
+				// 替身定位与动画 offset 已搬到 AttachEffect::OnLogicUpdate（逻辑帧晚阶段）。
+				if (ae->AliveCached)
 				{
 					const AttachEffectData& aeData = ae->AEData;
-					// 调整替身的位置
-					if (aeData.Stand.Enable)
-					{
-						// 调整火车替身的位置
-						if (!aeData.Stand.IsTrain || !UpdateTrainStandLocation(ae, markIndex))
-						{
-							// 堆叠偏移
-							OffsetData offsetData = aeData.Stand.Offset;
-							CoordStruct standOffset = this->StackOffset(aeData, offsetData, standMarks, standGroupMarks, standGroupFirstMarks);
-							LocationMark locationMark = GetRelativeLocation(pObject, offsetData, standOffset);
-							ae->UpdateStandLocation(locationMark);
-						}
-					}
-					// 调整动画的位置
-					if (aeData.Animation.Enable && aeData.Animation.IdleAnim.Enable)
-					{
-						OffsetData offsetData = aeData.Animation.IdleAnim.Offset;
-						CoordStruct animOffset = this->StackOffset(aeData, offsetData, animMarks, animGroupMarks, animGroupFirstMarks);
-						ae->UpdateAnimOffset(animOffset);
-					}
 					// 调整Info.Stack的位置
 					if (aeData.Info.Enable && aeData.Info.Stack.Enable)
 					{
@@ -1503,6 +1476,75 @@ void AttachEffect::OnGScreenRender(EventSystem* sender, Event e, void* args)
 			}
 			});
 	}
+}
+
+// 逻辑帧晚阶段（EventArgsLate = LogicClass_Update_Late 0x55B719：所有对象 AI/移动之后、
+// SyncCheck_ComputeFrameHash(0x55DE40) 之前，每逻辑帧恰好一次）。
+// 原来这两件事写在渲染回调里 ⇒ 失焦（0 次渲染）那端不更新、一帧多渲又会多写 ⇒ 进校验值的
+// 替身 X/Y 当帧分叉；而且 IsAlive 的副作用也会随渲染次数重复触发。
+void AttachEffect::OnLogicUpdate(EventSystem* sender, Event e, void* args)
+{
+	if (args != EventArgsLate)
+	{
+		return;
+	}
+	if (!pObject)
+	{
+		// 渲染分支本来就有这个保护；逻辑分支每帧必跑，更需要
+		return;
+	}
+
+	// 替身的定位偏移
+	static StackOffsetMap<std::string, CoordStruct> standMarks{};
+	static StackOffsetMap<std::string, CoordStruct> standGroupMarks{};
+	static StackOffsetMap<std::string, CoordStruct> standGroupFirstMarks{};
+	// 动画的定位偏移
+	static StackOffsetMap<std::string, CoordStruct> animMarks{};
+	static StackOffsetMap<std::string, CoordStruct> animGroupMarks{};
+	static StackOffsetMap<std::string, CoordStruct> animGroupFirstMarks{};
+
+	// 清空偏移记录
+	standMarks.clear();
+	standGroupMarks.clear();
+	standGroupFirstMarks.clear();
+	animMarks.clear();
+	animGroupMarks.clear();
+	animGroupFirstMarks.clear();
+
+	// 火车的位置索引
+	int markIndex = 0;
+	ForeachChild([&](Component* c) {
+		if (auto ae = dynamic_cast<AttachEffectScript*>(c))
+		{
+			// 由 CheckDurationAndDisable 在本帧 OnUpdate 里刷新（IsAlive 带副作用，只能调一次）
+			if (ae->AliveCached)
+			{
+				const AttachEffectData& aeData = ae->AEData;
+				// 调整替身的位置
+				if (aeData.Stand.Enable)
+				{
+					// 调整火车替身的位置
+					if (!aeData.Stand.IsTrain || !UpdateTrainStandLocation(ae, markIndex))
+					{
+						// 堆叠偏移
+						OffsetData offsetData = aeData.Stand.Offset;
+						CoordStruct standOffset = this->StackOffset(aeData, offsetData, standMarks, standGroupMarks, standGroupFirstMarks);
+						// 抛射体上的替身取**当帧**实际坐标，不做"下一帧"外推
+						LocationMark locationMark = GetRelativeLocation(pObject, offsetData, standOffset, false);
+						ae->UpdateStandLocation(locationMark);
+					}
+				}
+				// 调整动画的位置：AnimationEffect::UpdateLocationOffset 写 AnimStatus::Offset，
+				// 而它在逻辑期被消费成 pAnim->SetLocation（AnimStatus.cpp:209/218）⇒ 属同类隐患，一并搬来
+				if (aeData.Animation.Enable && aeData.Animation.IdleAnim.Enable)
+				{
+					OffsetData offsetData = aeData.Animation.IdleAnim.Offset;
+					CoordStruct animOffset = this->StackOffset(aeData, offsetData, animMarks, animGroupMarks, animGroupFirstMarks);
+					ae->UpdateAnimOffset(animOffset);
+				}
+			}
+		}
+		});
 }
 
 void AttachEffect::OnUpdate()

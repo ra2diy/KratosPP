@@ -2,6 +2,7 @@
 #include <Windows.h>
 
 #include <Extension.h>
+#include <Extension/TechnoExt.h>
 #include <Utilities/Macro.h>
 
 #include <Common/Components/Component.h>
@@ -12,6 +13,7 @@
 
 #include <Ext/Helper/MathEx.h>
 
+#include <Ext/Common/CommonStatus.h>
 #include <Ext/Common/FireSuperManager.h>
 #include <Ext/Common/PaintballSyncManager.h>
 #include <Ext/Common/PrintTextManager.h>
@@ -29,7 +31,13 @@ public:
 		EventSystems::General.AddHandler(Events::ScenarioStartEvent, FireSuperManager::Clear);
 		EventSystems::General.AddHandler(Events::ScenarioStartEvent, PaintballSyncManager::Clear);
 		EventSystems::General.AddHandler(Events::ScenarioStartEvent, PrintTextManager::Clear);
+		// 预占用网格跨局/读档清理（HumanConnonPreOcc）
+		EventSystems::General.AddHandler(Events::ScenarioStartEvent, TechnoExt::ClearPreOcc);
+		// 对象销毁时释放它的预占用，防止悬垂 key 与幽灵占格
+		EventSystems::General.AddHandler(Events::ObjectUnInitEvent, TechnoExt::OnObjectUnInit);
 		EventSystems::General.AddHandler(Events::ScenarioClearClassesEvent, INI::ClearBuffer);
+		// 必须排在 INI::ClearBuffer 之后（同一事件按注册顺序执行）：让 4 个规则缓存失效
+		EventSystems::General.AddHandler(Events::ScenarioClearClassesEvent, ClearCommonStatusCache);
 		EventSystems::General.AddHandler(Events::ScenarioClearClassesEvent, ExtTypeRegistryClear);
 		EventSystems::Logic.AddHandler(Events::LogicUpdateEvent, FireSuperManager::Update);
 	}

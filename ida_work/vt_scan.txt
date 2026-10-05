@@ -1,0 +1,1329 @@
+[UNIT vtable 0x007F5C70 header]
+   +0x00 = 0x00410260 AbstractClass_QueryInterface
+   +0x04 = 0x00410300 AbstractClass_AddRef
+   +0x08 = 0x00410310 AbstractClass_Release
+
+[.rdata] 007E1608-00812000
+[AbstractClass-derived vtable bases found] 74
+
+  vt=0x007E1F50 whatami=purecall                                       +1C4=0x007BB050 sub_7BB050                   +378=0x00413F80 AircraftClass_Init
+  vt=0x007E2000 whatami=purecall                                       +1C4=0x004C9150 purecall                     +378=0x004DB260 FootClass_Exit
+  vt=0x007E2868 whatami=AircraftTypeClass_GetAbstractDerivationID      +1C4=0x00410580 AbstractClass_INoticeSinkUnk +378=0x20202020 
+  vt=0x007E29A8 whatami=AirstrikeClass_GetAbstractDerivationID         +1C4=0x20202020                              +378=0xDBDBDBDB 
+  vt=0x007E2A50 whatami=AITriggerTypeClass_GetAbstractDerivationID     +1C4=0x20202020                              +378=0xDBDBDBDB 
+  vt=0x007E32A4 whatami=AlphaShapeClass_GetAbstractDerivationID        +1C4=0x00422CA0 AnimClass_Draw               +378=0x00428800 AnimTypeClass_Load
+  vt=0x007E3354 whatami=AnimClass_GetAbstractDerivationID              +1C4=0x005F6A10 TechnoClass_GetCell1         +378=0xD1AFDD24 
+  vt=0x007E3608 whatami=AnimTypeClass_GetAbstractDerivationID          +1C4=0x0042DB60 sub_42DB60                   +378=0x28272625 
+  vt=0x007E3AD0 whatami=BuildingLightClass_GetAbstractDerivationID     +1C4=0x005F6A10 TechnoClass_GetCell1         +378=0x00410540 AbstractClass_GetCoords_1arg
+  vt=0x007E3D10 whatami=BombClass_GetAbstractDerivationID              +1C4=0x00454190 BuildingClass_18             +378=0x005F5FA0 TechnoClass_SetHeight
+  vt=0x007E3DF0 whatami=NeuronClass_GetAbstractDerivationID            +1C4=0x005F65F0 W?Detach$:ObjectClass$n(pn$O +378=0x00458DB0 BuildingClass_2AC
+  vt=0x007E3EBC whatami=BuildingClass_2C                               +1C4=0x005F6A10 TechnoClass_GetCell1         +378=0x006FFBE0 W?Player_Assign_Mission$:TechnoCla
+  vt=0x007E4570 whatami=BuildingTypeClass_GetAbstractDerivationID      +1C4=0x005F6B60 TechnoClass_OnFloor          +378=0x77777777 
+  vt=0x007E4948 whatami=BulletTypeClass_GetAbstractDerivationID        +1C4=0x00472B30 sub_472B30                   +378=0x0081859C aDamage
+  vt=0x007E4A28 whatami=CampaignClass_GetAbstractDerivationID          +1C4=0x3F91DF46                              +378=0x00477790 ??_GFilePipe@@UAEPAXI@Z
+  vt=0x007E4B40 whatami=CaptureManagerClass_GetAbstractDerivationID    +1C4=0x0081BDDC aFollowWaypoint              +378=0x000000FE 
+  vt=0x007E4EEC whatami=CellClass_GetAbstractDerivationID              +1C4=0x004E1A00 Gadget_5C                    +378=0x0081D9CC aSpeed
+  vt=0x007E5FB8 whatami=DiskLaserClass_GetAbstractDerivationID         +1C4=0x004AEBE0 sub_4AEBE0                   +378=0x00000000 
+  vt=0x007E87A8 whatami=EMPulseClass_GetAbstractDerivationID           +1C4=0x004CA8E0 sub_4CA8E0                   +378=0x004105F0 j_AbstractClass_AddRef
+  vt=0x007E88D0 whatami=FactoryClass_GetAbstractDerivationID           +1C4=0x004B6630 LocomotionClass_ILocomotion_ +378=0x004E0CE0 sub_4E0CE0
+  vt=0x007E8B38 whatami=FoggedObjectClass_GetAbstractDerivationID      +1C4=0x004DA4E0 W?Visual_Character$:FootClas +378=0x004D5070 FootClass_Guard
+  vt=0x007E8C94 whatami=purecall                                       +1C4=0x005F6A10 TechnoClass_GetCell1         +378=0x006FFBE0 W?Player_Assign_Mission$:TechnoCla
+  vt=0x007EB058 whatami=InfantryClass_GetAbstractDerivationID          +1C4=0x005F6A10 TechnoClass_GetCell1         +378=0x006FFBE0 W?Player_Assign_Mission$:TechnoCla
+  vt=0x007EB610 whatami=InfantryTypeClass_GetAbstractDerivationID      +1C4=0xD39103C9                              +378=0x00803980 ??_R4CombatantSelectCommandClass@@
+  vt=0x007EC258 whatami=IsometricTileClass_GetAbstractDerivationID     +1C4=0x005F6A10 TechnoClass_GetCell1         +378=0xDBDBDBDB 
+  vt=0x007ECC48 whatami=IsometricTileTypeClass_GetAbstractDerivationID +1C4=0x004B6640 LocomotionClass_ILocomotion_ +378=0x00555520 sub_555520
+  vt=0x007ED028 whatami=LightSourceClass_GetAbstractDerivationID       +1C4=0x00558470 sub_558470                   +378=0x00000000 
+  vt=0x007EDCC0 whatami=purecall                                       +1C4=0x005F6A10 TechnoClass_GetCell1         +378=0x006D1800 TabClass_GetTip
+  vt=0x007EF060 whatami=purecall                                       +1C4=0x005F6A10 TechnoClass_GetCell1         +378=0x00410300 AbstractClass_AddRef
+  vt=0x007EF2D8 whatami=purecall                                       +1C4=0x00426430 ObjectClass_IsDisguisedAs    +378=0x00410520 AbstractClass_OnFloor
+  vt=0x007EF3D4 whatami=OverlayClass_GetAbstractDerivationID           +1C4=0x005F6A10 TechnoClass_GetCell1         +378=0x00807888 ??_R4?$DynamicVectorClass@VHSVClas
+  vt=0x007EF600 whatami=OverlayTypeClass_GetAbstractDerivationID       +1C4=0x00627F70 sub_627F70                   +378=0x00410470 AbstractClass_Init
+  vt=0x007EF890 whatami=ParasiteClass_GetAbstractDerivationID          +1C4=0x005F4320 ObjectClass_KickOutUnit      +378=0x005F3E30 ObjectClass_GetImage
+  vt=0x007EF954 whatami=ParticleClass_GetAbstractDerivationID          +1C4=0x005F6A10 TechnoClass_GetCell1         +378=0x0041BE80 ObjectClass_DrawRadialIndicator
+  vt=0x007EFB9C whatami=ParticleSystemClass_GetAbstractDerivationID    +1C4=0x005F6A10 TechnoClass_GetCell1         +378=0x0063DE60 sub_63DE60
+  vt=0x007F00A8 whatami=ParticleSystemTypeClass_GetAbstractDerivationI +1C4=0x0083727C aPowerFacilitie              +378=0x430C0000 
+  vt=0x007F0188 whatami=ParticleTypeClass_GetAbstractDerivationID      +1C4=0x0040D240 GScreenClass_Release         +378=0x00410230 W?Create_ID$:IRTTITypeInfo$:Abstra
+  vt=0x007F0508 whatami=purecall                                       +1C4=0x005F6A10 TechnoClass_GetCell1         +378=0x0065C2E0 sub_65C2E0
+  vt=0x007F0810 whatami=RadSiteClass_GetAbstractDerivationID           +1C4=0x00000001                              +378=0x0055AB80 LocomotionClass_ILocomotion_Shove
+  vt=0x007F0F78 whatami=ScriptClass_GetAbstractDerivationID            +1C4=0x004A8960 W?Set_View_Dimensions$:Displ +378=0xCCCCCCCD 
+  vt=0x007F1008 whatami=ScriptTypeClass_GetAbstractDerivationID        +1C4=0x0069C6B0 sub_69C6B0                   +378=0x00000000 
+  vt=0x007F2EC0 whatami=SideClass_GetAbstractDerivationID              +1C4=0x004F43F0 sub_4F43F0                   +378=0x006B13B0 sub_6B13B0
+  vt=0x007F31C8 whatami=SlaveManagerClass_GetAbstractDerivationID      +1C4=0x004263C0 ObjectClass_GetUIName        +378=0x006B58B0 SmudgeTypeClass_Save
+  vt=0x007F32FC whatami=SmudgeClass_GetAbstractDerivationID            +1C4=0x005F6A10 TechnoClass_GetCell1         +378=0x00410470 AbstractClass_Init
+  vt=0x007F3528 whatami=SmudgeTypeClass_GetAbstractDerivationID        +1C4=0x006B81B0 sub_6B81B0                   +378=0x006C01D0 sub_6C01D0
+  vt=0x007F3650 whatami=SpawnManagerClass_GetAbstractDerivationID      +1C4=0x006BF940 sub_6BF940                   +378=0x006C1460 sub_6C1460
+  vt=0x007F3FE8 whatami=SuperClass_GetAbstractDerivationID             +1C4=0x06061A04                              +378=0x006DBE00 TacticalClass_Save
+  vt=0x007F4090 whatami=SuperWeaponTypeClass_GetAbstractDerivationID   +1C4=0x03030101                              +378=0x006E4840 sub_6E4840
+  vt=0x007F4348 whatami=TacticalClass_GetSize                          +1C4=0x006E58A0 TagClass_GetAbstractDerivati +378=0x004104B0 AbstractClass_GetArrayIndex
+  vt=0x007F443C whatami=TActionClass_GetAbstractDerivationID           +1C4=0x004104A0 AbstractClass_GetOwningHouse +378=0x004105E0 AbstractClass_QueryInterface_0
+  vt=0x007F44E0 whatami=TagClass_GetAbstractDerivationID               +1C4=0x00410470 AbstractClass_Init           +378=0x006F2210 sub_6F2210
+  vt=0x007F45C4 whatami=TagTypeClass_GetAbstractDerivationID           +1C4=0x00410540 AbstractClass_GetCoords_1arg +378=0x00410580 AbstractClass_INoticeSinkUnknown
+  vt=0x007F4680 whatami=TaskForceClass_GetAbstractDerivationID         +1C4=0x006F2290 sub_6F2290                   +378=0x005F42C0 ObjectClass_IsSellable
+  vt=0x007F4730 whatami=TeamClass_GetAbstractDerivationID              +1C4=0x00000003                              +378=0x006F9DD0 TechnoClass_BlinkDisguise
+  vt=0x007F47D0 whatami=TeamTypeClass_GetAbstractDerivationID          +1C4=0x0070C270 TechnoClass_GetCRC           +378=0x005B35E0 W?Assign_Mission$:MissionClass$n($
+  vt=0x007F4960 whatami=purecall                                       +1C4=0x005F6A10 TechnoClass_GetCell1         +378=0x006FFBE0 W?Player_Assign_Mission$:TechnoCla
+  vt=0x007F4ED8 whatami=purecall                                       +1C4=0x0071A090 TeleportLocomotionClass_ILoc +378=0x00410470 AbstractClass_Init
+  vt=0x007F5180 whatami=TemporalClass_GetAbstractDerivationID          +1C4=0x0071C360 TerrainClass_118             +378=0x00000000 
+  vt=0x007F522C whatami=TerrainClass_GetAbstractDerivationID           +1C4=0x005F6A10 TechnoClass_GetCell1         +378=0x0071FA60 TEventClass_GetAbstractDerivationI
+  vt=0x007F5458 whatami=TerrainTypeClass_GetAbstractDerivationID       +1C4=0x004E1450 Gadget_40                    +378=0x00724E10 sub_724E10
+  vt=0x007F5578 whatami=TEventClass_GetAbstractDerivationID            +1C4=0x00721E80 TiberiumClass_Load           +378=0x00410600 j_AbstractClass_Release
+  vt=0x007F5728 whatami=TiberiumClass_GetAbstractDerivationID          +1C4=0x004105F0 j_AbstractClass_AddRef       +378=0x0055ACE0 LocomotionClass_ILocomotion_ForceN
+  vt=0x007F5858 whatami=TriggerClass_GetAbstractDerivationID           +1C4=0x3F91DF46                              +378=0x00000000 
+  vt=0x007F5904 whatami=TriggerTypeClass_GetAbstractDerivationID       +1C4=0x004B6640 LocomotionClass_ILocomotion_ +378=0x00746DE0 UnitClass_GetClassID
+  vt=0x007F59B0 whatami=TubeClass_GetAbstractDerivationID              +1C4=0x004E14C0 Gadget_30                    +378=0x005F6BD0 ObjectClass_ReturnRealYSort
+  vt=0x007F5C70 whatami=UnitClass_GetAbstractDerivationID              +1C4=0x005F6A10 TechnoClass_GetCell1         +378=0x006FFBE0 W?Player_Assign_Mission$:TechnoCla
+  vt=0x007F6218 whatami=UnitTypeClass_GetAbstractDerivationID          +1C4=0x00426420 ObjectClass_IsDisguised      +378=0x004104C0 AbstractClass_GetCoords
+  vt=0x007F6318 whatami=VoxelAnimClass_GetAbstractDerivationID         +1C4=0x005F6A10 TechnoClass_GetCell1         +378=0x004105F0 j_AbstractClass_AddRef
+  vt=0x007F6548 whatami=VoxelAnimTypeClass_GetAbstractDerivationID     +1C4=0x00426390 ObjectClass_IsSelectable     +378=0x00751900 sub_751900
+  vt=0x007F66A8 whatami=VeinholeMonsterClass_GetAbstractDerivationID   +1C4=0x005F6A10 TechnoClass_GetCell1         +378=0x0055A7D0 LocomotionClass_ILocomotion_Shadow
+  vt=0x007F6B30 whatami=WarheadTypeClass_GetAbstractDerivationID       +1C4=0x005F4320 ObjectClass_KickOutUnit      +378=0x00410490 AbstractClass_GetOwningHouseIndex
+  vt=0x007F6BF4 whatami=WaveClass_GetAbstractDerivationID              +1C4=0x005F6A10 TechnoClass_GetCell1         +378=0x00765710 ??_G?$rc_ptr@VCampaignProperties@W
+  vt=0x007F6E70 whatami=WaypointPathClass_GetAbstractDerivationID      +1C4=0x00766FA0 sub_766FA0                   +378=0x0076A3F0 sub_76A3F0
+  vt=0x007F73B8 whatami=WeaponTypeClass_GetAbstractDerivationID        +1C4=0x2143C597                              +378=0x007AB3C0 sub_7AB3C0
+
+====================================================================================================
+### slot +0x1C4 -> YRpp ObjectClass::GetCellAgain ; expected engine target 0x005F6A10
+  0x005F6A10  x19   EXPECTED
+        TechnoClass_GetCell1
+  0x20202020  x2    DIFFERENT (subclass override!)
+        
+          from vt=0x007E29A8 whatami=AirstrikeClass_GetAbstractDerivationID
+          from vt=0x007E2A50 whatami=AITriggerTypeClass_GetAbstractDerivationID
+  0x3F91DF46  x2    DIFFERENT (subclass override!)
+        
+          from vt=0x007E4A28 whatami=CampaignClass_GetAbstractDerivationID
+          from vt=0x007F5858 whatami=TriggerClass_GetAbstractDerivationID
+  0x004B6640  x2    DIFFERENT (subclass override!)
+        LocomotionClass_ILocomotion_WillJumpTracks
+          from vt=0x007ECC48 whatami=IsometricTileTypeClass_GetAbstractDerivationID
+          from vt=0x007F5904 whatami=TriggerTypeClass_GetAbstractDerivationID
+  0x005F4320  x2    DIFFERENT (subclass override!)
+        ObjectClass_KickOutUnit
+          from vt=0x007EF890 whatami=ParasiteClass_GetAbstractDerivationID
+          from vt=0x007F6B30 whatami=WarheadTypeClass_GetAbstractDerivationID
+  0x007BB050  x1    DIFFERENT (subclass override!)
+        sub_7BB050
+          from vt=0x007E1F50 whatami=purecall
+  0x004C9150  x1    DIFFERENT (subclass override!)
+        purecall
+          from vt=0x007E2000 whatami=purecall
+  0x00410580  x1    DIFFERENT (subclass override!)
+        AbstractClass_INoticeSinkUnknown
+          from vt=0x007E2868 whatami=AircraftTypeClass_GetAbstractDerivationID
+  0x00422CA0  x1    DIFFERENT (subclass override!)
+        AnimClass_Draw
+          from vt=0x007E32A4 whatami=AlphaShapeClass_GetAbstractDerivationID
+  0x0042DB60  x1    DIFFERENT (subclass override!)
+        sub_42DB60
+          from vt=0x007E3608 whatami=AnimTypeClass_GetAbstractDerivationID
+  0x00454190  x1    DIFFERENT (subclass override!)
+        BuildingClass_18
+          from vt=0x007E3D10 whatami=BombClass_GetAbstractDerivationID
+  0x005F65F0  x1    DIFFERENT (subclass override!)
+        W?Detach$:ObjectClass$n(pn$ObjectClass$$)v
+          from vt=0x007E3DF0 whatami=NeuronClass_GetAbstractDerivationID
+  0x005F6B60  x1    DIFFERENT (subclass override!)
+        TechnoClass_OnFloor
+          from vt=0x007E4570 whatami=BuildingTypeClass_GetAbstractDerivationID
+  0x00472B30  x1    DIFFERENT (subclass override!)
+        sub_472B30
+          from vt=0x007E4948 whatami=BulletTypeClass_GetAbstractDerivationID
+  0x0081BDDC  x1    DIFFERENT (subclass override!)
+        aFollowWaypoint
+          from vt=0x007E4B40 whatami=CaptureManagerClass_GetAbstractDerivationID
+  0x004E1A00  x1    DIFFERENT (subclass override!)
+        Gadget_5C
+          from vt=0x007E4EEC whatami=CellClass_GetAbstractDerivationID
+  0x004AEBE0  x1    DIFFERENT (subclass override!)
+        sub_4AEBE0
+          from vt=0x007E5FB8 whatami=DiskLaserClass_GetAbstractDerivationID
+  0x004CA8E0  x1    DIFFERENT (subclass override!)
+        sub_4CA8E0
+          from vt=0x007E87A8 whatami=EMPulseClass_GetAbstractDerivationID
+  0x004B6630  x1    DIFFERENT (subclass override!)
+        LocomotionClass_ILocomotion_IsMovingHere
+          from vt=0x007E88D0 whatami=FactoryClass_GetAbstractDerivationID
+  0x004DA4E0  x1    DIFFERENT (subclass override!)
+        W?Visual_Character$:FootClass$n.x(ii)$VisualType$$
+          from vt=0x007E8B38 whatami=FoggedObjectClass_GetAbstractDerivationID
+  0xD39103C9  x1    DIFFERENT (subclass override!)
+        
+          from vt=0x007EB610 whatami=InfantryTypeClass_GetAbstractDerivationID
+  0x00558470  x1    DIFFERENT (subclass override!)
+        sub_558470
+          from vt=0x007ED028 whatami=LightSourceClass_GetAbstractDerivationID
+  0x00426430  x1    DIFFERENT (subclass override!)
+        ObjectClass_IsDisguisedAs
+          from vt=0x007EF2D8 whatami=purecall
+  0x00627F70  x1    DIFFERENT (subclass override!)
+        sub_627F70
+          from vt=0x007EF600 whatami=OverlayTypeClass_GetAbstractDerivationID
+  0x0083727C  x1    DIFFERENT (subclass override!)
+        aPowerFacilitie
+          from vt=0x007F00A8 whatami=ParticleSystemTypeClass_GetAbstractDerivationID
+  0x0040D240  x1    DIFFERENT (subclass override!)
+        GScreenClass_Release
+          from vt=0x007F0188 whatami=ParticleTypeClass_GetAbstractDerivationID
+  0x00000001  x1    DIFFERENT (subclass override!)
+        
+          from vt=0x007F0810 whatami=RadSiteClass_GetAbstractDerivationID
+  0x004A8960  x1    DIFFERENT (subclass override!)
+        W?Set_View_Dimensions$:DisplayClass$n(iiii)v
+          from vt=0x007F0F78 whatami=ScriptClass_GetAbstractDerivationID
+  0x0069C6B0  x1    DIFFERENT (subclass override!)
+        sub_69C6B0
+          from vt=0x007F1008 whatami=ScriptTypeClass_GetAbstractDerivationID
+  0x004F43F0  x1    DIFFERENT (subclass override!)
+        sub_4F43F0
+          from vt=0x007F2EC0 whatami=SideClass_GetAbstractDerivationID
+  0x004263C0  x1    DIFFERENT (subclass override!)
+        ObjectClass_GetUIName
+          from vt=0x007F31C8 whatami=SlaveManagerClass_GetAbstractDerivationID
+  0x006B81B0  x1    DIFFERENT (subclass override!)
+        sub_6B81B0
+          from vt=0x007F3528 whatami=SmudgeTypeClass_GetAbstractDerivationID
+  0x006BF940  x1    DIFFERENT (subclass override!)
+        sub_6BF940
+          from vt=0x007F3650 whatami=SpawnManagerClass_GetAbstractDerivationID
+  0x06061A04  x1    DIFFERENT (subclass override!)
+        
+          from vt=0x007F3FE8 whatami=SuperClass_GetAbstractDerivationID
+  0x03030101  x1    DIFFERENT (subclass override!)
+        
+          from vt=0x007F4090 whatami=SuperWeaponTypeClass_GetAbstractDerivationID
+  0x006E58A0  x1    DIFFERENT (subclass override!)
+        TagClass_GetAbstractDerivationID
+          from vt=0x007F4348 whatami=TacticalClass_GetSize
+  0x004104A0  x1    DIFFERENT (subclass override!)
+        AbstractClass_GetOwningHouse
+          from vt=0x007F443C whatami=TActionClass_GetAbstractDerivationID
+  0x00410470  x1    DIFFERENT (subclass override!)
+        AbstractClass_Init
+          from vt=0x007F44E0 whatami=TagClass_GetAbstractDerivationID
+  0x00410540  x1    DIFFERENT (subclass override!)
+        AbstractClass_GetCoords_1arg
+          from vt=0x007F45C4 whatami=TagTypeClass_GetAbstractDerivationID
+  0x006F2290  x1    DIFFERENT (subclass override!)
+        sub_6F2290
+          from vt=0x007F4680 whatami=TaskForceClass_GetAbstractDerivationID
+  0x00000003  x1    DIFFERENT (subclass override!)
+        
+          from vt=0x007F4730 whatami=TeamClass_GetAbstractDerivationID
+  0x0070C270  x1    DIFFERENT (subclass override!)
+        TechnoClass_GetCRC
+          from vt=0x007F47D0 whatami=TeamTypeClass_GetAbstractDerivationID
+  0x0071A090  x1    DIFFERENT (subclass override!)
+        TeleportLocomotionClass_ILocomotion_71A090
+          from vt=0x007F4ED8 whatami=purecall
+  0x0071C360  x1    DIFFERENT (subclass override!)
+        TerrainClass_118
+          from vt=0x007F5180 whatami=TemporalClass_GetAbstractDerivationID
+  0x004E1450  x1    DIFFERENT (subclass override!)
+        Gadget_40
+          from vt=0x007F5458 whatami=TerrainTypeClass_GetAbstractDerivationID
+  0x00721E80  x1    DIFFERENT (subclass override!)
+        TiberiumClass_Load
+          from vt=0x007F5578 whatami=TEventClass_GetAbstractDerivationID
+  0x004105F0  x1    DIFFERENT (subclass override!)
+        j_AbstractClass_AddRef
+          from vt=0x007F5728 whatami=TiberiumClass_GetAbstractDerivationID
+  0x004E14C0  x1    DIFFERENT (subclass override!)
+        Gadget_30
+          from vt=0x007F59B0 whatami=TubeClass_GetAbstractDerivationID
+  0x00426420  x1    DIFFERENT (subclass override!)
+        ObjectClass_IsDisguised
+          from vt=0x007F6218 whatami=UnitTypeClass_GetAbstractDerivationID
+  0x00426390  x1    DIFFERENT (subclass override!)
+        ObjectClass_IsSelectable
+          from vt=0x007F6548 whatami=VoxelAnimTypeClass_GetAbstractDerivationID
+  0x00766FA0  x1    DIFFERENT (subclass override!)
+        sub_766FA0
+          from vt=0x007F6E70 whatami=WaypointPathClass_GetAbstractDerivationID
+  0x2143C597  x1    DIFFERENT (subclass override!)
+        
+          from vt=0x007F73B8 whatami=WeaponTypeClass_GetAbstractDerivationID
+
+====================================================================================================
+### slot +0x378 -> YRpp TechnoClass::ClickedMission ; expected engine target 0x006FFBE0
+  0x006FFBE0  x5    EXPECTED
+        W?Player_Assign_Mission$:TechnoClass$n($MissionType$$ll)v
+  0x00000000  x5    DIFFERENT (subclass override!)
+        
+          from vt=0x007E5FB8 whatami=DiskLaserClass_GetAbstractDerivationID
+          from vt=0x007ED028 whatami=LightSourceClass_GetAbstractDerivationID
+          from vt=0x007F1008 whatami=ScriptTypeClass_GetAbstractDerivationID
+          from vt=0x007F5180 whatami=TemporalClass_GetAbstractDerivationID
+          from vt=0x007F5858 whatami=TriggerClass_GetAbstractDerivationID
+  0xDBDBDBDB  x3    DIFFERENT (subclass override!)
+        
+          from vt=0x007E29A8 whatami=AirstrikeClass_GetAbstractDerivationID
+          from vt=0x007E2A50 whatami=AITriggerTypeClass_GetAbstractDerivationID
+          from vt=0x007EC258 whatami=IsometricTileClass_GetAbstractDerivationID
+  0x00410470  x3    DIFFERENT (subclass override!)
+        AbstractClass_Init
+          from vt=0x007EF600 whatami=OverlayTypeClass_GetAbstractDerivationID
+          from vt=0x007F32FC whatami=SmudgeClass_GetAbstractDerivationID
+          from vt=0x007F4ED8 whatami=purecall
+  0x004105F0  x2    DIFFERENT (subclass override!)
+        j_AbstractClass_AddRef
+          from vt=0x007E87A8 whatami=EMPulseClass_GetAbstractDerivationID
+          from vt=0x007F6318 whatami=VoxelAnimClass_GetAbstractDerivationID
+  0x00413F80  x1    DIFFERENT (subclass override!)
+        AircraftClass_Init
+          from vt=0x007E1F50 whatami=purecall
+  0x004DB260  x1    DIFFERENT (subclass override!)
+        FootClass_Exit
+          from vt=0x007E2000 whatami=purecall
+  0x20202020  x1    DIFFERENT (subclass override!)
+        
+          from vt=0x007E2868 whatami=AircraftTypeClass_GetAbstractDerivationID
+  0x00428800  x1    DIFFERENT (subclass override!)
+        AnimTypeClass_Load
+          from vt=0x007E32A4 whatami=AlphaShapeClass_GetAbstractDerivationID
+  0xD1AFDD24  x1    DIFFERENT (subclass override!)
+        
+          from vt=0x007E3354 whatami=AnimClass_GetAbstractDerivationID
+  0x28272625  x1    DIFFERENT (subclass override!)
+        
+          from vt=0x007E3608 whatami=AnimTypeClass_GetAbstractDerivationID
+  0x00410540  x1    DIFFERENT (subclass override!)
+        AbstractClass_GetCoords_1arg
+          from vt=0x007E3AD0 whatami=BuildingLightClass_GetAbstractDerivationID
+  0x005F5FA0  x1    DIFFERENT (subclass override!)
+        TechnoClass_SetHeight
+          from vt=0x007E3D10 whatami=BombClass_GetAbstractDerivationID
+  0x00458DB0  x1    DIFFERENT (subclass override!)
+        BuildingClass_2AC
+          from vt=0x007E3DF0 whatami=NeuronClass_GetAbstractDerivationID
+  0x77777777  x1    DIFFERENT (subclass override!)
+        
+          from vt=0x007E4570 whatami=BuildingTypeClass_GetAbstractDerivationID
+  0x0081859C  x1    DIFFERENT (subclass override!)
+        aDamage
+          from vt=0x007E4948 whatami=BulletTypeClass_GetAbstractDerivationID
+  0x00477790  x1    DIFFERENT (subclass override!)
+        ??_GFilePipe@@UAEPAXI@Z
+          from vt=0x007E4A28 whatami=CampaignClass_GetAbstractDerivationID
+  0x000000FE  x1    DIFFERENT (subclass override!)
+        
+          from vt=0x007E4B40 whatami=CaptureManagerClass_GetAbstractDerivationID
+  0x0081D9CC  x1    DIFFERENT (subclass override!)
+        aSpeed
+          from vt=0x007E4EEC whatami=CellClass_GetAbstractDerivationID
+  0x004E0CE0  x1    DIFFERENT (subclass override!)
+        sub_4E0CE0
+          from vt=0x007E88D0 whatami=FactoryClass_GetAbstractDerivationID
+  0x004D5070  x1    DIFFERENT (subclass override!)
+        FootClass_Guard
+          from vt=0x007E8B38 whatami=FoggedObjectClass_GetAbstractDerivationID
+  0x00803980  x1    DIFFERENT (subclass override!)
+        ??_R4CombatantSelectCommandClass@@6B@
+          from vt=0x007EB610 whatami=InfantryTypeClass_GetAbstractDerivationID
+  0x00555520  x1    DIFFERENT (subclass override!)
+        sub_555520
+          from vt=0x007ECC48 whatami=IsometricTileTypeClass_GetAbstractDerivationID
+  0x006D1800  x1    DIFFERENT (subclass override!)
+        TabClass_GetTip
+          from vt=0x007EDCC0 whatami=purecall
+  0x00410300  x1    DIFFERENT (subclass override!)
+        AbstractClass_AddRef
+          from vt=0x007EF060 whatami=purecall
+  0x00410520  x1    DIFFERENT (subclass override!)
+        AbstractClass_OnFloor
+          from vt=0x007EF2D8 whatami=purecall
+  0x00807888  x1    DIFFERENT (subclass override!)
+        ??_R4?$DynamicVectorClass@VHSVClass@@@@6B@
+          from vt=0x007EF3D4 whatami=OverlayClass_GetAbstractDerivationID
+  0x005F3E30  x1    DIFFERENT (subclass override!)
+        ObjectClass_GetImage
+          from vt=0x007EF890 whatami=ParasiteClass_GetAbstractDerivationID
+  0x0041BE80  x1    DIFFERENT (subclass override!)
+        ObjectClass_DrawRadialIndicator
+          from vt=0x007EF954 whatami=ParticleClass_GetAbstractDerivationID
+  0x0063DE60  x1    DIFFERENT (subclass override!)
+        sub_63DE60
+          from vt=0x007EFB9C whatami=ParticleSystemClass_GetAbstractDerivationID
+  0x430C0000  x1    DIFFERENT (subclass override!)
+        
+          from vt=0x007F00A8 whatami=ParticleSystemTypeClass_GetAbstractDerivationID
+  0x00410230  x1    DIFFERENT (subclass override!)
+        W?Create_ID$:IRTTITypeInfo$:AbstractClass$n(i)i
+          from vt=0x007F0188 whatami=ParticleTypeClass_GetAbstractDerivationID
+  0x0065C2E0  x1    DIFFERENT (subclass override!)
+        sub_65C2E0
+          from vt=0x007F0508 whatami=purecall
+  0x0055AB80  x1    DIFFERENT (subclass override!)
+        LocomotionClass_ILocomotion_Shove
+          from vt=0x007F0810 whatami=RadSiteClass_GetAbstractDerivationID
+  0xCCCCCCCD  x1    DIFFERENT (subclass override!)
+        
+          from vt=0x007F0F78 whatami=ScriptClass_GetAbstractDerivationID
+  0x006B13B0  x1    DIFFERENT (subclass override!)
+        sub_6B13B0
+          from vt=0x007F2EC0 whatami=SideClass_GetAbstractDerivationID
+  0x006B58B0  x1    DIFFERENT (subclass override!)
+        SmudgeTypeClass_Save
+          from vt=0x007F31C8 whatami=SlaveManagerClass_GetAbstractDerivationID
+  0x006C01D0  x1    DIFFERENT (subclass override!)
+        sub_6C01D0
+          from vt=0x007F3528 whatami=SmudgeTypeClass_GetAbstractDerivationID
+  0x006C1460  x1    DIFFERENT (subclass override!)
+        sub_6C1460
+          from vt=0x007F3650 whatami=SpawnManagerClass_GetAbstractDerivationID
+  0x006DBE00  x1    DIFFERENT (subclass override!)
+        TacticalClass_Save
+          from vt=0x007F3FE8 whatami=SuperClass_GetAbstractDerivationID
+  0x006E4840  x1    DIFFERENT (subclass override!)
+        sub_6E4840
+          from vt=0x007F4090 whatami=SuperWeaponTypeClass_GetAbstractDerivationID
+  0x004104B0  x1    DIFFERENT (subclass override!)
+        AbstractClass_GetArrayIndex
+          from vt=0x007F4348 whatami=TacticalClass_GetSize
+  0x004105E0  x1    DIFFERENT (subclass override!)
+        AbstractClass_QueryInterface_0
+          from vt=0x007F443C whatami=TActionClass_GetAbstractDerivationID
+  0x006F2210  x1    DIFFERENT (subclass override!)
+        sub_6F2210
+          from vt=0x007F44E0 whatami=TagClass_GetAbstractDerivationID
+  0x00410580  x1    DIFFERENT (subclass override!)
+        AbstractClass_INoticeSinkUnknown
+          from vt=0x007F45C4 whatami=TagTypeClass_GetAbstractDerivationID
+  0x005F42C0  x1    DIFFERENT (subclass override!)
+        ObjectClass_IsSellable
+          from vt=0x007F4680 whatami=TaskForceClass_GetAbstractDerivationID
+  0x006F9DD0  x1    DIFFERENT (subclass override!)
+        TechnoClass_BlinkDisguise
+          from vt=0x007F4730 whatami=TeamClass_GetAbstractDerivationID
+  0x005B35E0  x1    DIFFERENT (subclass override!)
+        W?Assign_Mission$:MissionClass$n($MissionType$$)v
+          from vt=0x007F47D0 whatami=TeamTypeClass_GetAbstractDerivationID
+  0x0071FA60  x1    DIFFERENT (subclass override!)
+        TEventClass_GetAbstractDerivationID
+          from vt=0x007F522C whatami=TerrainClass_GetAbstractDerivationID
+  0x00724E10  x1    DIFFERENT (subclass override!)
+        sub_724E10
+          from vt=0x007F5458 whatami=TerrainTypeClass_GetAbstractDerivationID
+  0x00410600  x1    DIFFERENT (subclass override!)
+        j_AbstractClass_Release
+          from vt=0x007F5578 whatami=TEventClass_GetAbstractDerivationID
+  0x0055ACE0  x1    DIFFERENT (subclass override!)
+        LocomotionClass_ILocomotion_ForceNewSlope
+          from vt=0x007F5728 whatami=TiberiumClass_GetAbstractDerivationID
+  0x00746DE0  x1    DIFFERENT (subclass override!)
+        UnitClass_GetClassID
+          from vt=0x007F5904 whatami=TriggerTypeClass_GetAbstractDerivationID
+  0x005F6BD0  x1    DIFFERENT (subclass override!)
+        ObjectClass_ReturnRealYSort
+          from vt=0x007F59B0 whatami=TubeClass_GetAbstractDerivationID
+  0x004104C0  x1    DIFFERENT (subclass override!)
+        AbstractClass_GetCoords
+          from vt=0x007F6218 whatami=UnitTypeClass_GetAbstractDerivationID
+  0x00751900  x1    DIFFERENT (subclass override!)
+        sub_751900
+          from vt=0x007F6548 whatami=VoxelAnimTypeClass_GetAbstractDerivationID
+  0x0055A7D0  x1    DIFFERENT (subclass override!)
+        LocomotionClass_ILocomotion_ShadowMatrix
+          from vt=0x007F66A8 whatami=VeinholeMonsterClass_GetAbstractDerivationID
+  0x00410490  x1    DIFFERENT (subclass override!)
+        AbstractClass_GetOwningHouseIndex
+          from vt=0x007F6B30 whatami=WarheadTypeClass_GetAbstractDerivationID
+  0x00765710  x1    DIFFERENT (subclass override!)
+        ??_G?$rc_ptr@VCampaignProperties@WorldDominationTour@@@@UAEPAXI@Z
+          from vt=0x007F6BF4 whatami=WaveClass_GetAbstractDerivationID
+  0x0076A3F0  x1    DIFFERENT (subclass override!)
+        sub_76A3F0
+          from vt=0x007F6E70 whatami=WaypointPathClass_GetAbstractDerivationID
+  0x007AB3C0  x1    DIFFERENT (subclass override!)
+        sub_7AB3C0
+          from vt=0x007F73B8 whatami=WeaponTypeClass_GetAbstractDerivationID
+
+[detail around the two slots for a few representative vtables]
+  vt 0x007E1F50:
+      +0x1B8 = 0x007BBAF0 sub_7BBAF0
+      +0x1BC = 0x007BBB90 XSurface_Blit
+      +0x1C0 = 0x007BBCF0 sub_7BBCF0
+      +0x1C4 = 0x007BB050 sub_7BB050
+      +0x1C8 = 0x007BB020 XSurface_FillRect
+      +0x36C = 0x0041B5C0 AircraftClass_Save
+      +0x370 = 0x004103E0 AbstractClass_GetSize
+      +0x374 = 0x0041C210 AircraftClass_SDDTOR
+      +0x378 = 0x00413F80 AircraftClass_Init
+      +0x37C = 0x0041B660 AircraftClass_PointerGotInvalid
+      +0x380 = 0x0041C180 AircraftClass_GetAbstractDerivationID
+  vt 0x007E2000:
+      +0x1B8 = 0x004C9150 purecall
+      +0x1BC = 0x004C9150 purecall
+      +0x1C0 = 0x004C9150 purecall
+      +0x1C4 = 0x004C9150 purecall
+      +0x1C8 = 0x004C9150 purecall
+      +0x36C = 0x0041C020 TechnoClass_IsDisguised_2
+      +0x370 = 0x0041BE60 ObjectClass_GetDisguiseHouse
+      +0x374 = 0x0041BE70 ObjectClass_GetDisguise
+      +0x378 = 0x004DB260 FootClass_Exit
+      +0x37C = 0x00414310 AircraftClass_Put
+      +0x380 = 0x004D9720 FootClass_DC
+  vt 0x007E2868:
+      +0x1B8 = 0x007FB710 ??_R4AITriggerTypeClass@@6BINoticeSource@@@
+      +0x1BC = 0x00410590 AbstractClass_INoticeSourceUnknown
+      +0x1C0 = 0x007FB728 ??_R4AITriggerTypeClass@@6BINoticeSink@@@
+      +0x1C4 = 0x00410580 AbstractClass_INoticeSinkUnknown
+      +0x1C8 = 0x007FB740 ??_R4AITriggerTypeClass@@6BIRTTITypeInfo@@@
+      +0x36C = 0x20202020 
+      +0x370 = 0x20202020 
+      +0x374 = 0x20202020 
+      +0x378 = 0x20202020 
+      +0x37C = 0x20202020 
+      +0x380 = 0x20202020 
+  vt 0x007E29A8:
+      +0x1B8 = 0x20202020 
+      +0x1BC = 0x20202020 
+      +0x1C0 = 0x20202020 
+      +0x1C4 = 0x20202020 
+      +0x1C8 = 0x20202020 
+      +0x36C = 0xDBDBDBDB 
+      +0x370 = 0xDBDBDBDB 
+      +0x374 = 0xDBDBDBDB 
+      +0x378 = 0xDBDBDBDB 
+      +0x37C = 0xDBDBDBDB 
+      +0x380 = 0xDBDBDBDB 
+  vt 0x007E2A50:
+      +0x1B8 = 0x20202020 
+      +0x1BC = 0x20202020 
+      +0x1C0 = 0x20202020 
+      +0x1C4 = 0x20202020 
+      +0x1C8 = 0x20202020 
+      +0x36C = 0xDBDBDBDB 
+      +0x370 = 0xDBDBDBDB 
+      +0x374 = 0xDBDBDBDB 
+      +0x378 = 0xDBDBDBDB 
+      +0x37C = 0xDBDBDBDB 
+      +0x380 = 0xDBDBDBDB 
+  vt 0x007E32A4:
+      +0x1B8 = 0x004238D0 sub_4238D0
+      +0x1BC = 0x00426440 ObjectClass_10C
+      +0x1C0 = 0x00426450 ObjectClass_DrawExtras
+      +0x1C4 = 0x00422CA0 AnimClass_Draw
+      +0x1C8 = 0x005F65D0 ObjectClass_Special_Draw_It
+      +0x36C = 0x00410310 AbstractClass_Release
+      +0x370 = 0x00428990 AnimTypeClass_GetClassID
+      +0x374 = 0x00410450 AbstractClass_IsDirty
+      +0x378 = 0x00428800 AnimTypeClass_Load
+      +0x37C = 0x00428970 AnimTypeClass_Save
+      +0x380 = 0x005F9970 ObjectTypeClass_GetMaxSize
+  vt 0x007E3354:
+      +0x1B8 = 0x0041BEA0 TechnoClass_GetCellCoords
+      +0x1BC = 0x005F6960 TechnoClass_GetCell
+      +0x1C0 = 0x005F69C0 TechnoClass_GetCellCoords1
+      +0x1C4 = 0x005F6A10 TechnoClass_GetCell1
+      +0x1C8 = 0x005F5F40 TechnoClass_GetHeight
+      +0x36C = 0x96F02EC3 
+      +0x370 = 0x11D16FE8 
+      +0x374 = 0xA000FDB6 
+      +0x378 = 0xD1AFDD24 
+      +0x37C = 0x007FBC18 ??_R4ApplicationClass@@6B@
+      +0x380 = 0x00429360 sub_429360
+  vt 0x007E3608:
+      +0x1B8 = 0x2F1A9FBE 
+      +0x1BC = 0x3FF024DD 
+      +0x1C0 = 0x007FBC80 ??_R4?$DynamicVectorClass@I@@6B@
+      +0x1C4 = 0x0042DB60 sub_42DB60
+      +0x1C8 = 0x0042D600 sub_42D600
+      +0x36C = 0x1C1B1AFE 
+      +0x370 = 0x201F1E1D 
+      +0x374 = 0x24232221 
+      +0x378 = 0x28272625 
+      +0x37C = 0x2C2B2A29 
+      +0x380 = 0x302F2E2D 
+  vt 0x007E3AD0:
+      +0x1B8 = 0x0041BEA0 TechnoClass_GetCellCoords
+      +0x1BC = 0x005F6960 TechnoClass_GetCell
+      +0x1C0 = 0x005F69C0 TechnoClass_GetCellCoords1
+      +0x1C4 = 0x005F6A10 TechnoClass_GetCell1
+      +0x1C8 = 0x005F5F40 TechnoClass_GetHeight
+      +0x36C = 0x004104F0 AbstractClass_GetCoords_2arg
+      +0x370 = 0x00410520 AbstractClass_OnFloor
+      +0x374 = 0x00410530 AbstractClass_InAir
+      +0x378 = 0x00410540 AbstractClass_GetCoords_1arg
+      +0x37C = 0x00410570 AbstractClass_Update
+      +0x380 = 0x007FC230 ??_R4?$VectorClass@PAVNeuronClass@@@@6B@
+  vt 0x007E3D10:
+      +0x1B8 = 0x00459E80 BuildingClass_C
+      +0x1BC = 0x00410450 AbstractClass_IsDirty
+      +0x1C0 = 0x00453E20 BuildingClass_Load
+      +0x1C4 = 0x00454190 BuildingClass_18
+      +0x1C8 = 0x004103E0 AbstractClass_GetSize
+      +0x36C = 0x005F69C0 TechnoClass_GetCellCoords1
+      +0x370 = 0x005F6A10 TechnoClass_GetCell1
+      +0x374 = 0x005F5F40 TechnoClass_GetHeight
+      +0x378 = 0x005F5FA0 TechnoClass_SetHeight
+      +0x37C = 0x005F5F30 TechnoClass_GetZ
+      +0x380 = 0x0070C5B0 TechnoClass_IsBeingWarpedOut
+  vt 0x007E3DF0:
+      +0x1B8 = 0x005F4160 TechnoClass_EC
+      +0x1BC = 0x00453D60 BuildingClass_F0
+      +0x1C0 = 0x00453DC0 BuildingClass_F4
+      +0x1C4 = 0x005F65F0 W?Detach$:ObjectClass$n(pn$ObjectClass$$)v
+      +0x1C8 = 0x00703850 W?Do_Shimmer$:TechnoClass$n()v
+      +0x36C = 0x00457770 BuildingClass_2A0
+      +0x370 = 0x004578C0 BuildingClass_2A4
+      +0x374 = 0x00445E50 BuildingClass_2A8
+      +0x378 = 0x00458DB0 BuildingClass_2AC
+      +0x37C = 0x0070C620 TechnoClass_2B0
+      +0x380 = 0x00708BC0 TechnoClass_GetTiberiumPercentage
+  vt 0x007E3EBC:
+      +0x1B8 = 0x0041BEA0 TechnoClass_GetCellCoords
+      +0x1BC = 0x005F6960 TechnoClass_GetCell
+      +0x1C0 = 0x005F69C0 TechnoClass_GetCellCoords1
+      +0x1C4 = 0x005F6A10 TechnoClass_GetCell1
+      +0x1C8 = 0x005F5F40 TechnoClass_GetHeight
+      +0x36C = 0x00459C20 BuildingClass_36C
+      +0x370 = 0x007090A0 W?Response_Fire$:TechnoClass$n()v
+      +0x374 = 0x006FFE00 TechnoClass_374
+      +0x378 = 0x006FFBE0 W?Player_Assign_Mission$:TechnoClass$n($MissionType$$ll)v
+      +0x37C = 0x0070EFD0 TechnoClass_37C
+      +0x380 = 0x00459E40 TechnoClass_380
+  vt 0x007E4570:
+      +0x1B8 = 0x005F6690 TechnoClass_IsDead
+      +0x1BC = 0x005F65A0 W?Center_Coord$:ObjectClass$n.x()ul
+      +0x1C0 = 0x004104F0 AbstractClass_GetCoords_2arg
+      +0x1C4 = 0x005F6B60 TechnoClass_OnFloor
+      +0x1C8 = 0x005F6B90 TechnoClass_InAir
+      +0x36C = 0x4062C000 
+      +0x370 = 0x00000000 
+      +0x374 = 0x40200000 
+      +0x378 = 0x77777777 
+      +0x37C = 0x3FEF7777 
+      +0x380 = 0x00000000 
+  vt 0x007E4948:
+      +0x1B8 = 0x00472E90 sub_472E90
+      +0x1BC = 0x00472EC0 sub_472EC0
+      +0x1C0 = 0x00472F00 sub_472F00
+      +0x1C4 = 0x00472B30 sub_472B30
+      +0x1C8 = 0x007FCAC8 ??_R4CaptureManagerClass@@6BINoticeSource@@@
+      +0x36C = 0x0081BEC8 aDontUse8
+      +0x370 = 0x0081BEBC aGuardArea
+      +0x374 = 0x0081BEB4 aHeal
+      +0x378 = 0x0081859C aDamage
+      +0x37C = 0x0081BEAC aGRepair
+      +0x380 = 0x0081BEA0 aNoDeploy
+  vt 0x007E4A28:
+      +0x1B8 = 0x00000000 
+      +0x1BC = 0x404E0000 
+      +0x1C0 = 0xA2529D39 
+      +0x1C4 = 0x3F91DF46 
+      +0x1C8 = 0x00000000 
+      +0x36C = 0x006C9890 W?Get_From$:Straw$n(pn$1$)v
+      +0x370 = 0x007BA530 FileStraw_ReadNextBytes
+      +0x374 = 0x007FCD80 ??_R4FilePipe@@6B@
+      +0x378 = 0x00477790 ??_GFilePipe@@UAEPAXI@Z
+      +0x37C = 0x00631D30 Pipe_631D30
+      +0x380 = 0x007BA450 sub_7BA450
+  vt 0x007E4B40:
+      +0x1B8 = 0x0081BE0C aPlaceWaypoint
+      +0x1BC = 0x0081BE00 aTibSunBug
+      +0x1C0 = 0x0081BDEC aEnterWaypointMode
+      +0x1C4 = 0x0081BDDC aFollowWaypoint
+      +0x1C8 = 0x0081BDCC aSelectWaypoint
+      +0x36C = 0x404E0000 
+      +0x370 = 0xA2529D39 
+      +0x374 = 0x3F91DF46 
+      +0x378 = 0x000000FE 
+      +0x37C = 0x007FCFE0 ??_R4CellClass@@6BINoticeSource@@@
+      +0x380 = 0x00410590 AbstractClass_INoticeSourceUnknown
+  vt 0x007E4EEC:
+      +0x1B8 = 0x004E19A0 Gadget_50
+      +0x1BC = 0x004E19D0 Gadget_54
+      +0x1C0 = 0x004E19F0 Gadget_58
+      +0x1C4 = 0x004E1A00 Gadget_5C
+      +0x1C8 = 0x004886A0 Gadget_60
+      +0x36C = 0x0081D9E4 aDarkness
+      +0x370 = 0x0081D9DC aReveal
+      +0x374 = 0x0081D9D4 aArmor
+      +0x378 = 0x0081D9CC aSpeed
+      +0x37C = 0x0081D9C0 Key
+      +0x380 = 0x0081D9B8 aIcbm
+  vt 0x007E5FB8:
+      +0x1B8 = 0x00565B00 W?Free_Cells$:MapClass$n()v
+      +0x1BC = 0x00565BC0 W?Init_Cells$:MapClass$n()v
+      +0x1C0 = 0x00577920 W?Detach$:MapClass$n(li)v
+      +0x1C4 = 0x004AEBE0 sub_4AEBE0
+      +0x1C8 = 0x0056BBE0 W?Logic$:MapClass$n()v
+      +0x36C = 0x00000000 
+      +0x370 = 0x0000003A 
+      +0x374 = 0x00000000 
+      +0x378 = 0x00000000 
+      +0x37C = 0x0000002F 
+      +0x380 = 0x00000000 
+  vt 0x007E87A8:
+      +0x1B8 = 0x004CA9E0 sub_4CA9E0
+      +0x1BC = 0x004CAA10 sub_4CAA10
+      +0x1C0 = 0x004CAA50 sub_4CAA50
+      +0x1C4 = 0x004CA8E0 sub_4CA8E0
+      +0x1C8 = 0x6DC9C883 
+      +0x36C = 0x00410580 AbstractClass_INoticeSinkUnknown
+      +0x370 = 0x00800700 ??_R4FoggedObjectClass@@6BIRTTITypeInfo@@@
+      +0x374 = 0x004105E0 AbstractClass_QueryInterface_0
+      +0x378 = 0x004105F0 j_AbstractClass_AddRef
+      +0x37C = 0x00410600 j_AbstractClass_Release
+      +0x380 = 0x00410210 AbstractClass_What_Am_I
+  vt 0x007E88D0:
+      +0x1B8 = 0x004CFE80 sub_4CFE80
+      +0x1BC = 0x004B4C80 LocomotionClass_ILocomotion_IsSurfacing
+      +0x1C0 = 0x004B6620 LocomotionClass_ILocomotion_MarkAllOccupationBits
+      +0x1C4 = 0x004B6630 LocomotionClass_ILocomotion_IsMovingHere
+      +0x1C8 = 0x004B6640 LocomotionClass_ILocomotion_WillJumpTracks
+      +0x36C = 0x004E0220 sub_4E0220
+      +0x370 = 0x004E0240 sub_4E0240
+      +0x374 = 0x00800898 ??_R4?$VectorClass@PAVFootClass@@@@6B@
+      +0x378 = 0x004E0CE0 sub_4E0CE0
+      +0x37C = 0x004E0580 sub_4E0580
+      +0x380 = 0x004E05C0 sub_4E05C0
+  vt 0x007E8B38:
+      +0x1B8 = 0x004DA530 W?AI$:FootClass$n()v
+      +0x1BC = 0x00710410 TechnoClass_60
+      +0x1C0 = 0x006F32D0 TechnoClass_64
+      +0x1C4 = 0x004DA4E0 W?Visual_Character$:FootClass$n.x(ii)$VisualType$$
+      +0x1C8 = 0x004DED70 FootClass_GetImage
+      +0x36C = 0x004D4DC0 FootClass_Attack
+      +0x370 = 0x004D4B20 FootClass_Mi_Capture
+      +0x374 = 0x004D4CB0 FootClass_Mi_Eaten
+      +0x378 = 0x004D5070 FootClass_Guard
+      +0x37C = 0x004D6AA0 FootClass_AreaGuard
+      +0x380 = 0x005B2E90 MissionClass_Mi_Harvest
+  vt 0x007E8C94:
+      +0x1B8 = 0x0041BEA0 TechnoClass_GetCellCoords
+      +0x1BC = 0x005F6960 TechnoClass_GetCell
+      +0x1C0 = 0x005F69C0 TechnoClass_GetCellCoords1
+      +0x1C4 = 0x005F6A10 TechnoClass_GetCell1
+      +0x1C8 = 0x005F5F40 TechnoClass_GetHeight
+      +0x36C = 0x00708E00 W?Response_Deploy$:TechnoClass$n()v
+      +0x370 = 0x007090A0 W?Response_Fire$:TechnoClass$n()v
+      +0x374 = 0x006FFE00 TechnoClass_374
+      +0x378 = 0x006FFBE0 W?Player_Assign_Mission$:TechnoClass$n($MissionType$$ll)v
+      +0x37C = 0x0070EFD0 TechnoClass_37C
+      +0x380 = 0x004DE770 FootClass_IsParalysed
+  vt 0x007EB058:
+      +0x1B8 = 0x0041BEA0 TechnoClass_GetCellCoords
+      +0x1BC = 0x005F6960 TechnoClass_GetCell
+      +0x1C0 = 0x005F69C0 TechnoClass_GetCellCoords1
+      +0x1C4 = 0x005F6A10 TechnoClass_GetCell1
+      +0x1C8 = 0x005F5F40 TechnoClass_GetHeight
+      +0x36C = 0x00708E00 W?Response_Deploy$:TechnoClass$n()v
+      +0x370 = 0x007090A0 W?Response_Fire$:TechnoClass$n()v
+      +0x374 = 0x006FFE00 TechnoClass_374
+      +0x378 = 0x006FFBE0 W?Player_Assign_Mission$:TechnoClass$n($MissionType$$ll)v
+      +0x37C = 0x0070EFD0 TechnoClass_37C
+      +0x380 = 0x004DE770 FootClass_IsParalysed
+  vt 0x007EB610:
+      +0x1B8 = 0x44EC053B 
+      +0x1BC = 0x11D0400F 
+      +0x1C0 = 0xA000CD9D 
+      +0x1C4 = 0xD39103C9 
+      +0x1C8 = 0x44EC053A 
+      +0x36C = 0x00536890 sub_536890
+      +0x370 = 0x005368A0 sub_5368A0
+      +0x374 = 0x005368B0 sub_5368B0
+      +0x378 = 0x00803980 ??_R4CombatantSelectCommandClass@@6B@
+      +0x37C = 0x00538340 ??_GCombatantSelectCommandClass@@UAEPAXI@Z
+      +0x380 = 0x00536770 sub_536770
+  vt 0x007EC258:
+      +0x1B8 = 0x0041BEA0 TechnoClass_GetCellCoords
+      +0x1BC = 0x005F6960 TechnoClass_GetCell
+      +0x1C0 = 0x005F69C0 TechnoClass_GetCellCoords1
+      +0x1C4 = 0x005F6A10 TechnoClass_GetCell1
+      +0x1C8 = 0x005F5F40 TechnoClass_GetHeight
+      +0x36C = 0x20202020 
+      +0x370 = 0x20202020 
+      +0x374 = 0xDBDBDBDB 
+      +0x378 = 0xDBDBDBDB 
+      +0x37C = 0xDBDBDBDB 
+      +0x380 = 0xDBDBDBDB 
+  vt 0x007ECC48:
+      +0x1B8 = 0x004B4C80 LocomotionClass_ILocomotion_IsSurfacing
+      +0x1BC = 0x0054D930 sub_54D930
+      +0x1C0 = 0x004B6630 LocomotionClass_ILocomotion_IsMovingHere
+      +0x1C4 = 0x004B6640 LocomotionClass_ILocomotion_WillJumpTracks
+      +0x1C8 = 0x004B4C50 LocomotionClass_ILocomotion_IsReallyMovingNow
+      +0x36C = 0x00555250 sub_555250
+      +0x370 = 0x00805010 ??_R4?$DynamicVectorClass@PAVPendingCellClass@LightSourceClass@@@@6B@
+      +0x374 = 0x00555870 sub_555870
+      +0x378 = 0x00555520 sub_555520
+      +0x37C = 0x005556A0 sub_5556A0
+      +0x380 = 0x00555260 sub_555260
+  vt 0x007ED028:
+      +0x1B8 = 0x00558240 sub_558240
+      +0x1BC = 0x005583C0 sub_5583C0
+      +0x1C0 = 0x005581E0 sub_5581E0
+      +0x1C4 = 0x00558470 sub_558470
+      +0x1C8 = 0x00558210 sub_558210
+      +0x36C = 0x0055C990 W?$dt:LZOStraw$n(np$Memory$$uc)_
+      +0x370 = 0x006C9890 W?Get_From$:Straw$n(pn$1$)v
+      +0x374 = 0x0055C7C0 W?Get$:LZOStraw$n(pnvi)i
+      +0x378 = 0x00000000 
+      +0x37C = 0x404E0000 
+      +0x380 = 0xA2529D39 
+  vt 0x007EDCC0:
+      +0x1B8 = 0x0041BEA0 TechnoClass_GetCellCoords
+      +0x1BC = 0x005F6960 TechnoClass_GetCell
+      +0x1C0 = 0x005F69C0 TechnoClass_GetCellCoords1
+      +0x1C4 = 0x005F6A10 TechnoClass_GetCell1
+      +0x1C8 = 0x005F5F40 TechnoClass_GetHeight
+      +0x36C = 0x006AC5D0 sub_6AC5D0
+      +0x370 = 0x006AC5E0 sub_6AC5E0
+      +0x374 = 0x004ACE70 W?Read_INI$:DisplayClass$n(rn$CCINIClass$$)v
+      +0x378 = 0x006D1800 TabClass_GetTip
+      +0x37C = 0x006ABD30 sub_6ABD30
+      +0x380 = 0x004AEAD0 W?Abort_Drag_Select$:DisplayClass$n(pi)v
+  vt 0x007EF060:
+      +0x1B8 = 0x0041BEA0 TechnoClass_GetCellCoords
+      +0x1BC = 0x005F6960 TechnoClass_GetCell
+      +0x1C0 = 0x005F69C0 TechnoClass_GetCellCoords1
+      +0x1C4 = 0x005F6A10 TechnoClass_GetCell1
+      +0x1C8 = 0x005F5F40 TechnoClass_GetHeight
+      +0x36C = 0x00410580 AbstractClass_INoticeSinkUnknown
+      +0x370 = 0x00807638 ??_R4OverlayClass@@6BOverlayClass@@@
+      +0x374 = 0x00410260 AbstractClass_QueryInterface
+      +0x378 = 0x00410300 AbstractClass_AddRef
+      +0x37C = 0x00410310 AbstractClass_Release
+      +0x380 = 0x005FDF10 OverlayClass_GetClassID
+  vt 0x007EF2D8:
+      +0x1B8 = 0x005F6A70 TechnoClass_BC
+      +0x1BC = 0x00426410 TechnoClass_C0
+      +0x1C0 = 0x00426420 ObjectClass_IsDisguised
+      +0x1C4 = 0x00426430 ObjectClass_IsDisguisedAs
+      +0x1C8 = 0x0041BE60 ObjectClass_GetDisguiseHouse
+      +0x36C = 0x00410440 AbstractClass_IsDead
+      +0x370 = 0x004104C0 AbstractClass_GetCoords
+      +0x374 = 0x004104F0 AbstractClass_GetCoords_2arg
+      +0x378 = 0x00410520 AbstractClass_OnFloor
+      +0x37C = 0x00410530 AbstractClass_InAir
+      +0x380 = 0x00410540 AbstractClass_GetCoords_1arg
+  vt 0x007EF3D4:
+      +0x1B8 = 0x0041BEA0 TechnoClass_GetCellCoords
+      +0x1BC = 0x005F6960 TechnoClass_GetCell
+      +0x1C0 = 0x005F69C0 TechnoClass_GetCellCoords1
+      +0x1C4 = 0x005F6A10 TechnoClass_GetCell1
+      +0x1C8 = 0x005F5F40 TechnoClass_GetHeight
+      +0x36C = 0x006241C0 sub_6241C0
+      +0x370 = 0x006241D0 sub_6241D0
+      +0x374 = 0x006241E0 sub_6241E0
+      +0x378 = 0x00807888 ??_R4?$DynamicVectorClass@VHSVClass@@@@6B@
+      +0x37C = 0x006287B0 sub_6287B0
+      +0x380 = 0x006281F0 sub_6281F0
+  vt 0x007EF600:
+      +0x1B8 = 0x00627E50 sub_627E50
+      +0x1BC = 0x00627F00 sub_627F00
+      +0x1C0 = 0x00627F30 sub_627F30
+      +0x1C4 = 0x00627F70 sub_627F70
+      +0x1C8 = 0x00627D70 sub_627D70
+      +0x36C = 0x0062D810 ParticleClass_Save
+      +0x370 = 0x004103E0 AbstractClass_GetSize
+      +0x374 = 0x0062D9A0 ParticleClass_SDDTOR
+      +0x378 = 0x00410470 AbstractClass_Init
+      +0x37C = 0x005F5230 W?Detach$:ObjectClass$n(li)v
+      +0x380 = 0x0062D980 ParticleClass_GetAbstractDerivationID
+  vt 0x007EF890:
+      +0x1B8 = 0x005F6120 ObjectClass_F4
+      +0x1BC = 0x005F65F0 W?Detach$:ObjectClass$n(pn$ObjectClass$$)v
+      +0x1C0 = 0x005F4310 ObjectClass_UnCloak2
+      +0x1C4 = 0x005F4320 ObjectClass_KickOutUnit
+      +0x1C8 = 0x005F4B10 ObjectClass_104
+      +0x36C = 0x005F6DA0 ObjectClass_AnimPointerGotInvalid
+      +0x370 = 0x00426390 ObjectClass_IsSelectable
+      +0x374 = 0x004263A0 ObjectClass_VisualCharacter
+      +0x378 = 0x005F3E30 ObjectClass_GetImage
+      +0x37C = 0x005F4250 ObjectClass_MouseOverCell
+      +0x380 = 0x005F4240 ObjectClass_MouseOverObject
+  vt 0x007EF954:
+      +0x1B8 = 0x0041BEA0 TechnoClass_GetCellCoords
+      +0x1BC = 0x005F6960 TechnoClass_GetCell
+      +0x1C0 = 0x005F69C0 TechnoClass_GetCellCoords1
+      +0x1C4 = 0x005F6A10 TechnoClass_GetCell1
+      +0x1C8 = 0x005F5F40 TechnoClass_GetHeight
+      +0x36C = 0x005F5850 W?Mark$:ObjectClass$n($MarkType$$)i
+      +0x370 = 0x005F4730 TechnoClass_128
+      +0x374 = 0x005F4870 ObjectClass_12C
+      +0x378 = 0x0041BE80 ObjectClass_DrawRadialIndicator
+      +0x37C = 0x005F4D10 TechnoClass_134
+      +0x380 = 0x005F6C30 ObjectClass_CanBeSelected
+  vt 0x007EFB9C:
+      +0x1B8 = 0x0041BEA0 TechnoClass_GetCellCoords
+      +0x1BC = 0x005F6960 TechnoClass_GetCell
+      +0x1C0 = 0x005F69C0 TechnoClass_GetCellCoords1
+      +0x1C4 = 0x005F6A10 TechnoClass_GetCell1
+      +0x1C8 = 0x005F5F40 TechnoClass_GetHeight
+      +0x36C = 0x0063DD40 sub_63DD40
+      +0x370 = 0x0063DD80 sub_63DD80
+      +0x374 = 0x0063DE30 sub_63DE30
+      +0x378 = 0x0063DE60 sub_63DE60
+      +0x37C = 0x0063DEA0 sub_63DEA0
+      +0x380 = 0x0063DBB0 sub_63DBB0
+  vt 0x007F00A8:
+      +0x1B8 = 0x008372B0 aFactories
+      +0x1BC = 0x008372A0 aBaseDefenses
+      +0x1C0 = 0x00837290 aBaseThreats
+      +0x1C4 = 0x0083727C aPowerFacilitie
+      +0x1C8 = 0x00837260 aOccupiableBuil
+      +0x36C = 0x00653F70 sub_653F70
+      +0x370 = 0x00652E90 RadarClass_InitForHouse
+      +0x374 = 0x42D80000 
+      +0x378 = 0x430C0000 
+      +0x37C = 0x3B800000 
+      +0x380 = 0x00808458 ??_R4?$DynamicVectorClass@U?$HashObject@URadarTrackingStruct@@PAVTechnoClass@@@@@@6B@
+  vt 0x007F0188:
+      +0x1B8 = 0x008083C0 ??_R4RadarClass@@6B@
+      +0x1BC = 0x004F4240 GScreenClass_QueryInterface
+      +0x1C0 = 0x0040D230 GScreenClass_AddRef
+      +0x1C4 = 0x0040D240 GScreenClass_Release
+      +0x1C8 = 0x005656D0 MapClass_IsVisible
+      +0x36C = 0x00410600 j_AbstractClass_Release
+      +0x370 = 0x00410210 AbstractClass_What_Am_I
+      +0x374 = 0x00410220 AbstractClass_Fetch_ID
+      +0x378 = 0x00410230 W?Create_ID$:IRTTITypeInfo$:AbstractClass$n(i)i
+      +0x37C = 0x00808590 ??_R4RadioClass@@6BRadioClass@@@
+      +0x380 = 0x00410260 AbstractClass_QueryInterface
+  vt 0x007F0508:
+      +0x1B8 = 0x0041BEA0 TechnoClass_GetCellCoords
+      +0x1BC = 0x005F6960 TechnoClass_GetCell
+      +0x1C0 = 0x005F69C0 TechnoClass_GetCellCoords1
+      +0x1C4 = 0x005F6A10 TechnoClass_GetCell1
+      +0x1C8 = 0x005F5F40 TechnoClass_GetHeight
+      +0x36C = 0x0065C5A0 RAMFileClass_SDDTOR
+      +0x370 = 0x0065C550 RAMFileClass_GetFileName
+      +0x374 = 0x0065C560 RAMFileClass_SetFileName
+      +0x378 = 0x0065C2E0 sub_65C2E0
+      +0x37C = 0x0065C300 sub_65C300
+      +0x380 = 0x0065C320 RAMFileClass_FileExists
+  vt 0x007F0810:
+      +0x1B8 = 0x00000008 
+      +0x1BC = 0x000000C8 
+      +0x1C0 = 0x00000258 
+      +0x1C4 = 0x00000001 
+      +0x1C8 = 0x00000008 
+      +0x36C = 0x0055A930 LocomotionClass_ILocomotion_IsPowered
+      +0x370 = 0x0055A940 LocomotionClass_ILocomotion_IsIonSensitive
+      +0x374 = 0x0055AB70 LocomotionClass_ILocomotion_Push
+      +0x378 = 0x0055AB80 LocomotionClass_ILocomotion_Shove
+      +0x37C = 0x0055AC10 LocomotionClass_ILocomotion_ForceTrack
+      +0x380 = 0x00663460 RocketLocomotionClass_ILocomotion_InWhichLayer
+  vt 0x007F0F78:
+      +0x1B8 = 0x004AA050 MapClass_CellSmth2
+      +0x1BC = 0x004C9150 purecall
+      +0x1C0 = 0x004A9840 W?Scroll_Map$:DisplayClass$n($DirType$$rnii)i
+      +0x1C4 = 0x004A8960 W?Set_View_Dimensions$:DisplayClass$n(iiii)v
+      +0x1C8 = 0x0040D250 W?Put_Place_Back$:MouseClass$n(pn$TechnoClass$$)v
+      +0x36C = 0x0069C940 sub_69C940
+      +0x370 = 0x0069C4D0 sub_69C4D0
+      +0x374 = 0x0069C4F0 sub_69C4F0
+      +0x378 = 0xCCCCCCCD 
+      +0x37C = 0x4058FCCC 
+      +0x380 = 0x00000000 
+  vt 0x007F1008:
+      +0x1B8 = 0x0069C660 sub_69C660
+      +0x1BC = 0x0069D430 sub_69D430
+      +0x1C0 = 0x0069C690 sub_69C690
+      +0x1C4 = 0x0069C6B0 sub_69C6B0
+      +0x1C8 = 0x00809198 ??_R4?$DynamicVectorClass@PAUGlobalPacketType@@@@6B@
+      +0x36C = 0x00000000 
+      +0x370 = 0x000000A8 
+      +0x374 = 0x00000000 
+      +0x378 = 0x00000000 
+      +0x37C = 0x0000009D 
+      +0x380 = 0x00000000 
+  vt 0x007F2EC0:
+      +0x1B8 = 0x006A5310 sub_6A5310
+      +0x1BC = 0x004F4320 W?Input$:GScreenClass$n(rn$KeyNumType$$rnirni)v
+      +0x1C0 = 0x006A7780 SidebarClass_MouseMove
+      +0x1C4 = 0x004F43F0 sub_4F43F0
+      +0x1C8 = 0x004F4410 sub_4F4410
+      +0x36C = 0x006B1980 sub_6B1980
+      +0x370 = 0x006B1470 sub_6B1470
+      +0x374 = 0x006B15F0 sub_6B15F0
+      +0x378 = 0x006B13B0 sub_6B13B0
+      +0x37C = 0x006B16A0 sub_6B16A0
+      +0x380 = 0x006B13E0 sub_6B13E0
+  vt 0x007F31C8:
+      +0x1B8 = 0x005F6BC0 ObjectClass_GetTechnoType
+      +0x1BC = 0x006B4F20 SmudgeClass_GetType
+      +0x1C0 = 0x005F42A0 ObjectClass_8C
+      +0x1C4 = 0x004263C0 ObjectClass_GetUIName
+      +0x1C8 = 0x005F42B0 ObjectClass_IsRepairable
+      +0x36C = 0x006B58D0 SmudgeTypeClass_GetClassID
+      +0x370 = 0x00410450 AbstractClass_IsDirty
+      +0x374 = 0x006B5850 SmudgeTypeClass_Load
+      +0x378 = 0x006B58B0 SmudgeTypeClass_Save
+      +0x37C = 0x005F9970 ObjectTypeClass_GetMaxSize
+      +0x380 = 0x006B6160 SmudgeTypeClass_SDDTOR
+  vt 0x007F32FC:
+      +0x1B8 = 0x0041BEA0 TechnoClass_GetCellCoords
+      +0x1BC = 0x005F6960 TechnoClass_GetCell
+      +0x1C0 = 0x005F69C0 TechnoClass_GetCellCoords1
+      +0x1C4 = 0x005F6A10 TechnoClass_GetCell1
+      +0x1C8 = 0x005F5F40 TechnoClass_GetHeight
+      +0x36C = 0x006B80B0 SpawnManagerClass_Save
+      +0x370 = 0x004103E0 AbstractClass_GetSize
+      +0x374 = 0x006B8140 ??_GSpawnManagerClass@@UAEPAXI@Z
+      +0x378 = 0x00410470 AbstractClass_Init
+      +0x37C = 0x00410480 AbstractClass_PointerGotInvalid
+      +0x380 = 0x006B8130 SpawnManagerClass_GetAbstractDerivationID
+  vt 0x007F3528:
+      +0x1B8 = 0x006B8310 sub_6B8310
+      +0x1BC = 0x006B8340 sub_6B8340
+      +0x1C0 = 0x006B8380 sub_6B8380
+      +0x1C4 = 0x006B81B0 sub_6B81B0
+      +0x1C8 = 0x00000000 
+      +0x36C = 0x006C0110 sub_6C0110
+      +0x370 = 0x006C0190 sub_6C0190
+      +0x374 = 0x0080A078 ??_R4?$TClassFactory@VCampaignClass@@@@6B@
+      +0x378 = 0x006C01D0 sub_6C01D0
+      +0x37C = 0x006C0240 sub_6C0240
+      +0x380 = 0x006C0260 sub_6C0260
+  vt 0x007F3650:
+      +0x1B8 = 0x006BF890 sub_6BF890
+      +0x1BC = 0x00809E98 ??_R4?$TClassFactory@VCellClass@@@@6B@
+      +0x1C0 = 0x006BF8D0 sub_6BF8D0
+      +0x1C4 = 0x006BF940 sub_6BF940
+      +0x1C8 = 0x006BF960 sub_6BF960
+      +0x36C = 0x0080A438 ??_R4?$TClassFactory@VTEventClass@@@@6B@
+      +0x370 = 0x006C13D0 sub_6C13D0
+      +0x374 = 0x006C1440 sub_6C1440
+      +0x378 = 0x006C1460 sub_6C1460
+      +0x37C = 0x006C1490 sub_6C1490
+      +0x380 = 0x006C1510 sub_6C1510
+  vt 0x007F3FE8:
+      +0x1B8 = 0x06061A04 
+      +0x1BC = 0x11112D23 
+      +0x1C0 = 0x11112926 
+      +0x1C4 = 0x06061A04 
+      +0x1C8 = 0x06061A04 
+      +0x36C = 0x006DBCE0 TacticalClass_GetClassID
+      +0x370 = 0x00410450 AbstractClass_IsDirty
+      +0x374 = 0x006DBD20 TacticalClass_Load
+      +0x378 = 0x006DBE00 TacticalClass_Save
+      +0x37C = 0x004103E0 AbstractClass_GetSize
+      +0x380 = 0x006DC470 TacticalClass_SDDTOR
+  vt 0x007F4090:
+      +0x1B8 = 0x0B0B1616 
+      +0x1BC = 0xFEFE0D0D 
+      +0x1C0 = 0xFEFE0D0D 
+      +0x1C4 = 0x03030101 
+      +0x1C8 = 0x03031010 
+      +0x36C = 0x006E4940 sub_6E4940
+      +0x370 = 0x006E4970 sub_6E4970
+      +0x374 = 0x006E49B0 sub_6E49B0
+      +0x378 = 0x006E4840 sub_6E4840
+      +0x37C = 0x0080BA58 ??_R4TActionClass@@6BINoticeSource@@@
+      +0x380 = 0x00410590 AbstractClass_INoticeSourceUnknown
+  vt 0x007F4348:
+      +0x1B8 = 0x006E58B0 ??_GTagClass@@UAEPAXI@Z
+      +0x1BC = 0x00410470 AbstractClass_Init
+      +0x1C0 = 0x006E5610 TagClass_PointerGotInvalid
+      +0x1C4 = 0x006E58A0 TagClass_GetAbstractDerivationID
+      +0x1C8 = 0x006E5890 TagClass_GetSize
+      +0x36C = 0x006E8750 TaskForceClass_GetCRC
+      +0x370 = 0x00410490 AbstractClass_GetOwningHouseIndex
+      +0x374 = 0x004104A0 AbstractClass_GetOwningHouse
+      +0x378 = 0x004104B0 AbstractClass_GetArrayIndex
+      +0x37C = 0x00410440 AbstractClass_IsDead
+      +0x380 = 0x004104C0 AbstractClass_GetCoords
+  vt 0x007F443C:
+      +0x1B8 = 0x006E64A0 TagTypeClass_GetSize
+      +0x1BC = 0x006E63E0 TagTypeClass_GetCRC
+      +0x1C0 = 0x00410490 AbstractClass_GetOwningHouseIndex
+      +0x1C4 = 0x004104A0 AbstractClass_GetOwningHouse
+      +0x1C8 = 0x006E64B0 TagTypeClass_GetArrayIndex
+      +0x36C = 0x0080BE88 ??_R4TeamTypeClass@@6BINoticeSink@@@
+      +0x370 = 0x00410580 AbstractClass_INoticeSinkUnknown
+      +0x374 = 0x0080BEA0 ??_R4TeamTypeClass@@6BIRTTITypeInfo@@@
+      +0x378 = 0x004105E0 AbstractClass_QueryInterface_0
+      +0x37C = 0x004105F0 j_AbstractClass_AddRef
+      +0x380 = 0x00410600 j_AbstractClass_Release
+  vt 0x007F44E0:
+      +0x1B8 = 0x006E8680 TaskForceClass_Save
+      +0x1BC = 0x004103E0 AbstractClass_GetSize
+      +0x1C0 = 0x006E87F0 TaskForceClass_SDDTOR
+      +0x1C4 = 0x00410470 AbstractClass_Init
+      +0x1C8 = 0x00410480 AbstractClass_PointerGotInvalid
+      +0x36C = 0x006F2400 sub_6F2400
+      +0x370 = 0x006F2440 sub_6F2440
+      +0x374 = 0x006F2490 sub_6F2490
+      +0x378 = 0x006F2210 sub_6F2210
+      +0x37C = 0x0080BFA8 ??_R4?$DynamicVectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@@@6B@
+      +0x380 = 0x006F2720 sub_6F2720
+  vt 0x007F45C4:
+      +0x1B8 = 0x004104F0 AbstractClass_GetCoords_2arg
+      +0x1BC = 0x00410520 AbstractClass_OnFloor
+      +0x1C0 = 0x00410530 AbstractClass_InAir
+      +0x1C4 = 0x00410540 AbstractClass_GetCoords_1arg
+      +0x1C8 = 0x006E9140 TeamClass_Update
+      +0x36C = 0x0080BFC0 ??_R4TechnoClass@@6BINoticeSource@@@
+      +0x370 = 0x00410590 AbstractClass_INoticeSourceUnknown
+      +0x374 = 0x0080BFD8 ??_R4TechnoClass@@6BINoticeSink@@@
+      +0x378 = 0x00410580 AbstractClass_INoticeSinkUnknown
+      +0x37C = 0x0080BFF0 ??_R4TechnoClass@@6BIRTTITypeInfo@@@
+      +0x380 = 0x004105E0 AbstractClass_QueryInterface_0
+  vt 0x007F4680:
+      +0x1B8 = 0x006F1550 TeamTypeClass_SaveToINI
+      +0x1BC = 0x0080BF40 ??_R4?$VectorClass@V?$DistributionObject@PAVAITriggerTypeClass@@@?$DiscreteDistributionClass@VAITriggerTypeClass@@@@@@6B@
+      +0x1C0 = 0x006F2680 sub_6F2680
+      +0x1C4 = 0x006F2290 sub_6F2290
+      +0x1C8 = 0x006F22F0 sub_6F22F0
+      +0x36C = 0x00708B30 TechnoClass_GetOwners
+      +0x370 = 0x004263C0 ObjectClass_GetUIName
+      +0x374 = 0x00701140 W?Can_Repair$:TechnoClass$n.x()i
+      +0x378 = 0x005F42C0 ObjectClass_IsSellable
+      +0x37C = 0x007010D0 TechnoClass_9C
+      +0x380 = 0x00700C40 TechnoClass_CanSetWaypoint
+  vt 0x007F4730:
+      +0x1B8 = 0x00000006 
+      +0x1BC = 0x00000005 
+      +0x1C0 = 0x00000004 
+      +0x1C4 = 0x00000003 
+      +0x1C8 = 0x00000002 
+      +0x36C = 0x006FC030 TechnoClass_CanBeSelectedNow
+      +0x370 = 0x005F4360 ObjectClass_140
+      +0x374 = 0x005F4350 ObjectClass_ClickedMission
+      +0x378 = 0x006F9DD0 TechnoClass_BlinkDisguise
+      +0x37C = 0x006FBFA0 TechnoClass_14C
+      +0x380 = 0x005F44A0 ObjectClass_Deselect
+  vt 0x007F47D0:
+      +0x1B8 = 0x007077C0 TechnoClass_PointerGotInvalid
+      +0x1BC = 0x004C9150 purecall
+      +0x1C0 = 0x004C9150 purecall
+      +0x1C4 = 0x0070C270 TechnoClass_GetCRC
+      +0x1C8 = 0x006F9DB0 TechnoClass_38
+      +0x36C = 0x0070C5D0 TechnoClass_IsTemporalSource
+      +0x370 = 0x0070C5F0 TechnoClass_IsNotTemporalLocked
+      +0x374 = 0x00705D70 TechnoClass_GetRemapColour
+      +0x378 = 0x005B35E0 W?Assign_Mission$:MissionClass$n($MissionType$$)v
+      +0x37C = 0x005B3570 TechnoClass_NextMission
+      +0x380 = 0x005B2FD0 TechnoClass_ForceMission
+  vt 0x007F4960:
+      +0x1B8 = 0x0041BEA0 TechnoClass_GetCellCoords
+      +0x1BC = 0x005F6960 TechnoClass_GetCell
+      +0x1C0 = 0x005F69C0 TechnoClass_GetCellCoords1
+      +0x1C4 = 0x005F6A10 TechnoClass_GetCell1
+      +0x1C8 = 0x005F5F40 TechnoClass_GetHeight
+      +0x36C = 0x00708E00 W?Response_Deploy$:TechnoClass$n()v
+      +0x370 = 0x007090A0 W?Response_Fire$:TechnoClass$n()v
+      +0x374 = 0x006FFE00 TechnoClass_374
+      +0x378 = 0x006FFBE0 W?Player_Assign_Mission$:TechnoClass$n($MissionType$$ll)v
+      +0x37C = 0x0070EFD0 TechnoClass_37C
+      +0x380 = 0x00459E40 TechnoClass_380
+  vt 0x007F4ED8:
+      +0x1B8 = 0x004B4C60 LocomotionClass_ILocomotion_GetStatus
+      +0x1BC = 0x004B4C70 LocomotionClass_ILocomotion_AcquireHunterSeekerTarget
+      +0x1C0 = 0x004B4C80 LocomotionClass_ILocomotion_IsSurfacing
+      +0x1C4 = 0x0071A090 TeleportLocomotionClass_ILocomotion_71A090
+      +0x1C8 = 0x004B6630 LocomotionClass_ILocomotion_IsMovingHere
+      +0x36C = 0x0071CF30 TerrainClass_Save
+      +0x370 = 0x004103E0 AbstractClass_GetSize
+      +0x374 = 0x0071D350 TerrainClass_SDDTOR
+      +0x378 = 0x00410470 AbstractClass_Init
+      +0x37C = 0x0071CFD0 TerrainClass_PointerGotInvalid
+      +0x380 = 0x0071D300 TerrainClass_GetAbstractDerivationID
+  vt 0x007F5180:
+      +0x1B8 = 0x00426440 ObjectClass_10C
+      +0x1BC = 0x00426450 ObjectClass_DrawExtras
+      +0x1C0 = 0x0071C1B0 TerrainClass_Draw
+      +0x1C4 = 0x0071C360 TerrainClass_118
+      +0x1C8 = 0x005F4330 ObjectClass_11C
+      +0x36C = 0x005F7900 ObjectClass_Who_Can_build_Me
+      +0x370 = 0x005F7630 ObjectTypeClass_GetCameo
+      +0x374 = 0x0041CFA0 ObjectTypeClass_GetImage
+      +0x378 = 0x00000000 
+      +0x37C = 0x404E0000 
+      +0x380 = 0xA2529D39 
+  vt 0x007F522C:
+      +0x1B8 = 0x0041BEA0 TechnoClass_GetCellCoords
+      +0x1BC = 0x005F6960 TechnoClass_GetCell
+      +0x1C0 = 0x005F69C0 TechnoClass_GetCellCoords1
+      +0x1C4 = 0x005F6A10 TechnoClass_GetCell1
+      +0x1C8 = 0x005F5F40 TechnoClass_GetHeight
+      +0x36C = 0x0071FA80 TEventClass_SDDTOR
+      +0x370 = 0x00410470 AbstractClass_Init
+      +0x374 = 0x0071F800 EventClass_PointerGotInvalid
+      +0x378 = 0x0071FA60 TEventClass_GetAbstractDerivationID
+      +0x37C = 0x0071FA50 TEventClass_GetSize
+      +0x380 = 0x0071F820 EventClass_GetCRC
+  vt 0x007F5458:
+      +0x1B8 = 0x004E1920 Gadget_34
+      +0x1BC = 0x00488690 Gadget_38
+      +0x1C0 = 0x004E1460 Gadget_3C
+      +0x1C4 = 0x004E1450 Gadget_40
+      +0x1C8 = 0x0048E610 Control_44
+      +0x36C = 0x0080C840 ??_R4?$DynamicVectorClass@PBVToolTip@@@@6B@
+      +0x370 = 0x00724F40 sub_724F40
+      +0x374 = 0x00724C90 sub_724C90
+      +0x378 = 0x00724E10 sub_724E10
+      +0x37C = 0x00724C30 sub_724C30
+      +0x380 = 0x00724EC0 sub_724EC0
+  vt 0x007F5578:
+      +0x1B8 = 0x00410310 AbstractClass_Release
+      +0x1BC = 0x00721E40 TiberiumClass_GetClassID
+      +0x1C0 = 0x00410450 AbstractClass_IsDirty
+      +0x1C4 = 0x00721E80 TiberiumClass_Load
+      +0x1C8 = 0x007220D0 TiberiumClass_Save
+      +0x36C = 0x0080C9B0 ??_R4TriggerTypeClass@@6BIRTTITypeInfo@@@
+      +0x370 = 0x004105E0 AbstractClass_QueryInterface_0
+      +0x374 = 0x004105F0 j_AbstractClass_AddRef
+      +0x378 = 0x00410600 j_AbstractClass_Release
+      +0x37C = 0x00410210 AbstractClass_What_Am_I
+      +0x380 = 0x00410220 AbstractClass_Fetch_ID
+  vt 0x007F5728:
+      +0x1B8 = 0x00410580 AbstractClass_INoticeSinkUnknown
+      +0x1BC = 0x0080C9B0 ??_R4TriggerTypeClass@@6BIRTTITypeInfo@@@
+      +0x1C0 = 0x004105E0 AbstractClass_QueryInterface_0
+      +0x1C4 = 0x004105F0 j_AbstractClass_AddRef
+      +0x1C8 = 0x00410600 j_AbstractClass_Release
+      +0x36C = 0x0055AC10 LocomotionClass_ILocomotion_ForceTrack
+      +0x370 = 0x0072A1A0 sub_72A1A0
+      +0x374 = 0x0055AC00 LocomotionClass_ILocomotion_ForceImmediateDestination
+      +0x378 = 0x0055ACE0 LocomotionClass_ILocomotion_ForceNewSlope
+      +0x37C = 0x00728A60 sub_728A60
+      +0x380 = 0x0055AD10 LocomotionClass_ILocomotion_ApparentSpeed
+  vt 0x007F5858:
+      +0x1B8 = 0x00000000 
+      +0x1BC = 0x404E0000 
+      +0x1C0 = 0xA2529D39 
+      +0x1C4 = 0x3F91DF46 
+      +0x1C8 = 0x0080CAE8 ??_R4TunnelLocomotionClass@@6BILocomotion@@@
+      +0x36C = 0x004E13F0 Gadget_80
+      +0x370 = 0x0072A660 sub_72A660
+      +0x374 = 0x00000000 
+      +0x378 = 0x00000000 
+      +0x37C = 0x404E0000 
+      +0x380 = 0xA2529D39 
+  vt 0x007F5904:
+      +0x1B8 = 0x0072A1E0 sub_72A1E0
+      +0x1BC = 0x004B6620 LocomotionClass_ILocomotion_MarkAllOccupationBits
+      +0x1C0 = 0x004B6630 LocomotionClass_ILocomotion_IsMovingHere
+      +0x1C4 = 0x004B6640 LocomotionClass_ILocomotion_WillJumpTracks
+      +0x1C8 = 0x004B4C50 LocomotionClass_ILocomotion_IsReallyMovingNow
+      +0x36C = 0x00410260 AbstractClass_QueryInterface
+      +0x370 = 0x00410300 AbstractClass_AddRef
+      +0x374 = 0x00410310 AbstractClass_Release
+      +0x378 = 0x00746DE0 UnitClass_GetClassID
+      +0x37C = 0x00410450 AbstractClass_IsDirty
+      +0x380 = 0x00744470 UnitClass_Load
+  vt 0x007F59B0:
+      +0x1B8 = 0x004E1480 Gadget_24
+      +0x1BC = 0x004E1640 Gadget_28
+      +0x1C0 = 0x004E1570 Gadget_2C
+      +0x1C4 = 0x004E14C0 Gadget_30
+      +0x1C8 = 0x004E1920 Gadget_34
+      +0x36C = 0x0041BE00 ObjectClass_GetCoords_2
+      +0x370 = 0x006F3AD0 TechnoClass_GetFLH
+      +0x374 = 0x0041BE30 ObjectClass_GetExitCoords
+      +0x378 = 0x005F6BD0 ObjectClass_ReturnRealYSort
+      +0x37C = 0x004DDC40 FootClass_BC
+      +0x380 = 0x0041C070 FootClass_C0
+  vt 0x007F5C70:
+      +0x1B8 = 0x0041BEA0 TechnoClass_GetCellCoords
+      +0x1BC = 0x005F6960 TechnoClass_GetCell
+      +0x1C0 = 0x005F69C0 TechnoClass_GetCellCoords1
+      +0x1C4 = 0x005F6A10 TechnoClass_GetCell1
+      +0x1C8 = 0x005F5F40 TechnoClass_GetHeight
+      +0x36C = 0x00708E00 W?Response_Deploy$:TechnoClass$n()v
+      +0x370 = 0x007090A0 W?Response_Fire$:TechnoClass$n()v
+      +0x374 = 0x006FFE00 TechnoClass_374
+      +0x378 = 0x006FFBE0 W?Player_Assign_Mission$:TechnoClass$n($MissionType$$ll)v
+      +0x37C = 0x00746C90 sub_746C90
+      +0x380 = 0x004DE770 FootClass_IsParalysed
+  vt 0x007F6218:
+      +0x1B8 = 0x005F6BD0 ObjectClass_ReturnRealYSort
+      +0x1BC = 0x005F6A70 TechnoClass_BC
+      +0x1C0 = 0x00426410 TechnoClass_C0
+      +0x1C4 = 0x00426420 ObjectClass_IsDisguised
+      +0x1C8 = 0x00426430 ObjectClass_IsDisguisedAs
+      +0x36C = 0x004104A0 AbstractClass_GetOwningHouse
+      +0x370 = 0x004104B0 AbstractClass_GetArrayIndex
+      +0x374 = 0x00410440 AbstractClass_IsDead
+      +0x378 = 0x004104C0 AbstractClass_GetCoords
+      +0x37C = 0x004104F0 AbstractClass_GetCoords_2arg
+      +0x380 = 0x00410520 AbstractClass_OnFloor
+  vt 0x007F6318:
+      +0x1B8 = 0x0041BEA0 TechnoClass_GetCellCoords
+      +0x1BC = 0x005F6960 TechnoClass_GetCell
+      +0x1C0 = 0x005F69C0 TechnoClass_GetCellCoords1
+      +0x1C4 = 0x005F6A10 TechnoClass_GetCell1
+      +0x1C8 = 0x005F5F40 TechnoClass_GetHeight
+      +0x36C = 0x00410580 AbstractClass_INoticeSinkUnknown
+      +0x370 = 0x0080CFD8 ??_R4VeinholeMonsterClass@@6BIRTTITypeInfo@@@
+      +0x374 = 0x004105E0 AbstractClass_QueryInterface_0
+      +0x378 = 0x004105F0 j_AbstractClass_AddRef
+      +0x37C = 0x00410600 j_AbstractClass_Release
+      +0x380 = 0x00410210 AbstractClass_What_Am_I
+  vt 0x007F6548:
+      +0x1B8 = 0x00410540 AbstractClass_GetCoords_1arg
+      +0x1BC = 0x0074CE50 VeinholeMonsterClass_Update
+      +0x1C0 = 0x005F6DA0 ObjectClass_AnimPointerGotInvalid
+      +0x1C4 = 0x00426390 ObjectClass_IsSelectable
+      +0x1C8 = 0x004263A0 ObjectClass_VisualCharacter
+      +0x36C = 0x00751AB0 sub_751AB0
+      +0x370 = 0x007518D0 sub_7518D0
+      +0x374 = 0x00751B60 sub_751B60
+      +0x378 = 0x00751900 sub_751900
+      +0x37C = 0x00751920 sub_751920
+      +0x380 = 0x0080D0E0 ??_R4?$VectorClass@PAVVocClass@@@@6B@
+  vt 0x007F66A8:
+      +0x1B8 = 0x0041BEA0 TechnoClass_GetCellCoords
+      +0x1BC = 0x005F6960 TechnoClass_GetCell
+      +0x1C0 = 0x005F69C0 TechnoClass_GetCellCoords1
+      +0x1C4 = 0x005F6A10 TechnoClass_GetCell1
+      +0x1C8 = 0x005F5F40 TechnoClass_GetHeight
+      +0x36C = 0x0055ABF0 LocomotionClass_ILocomotion_CanEnterCell
+      +0x370 = 0x0055ABE0 LocomotionClass_ILocomotion_IsToHaveShadow
+      +0x374 = 0x0055A730 LocomotionClass_ILocomotion_DrawMatrix
+      +0x378 = 0x0055A7D0 LocomotionClass_ILocomotion_ShadowMatrix
+      +0x37C = 0x0055ABD0 LocomotionClass_ILocomotion_DrawPoint
+      +0x380 = 0x0055A8C0 LocomotionClass_ILocomotion_ShadowPoint
+  vt 0x007F6B30:
+      +0x1B8 = 0x005F6120 ObjectClass_F4
+      +0x1BC = 0x005F65F0 W?Detach$:ObjectClass$n(pn$ObjectClass$$)v
+      +0x1C0 = 0x005F4310 ObjectClass_UnCloak2
+      +0x1C4 = 0x005F4320 ObjectClass_KickOutUnit
+      +0x1C8 = 0x005F4B10 ObjectClass_104
+      +0x36C = 0x00763E10 WaypointPathClass_GetAbstractDerivationID
+      +0x370 = 0x00763E00 WaypointPathClass_GetSize
+      +0x374 = 0x00763C00 WaypointPathClass_GetCRC
+      +0x378 = 0x00410490 AbstractClass_GetOwningHouseIndex
+      +0x37C = 0x004104A0 AbstractClass_GetOwningHouse
+      +0x380 = 0x004104B0 AbstractClass_GetArrayIndex
+  vt 0x007F6BF4:
+      +0x1B8 = 0x0041BEA0 TechnoClass_GetCellCoords
+      +0x1BC = 0x005F6960 TechnoClass_GetCell
+      +0x1C0 = 0x005F69C0 TechnoClass_GetCellCoords1
+      +0x1C4 = 0x005F6A10 TechnoClass_GetCell1
+      +0x1C8 = 0x005F5F40 TechnoClass_GetHeight
+      +0x36C = 0x007656B0 sub_7656B0
+      +0x370 = 0x007656D0 sub_7656D0
+      +0x374 = 0x0080D7A0 ??_R4?$rc_ptr@VCampaignProperties@WorldDominationTour@@@@6B@
+      +0x378 = 0x00765710 ??_G?$rc_ptr@VCampaignProperties@WorldDominationTour@@@@UAEPAXI@Z
+      +0x37C = 0x0080D870 ??_R4?$rc_ptr@VHistory@WorldDominationTour@@@@6B@
+      +0x380 = 0x00765740 ??_G?$rc_ptr@VHistory@WorldDominationTour@@@@UAEPAXI@Z
+  vt 0x007F6E70:
+      +0x1B8 = 0x0080DAD8 ??_R4?$VectorCursor@V?$rc_ptr@VGameOption@WorldDominationTour@@@@V?$DynamicVectorClass@V?$rc_ptr@VGameOption@WorldDominationTour@@@@@@@@6B@
+      +0x1BC = 0x007669F0 ??_G?$VectorCursor@V?$rc_ptr@VGameOption@WorldDominationTour@@@@V?$DynamicVectorClass@V?$rc_ptr@VGameOption@WorldDominationTour@@@@@@@@UAEPAXI@Z
+      +0x1C0 = 0x00766920 sub_766920
+      +0x1C4 = 0x00766FA0 sub_766FA0
+      +0x1C8 = 0x00766FB0 sub_766FB0
+      +0x36C = 0x0080E008 ??_R4?$VectorClass@VCentroid@WorldDominationTour@@@@6B@
+      +0x370 = 0x0076A770 sub_76A770
+      +0x374 = 0x0076A390 sub_76A390
+      +0x378 = 0x0076A3F0 sub_76A3F0
+      +0x37C = 0x0076A4F0 sub_76A4F0
+      +0x380 = 0x0076A520 sub_76A520
+  vt 0x007F73B8:
+      +0x1B8 = 0x6869E99D 
+      +0x1BC = 0x11D19FB4 
+      +0x1C0 = 0x6000C89D 
+      +0x1C4 = 0x2143C597 
+      +0x1C8 = 0xB832B0AA 
+      +0x36C = 0x007A9200 sub_7A9200
+      +0x370 = 0x007AB350 sub_7AB350
+      +0x374 = 0x007AB440 sub_7AB440
+      +0x378 = 0x007AB3C0 sub_7AB3C0
+      +0x37C = 0x007A4EC0 sub_7A4EC0
+      +0x380 = 0x007AB8E0 sub_7AB8E0
+[done]

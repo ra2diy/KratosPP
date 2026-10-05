@@ -320,6 +320,9 @@ public:
 
 	virtual void OnSelect(bool& selectable) override;
 
+	virtual void OnGuardCommand() override;
+	virtual void OnStopCommand() override;
+
 	// TODO Add new State
 	// 状态机
 	STATE_VAR_DEFINE(AntiBullet);
@@ -656,6 +659,9 @@ private:
 
 	bool OnSelect_VirtualUnit();
 	bool OnSelect_Deselect();
+
+	void OnGuardCommand_Stand();
+	void OnStopCommand_Stand();
 
 	// 阿伟死了，DestroySelfState干的
 	bool _isDead = false;

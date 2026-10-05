@@ -33,3 +33,5 @@ __pycache__/
 # 构建日志（临时产物，不是分析证据；分析证据是 ida_work/ida_*.log 与 *_probe.txt）
 /ida_work/build_*.log
 /out_build*.log
+# 仓库根目录下的零散构建日志（例如手工跑 msbuild 时重定向出来的 build_fix*.log）
+/build_*.log

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <Common/INI/INI.h>
 #include <Common/INI/INIConfig.h>
@@ -35,6 +35,14 @@ public:
 		}
 		return _data;
 	};
+
+	// 使惰性缓存失效。ScenarioClearClassesEvent 上 INI::ClearBuffer 会 GameDelete 掉这些
+	// INIConfig（Common/INI/INIConfigManager.h:23），缓存指针必须同时清空，否则下一次 Data()
+	// 返回悬垂指针（跨局残留 / UAF）。
+	static void ClearCache()
+	{
+		_data = nullptr;
+	}
 
 private:
 	static GeneralData* _data;
@@ -90,6 +98,12 @@ public:
 		return _data;
 	};
 
+	// 见 General::ClearCache
+	static void ClearCache()
+	{
+		_data = nullptr;
+	}
+
 private:
 	static CombatDamageData* _data;
 };
@@ -137,6 +151,12 @@ public:
 		return _data;
 	};
 
+	// 见 General::ClearCache
+	static void ClearCache()
+	{
+		_data = nullptr;
+	}
+
 private:
 	static AudioVisualData* _data;
 };
@@ -166,6 +186,16 @@ public:
 		return _data;
 	};
 
+	// 见 General::ClearCache
+	static void ClearCache()
+	{
+		_data = nullptr;
+	}
+
 private:
 	static AIConfigData* _data;
 };
+
+// ScenarioClearClassesEvent 处理器：清空上述 4 个规则数据的惰性缓存。
+// 注册顺序必须排在 INI::ClearBuffer 之后（同一事件按注册顺序执行）。
+void ClearCommonStatusCache(EventSystem* sender, Event e, void* args);

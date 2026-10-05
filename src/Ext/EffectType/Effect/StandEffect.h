@@ -73,6 +73,9 @@ public:
 
 	virtual void OnRocketExplosion() override;
 
+	void RaiseGuardCommand();
+	void RaiseStopCommand();
+
 	TechnoClass* pStand = nullptr;
 
 #pragma region Save/Load

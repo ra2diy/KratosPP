@@ -1,5 +1,7 @@
 ﻿#include "StandEffect.h"
 
+#include <HouseClass.h>
+
 #include <DriveLocomotionClass.h>
 #include <MechLocomotionClass.h>
 #include <ShipLocomotionClass.h>
@@ -12,6 +14,7 @@
 #include <Ext/Helper/Scripts.h>
 #include <Ext/Helper/Status.h>
 
+#include <Ext/SyncEventType/TechnoScriptCommandEvent.h>
 #include <Ext/TechnoType/TechnoStatus.h>
 #include <Ext/TechnoType/TurretAngle.h>
 
@@ -356,19 +359,37 @@ void StandEffect::UpdateStateTechno(bool masterIsDead)
 	// check fire
 	bool powerOff = Data->Powered && AE->AEManager->PowerOff;
 	bool canFire = !powerOff && (Data->MobileFire || !masterIsMoving);
+
+	// ★ 异阵营（寄生类）替身**自主行动**：只有"同阵营"的替身才跟随主身的任务/目标。
+	//   参照取 `pTechno->Owner`（**主身 Owner**），理由与证据：
+	//   ① 本函数两端每帧都会跑 ⇒ 参照必须是**同步量**。`HouseClass::CurrentPlayer` 是"本机玩家"
+	//      （YRpp/HouseClass.h:173 "House of player at this computer"），各客户端不同 ⇒ 用它必失同步；
+	//      `pTechno->Owner` 是对象表里的同步量。
+	//   ② 语义就是"同属一个阵营的替身才跟随它的主身"：本组件描述的正是 (主身 pTechno, 替身 pStand)
+	//      这一对，判据即 `pStand->Owner == pTechno->Owner`；嵌套替身各有自己的组件
+	//      ⇒ 天然"逐层独立判定"。
+	//   ③ 证据：替身的 Owner 来自创建它的 AE 来源方（StandEffect.cpp:24
+	//      `CreateObject(AE->pSourceHouse)`），"同阵营与否"正是 StandEffect.cpp:84-86 判断
+	//      "同阵营同步状态机"用的同一判据；配置 `SameHouse` 时上面 :226-229 已先把替身 Owner
+	//      改成主身 Owner ⇒ 仍然跟随。
+	bool followMaster = pStand->Owner && pStand->Owner == pTechno->Owner;
+
 	if (canFire)
 	{
 		// synch mission
-		switch (mission)
+		if (followMaster)
 		{
-		case Mission::Guard:
-		case Mission::Area_Guard:
-			Mission standMission = pStand->CurrentMission;
-			if (standMission != Mission::Attack)
+			switch (mission)
 			{
-				pStand->QueueMission(mission, true);
+			case Mission::Guard:
+			case Mission::Area_Guard:
+				Mission standMission = pStand->CurrentMission;
+				if (standMission != Mission::Attack)
+				{
+					pStand->QueueMission(mission, true);
+				}
+				break;
 			}
-			break;
 		}
 	}
 	else
@@ -416,7 +437,7 @@ void StandEffect::UpdateStateTechno(bool masterIsDead)
 			}
 		}
 	}
-	else
+	else if (followMaster)
 	{
 		if (!onStopCommand)
 		{
@@ -711,8 +732,9 @@ bool StandEffect::IsAlive()
 {
 	// 主身沉没/坠落期间替身被同步了 IsSinking/IsCrashing（UpdateStateTechno 第 246 行），
 	// IsDead()（Status.cpp:157 把 IsSinking/IsCrashing 视同死亡）会把替身误判为死亡。
-	// 若在此返回 false，AttachEffect 的渲染派发（OnGScreenRender 1471 行 ae->IsAlive()）
-	// 会把 UpdateStandLocation + OnGScreenRender 全部跳过 —— 沉没动画期间替身定位完全停摆。
+	// 若在此返回 false，AttachEffect 的门控（AttachEffectScript::AliveCached，
+	// 即 OnLogicUpdate / OnGScreenRender 里的替身定位与渲染派发）会把
+	// UpdateStandLocation + OnGScreenRender 全部跳过 —— 沉没动画期间替身定位完全停摆。
 	if (IsDead(pStand) && !MasterGoingDown())
 	{
 		return _pause;
@@ -913,36 +935,62 @@ void StandEffect::OnReceiveDamageDestroy()
 	}
 }
 
+// 收端处理器：由隧道 `TechnoScriptCommandEvent::Respond` 在**两端**各派发一次（目标就是该 techno
+// 自己）。本层只做**下潜**：把这条命令转给"自己这一层的替身"（`pStand`），于是嵌套替身
+// （替身的替身）逐层收到命令。
+//
+// ★ 门控与"由谁发送"：
+//   · 发送由 `Raise*Command` 把关，三个条件：`IsDead(pStand)`、`pStand->IsSelected`
+//     （**本机**选中集，只用来决定"这一端要不要投这条消息"，与主身穿在热键执行体里的写法同构）、
+//     `pStand->Owner == pTechno->Owner`（替身 Owner 来自创建它的 AE 来源方 ⇒ **同步量**）。
+//   · "原版命令恰好一条"由收端 `On*Command_Stand` 的
+//     `!IsEngineAlreadySent() && IsCurrentInitiator()` 保证（论证见 TechnoScriptCommandEvent.h）。
+//   · 本函数自身不读任何本机状态、不发事件（发送全部交给 `Raise*Command`）。
+//
+// ★ 逐层下潜是**消息链**（第 N 层收到消息 → 投第 N+1 层的消息 → 由引擎事件循环再派发），
+//   **不是 C++ 递归** ⇒ 不占栈、不会爆栈；替身构成以 `pMyMaster` 为父的有向树（每个替身
+//   由唯一的 StandEffect 组件创建）⇒ 无环、有限 ⇒ **无需深度保护**。
+//   ⚠ 已知代价（不构成失同步）：第 2 层起，`Respond` 在**两端**都会走到本函数 ⇒ 第 d 层实际
+//   投出 2^(d-1) 条消息（每层 ×2）。重复派发在两端是**对称**的（收端补发仍有
+//   `IsCurrentInitiator()` 收敛），但会放大 `EventClass::OutList`（上限 128）的压力。
+//   若要收紧，可在 `Raise*Command` 里加 `IsCurrentInitiator()` 门控，只让发起端投递。
 void StandEffect::OnGuardCommand()
 {
-	if (IsDead(pStand))
+	RaiseGuardCommand();
+}
+
+// 收端处理器：同上（隧道 Respond 两端各派发一次）。Stop 的"原版命令"是那条 IDLE 事件。
+void StandEffect::OnStopCommand()
+{
+	RaiseStopCommand();
+}
+
+// 发端，Master收到Guard命令后，替替身派发相同的命令
+void StandEffect::RaiseGuardCommand()
+{
+	if (IsDead(pStand) || pStand->IsSelected)
 	{
 		return;
 	}
-	if (!pStand->IsSelected)
+	if (pStand->Owner && pStand->Owner == pTechno->Owner)
 	{
-		// 执行替身的OnStop
-		if (auto ext = TechnoExt::ExtMap.Find(pStand))
-			ext->_GameObject->Foreach([](Component* c)
-				{ if (auto cc = dynamic_cast<ITechnoScript*>(c)) { cc->OnGuardCommand(); } });
+		// engineAlreadySent = false：替身没被选中 ⇒ 引擎不会给它发原版命令，
+		// 收端 OnGuardCommand_Stand 需在发起端补发（恰好一条）。
+		TechnoScriptCommandEvent::Raise(pStand, TechnoScriptCommandEvent::Command::Guard, false);
 	}
 }
 
-void StandEffect::OnStopCommand()
+// 发端，Master收到Stop命令后，替替身派发相同的命令
+void StandEffect::RaiseStopCommand()
 {
-	if (IsDead(pStand))
+	if (IsDead(pStand) || pStand->IsSelected)
 	{
 		return;
 	}
-	ClearAllTarget(pStand);
-	onStopCommand = true;
-	if (!pStand->IsSelected)
+	if (pStand->Owner && pStand->Owner == pTechno->Owner)
 	{
-		pStand->ClickedEvent(NetworkEvents::Idle);
-		// 执行替身的OnStop
-		if (auto ext = TechnoExt::ExtMap.Find(pStand))
-			ext->_GameObject->Foreach([](Component* c)
-				{ if (auto cc = dynamic_cast<ITechnoScript*>(c)) { cc->OnStopCommand(); } });
+		// engineAlreadySent = false：同上，收端补发原版 IDLE（恰好一条）。
+		TechnoScriptCommandEvent::Raise(pStand, TechnoScriptCommandEvent::Command::Stop, false);
 	}
 }
 

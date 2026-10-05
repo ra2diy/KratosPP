@@ -1,0 +1,184 @@
+idb = D:\Workspace\ra2mod\platform\gamemd\gamemd.idb   hexrays=True
+
+====================================================================================================
+V1) ObjectClass_SetPosition / SetZ 的 vtable 槽位
+====================================================================================================
+   == xrefs of 005F6940 (ObjectClass_SetPosition) ==
+      CODE 004DB855 type=17 seg=.text
+      CODE 004DB86B type=17 seg=.text
+      CODE 0054380C type=17 seg=.text
+      CODE 0062B8D2 type=17 seg=.text
+      DATA 007E3354 type=1 seg=.rdata
+         所在 vtable 起点约 007E3354，槽位 = +0x0
+         vtable[0..3] = 00410260 00410300 00410310 00426540
+      DATA 007E3AD0 type=1 seg=.rdata
+         所在 vtable 起点约 007E3AD0，槽位 = +0x0
+         vtable[0..3] = 00410260 00410300 00410310 00436910
+      DATA 007E4070 type=1 seg=.rdata
+         所在 vtable 起点约 007E3EBC，槽位 = +0x1B4
+         vtable[0..3] = 00410260 00410300 00410310 00459E80
+      DATA 007E46E4 type=1 seg=.rdata
+         所在 vtable 起点约 007E46E4，槽位 = +0x0
+         vtable[0..3] = 00410260 0046AFD0 0046AFF0 0046B560
+      DATA 007EC258 type=1 seg=.rdata
+         所在 vtable 起点约 007EC258，槽位 = +0x0
+         vtable[0..3] = 00410260 00410300 00410310 00543AB0
+      DATA 007EDCC0 type=1 seg=.rdata
+         所在 vtable 起点约 007EDCC0，槽位 = +0x0
+         vtable[0..3] = 00410260 00410300 00410310 004C9150
+      DATA 007EF060 type=1 seg=.rdata
+         所在 vtable 起点约 007EF060，槽位 = +0x0
+         vtable[0..3] = 00410260 00410300 00410310 004C9150
+      DATA 007EF3D4 type=1 seg=.rdata
+         所在 vtable 起点约 007EF3D4，槽位 = +0x0
+         vtable[0..3] = 00410260 00410300 00410310 005FDF10
+      DATA 007EF954 type=1 seg=.rdata
+         所在 vtable 起点约 007EF954，槽位 = +0x0
+         vtable[0..3] = 00410260 00410300 00410310 0062D930
+      DATA 007EFB9C type=1 seg=.rdata
+         所在 vtable 起点约 007EFB9C，槽位 = +0x0
+         vtable[0..3] = 00410260 00410300 00410310 006301A0
+      DATA 007F0508 type=1 seg=.rdata
+         所在 vtable 起点约 007F0508，槽位 = +0x0
+         vtable[0..3] = 00410260 00410300 00410310 004C9150
+      DATA 007F32FC type=1 seg=.rdata
+         所在 vtable 起点约 007F32FC，槽位 = +0x0
+         vtable[0..3] = 00410260 00410300 00410310 006B4F50
+      DATA 007F4960 type=1 seg=.rdata
+         所在 vtable 起点约 007F4960，槽位 = +0x0
+         vtable[0..3] = 00410260 00410300 00410310 004C9150
+      DATA 007F522C type=1 seg=.rdata
+         所在 vtable 起点约 007F522C，槽位 = +0x0
+         vtable[0..3] = 00410260 00410300 00410310 0071D310
+      DATA 007F6318 type=1 seg=.rdata
+         所在 vtable 起点约 007F6318，槽位 = +0x0
+         vtable[0..3] = 00410260 00410300 00410310 0074AAD0
+      DATA 007F66A8 type=1 seg=.rdata
+         所在 vtable 起点约 007F66A8，槽位 = +0x0
+         vtable[0..3] = 00410260 00410300 00410310 0074F2D0
+      DATA 007F6BF4 type=1 seg=.rdata
+         所在 vtable 起点约 007F6BF4，槽位 = +0x0
+         vtable[0..3] = 00410260 00410300 00410310 0075F840
+   == xrefs of 005F6060 (ObjectClass_SetZ) ==
+      CODE 00422281 type=17 seg=.text
+      CODE 00443F57 type=17 seg=.text
+      CODE 00514901 type=17 seg=.text
+      CODE 00514A16 type=17 seg=.text
+      CODE 0054D541 type=17 seg=.text
+
+====================================================================================================
+V2) GameInFocus 写入点（窗口焦点消息）
+====================================================================================================
+---- Windows_Procedure 里 GameInFocus 的写入点上下文  [00777870 - 00777900] ----
+   00777870  pop     ecx
+   00777871  retn    10h
+   00777874  mov     byte_A8ED81, 1
+   0077787B  jmp     def_7776AE; default
+   00777880  mov     byte_A8ED81, bl
+   00777886  jmp     def_7776AE; default
+   0077788B  cmp     ecx, 0F140h
+   00777891  jnz     def_7776AE; default
+   00777897  pop     edi
+   00777898  pop     esi
+   00777899  xor     eax, eax
+   0077789B  pop     ebx
+   0077789C  pop     ecx
+   0077789D  retn    10h
+   007778A0  cmp     edi, hWndParent
+   007778A6  jnz     loc_777949
+   007778AC  mov     eax, [esp+10h+arg_8]
+   007778B0  xor     ecx, ecx
+   007778B2  cmp     eax, ebx
+   007778B4  setnz   cl
+   007778B7  xor     edx, edx
+   007778B9  mov     dl, GameInFocus
+   007778BF  cmp     edx, ecx
+   007778C1  jz      loc_777949
+   007778C7  cmp     eax, ebx
+   007778C9  setnz   al
+   007778CC  cmp     al, bl
+   007778CE  mov     GameInFocus, al
+   007778D3  jnz     short loc_777930
+   007778D5  push    offset aFocus_loss; "Focus_Loss()\n"
+   007778DA  call    WWDebugString; Focus_Loss()
+   007778DF  add     esp, 4
+   007778E2  mov     cl, 1
+   007778E4  call    Movie_State_563CC0
+   007778E9  call    dfdfdfdfd
+   007778EE  mov     ecx, WWMouse
+   007778F4  cmp     ecx, ebx
+   007778F6  jz      short loc_777929
+   007778F8  mov     eax, [ecx]
+   007778FA  call    dword ptr [eax+1Ch]
+   007778FD  mov     Mouse_Captured, al
+
+   WM_ 常量参考: WM_ACTIVATE=0x6 WM_SETFOCUS=0x7 WM_KILLFOCUS=0x8 WM_ACTIVATEAPP=0x1C WM_SIZE=0x5
+---- Windows_Procedure 的 switch 头  [007776A0 - 00777720] ----
+   007776A0  ja      def_7776AE; default
+   007776A6  xor     edx, edx
+   007776A8  mov     dl, ds:byte_777A98[ecx]
+   007776AE  jmp     ds:jpt_7776AE[edx*4]; switch jump
+   007776B5  cmp     dword_A8EDA0, ebx; jumptable 007776AE case 15
+   007776BB  jnz     loc_777774
+   007776C1  cmp     GameInFocus, 1
+   007776C8  jz      short loc_7776D7
+   007776CA  cmp     WindowedMode, 1
+   007776D1  jnz     loc_777774
+   007776D7  mov     ecx, WWMouse
+   007776DD  cmp     ecx, ebx
+   007776DF  jz      loc_777774
+   007776E5  cmp     DSurface_Primary, ebx
+   007776EB  jz      loc_777774
+   007776F1  cmp     DSurface_Hidden, ebx
+   007776F7  jz      short loc_777774
+   007776F9  mov     eax, DSurface_Composite
+   007776FE  cmp     eax, ebx
+   00777700  jz      short loc_777774
+   00777702  cmp     byte ptr dword_A8ED5C, 1
+   00777709  jnz     short loc_777735
+   0077770B  mov     esi, eax
+   0077770D  mov     eax, [ecx]
+   0077770F  push    ebx; int
+   00777710  call    dword ptr [eax+1Ch]
+   00777713  mov     cl, al; int
+   00777715  mov     edx, esi; BSurface *
+   00777717  call    GScreenClass::Do_Blit
+   0077771C  push    1
+   0077771E  mov     ecx, offset Map
+
+====================================================================================================
+V3) sub_647260 跳表：哪些 game mode 每帧算校验值
+====================================================================================================
+   jpt_6474D5 = 0x6475d8
+      [0] -> 006474DC  loc_6474DC   (mov     eax, EventClass_OutList; case 0x0)
+      [1] -> 006475C8  loc_6475C8   (call    sub_6475F0; case 0x1)
+      [2] -> 006475C8  loc_6475C8   (call    sub_6475F0; case 0x1)
+      [3] -> 006475C8  loc_6475C8   (call    sub_6475F0; case 0x1)
+      [4] -> 006475C8  loc_6475C8   (call    sub_6475F0; case 0x1)
+      [5] -> 006474DC  loc_6474DC   (mov     eax, EventClass_OutList; case 0x0)
+
+   -- sub_6475F0 从哪被调用 / 谁引用 Session.idxGameMode 的 switch --
+      <- 006475C8 in sub_647260 : call    sub_6475F0; case 0x1
+
+====================================================================================================
+V4) 层数组元素的使用方式
+====================================================================================================
+---- Tactical_Draw_All 层元素使用（元素=对象指针）  [006D8F39 - 006D8F60] ----
+   006D8F39  mov     eax, vec_ObjectsInLayers.data[ebx]
+   006D8F3F  mov     ecx, [esp+100h+var_C8]
+   006D8F43  mov     esi, [eax+ecx*4]
+   006D8F46  test    esi, esi
+   006D8F48  mov     byte ptr [esi+99h], 0
+   006D8F4F  jz      loc_6D9177
+   006D8F55  mov     al, [esi+14h]
+   006D8F58  mov     dl, al
+   006D8F5A  shr     dl, 2
+   006D8F5D  and     dl, 1
+---- Tactical_Draw_All 第二段层循环元素  [006D95C5 - 006D95E0] ----
+   006D95C5  mov     [esp+100h+var_C8], eax
+   006D95C7  jle     loc_6D97A8
+   006D95CD  mov     ecx, [ecx]
+   006D95CF  mov     ebx, [ecx+eax*4]
+   006D95D2  mov     al, [ebx+99h]
+   006D95D8  test    al, al
+   006D95DA  jz      loc_6D978F

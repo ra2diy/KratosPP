@@ -1,4 +1,4 @@
-#include "TechnoStatus.h"
+﻿#include "TechnoStatus.h"
 
 #include <Ext/Common/CommonStatus.h>
 #include <Ext/Common/FireSuperManager.h>
@@ -415,6 +415,16 @@ void TechnoStatus::OnSelect(bool& selectable)
 		Break();
 		return;
 	}
+}
+
+void TechnoStatus::OnGuardCommand()
+{
+	OnGuardCommand_Stand();
+}
+
+void TechnoStatus::OnStopCommand()
+{
+	OnStopCommand_Stand();
 }
 
 void TechnoStatus::UpdateForceDecloakState(bool active)

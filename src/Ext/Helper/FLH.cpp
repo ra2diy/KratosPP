@@ -208,7 +208,7 @@ DirStruct GetRelativeDir(TechnoClass* pMaster, int dir, bool isOnTurret)
 	return targetDir;
 }
 
-LocationMark GetRelativeLocation(ObjectClass* pOwner, OffsetData data, CoordStruct offset)
+LocationMark GetRelativeLocation(ObjectClass* pOwner, OffsetData data, CoordStruct offset, bool predictBulletNextFrame)
 {
 	if (offset.IsEmpty())
 	{
@@ -235,8 +235,11 @@ LocationMark GetRelativeLocation(ObjectClass* pOwner, OffsetData data, CoordStru
 		}
 		else if (CastToBullet(pOwner, pBullet))
 		{
-			// 增加抛射体偏移值取下一帧所在实际位置
-			sourcePos += ToCoordStruct(pBullet->Velocity);
+			if (predictBulletNextFrame)
+			{
+				// 增加抛射体偏移值取下一帧所在实际位置（原渲染期行为，仅保留给非替身定位的调用者）
+				sourcePos += ToCoordStruct(pBullet->Velocity);
+			}
 			// 获取面向
 			targetDir = Point2Dir(sourcePos, pBullet->TargetCoords);
 			targetPos = GetFLHAbsoluteCoords(sourcePos, offset, targetDir);
@@ -259,9 +262,9 @@ DirStruct GetRelativeDirection(ObjectClass* pOwner, int dir, bool isOnTurret, bo
 		}
 		else if (CastToBullet(pOwner, pBullet))
 		{
-			// 增加抛射体偏移值取下一帧所在实际位置
+			// 取抛射体**当帧**实际坐标（原来这里按"下一帧位置"外推；本函数全库无调用者，
+			// 按统一口径直接去掉外推，与 GetRelativeLocation(..., false) 一致）
 			CoordStruct sourcePos = pBullet->Location;
-			sourcePos += ToCoordStruct(pBullet->Velocity);
 			// 获取面向
 			targetDir = Point2Dir(sourcePos, pBullet->TargetCoords);
 		}

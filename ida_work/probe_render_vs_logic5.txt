@@ -1,0 +1,378 @@
+idb = D:\Workspace\ra2mod\platform\gamemd\gamemd.idb   hexrays=True
+
+====================================================================================================
+U1) ObjectClass/TechnoClass 成员逐偏移表（0x00-0xBC）
+====================================================================================================
+   [ObjectClass] sid=FF016046
+      +0x000  a                            size=32
+      +0x004  a                            size=32
+      +0x008  a                            size=32
+      +0x00C  a                            size=32
+      +0x010  a                            size=32
+      +0x014  a                            size=32
+      +0x018  a                            size=32
+      +0x01C  a                            size=32
+      +0x020  field_20                     size=4
+      +0x024  field_24                     size=4
+      +0x028  FallRate                     size=4
+      +0x02C  NextObject                   size=4
+      +0x030  Tag                          size=4
+      +0x034  IvanBomb                     size=4
+      +0x038  structX1                     size=20
+      +0x03C  structX1                     size=20
+      +0x040  structX1                     size=20
+      +0x044  structX1                     size=20
+      +0x048  structX1                     size=20
+      +0x04C  structX2                     size=20
+      +0x050  structX2                     size=20
+      +0x054  structX2                     size=20
+      +0x058  structX2                     size=20
+      +0x05C  structX2                     size=20
+      +0x060  field_60                     size=4
+      +0x064  BombVisible                  size=1
+      +0x068  Health                       size=4
+      +0x06C  BackupHealth                 size=4
+      +0x070  field_6C                     size=1
+      +0x074  field_70                     size=4
+      +0x078  field_74                     size=4
+      +0x07C  Sensed                       size=1
+      +0x080  HasParachute                 size=1
+      +0x084  Parachute                    size=4
+      +0x088  OnBridge                     size=1
+      +0x08C  Alive                        size=1
+      +0x090  BerserkCapable               size=4
+      +0x094  field_90                     size=1
+      +0x098  pos                          size=12
+      +0x09C  pos                          size=12
+      +0x0A0  pos                          size=12
+   [TechnoClass] sid=FF016053
+      +0x000  r                            size=236
+      +0x004  r                            size=236
+      +0x008  r                            size=236
+      +0x00C  r                            size=236
+      +0x010  r                            size=236
+      +0x014  r                            size=236
+      +0x018  r                            size=236
+      +0x01C  r                            size=236
+      +0x020  r                            size=236
+      +0x024  r                            size=236
+      +0x028  r                            size=236
+      +0x02C  r                            size=236
+      +0x030  r                            size=236
+      +0x034  r                            size=236
+      +0x038  r                            size=236
+      +0x03C  r                            size=236
+      +0x040  r                            size=236
+      +0x044  r                            size=236
+      +0x048  r                            size=236
+      +0x04C  r                            size=236
+      +0x050  r                            size=236
+      +0x054  r                            size=236
+      +0x058  r                            size=236
+      +0x05C  r                            size=236
+      +0x060  r                            size=236
+      +0x064  r                            size=236
+      +0x068  r                            size=236
+      +0x06C  r                            size=236
+      +0x070  r                            size=236
+      +0x074  r                            size=236
+      +0x078  r                            size=236
+      +0x07C  r                            size=236
+      +0x080  r                            size=236
+      +0x084  r                            size=236
+      +0x088  r                            size=236
+      +0x08C  r                            size=236
+      +0x090  r                            size=236
+      +0x094  r                            size=236
+      +0x098  r                            size=236
+      +0x09C  r                            size=236
+      +0x0A0  r                            size=236
+      +0x0A4  r                            size=236
+      +0x0A8  r                            size=236
+      +0x0AC  r                            size=236
+      +0x0B0  r                            size=236
+      +0x0B4  r                            size=236
+      +0x0B8  r                            size=236
+      +0x0BC  r                            size=236
+   [AbstractClass] sid=FF014731
+      +0x000  iRTTIInfo                    size=4
+      +0x004  iNotifySink                  size=4
+      +0x008  iNotifySource                size=4
+      +0x00C  field_10                     size=4
+      +0x010  derivationFlags              size=1
+      +0x014  field_18                     size=4
+      +0x018  InterlockedCounter           size=4
+      +0x01C  bDirty                       size=1
+   [FootClass] sid=FF016055
+      +0x000  t                            size=1308
+      +0x004  t                            size=1308
+      +0x008  t                            size=1308
+      +0x00C  t                            size=1308
+      +0x010  t                            size=1308
+      +0x014  t                            size=1308
+      +0x018  t                            size=1308
+      +0x01C  t                            size=1308
+      +0x020  t                            size=1308
+      +0x024  t                            size=1308
+      +0x028  t                            size=1308
+      +0x02C  t                            size=1308
+      +0x030  t                            size=1308
+      +0x034  t                            size=1308
+      +0x038  t                            size=1308
+      +0x03C  t                            size=1308
+      +0x040  t                            size=1308
+      +0x044  t                            size=1308
+      +0x048  t                            size=1308
+      +0x04C  t                            size=1308
+      +0x050  t                            size=1308
+      +0x054  t                            size=1308
+      +0x058  t                            size=1308
+      +0x05C  t                            size=1308
+      +0x060  t                            size=1308
+      +0x064  t                            size=1308
+      +0x068  t                            size=1308
+      +0x06C  t                            size=1308
+      +0x070  t                            size=1308
+      +0x074  t                            size=1308
+      +0x078  t                            size=1308
+      +0x07C  t                            size=1308
+      +0x080  t                            size=1308
+      +0x084  t                            size=1308
+      +0x088  t                            size=1308
+      +0x08C  t                            size=1308
+      +0x090  t                            size=1308
+      +0x094  t                            size=1308
+      +0x098  t                            size=1308
+      +0x09C  t                            size=1308
+      +0x0A0  t                            size=1308
+      +0x0A4  t                            size=1308
+      +0x0A8  t                            size=1308
+      +0x0AC  t                            size=1308
+      +0x0B0  t                            size=1308
+      +0x0B4  t                            size=1308
+      +0x0B8  t                            size=1308
+      +0x0BC  t                            size=1308
+
+====================================================================================================
+U2) 位置设置类函数反汇编（写了哪些偏移）
+====================================================================================================
+---- ObjectClass_SetPosition = ObjectClass_SetPosition  [005F6940 - 005F695D] ----
+   005F6940  mov     eax, [esp+arg_Coords]
+   005F6944  add     ecx, 9Ch
+   005F694A  mov     edx, [eax]
+   005F694C  mov     [ecx], edx
+   005F694E  mov     edx, [eax+4]
+   005F6951  mov     [ecx+4], edx
+   005F6954  mov     eax, [eax+8]
+   005F6957  mov     [ecx+8], eax
+   005F695A  retn    4
+      | int __thiscall ObjectClass_SetPosition(_DWORD *this, _DWORD *a2)
+      | {
+      |   _DWORD *v2; // ecx
+      |   int result; // eax
+      | 
+      |   v2 = this + 39;
+      |   *v2 = *a2;
+      |   v2[1] = a2[1];
+      |   result = a2[2];
+      |   v2[2] = result;
+      |   return result;
+      | }
+---- ObjectClass_SetZ = ObjectClass_SetZ  [005F6060 - 005F609C] ----
+   005F6060  push    esi
+   005F6061  mov     esi, ecx
+   005F6063  mov     al, [esi+74h]
+   005F6066  test    al, al
+   005F6068  jz      short loc_5F608E
+   005F606A  mov     eax, [esi]
+   005F606C  push    0
+   005F606E  call    dword ptr [eax+124h]
+   005F6074  mov     ecx, [esp+4+arg_Z]
+   005F6078  mov     edx, [esi]
+   005F607A  mov     [esi+0A4h], ecx
+   005F6080  push    1
+   005F6082  mov     ecx, esi
+   005F6084  call    dword ptr [edx+124h]
+   005F608A  pop     esi
+   005F608B  retn    4
+   005F608E  mov     eax, [esp+arg_4]
+   005F6092  mov     [esi+0A4h], eax
+   005F6098  pop     esi
+   005F6099  retn    4
+      | // positive sp value has been detected, the output may be wrong!
+      | int __thiscall ObjectClass_SetZ(_DWORD *this, int a2)
+      | {
+      |   int v3; // edx
+      |   int result; // eax
+      |   void *retaddr; // [esp+4h] [ebp+0h]
+      | 
+      |   if ( *(this + 116) )
+      |   {
+      |     (*(*this + 292))(this, 0);
+      |     v3 = *this;
+      |     this[41] = retaddr;
+      |     return (*(v3 + 292))(this, 1);
+      |   }
+      |   else
+      |   {
+      |     result = a2;
+      |     this[41] = a2;
+      |   }
+      |   return result;
+      | }
+---- ObjectClass_F0 = ObjectClass_F0  [005F60A0 - 005F6113] ----
+   005F60A0  push    esi
+   005F60A1  mov     esi, [esp+4+a2]
+   005F60A5  push    esi; loc
+   005F60A6  mov     ecx, offset Map; this
+   005F60AB  call    MapClass_GetCellFloorHeight
+   005F60B0  mov     edx, const_int_ObjectClass_1A0h
+   005F60B6  mov     ecx, [esi+8]
+   005F60B9  add     eax, edx
+   005F60BB  cmp     eax, ecx
+   005F60BD  jg      short loc_5F60F4
+   005F60BF  push    esi; a2
+   005F60C0  mov     ecx, offset Map; this
+   005F60C5  call    MapClass_Get_Target_Cell
+   005F60CA  mov     ecx, [eax+140h]
+   005F60D0  test    ch, 1
+   005F60D3  jz      short loc_5F60F4
+   005F60D5  push    esi; a2
+   005F60D6  mov     ecx, offset Map; this
+   005F60DB  call    MapClass_Get_Target_Cell
+   005F60E0  mov     ecx, [eax+128h]
+   005F60E6  add     eax, 128h
+   005F60EB  or      ecx, 40h
+   005F60EE  pop     esi
+   005F60EF  mov     [eax], ecx
+   005F60F1  retn    4
+   005F60F4  push    esi; a2
+   005F60F5  mov     ecx, offset Map; this
+   005F60FA  call    MapClass_Get_Target_Cell
+   005F60FF  mov     ecx, [eax+124h]
+   005F6105  add     eax, 124h
+   005F610A  or      ecx, 40h
+   005F610D  pop     esi
+   005F610E  mov     [eax], ecx
+   005F6110  retn    4
+      | _DWORD *__stdcall ObjectClass_F0(dwXYZ *a2)
+      | {
+      |   _DWORD *result; // eax
+      |   CellClass *Target_Cell; // eax
+      |   int v3; // ecx
+      |   CellClass *v4; // eax
+      |   int v5; // ecx
+      | 
+      |   if ( const_int_ObjectClass_1A0h + MapClass_GetCellFloorHeight(&Map, a2) <= a2->Z
+      |     && (MapClass_Get_Target_Cell(&Map, a2)->flags & 0x100) != 0 )
+      |   {
+      |     Target_Cell = MapClass_Get_Target_Cell(&Map, a2);
+      |     v3 = *&Target_Cell->field_128;
+      |     result = &Target_Cell->field_128;
+      |     *result = v3 | 0x40;
+      |   }
+      |   else
+      |   {
+      |     v4 = MapClass_Get_Target_Cell(&Map, a2);
+      |     v5 = *&v4->field_124;
+      |     result = &v4->field_124;
+      |     *result = v5 | 0x40;
+      |   }
+      |   return result;
+      | }
+---- ObjectClass_F4 = ObjectClass_F4  [005F6120 - 005F6193] ----
+   005F6120  push    esi
+   005F6121  mov     esi, [esp+4+a2]
+   005F6125  push    esi; loc
+   005F6126  mov     ecx, offset Map; this
+   005F612B  call    MapClass_GetCellFloorHeight
+   005F6130  mov     edx, const_int_ObjectClass_1A0h
+   005F6136  mov     ecx, [esi+8]
+   005F6139  add     eax, edx
+   005F613B  cmp     eax, ecx
+   005F613D  jg      short loc_5F6174
+   005F613F  push    esi; a2
+   005F6140  mov     ecx, offset Map; this
+   005F6145  call    MapClass_Get_Target_Cell
+   005F614A  mov     ecx, [eax+140h]
+   005F6150  test    ch, 1
+   005F6153  jz      short loc_5F6174
+   005F6155  push    esi; a2
+   005F6156  mov     ecx, offset Map; this
+   005F615B  call    MapClass_Get_Target_Cell
+   005F6160  mov     ecx, [eax+128h]
+   005F6166  add     eax, 128h
+   005F616B  and     ecx, 0FFFFFFBFh
+   005F616E  pop     esi
+   005F616F  mov     [eax], ecx
+   005F6171  retn    4
+   005F6174  push    esi; a2
+   005F6175  mov     ecx, offset Map; this
+   005F617A  call    MapClass_Get_Target_Cell
+   005F617F  mov     ecx, [eax+124h]
+   005F6185  add     eax, 124h
+   005F618A  and     ecx, 0FFFFFFBFh
+   005F618D  pop     esi
+   005F618E  mov     [eax], ecx
+   005F6190  retn    4
+      | _DWORD *__stdcall ObjectClass_F4(dwXY *a2)
+      | {
+      |   CellClass *Target_Cell; // eax
+      |   int v2; // ecx
+      |   _DWORD *result; // eax
+      |   CellClass *v4; // eax
+      |   int v5; // ecx
+      | 
+      |   if ( const_int_ObjectClass_1A0h + MapClass_GetCellFloorHeight(&Map, a2) <= a2[1].X
+      |     && (MapClass_Get_Target_Cell(&Map, a2)->flags & 0x100) != 0 )
+      |   {
+      |     Target_Cell = MapClass_Get_Target_Cell(&Map, a2);
+      |     v2 = *&Target_Cell->field_128;
+      |     result = &Target_Cell->field_128;
+      |     *result = v2 & 0xFFFFFFBF;
+      |   }
+      |   else
+      |   {
+      |     v4 = MapClass_Get_Target_Cell(&Map, a2);
+      |     v5 = *&v4->field_124;
+      |     result = &v4->field_124;
+      |     *result = v5 & 0xFFFFFFBF;
+      |   }
+      |   return result;
+      | }
+
+====================================================================================================
+U3) vtable 类型里的 SetLocation / GetCoords 槽位
+====================================================================================================
+   [vt_ObjectClass] sid=0xff01f89d
+      +0x0A8  GetCoords_TwoArguments
+      +0x0AC  GetCoords_
+      +0x0B4  GetExitCoords
+      +0x18C  UpdatePosition
+      +0x1B4  SetCoords
+      +0x1B8  GetCellCoords
+      +0x1C0  GetCellCoords1
+   [vt_TechnoClass] sid=0xff01a403
+   [vt_FootClass] sid=0xff01ee22
+   [vt_AbstractClass] sid=0xff01fab3
+      +0x048  GetCoords
+      +0x04C  GetCoords_2arg
+      +0x058  GetCoords_1arg
+
+   -- .rdata 里的 vt 实例 --
+      vt_ObjectClass @ <无>
+      vt_TechnoClass @ <无>
+      vt_FootClass @ <无>
+      vt_UnitClass @ <无>
+
+====================================================================================================
+U4) GetCoords 实际实现（返回 this+?）+ SetLocation 符号
+====================================================================================================
+   vt_TechnoClass = <无>
+   NAME 005F6940 ObjectClass_SetPosition
+
+====================================================================================================
+U5) 真 GetCoords / 层元素绘制槽
+====================================================================================================
+
+   -- 层数组元素类型：Tactical_Draw_All 里对元素的调用（vt+0x104 / vt+0x110）--

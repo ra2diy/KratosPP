@@ -128,6 +128,8 @@ public:
 		_paused = false; // 暂停
 		_hold = false; // 跳过效果器死亡检查，用于暂停效果器，AE不会当成死亡结束
 
+		AliveCached = false;
+
 		_diffSource = false; // pSource是外人，需要监听死亡
 	}
 
@@ -179,6 +181,22 @@ public:
 	bool FromPassenger = false;
 
 	bool SkipNext = false; // 跳过下一个
+
+	/// <summary>
+	/// 上一次**逻辑帧** `IsAlive()` 的结果，由 `AttachEffect::CheckDurationAndDisable()`
+	/// 每逻辑帧刷新一次。
+	///
+	/// 为什么要有缓存：`IsAlive()` 带副作用（`EnableEffects` / `PauseEffects` / `Deactivate`，
+	/// 见 AttachEffectScript.cpp:228-335），同一帧**只允许调用一次**；而渲染分支
+	/// （`AttachEffect::OnGScreenRender`）原来自己又调了一次，一帧多渲就会重复触发。
+	/// 现在渲染分支与逻辑晚阶段都只读这个缓存。
+	///
+	/// 渲染发生在逻辑之前 ⇒ 渲染读到的是上一逻辑帧的结果（纯视觉，可接受）；
+	/// 逻辑晚阶段（`LogicClass_Update_Late`）读到的就是本帧 OnUpdate 里刚刷新的值。
+	///
+	/// 不参与存档：每逻辑帧都会重算。
+	/// </summary>
+	bool AliveCached = false;
 
 #pragma region Save/Load
 	template <typename T>

@@ -21,6 +21,22 @@ void TechnoExt::ClearAllArray(EventSystem* sender, Event e, void* args)
 	ImmuneStandArray.clear();
 
 	VirtualUnitArray.clear();
+
+	// HumanConnonPreOcc 与上面几个表同类：key 都是 TechnoClass*，读档后旧 sim 的
+	// 预占没有意义，且 key 全部悬垂。一起清。
+	HumanConnonPreOcc.Clear();
+}
+
+void TechnoExt::ClearPreOcc(EventSystem* sender, Event e, void* args)
+{
+	HumanConnonPreOcc.Clear();
+}
+
+void TechnoExt::OnObjectUnInit(EventSystem* sender, Event e, void* args)
+{
+	// args 是即将销毁的 ObjectClass*（Hooks/PointerExpireHook.cpp:36）。
+	// 只有 TechnoClass 进过 m_unitToCell，非 techno 指针查不到即返回。
+	HumanConnonPreOcc.ReleaseOccupancy(static_cast<TechnoClass*>(args));
 }
 
 

@@ -1,0 +1,817 @@
+probe.cpp
+D:\Workspace\ra2mod\platform\KratosPP\YRpp\Memory.h(198): error C3520: “TArgs”: 必须在此上下文中扩展参数包
+
+class constant_ptr<class DynamicVectorClass<class FootClass *>,9125312>	size(1):
+	+---
+	+---
+
+class FootClass	size(1728):
+	+---
+ 0	| +--- (base class TechnoClass)
+ 0	| | +--- (base class RadioClass)
+ 0	| | | +--- (base class MissionClass)
+ 0	| | | | +--- (base class ObjectClass)
+ 0	| | | | | +--- (base class AbstractClass)
+ 0	| | | | | | +--- (base class IPersistStream)
+ 0	| | | | | | | +--- (base class IPersist)
+ 0	| | | | | | | | +--- (base class IUnknown)
+ 0	| | | | | | | | | {vfptr}
+	| | | | | | | | +---
+	| | | | | | | +---
+	| | | | | | +---
+ 4	| | | | | | +--- (base class IRTTITypeInfo)
+ 4	| | | | | | | +--- (base class IUnknown)
+ 4	| | | | | | | | {vfptr}
+	| | | | | | | +---
+	| | | | | | +---
+ 8	| | | | | | +--- (base class INoticeSink)
+ 8	| | | | | | | {vfptr}
+	| | | | | | +---
+12	| | | | | | +--- (base class INoticeSource)
+12	| | | | | | | {vfptr}
+	| | | | | | +---
+16	| | | | | | UniqueID
+20	| | | | | | AbstractFlags AbstractFlags
+24	| | | | | | unknown_18
+28	| | | | | | RefCount
+32	| | | | | | Dirty
+33	| | | | | | padding_21
+	| | | | | +---
+36	| | | | | unknown_24
+40	| | | | | unknown_28
+44	| | | | | FallRate
+48	| | | | | NextObject
+52	| | | | | AttachedTag
+56	| | | | | AttachedBomb
+60	| | | | | AudioController AmbientSoundController
+60	| | | | | __AmbientSoundController
+80	| | | | | AudioController CustomSoundController
+80	| | | | | __CustomSoundController
+100	| | | | | CustomSound
+104	| | | | | BombVisible
+105	| | | | | align_69
+108	| | | | | Health
+112	| | | | | EstimatedHealth
+116	| | | | | IsOnMap
+117	| | | | | align_75
+120	| | | | | unknown_78
+124	| | | | | unknown_7C
+128	| | | | | NeedsRedraw
+129	| | | | | InLimbo
+130	| | | | | InOpenToppedTransport
+131	| | | | | IsSelected
+132	| | | | | HasParachute
+133	| | | | | align_85
+136	| | | | | Parachute
+140	| | | | | OnBridge
+141	| | | | | IsFallingDown
+142	| | | | | WasFallingDown
+143	| | | | | IsABomb
+144	| | | | | IsAlive
+145	| | | | | align_91
+148	| | | | | Layer LastLayer
+152	| | | | | IsInLogic
+153	| | | | | IsVisible
+154	| | | | | align_99
+156	| | | | | ?$Vector3D@H Location
+168	| | | | | LineTrailer
+	| | | | +---
+172	| | | | Mission CurrentMission
+176	| | | | Mission SuspendedMission
+180	| | | | Mission QueuedMission
+184	| | | | unknown_bool_B8
+  	| | | | <alignment member> (size=3)
+188	| | | | MissionStatus
+192	| | | | CurrentMissionStartTime
+196	| | | | unknown_C4
+200	| | | | ?$TimerStruct@UFrameTimer@@ UpdateTimer
+200	| | | | __UpdateTimer
+	| | | +---
+212	| | | LastCommands
+224	| | | ?$VectorClass@PAVTechnoClass@@ RadioLinks
+224	| | | __RadioLinks
+	| | +---
+240	| | FlashData Flashing
+240	| | __Flashing
+248	| | StageClass Animation
+248	| | __Animation
+276	| | PassengersClass Passengers
+276	| | __Passengers
+284	| | Transporter
+288	| | unknown_int_120
+292	| | CurrentTurretNumber
+296	| | unknown_int_128
+300	| | BehindAnim
+304	| | DeployAnim
+308	| | InAir
+  	| | <alignment member> (size=3)
+312	| | CurrentWeaponNumber
+316	| | Rank CurrentRanking
+320	| | CurrentGattlingStage
+324	| | GattlingValue
+328	| | TurretAnimFrame
+332	| | InitialOwner
+336	| | VeterancyStruct Veterancy
+336	| | __Veterancy
+340	| | align_154
+344	| | ArmorMultiplier
+352	| | FirepowerMultiplier
+360	| | ?$TimerStruct@UFrameTimer@@ IdleActionTimer
+360	| | __IdleActionTimer
+372	| | ?$TimerStruct@UFrameTimer@@ RadarFlashTimer
+372	| | __RadarFlashTimer
+384	| | ?$TimerStruct@UFrameTimer@@ TargetingTimer
+384	| | __TargetingTimer
+396	| | ?$TimerStruct@UFrameTimer@@ IronCurtainTimer
+396	| | __IronCurtainTimer
+408	| | ?$TimerStruct@UFrameTimer@@ IronTintTimer
+408	| | __IronTintTimer
+420	| | IronTintStage
+424	| | ?$TimerStruct@UFrameTimer@@ AirstrikeTimer
+424	| | __AirstrikeTimer
+436	| | ?$TimerStruct@UFrameTimer@@ AirstrikeTintTimer
+436	| | __AirstrikeTintTimer
+448	| | AirstrikeTintStage
+452	| | ForceShielded
+456	| | Deactivated
+  	| | <alignment member> (size=3)
+460	| | DrainTarget
+464	| | DrainingMe
+468	| | DrainAnim
+472	| | Disguised
+  	| | <alignment member> (size=3)
+476	| | DisguiseCreationFrame
+480	| | ?$TimerStruct@UFrameTimer@@ InfantryBlinkTimer
+480	| | __InfantryBlinkTimer
+492	| | ?$TimerStruct@UFrameTimer@@ DisguiseBlinkTimer
+492	| | __DisguiseBlinkTimer
+504	| | UnlimboingInfantry
+  	| | <alignment member> (size=3)
+508	| | ?$TimerStruct@UFrameTimer@@ ReloadTimer
+508	| | __ReloadTimer
+520	| | unknown_208
+524	| | unknown_20C
+528	| | ?$IndexBitfield@PAVHouseClass@@ DisplayProductionTo
+528	| | __DisplayProductionTo
+532	| | Group
+536	| | Focus
+540	| | Owner
+544	| | CloakState CloakState
+548	| | StageClass CloakProgress
+548	| | __CloakProgress
+576	| | ?$TimerStruct@UFrameTimer@@ CloakDelayTimer
+576	| | __CloakDelayTimer
+588	| | WarpFactor
+592	| | unknown_bool_250
+  	| | <alignment member> (size=3)
+596	| | ?$Vector3D@H LastSightCoords
+608	| | LastSightRange
+612	| | LastSightHeight
+616	| | GapSuperCharged
+617	| | GeneratingGap
+  	| | <alignment member> (size=2)
+620	| | GapRadius
+624	| | BeingWarpedOut
+625	| | WarpingOut
+626	| | unknown_bool_272
+627	| | unused_273
+628	| | TemporalImUsing
+632	| | TemporalTargetingMe
+636	| | IsImmobilized
+  	| | <alignment member> (size=3)
+640	| | unknown_280
+644	| | ChronoLockRemaining
+648	| | ?$Vector3D@H ChronoDestCoords
+660	| | Airstrike
+664	| | Berzerk
+  	| | <alignment member> (size=3)
+668	| | BerzerkDurationLeft
+672	| | SprayOffsetIndex
+676	| | Uncrushable
+  	| | <alignment member> (size=3)
+680	| | DirectRockerLinkedUnit
+684	| | LocomotorTarget
+688	| | LocomotorSource
+692	| | Target
+696	| | LastTarget
+700	| | CaptureManager
+704	| | MindControlledBy
+708	| | MindControlledByAUnit
+  	| | <alignment member> (size=3)
+712	| | MindControlRingAnim
+716	| | MindControlledByHouse
+720	| | SpawnManager
+724	| | SpawnOwner
+728	| | SlaveManager
+732	| | SlaveOwner
+736	| | OriginallyOwnedByHouse
+740	| | BunkerLinkedItem
+744	| | PitchAngle
+748	| | ?$TimerStruct@UFrameTimer@@ ROFTimer
+748	| | __ROFTimer
+760	| | ROF
+764	| | Ammo
+768	| | Value
+772	| | FireParticleSystem
+776	| | SparkParticleSystem
+780	| | NaturalParticleSystem
+784	| | DamageParticleSystem
+788	| | RailgunParticleSystem
+792	| | unk1ParticleSystem
+796	| | unk2ParticleSystem
+800	| | FiringParticleSystem
+804	| | Wave
+808	| | AngleRotatedSideways
+812	| | AngleRotatedForwards
+816	| | RockingSidewaysPerFrame
+820	| | RockingForwardsPerFrame
+824	| | HijackerInfantryType
+828	| | StorageClass Tiberium
+828	| | __Tiberium
+844	| | unknown_34C
+848	| | TransitionTimer UnloadTimer
+848	| | __UnloadTimer
+880	| | FacingClass BarrelFacing
+880	| | __BarrelFacing
+904	| | FacingClass PrimaryFacing
+904	| | __PrimaryFacing
+928	| | FacingClass SecondaryFacing
+928	| | __SecondaryFacing
+952	| | CurrentBurstIndex
+956	| | ?$TimerStruct@UFrameTimer@@ TargetLaserTimer
+956	| | __TargetLaserTimer
+968	| | unknown_short_3C8
+970	| | unknown_3CA
+972	| | CountedAsOwned
+973	| | IsSinking
+974	| | WasSinkingAlready
+975	| | unknown_bool_3CF
+976	| | unknown_bool_3D0
+977	| | HasBeenAttacked
+978	| | Cloakable
+979	| | IsPrimaryFactory
+980	| | Spawned
+981	| | IsInPlayfield
+  	| | <alignment member> (size=2)
+984	| | RecoilData TurretRecoil
+984	| | __TurretRecoil
+1016	| | RecoilData BarrelRecoil
+1016	| | __BarrelRecoil
+1048	| | unknown_bool_418
+1049	| | unknown_bool_419
+1050	| | IsOwnedByCurrentPlayer
+1051	| | DiscoveredByCurrentPlayer
+1052	| | DiscoveredByComputer
+1053	| | unknown_bool_41D
+1054	| | unknown_bool_41E
+1055	| | unknown_bool_41F
+1056	| | SightIncrease
+1057	| | RecruitableA
+1058	| | RecruitableB
+1059	| | IsRadarTracked
+1060	| | IsOnCarryall
+1061	| | IsCrashing
+1062	| | WasCrashingAlready
+1063	| | IsBeingManipulated
+1064	| | BeingManipulatedBy
+1068	| | ChronoWarpedByHouse
+1072	| | unknown_bool_430
+1073	| | IsMouseHovering
+1074	| | WasSelected
+  	| | <alignment member> (size=1)
+1076	| | OldTeam
+1080	| | CountedAsOwnedSpecial
+1081	| | Absorbed
+1082	| | unknown_bool_43A
+  	| | <alignment member> (size=1)
+1084	| | unknown_43C
+1088	| | ?$DynamicVectorClass@H CurrentTargetThreatValues
+1088	| | __CurrentTargetThreatValues
+1112	| | ?$DynamicVectorClass@PAVAbstractClass@@ CurrentTargets
+1112	| | __CurrentTargets
+1136	| | ?$DynamicVectorClass@PAVAbstractClass@@ AttackedTargets
+1136	| | __AttackedTargets
+1160	| | AudioController Audio3
+1160	| | __Audio3
+1180	| | unknown_BOOL_49C
+1184	| | TurretIsRotating
+1188	| | AudioController Audio4
+1188	| | __Audio4
+1208	| | unknown_bool_4B8
+  	| | <alignment member> (size=3)
+1212	| | unknown_4BC
+1216	| | AudioController Audio5
+1216	| | __Audio5
+1236	| | unknown_bool_4D4
+  	| | <alignment member> (size=3)
+1240	| | unknown_4D8
+1244	| | AudioController Audio6
+1244	| | __Audio6
+1264	| | QueuedVoiceIndex
+1268	| | unknown_4F4
+1272	| | unknown_bool_4F8
+  	| | <alignment member> (size=3)
+1276	| | unknown_4FC
+1280	| | unknown_500
+1284	| | EMPLockRemaining
+1288	| | ThreatPosed
+1292	| | ShouldLoseTargetNow
+1296	| | FiringRadBeam
+1300	| | PlanningToken
+1304	| | Disguise
+1308	| | DisguisedAsHouse
+	| +---
+1312	| PlanningPathIdx
+1316	| unknown_short_524
+1318	| unknown_short_526
+1320	| unknown_short_528
+1322	| unknown_short_52A
+1324	| unknown_52C
+1328	| unknown_530
+1332	| unknown_534
+1336	| WalkedFramesSoFar
+1340	| PlayingMovingSound
+  	| <alignment member> (size=3)
+1344	| MovingSoundDelay
+1348	| AudioController Audio7
+1348	| __Audio7
+1368	| ?$Vector2D@F CurrentMapCoords
+1372	| ?$Vector2D@F LastMapCoords
+1376	| ?$Vector2D@F LastJumpjetMapCoords
+1380	| ?$Vector2D@F CurrentJumpjetMapCoords
+1384	| ?$Vector3D@H unknown_coords_568
+1396	| unused_574
+1400	| SpeedPercentage
+1408	| SpeedMultiplier
+1416	| ?$DynamicVectorClass@PAVAbstractClass@@ unknown_abstract_array_588
+1416	| __unknown_abstract_array_588
+1440	| unknown_5A0
+1444	| Destination
+1448	| LastDestination
+1452	| ?$DynamicVectorClass@PAVAbstractClass@@ unknown_abstract_array_5AC
+1452	| __unknown_abstract_array_5AC
+1476	| unknown_int_5C4
+1480	| unknown_5C8
+1484	| unknown_5CC
+1488	| unknown_5D0
+1489	| unknown_bool_5D1
+  	| <alignment member> (size=2)
+1492	| Team
+1496	| NextTeamMember
+1500	| unknown_5DC
+1504	| PathDirections
+1600	| ?$TimerStruct@UFrameTimer@@ PathDelayTimer
+1600	| __PathDelayTimer
+1612	| unknown_int_64C
+1616	| ?$TimerStruct@UFrameTimer@@ unknown_timer_650
+1616	| __unknown_timer_650
+1628	| ?$TimerStruct@UFrameTimer@@ SightTimer
+1628	| __SightTimer
+1640	| ?$TimerStruct@UFrameTimer@@ BlockagePathTimer
+1640	| __BlockagePathTimer
+1652	| ?$YRComPtr@UILocomotion@@ Locomotor
+1652	| __Locomotor
+1656	| ?$Vector3D@H unknown_point3d_678
+1668	| TubeIndex
+1669	| unknown_bool_685
+1670	| WaypointIndex
+1671	| unknown_bool_687
+1672	| unknown_bool_688
+1673	| IsTeamLeader
+1674	| ShouldScanForTarget
+1675	| unknown_bool_68B
+1676	| IsDeploying
+1677	| IsFiring
+1678	| unknown_bool_68E
+1679	| ShouldEnterAbsorber
+1680	| ShouldEnterOccupiable
+1681	| ShouldGarrisonStructure
+  	| <alignment member> (size=2)
+1684	| ParasiteEatingMe
+1688	| unknown_698
+1692	| ParasiteImUsing
+1696	| ?$TimerStruct@UFrameTimer@@ ParalysisTimer
+1696	| __ParalysisTimer
+1708	| unknown_bool_6AC
+1709	| IsAttackedByLocomotor
+1710	| IsLetGoByLocomotor
+1711	| unknown_bool_6AF
+1712	| unknown_bool_6B0
+1713	| unknown_bool_6B1
+1714	| unknown_bool_6B2
+1715	| unknown_bool_6B3
+1716	| unknown_bool_6B4
+1717	| unknown_bool_6B5
+1718	| FrozenStill
+1719	| unknown_bool_6B7
+1720	| unknown_bool_6B8
+  	| <alignment member> (size=3)
+1724	| unused_6BC
+	+---
+
+FootClass::$vftable@IPersistStream@:
+	| &FootClass_meta
+	|  0
+ 0	| &AbstractClass::QueryInterface 
+ 1	| &AbstractClass::AddRef 
+ 2	| &AbstractClass::Release 
+ 3	| &AbstractClass::GetClassID 
+ 4	| &AbstractClass::IsDirty 
+ 5	| &TechnoClass::Load 
+ 6	| &TechnoClass::Save 
+ 7	| &AbstractClass::GetSizeMax 
+ 8	| &FootClass::{dtor} 
+ 9	| &AbstractClass::Init 
+10	| &AbstractClass::PointerExpired 
+11	| &AbstractClass::WhatAmI 
+12	| &AbstractClass::Size 
+13	| &AbstractClass::ComputeCRC 
+14	| &AbstractClass::GetOwningHouseIndex 
+15	| &AbstractClass::GetOwningHouse 
+16	| &AbstractClass::GetArrayIndex 
+17	| &AbstractClass::IsDead 
+18	| &AbstractClass::GetCoords 
+19	| &AbstractClass::GetDestination 
+20	| &AbstractClass::IsOnFloor 
+21	| &AbstractClass::IsInAir 
+22	| &AbstractClass::GetCenterCoords 
+23	| &AbstractClass::Update 
+24	| &ObjectClass::AnimPointerExpired 
+25	| &ObjectClass::IsSelectable 
+26	| &ObjectClass::VisualCharacter 
+27	| &ObjectClass::GetImage 
+28	| &ObjectClass::MouseOverCell 
+29	| &ObjectClass::MouseOverObject 
+30	| &ObjectClass::InWhichLayer 
+31	| &ObjectClass::IsSurfaced 
+32	| &ObjectClass::IsStrange 
+33	| &ObjectClass::GetTechnoType 
+34	| &ObjectClass::GetType 
+35	| &ObjectClass::GetTypeOwners 
+36	| &ObjectClass::GetUIName 
+37	| &ObjectClass::CanBeRepaired 
+38	| &ObjectClass::CanBeSold 
+39	| &ObjectClass::IsActive 
+40	| &ObjectClass::IsControllable 
+41	| &ObjectClass::GetTargetCoords 
+42	| &ObjectClass::GetDockCoords 
+43	| &ObjectClass::GetRenderCoords 
+44	| &ObjectClass::GetFLH 
+45	| &ObjectClass::GetExitCoords 
+46	| &ObjectClass::GetYSort 
+47	| &ObjectClass::IsOnBridge 
+48	| &ObjectClass::IsStandingStill 
+49	| &ObjectClass::IsDisguised 
+50	| &ObjectClass::IsDisguisedAs 
+51	| &ObjectClass::GetDisguise 
+52	| &ObjectClass::GetDisguiseHouse 
+53	| &TechnoClass::Limbo 
+54	| &ObjectClass::Unlimbo 
+55	| &ObjectClass::Disappear 
+56	| &ObjectClass::RegisterDestruction 
+57	| &ObjectClass::RegisterKill 
+58	| &ObjectClass::SpawnParachuted 
+59	| &ObjectClass::DropAsBomb 
+60	| &ObjectClass::MarkAllOccupationBits 
+61	| &ObjectClass::UnmarkAllOccupationBits 
+62	| &ObjectClass::UnInit 
+63	| &ObjectClass::Reveal 
+64	| &ObjectClass::KickOutUnit 
+65	| &ObjectClass::DrawIfVisible 
+66	| &ObjectClass::GetFoundationData 
+67	| &ObjectClass::DrawBehind 
+68	| &ObjectClass::DrawExtras 
+69	| &ObjectClass::DrawIt 
+70	| &ObjectClass::DrawAgain 
+71	| &ObjectClass::Undiscover 
+72	| &ObjectClass::See 
+73	| &ObjectClass::UpdatePlacement 
+74	| &ObjectClass::GetDimensions 
+75	| &ObjectClass::GetRenderDimensions 
+76	| &ObjectClass::DrawRadialIndicator 
+77	| &ObjectClass::MarkForRedraw 
+78	| &ObjectClass::CanBeSelected 
+79	| &ObjectClass::CanBeSelectedNow 
+80	| &ObjectClass::CellClickedAction 
+81	| &ObjectClass::ObjectClickedAction 
+82	| &ObjectClass::Flash 
+83	| &ObjectClass::Select 
+84	| &ObjectClass::Deselect 
+85	| &ObjectClass::IronCurtain 
+86	| &ObjectClass::StopAirstrikeTimer 
+87	| &ObjectClass::StartAirstrikeTimer 
+88	| &ObjectClass::IsIronCurtained 
+89	| &ObjectClass::IsCloseEnough3D 
+90	| &ObjectClass::GetWeaponRange 
+91	| &ObjectClass::ReceiveDamage 
+92	| &ObjectClass::Destroy 
+93	| &ObjectClass::Scatter 
+94	| &ObjectClass::Ignite 
+95	| &ObjectClass::Extinguish 
+96	| &ObjectClass::GetPointsValue 
+97	| &ObjectClass::GetCurrentMission 
+98	| &ObjectClass::RestoreMission 
+99	| &ObjectClass::UpdatePosition 
+100	| &ObjectClass::FindFactory 
+101	| &ObjectClass::ReceiveCommand 
+102	| &ObjectClass::DiscoveredBy 
+103	| &ObjectClass::SetRepairState 
+104	| &ObjectClass::Sell 
+105	| &ObjectClass::AssignPlanningPath 
+106	| &ObjectClass::vt_entry_1A8 
+107	| &ObjectClass::IsCellOccupied 
+108	| &ObjectClass::vt_entry_1B0 
+109	| &ObjectClass::SetLocation 
+110	| &ObjectClass::GetMapCoords 
+111	| &ObjectClass::GetCell 
+112	| &ObjectClass::GetMapCoordsAgain 
+113	| &ObjectClass::GetCellAgain 
+114	| &ObjectClass::GetHeight 
+115	| &ObjectClass::SetHeight 
+116	| &ObjectClass::GetZ 
+117	| &ObjectClass::IsBeingWarpedOut 
+118	| &ObjectClass::IsWarpingIn 
+119	| &ObjectClass::IsWarpingSomethingOut 
+120	| &ObjectClass::IsNotWarping 
+121	| &ObjectClass::GetRemapColour 
+122	| &MissionClass::QueueMission 
+123	| &MissionClass::NextMission 
+124	| &MissionClass::ForceMission 
+125	| &MissionClass::Override_Mission 
+126	| &MissionClass::Mission_Revert 
+127	| &MissionClass::MissionIsOverriden 
+128	| &MissionClass::ReadyToNextMission 
+129	| &MissionClass::Mission_Sleep 
+130	| &MissionClass::Mission_Harmless 
+131	| &MissionClass::Mission_Ambush 
+132	| &MissionClass::Mission_Attack 
+133	| &MissionClass::Mission_Capture 
+134	| &MissionClass::Mission_Eaten 
+135	| &MissionClass::Mission_Guard 
+136	| &MissionClass::Mission_AreaGuard 
+137	| &MissionClass::Mission_Harvest 
+138	| &MissionClass::Mission_Hunt 
+139	| &MissionClass::Mission_Move 
+140	| &MissionClass::Mission_Retreat 
+141	| &MissionClass::Mission_Return 
+142	| &MissionClass::Mission_Stop 
+143	| &MissionClass::Mission_Unload 
+144	| &MissionClass::Mission_Enter 
+145	| &MissionClass::Mission_Construction 
+146	| &MissionClass::Mission_Selling 
+147	| &MissionClass::Mission_Repair 
+148	| &MissionClass::Mission_Missile 
+149	| &MissionClass::Mission_Open 
+150	| &MissionClass::Mission_Rescue 
+151	| &MissionClass::Mission_Patrol 
+152	| &MissionClass::Mission_ParaDropApproach 
+153	| &MissionClass::Mission_ParaDropOverfly 
+154	| &MissionClass::Mission_Wait 
+155	| &MissionClass::Mission_SpyPlaneApproach 
+156	| &MissionClass::Mission_SpyPlaneOverfly 
+157	| &RadioClass::SendToFirstLink 
+158	| &RadioClass::SendCommand 
+159	| &RadioClass::SendCommandWithData 
+160	| &RadioClass::SendToEachLink 
+161	| &TechnoClass::IsUnitFactory 
+162	| &TechnoClass::IsCloakable 
+163	| &TechnoClass::CanScatter 
+164	| &TechnoClass::BelongsToATeam 
+165	| &TechnoClass::ShouldSelfHealOneStep 
+166	| &TechnoClass::IsVoxel 
+167	| &TechnoClass::vt_entry_29C 
+168	| &TechnoClass::IsReadyToCloak 
+169	| &TechnoClass::ShouldNotBeCloaked 
+170	| &TechnoClass::TurretFacing 
+171	| &TechnoClass::IsArmed 
+172	| &TechnoClass::vt_entry_2B0 
+173	| &TechnoClass::GetStoragePercentage 
+174	| &TechnoClass::GetPipFillLevel 
+175	| &TechnoClass::GetRefund 
+176	| &TechnoClass::GetThreatValue 
+177	| &TechnoClass::vt_entry_2C4 
+178	| &TechnoClass::vt_entry_2C8 
+179	| &TechnoClass::CanReachLocation 
+180	| &TechnoClass::GetCrewCount 
+181	| &TechnoClass::GetAntiAirValue 
+182	| &TechnoClass::GetAntiArmorValue 
+183	| &TechnoClass::GetAntiInfantryValue 
+184	| &TechnoClass::GotHijacked 
+185	| &TechnoClass::SelectWeapon 
+186	| &TechnoClass::SelectNavalTargeting 
+187	| &TechnoClass::GetZAdjustment 
+188	| &TechnoClass::GetZGradient 
+189	| &TechnoClass::GetSomeCellStruct 
+190	| &TechnoClass::SetSomeCellStruct 
+191	| &TechnoClass::vt_entry_2FC 
+192	| &TechnoClass::vt_entry_300 
+193	| &TechnoClass::vt_entry_304 
+194	| &TechnoClass::GetRealFacing 
+195	| &TechnoClass::GetCrew 
+196	| &TechnoClass::vt_entry_310 
+197	| &TechnoClass::CanDeploySlashUnload 
+198	| &TechnoClass::GetROF 
+199	| &TechnoClass::GetGuardRange 
+200	| &TechnoClass::vt_entry_320 
+201	| &TechnoClass::IsRadarVisible 
+202	| &TechnoClass::IsSensorVisibleToPlayer 
+203	| &TechnoClass::IsSensorVisibleToHouse 
+204	| &TechnoClass::IsEngineer 
+205	| &TechnoClass::ProceedToNextPlanningWaypoint 
+206	| &TechnoClass::ScanForTiberium 
+207	| &TechnoClass::EnterGrinder 
+208	| &TechnoClass::EnterBioReactor 
+209	| &TechnoClass::EnterTankBunker 
+210	| &TechnoClass::EnterBattleBunker 
+211	| &TechnoClass::GarrisonStructure 
+212	| &TechnoClass::IsPowerOnline 
+213	| &TechnoClass::QueueVoice 
+214	| &TechnoClass::VoiceEnter 
+215	| &TechnoClass::VoiceHarvest 
+216	| &TechnoClass::VoiceSelect 
+217	| &TechnoClass::VoiceCapture 
+218	| &TechnoClass::VoiceMove 
+219	| &TechnoClass::VoiceDeploy 
+220	| &TechnoClass::VoiceAttack 
+221	| &TechnoClass::ClickedEvent 
+222	| &TechnoClass::ClickedMission 
+223	| &TechnoClass::IsUnderEMP 
+224	| &TechnoClass::IsParalyzed 
+225	| &TechnoClass::CanCheer 
+226	| &TechnoClass::Cheer 
+227	| &TechnoClass::GetDefaultSpeed 
+228	| &TechnoClass::DecreaseAmmo 
+229	| &TechnoClass::AddPassenger 
+230	| &TechnoClass::CanDisguiseAs 
+231	| &TechnoClass::TargetAndEstimateDamage 
+232	| &TechnoClass::Stun 
+233	| &TechnoClass::TriggersCellInset 
+234	| &TechnoClass::IsCloseEnough 
+235	| &TechnoClass::IsCloseEnoughToAttack 
+236	| &TechnoClass::IsCloseEnoughToAttackCoords 
+237	| &TechnoClass::vt_entry_3B4 
+238	| &FootClass::Destroyed 
+239	| &TechnoClass::GetFireErrorWithoutRange 
+240	| &TechnoClass::GetFireError 
+241	| &TechnoClass::SelectAutoTarget 
+242	| &TechnoClass::SetTarget 
+243	| &TechnoClass::Fire 
+244	| &TechnoClass::Guard 
+245	| &TechnoClass::SetOwningHouse 
+246	| &TechnoClass::vt_entry_3D8 
+247	| &TechnoClass::Crash 
+248	| &TechnoClass::IsAreaFire 
+249	| &TechnoClass::IsNotSprayAttack 
+250	| &TechnoClass::vt_entry_3E8 
+251	| &TechnoClass::IsNotSprayAttack2 
+252	| &TechnoClass::GetDeployWeapon 
+253	| &TechnoClass::GetTurretWeapon 
+254	| &TechnoClass::GetWeapon 
+255	| &TechnoClass::HasTurret 
+256	| &TechnoClass::CanOccupyFire 
+257	| &TechnoClass::GetOccupyRangeBonus 
+258	| &TechnoClass::GetOccupantCount 
+259	| &TechnoClass::OnFinishRepair 
+260	| &TechnoClass::UpdateCloak 
+261	| &TechnoClass::CreateGap 
+262	| &TechnoClass::DestroyGap 
+263	| &TechnoClass::vt_entry_41C 
+264	| &TechnoClass::Sensed 
+265	| &TechnoClass::Reload 
+266	| &TechnoClass::vt_entry_428 
+267	| &TechnoClass::GetAttackCoordinates 
+268	| &TechnoClass::IsNotWarpingIn 
+269	| &TechnoClass::vt_entry_434 
+270	| &TechnoClass::DrawActionLines 
+271	| &TechnoClass::GetDisguiseFlags 
+272	| &TechnoClass::IsClearlyVisibleTo 
+273	| &TechnoClass::DrawVoxel 
+274	| &TechnoClass::vt_entry_448 
+275	| &TechnoClass::DrawHealthBar 
+276	| &TechnoClass::DrawPipScalePips 
+277	| &TechnoClass::DrawVeterancyPips 
+278	| &TechnoClass::DrawExtraInfo 
+279	| &TechnoClass::Uncloak 
+280	| &TechnoClass::Cloak 
+281	| &TechnoClass::vt_entry_464 
+282	| &TechnoClass::UpdateRefinerySmokeSystems 
+283	| &TechnoClass::DisguiseAs 
+284	| &TechnoClass::ClearDisguise 
+285	| &TechnoClass::IsItTimeForIdleActionYet 
+286	| &TechnoClass::UpdateIdleAction 
+287	| &TechnoClass::vt_entry_47C 
+288	| &TechnoClass::SetDestination 
+289	| &TechnoClass::EnterIdleMode 
+290	| &TechnoClass::UpdateSight 
+291	| &TechnoClass::vt_entry_48C 
+292	| &FootClass::ForceCreate 
+293	| &TechnoClass::RadarTrackingStart 
+294	| &TechnoClass::RadarTrackingStop 
+295	| &TechnoClass::RadarTrackingFlash 
+296	| &TechnoClass::RadarTrackingUpdate 
+297	| &TechnoClass::vt_entry_4A4 
+298	| &TechnoClass::vt_entry_4A8 
+299	| &TechnoClass::vt_entry_4AC 
+300	| &TechnoClass::vt_entry_4B0 
+301	| &TechnoClass::vt_entry_4B4 
+302	| &TechnoClass::vt_entry_4B8 
+303	| &TechnoClass::CanUseWaypoint 
+304	| &TechnoClass::CanAttackOnTheMove 
+305	| &TechnoClass::vt_entry_4C4 
+306	| &TechnoClass::vt_entry_4C8 
+307	| &TechnoClass::vt_entry_4CC 
+308	| &TechnoClass::vt_entry_4D0 
+309	| &FootClass::ReceiveGunner 
+310	| &FootClass::RemoveGunner 
+311	| &FootClass::IsLeavingMap 
+312	| &FootClass::vt_entry_4E0 
+313	| &FootClass::CanDeployNow 
+314	| &FootClass::AddSensorsAt 
+315	| &FootClass::RemoveSensorsAt 
+316	| &FootClass::vt_entry_4F0 
+317	| &FootClass::vt_entry_4F4 
+318	| &FootClass::vt_entry_4F8 
+319	| &FootClass::MoveTo 
+320	| &FootClass::StopMoving 
+321	| &FootClass::vt_entry_504 
+322	| &FootClass::ChronoWarpTo 
+323	| &FootClass::Draw_A_SHP 
+324	| &FootClass::Draw_A_VXL 
+325	| &FootClass::GoBerzerk 
+326	| &FootClass::Panic 
+327	| &FootClass::UnPanic 
+328	| &FootClass::PlayIdleAnim 
+329	| &FootClass::vt_entry_524 
+330	| &FootClass::vt_entry_528 
+331	| &FootClass::vt_entry_52C 
+332	| &FootClass::vt_entry_530 
+333	| &FootClass::vt_entry_534 
+334	| &FootClass::GetCurrentSpeed 
+335	| &FootClass::vt_entry_53C 
+336	| &FootClass::vt_entry_540 
+337	| &FootClass::SetSpeedPercentage 
+338	| &FootClass::vt_entry_548 
+339	| &FootClass::vt_entry_54C 
+340	| &FootClass::vt_entry_550 
+
+FootClass::$vftable@IRTTITypeInfo@:
+	| -4
+ 0	| &thunk: this-=4; goto AbstractClass::QueryInterface 
+ 1	| &thunk: this-=4; goto AbstractClass::AddRef 
+ 2	| &thunk: this-=4; goto AbstractClass::Release 
+ 3	| &AbstractClass::What_Am_I 
+ 4	| &AbstractClass::Fetch_ID 
+ 5	| &AbstractClass::Create_ID 
+
+FootClass::$vftable@INoticeSink@:
+	| -8
+ 0	| &AbstractClass::INoticeSink_Unknown 
+
+FootClass::$vftable@INoticeSource@:
+	| -12
+ 0	| &AbstractClass::INoticeSource_Unknown 
+
+FootClass::{dtor} this adjustor: 0
+FootClass::Destroyed this adjustor: 0
+FootClass::ForceCreate this adjustor: 0
+FootClass::ReceiveGunner this adjustor: 0
+FootClass::RemoveGunner this adjustor: 0
+FootClass::IsLeavingMap this adjustor: 0
+FootClass::vt_entry_4E0 this adjustor: 0
+FootClass::CanDeployNow this adjustor: 0
+FootClass::AddSensorsAt this adjustor: 0
+FootClass::RemoveSensorsAt this adjustor: 0
+FootClass::vt_entry_4F0 this adjustor: 0
+FootClass::vt_entry_4F4 this adjustor: 0
+FootClass::vt_entry_4F8 this adjustor: 0
+FootClass::MoveTo this adjustor: 0
+FootClass::StopMoving this adjustor: 0
+FootClass::vt_entry_504 this adjustor: 0
+FootClass::ChronoWarpTo this adjustor: 0
+FootClass::Draw_A_SHP this adjustor: 0
+FootClass::Draw_A_VXL this adjustor: 0
+FootClass::GoBerzerk this adjustor: 0
+FootClass::Panic this adjustor: 0
+FootClass::UnPanic this adjustor: 0
+FootClass::PlayIdleAnim this adjustor: 0
+FootClass::vt_entry_524 this adjustor: 0
+FootClass::vt_entry_528 this adjustor: 0
+FootClass::vt_entry_52C this adjustor: 0
+FootClass::vt_entry_5probe.cpp(13): error C2664: “void ObjectClass::SetLocation(const CoordStruct &)”: 无法将参数 1 从“CellStruct”转换为“const CoordStruct &”
+probe.cpp(13): note: 原因如下: 无法从“CellStruct”转换为“const CoordStruct”
+probe.cpp(13): note: 没有可用于执行该转换的用户定义的转换运算符，或者无法调用该运算符
+D:\Workspace\ra2mod\platform\KratosPP\YRpp\ObjectClass.h(175): note: 参见“ObjectClass::SetLocation”的声明
+probe.cpp(13): note: 尝试匹配参数列表“(CellStruct)”时
+probe.cpp(28): error C2838: “None”: 成员声明中的限定名称非法
+probe.cpp(28): error C2065: “None”: 未声明的标识符
+30 this adjustor: 0
+FootClass::vt_entry_534 this adjustor: 0
+FootClass::GetCurrentSpeed this adjustor: 0
+FootClass::vt_entry_53C this adjustor: 0
+FootClass::vt_entry_540 this adjustor: 0
+FootClass::SetSpeedPercentage this adjustor: 0
+FootClass::vt_entry_548 this adjustor: 0
+FootClass::vt_entry_54C this adjustor: 0
+FootClass::vt_entry_550 this adjustor: 0
+FootClass::__delDtor this adjustor: 0
+FootClass::__vecDelDtor this adjustor: 0

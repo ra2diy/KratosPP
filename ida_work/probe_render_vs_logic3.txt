@@ -1,0 +1,1044 @@
+idb = D:\Workspace\ra2mod\platform\gamemd\gamemd.idb   hexrays=True
+
+====================================================================================================
+S7) Main_Loop LABEL_72 门控 / 渲染点 / 帧尾原件
+====================================================================================================
+---- Main_Loop LABEL_72 门控（渲染调用前置条件）  [0055D860 - 0055D905] ----
+   0055D860  xor     eax, eax
+   0055D861  pop     edi
+   0055D862  pop     esi
+   0055D863  test    cl, cl
+   0055D865  pop     ebp
+   0055D866  mov     byte_ABCD58, 0
+   0055D86D  setz    al
+   0055D870  pop     ebx
+   0055D871  add     esp, 1B4h
+   0055D877  retn
+   0055D878  mov     ecx, arg_ATTRACT_Flags
+   0055D87E  test    cl, 2
+   0055D881  jnz     short loc_55D8FF
+   0055D883  mov     eax, dword_A8EDA0
+   0055D888  xor     edi, edi
+   0055D88A  cmp     eax, edi
+   0055D88C  jnz     short loc_55D901
+   0055D88E  mov     al, GameInFocus
+   0055D893  test    al, al
+   0055D895  jz      short loc_55D901
+   0055D897  lea     eax, [esp+1C4h+var_188]
+   0055D89B  lea     ecx, [esp+1C4h+var_184]
+   0055D89F  push    eax
+   0055D8A0  lea     edx, [esp+1C8h+var_18C]
+   0055D8A4  push    ecx
+   0055D8A5  push    edx
+   0055D8A6  mov     ecx, offset Map
+   0055D8AB  call    GScreenClass::Input
+   0055D8B0  lea     ecx, [esp+1C4h+var_18C]
+   0055D8B4  call    Keyboard_Process
+   0055D8B9  mov     al, MPDEBUG
+   0055D8BE  test    al, al
+   0055D8C0  jz      short loc_55D8C9
+   0055D8C2  xor     cl, cl
+   0055D8C4  call    DrawMPDebug
+   0055D8C9  mov     eax, Frame
+   0055D8CE  and     eax, 7
+   0055D8D1  cmp     al, 7
+   0055D8D3  jnz     short loc_55D8E8
+   0055D8D5  cmp     Session, 4
+   0055D8DC  jnz     short loc_55D8E8
+   0055D8DE  mov     ecx, offset IPXManager
+   0055D8E3  call    sub_542520
+   0055D8E8  call    sub_4D2370
+   0055D8ED  mov     ecx, offset Map; this
+   0055D8F2  call    GScreenClass_DrawOnTop
+   0055D8F7  mov     ecx, arg_ATTRACT_Flags
+   0055D8FD  jmp     short loc_55D901
+   0055D8FF  xor     edi, edi
+   0055D901  mov     eax, ecx
+   0055D903  mov     byte_A8ED9D, 0
+---- Main_Loop 0x55D8F2 渲染调用 + 后续  [0055D8F2 - 0055D92C] ----
+   0055D8F2  call    GScreenClass_DrawOnTop
+   0055D8F7  mov     ecx, arg_ATTRACT_Flags
+   0055D8FD  jmp     short loc_55D901
+   0055D8FF  xor     edi, edi
+   0055D901  mov     eax, ecx
+   0055D903  mov     byte_A8ED9D, 0
+   0055D90A  and     eax, 1
+   0055D90D  jnz     short loc_55D918
+   0055D90F  test    cl, 2
+   0055D912  jz      loc_55DBC3
+   0055D918  cmp     eax, edi
+   0055D91A  jz      loc_55DA54
+   0055D920  lea     ecx, [esp+1C4h+var_180]
+   0055D924  push    ecx
+   0055D925  mov     ecx, TacticalMap
+   0055D92B  call    sub_6D6170
+---- Main_Loop 帧尾（hash / 帧限速 / Frame++）  [0055DE30 - 0055DEA8] ----
+   0055DE30  mov     ecx, dword_A8B564
+   0055DE31  add     edx, eax
+   0055DE33  inc     ecx
+   0055DE34  mov     dword_A8B560, edx
+   0055DE3A  mov     dword_A8B564, ecx
+   0055DE40  call    sub_647260
+   0055DE45  call    sub_637550
+   0055DE4A  call    Call_Back
+   0055DE4F  mov     al, byte_A83D49
+   0055DE54  test    al, al
+   0055DE56  jnz     short loc_55DEC8
+   0055DE58  mov     al, byte_A8ECD0
+   0055DE5D  test    al, al
+   0055DE5F  jnz     short loc_55DEC8
+   0055DE61  mov     al, byte_8B41C0
+   0055DE66  test    al, al
+   0055DE68  jnz     short loc_55DEC8
+   0055DE6A  mov     al, byte_A83D48
+   0055DE6F  test    al, al
+   0055DE71  jnz     short loc_55DEC8
+   0055DE73  mov     edx, Frame
+   0055DE79  mov     eax, dword_B07784
+   0055DE7E  inc     edx
+   0055DE7F  cmp     eax, edi
+   0055DE81  mov     Frame, edx
+   0055DE87  jz      short loc_55DE9A
+   0055DE89  mov     ecx, edx
+   0055DE8B  cmp     eax, ecx
+   0055DE8D  jge     short loc_55DE9A
+   0055DE8F  call    sub_684290
+   0055DE94  mov     dword_B07784, edi
+   0055DE9A  call    sub_55E160
+   0055DE9F  call    VisibleObjects_DeleteDead
+   0055DEA4  call    sub_637270
+
+====================================================================================================
+S1) GameInFocus 的确切地址与写入者
+====================================================================================================
+   sub_55E160: 0055E1F8 cmp     dword_A8EDA0, ebp
+   sub_55E160: 0055E204 cmp     GameInFocus, 1
+   sub_55E160 [0x55E1C0-0x55E2C0] 引用到的全局: 00A8ED80(W?GameInFocus$ni), 00A8EDA0(dword_A8EDA0)
+
+   Main_Loop [0x55D860-0x55D905] 引用/条件原件见 S7
+   --- 候选全局 00A8ED80 = W?GameInFocus$ni
+        DATA 00432E80 in BINK32_Handle_Movie_432E40 : mov     al, GameInFocus
+        DATA 004333F0 in sub_4333F0 : mov     al, GameInFocus
+        DATA 004BAD92 in sub_4BAD80 : mov     al, GameInFocus
+        DATA 004BAF4D in sub_4BAF40 : mov     al, GameInFocus
+        DATA 004BB00D in sub_4BB000 : mov     al, GameInFocus
+        DATA 004BB208 in sub_4BB0D0 : mov     al, GameInFocus
+        DATA 004BB689 in sub_4BB620 : mov     al, GameInFocus
+        DATA 004C3D8A in sub_4C3D00 : mov     al, GameInFocus
+        DATA 004C46AA in ScenarioClass_ShowCredits : mov     al, GameInFocus
+        DATA 0052BB43 in InitGame : mov     al, GameInFocus
+        DATA 0055D377 in W?Main_Loop$n()i : mov     al, GameInFocus
+        DATA 0055D3A7 in W?Main_Loop$n()i : mov     al, GameInFocus
+        DATA 0055D88E in W?Main_Loop$n()i : mov     al, GameInFocus
+        DATA 0055E204 in sub_55E160 : cmp     GameInFocus, 1
+        DATA 005D2469 in sub_5D2410 : mov     al, GameInFocus
+        DATA 005D2530 in sub_5D2530 : mov     al, GameInFocus
+        DATA 005D256A in sub_5D2530 : mov     al, GameInFocus
+        DATA 005D2592 in sub_5D2530 : mov     al, GameInFocus
+        DATA 00611137 in sub_610CA0 : mov     al, GameInFocus
+        DATA 0061119E in sub_610CA0 : mov     al, GameInFocus
+        DATA 006211D5 in sub_6211D0 : mov     cl, GameInFocus
+        DATA 0068FBC7 in sub_68FBB0 : cmp     GameInFocus, 1
+        DATA 0068FBEC in sub_68FBB0 : mov     al, GameInFocus
+        DATA 0068FC05 in sub_68FBB0 : mov     al, GameInFocus
+        DATA 0069024A in sub_690160 : mov     al, GameInFocus
+        DATA 0069027A in sub_690160 : mov     al, GameInFocus
+        ...
+   --- 候选全局 00A8EDA0 = dword_A8EDA0
+        DATA 0048C8B0 in sub_48C8B0 : mov     eax, dword_A8EDA0
+        DATA 0048C951 in sub_48C8B0 : mov     eax, dword_A8EDA0
+        DATA 0048C97A in sub_48C8B0 : mov     eax, dword_A8EDA0
+        DATA 0048C98A in sub_48C8B0 : mov     dword_A8EDA0, ebp
+        DATA 0048C9A2 in sub_48C8B0 : mov     eax, dword_A8EDA0
+        DATA 0048C9BF in sub_48C8B0 : mov     eax, dword_A8EDA0
+        DATA 0048C9D2 in sub_48C8B0 : mov     eax, dword_A8EDA0
+        DATA 0048C9E1 in sub_48C8B0 : mov     dword_A8EDA0, eax
+        DATA 0048C9F9 in sub_48C8B0 : mov     dword_A8EDA0, eax
+        DATA 0048CA12 in sub_48C8B0 : mov     dword_A8EDA0, eax
+        DATA 0048CC31 in sub_48C8B0 : mov     dword_A8EDA0, ebp; default
+        DATA 0048CE6D in Main_Game : mov     dword_A8EDA0, ebx
+        DATA 004C7939 in Networking_RespondToEvent : mov     dword_A8EDA0, 1
+        DATA 004C7A14 in Networking_RespondToEvent : mov     eax, dword_A8EDA0; case 0x1C
+        DATA 004C80FF in Networking_RespondToEvent : mov     dword_A8EDA0, 7
+        DATA 004E237E in sub_4E1FE0 : mov     dword_A8EDA0, 6
+        DATA 004E23A3 in sub_4E1FE0 : mov     dword_A8EDA0, 4
+        DATA 004E23FC in sub_4E23C0 : mov     dword_A8EDA0, 6
+        DATA 004E2420 in sub_4E23C0 : mov     dword_A8EDA0, 4
+        DATA 004F14E2 in sub_4F11B0 : mov     dword_A8EDA0, 5
+        DATA 004F16D2 in sub_4F11B0 : mov     dword_A8EDA0, 2
+        DATA 004F16E0 in sub_4F11B0 : mov     dword_A8EDA0, 3
+        DATA 0055D883 in W?Main_Loop$n()i : mov     eax, dword_A8EDA0
+        DATA 0055E1F8 in sub_55E160 : cmp     dword_A8EDA0, ebp
+        DATA 0064859A in sub_648350 : mov     eax, dword_A8EDA0
+        DATA 006497F9 in sub_648710 : mov     eax, dword_A8EDA0
+        ...
+
+   名字含 'Focus' 的符号：
+      00777420 W?Focus_Restore$n()v (seg=.text)
+      007E13A0 GetFocus (seg=.idata)
+      007E13CC SetFocus (seg=.idata)
+      00849E70 aFocus_loss_mou (seg=.data)
+      00849E94 aFocus_loss (seg=.data)
+      00849EA4 aFocus_restore_ (seg=.data)
+      00849ECC aFocus_restore (seg=.data)
+      00849EF8 aFocusGained (seg=.data)
+      00849F08 aFocusLost (seg=.data)
+      008A00A0 FocusGained (seg=.data)
+      00A8ED80 W?GameInFocus$ni (seg=.data)
+
+====================================================================================================
+S2) 0x9C 是不是对象位置 CoordStruct（pos / GetCoords）
+====================================================================================================
+   [ObjectClass] tinfo_t.get_named_type 失败: RuntimeError('Internal error 941 occurred when running a script. Either\n  - the script misused the IDA API, or\n  - there is a logic error in IDA\nPlease check the script first.\nIf it appears correct, send a bug report to <support@hex-rays.com>.\nIn any case we strongly recommend you to restart IDA as soon as possible.')
+   [ObjectClass] module-level get_named_type -> (1, b'\r\xea\x02=\x0eAbstractClass\x07\x07\x07\n=\x04#\x89A\n=\x03#q\n=\x04#\x9dB=\x0csomeStructX=\x0csomeStructX\x072222\x07\x072222\x07\x0722222222\n=\x04#\x87g22222222\x072222=\x08Point3D', b'\x02a\tfield_20\tfield_24\tFallRate\x0bNextObject\x04Tag\tIvanBomb\tstructX1\tstructX2\tfield_60\x0cBombVisible\tfield_61\tfield_62\tfield_63\x07Health\rBackupHealth\tfield_6C\tfield_6D\tfield_6E\tfield_6F\tfield_70\tfield_74\x07Sensed\x08InLimbo\rInOpenTopped\tSelected\rHasParachute\tfield_7D\tfield_86\tfield_7F\nParachute\tOnBridge\x08Falling\nfield_8A0\x08IsABomb\x06Alive\tfield_89\tfield_8A\tfield_8B\x0fBerserkCapable\tfield_90\tfield_91\tfield_92\tfield_93\x04pos', None, None, 0, 173) (<class 'tuple'>)
+  <SECTION FAILED>
+Traceback (most recent call last):
+  File "D:/Workspace/ra2mod/platform/KratosPP/ida_work/probe_render_vs_logic3.py", line 65, in section
+    fn()
+  File "D:/Workspace/ra2mod/platform/KratosPP/ida_work/probe_render_vs_logic3.py", line 147, in s2
+    log("   [%s] %s  size=0x%X" % (sname, tif._print(), tif.get_size()))
+                                          ^^^^^^^^^^
+AttributeError: 'int' object has no attribute '_print'
+
+
+====================================================================================================
+S3) LayerClass::Sort / AddObject 语义
+====================================================================================================
+---- LayerClass::Sort = sub_551A30  [00551A30 - 00551A85] ----
+   00551A30  push    ecx
+   00551A31  push    ebx
+   00551A32  push    ebp
+   00551A33  mov     ebp, ecx
+   00551A35  xor     ebx, ebx
+   00551A37  mov     eax, [ebp+10h]
+   00551A3A  dec     eax
+   00551A3B  test    eax, eax
+   00551A3D  jle     short loc_551A81
+   00551A3F  push    esi
+   00551A40  push    edi
+   00551A41  mov     eax, [ebp+4]
+   00551A44  mov     esi, [eax+ebx*4+4]
+   00551A48  mov     edi, [eax+ebx*4]
+   00551A4B  mov     ecx, esi
+   00551A4D  mov     edx, [esi]
+   00551A4F  call    dword ptr [edx+0B8h]
+   00551A55  mov     [esp+14h+var_4], eax
+   00551A59  mov     eax, [edi]
+   00551A5B  mov     ecx, edi
+   00551A5D  call    dword ptr [eax+0B8h]
+   00551A63  cmp     [esp+14h+var_4], eax
+   00551A67  jge     short loc_551A76
+   00551A69  mov     ecx, [ebp+4]
+   00551A6C  mov     [ecx+ebx*4+4], edi
+   00551A70  mov     edx, [ebp+4]
+   00551A73  mov     [edx+ebx*4], esi
+   00551A76  mov     eax, [ebp+10h]
+   00551A79  inc     ebx
+   00551A7A  dec     eax
+   00551A7B  cmp     ebx, eax
+   00551A7D  jl      short loc_551A41
+   00551A7F  pop     edi
+   00551A80  pop     esi
+   00551A81  pop     ebp
+   00551A82  pop     ebx
+   00551A83  pop     ecx
+   00551A84  retn
+---- LayerClass::AddObject(0x5519B0)  [005519B0 - 00551A2C] ----
+   005519B0  mov     al, [esp+sortable]
+   005519B4  push    esi
+   005519B5  test    al, al
+   005519B7  mov     esi, ecx
+   005519B9  jz      short loc_5519CF
+   005519BB  mov     eax, [esp+4+a2]
+   005519BF  push    eax; a2
+   005519C0  call    MapClass_AddObjectToALayer
+   005519C5  neg     eax
+   005519C7  sbb     eax, eax
+   005519C9  pop     esi
+   005519CA  neg     eax
+   005519CC  retn    8
+   005519CF  mov     ecx, [esi+8]
+   005519D2  mov     eax, [esi+10h]
+   005519D5  cmp     eax, ecx
+   005519D7  jl      short loc_551A0A
+   005519D9  mov     al, [esi+0Dh]
+   005519DC  test    al, al
+   005519DE  jnz     short loc_5519E4
+   005519E0  test    ecx, ecx
+   005519E2  jnz     short loc_5519FB
+   005519E4  mov     eax, [esi+14h]
+   005519E7  test    eax, eax
+   005519E9  jle     short loc_5519FB
+   005519EB  mov     edx, [esi]
+   005519ED  add     eax, ecx
+   005519EF  push    0
+   005519F1  push    eax
+   005519F2  mov     ecx, esi
+   005519F4  call    dword ptr [edx+8]
+   005519F7  test    al, al
+   005519F9  jnz     short loc_551A0A
+   005519FB  xor     al, al
+   005519FD  xor     edx, edx
+   005519FF  test    al, al
+   00551A01  setnz   dl
+   00551A04  mov     al, dl
+   00551A06  pop     esi
+   00551A07  retn    8
+   00551A0A  mov     eax, [esi+10h]
+   00551A0D  mov     edx, [esi+4]
+   00551A10  lea     ecx, [eax+1]
+   00551A13  mov     [esi+10h], ecx
+   00551A16  mov     ecx, [esp+4+a2]
+   00551A1A  mov     [edx+eax*4], ecx
+   00551A1D  mov     al, 1
+   00551A1F  xor     edx, edx
+   00551A21  pop     esi
+   00551A22  test    al, al
+   00551A24  setnz   dl
+   00551A27  mov     al, dl
+   00551A29  retn    8
+   #### PSEUDOCODE sub_551A30
+      int __thiscall sub_551A30(_DWORD *this)
+      {
+        int v2; // ebx
+        int result; // eax
+        int v4; // eax
+        int v5; // esi
+        int v6; // edi
+        int v7; // [esp+8h] [ebp-4h]
+      
+        v2 = 0;
+        result = this[4] - 1;
+        if ( result > 0 )
+        {
+          do
+          {
+            v4 = this[1];
+            v5 = *(v4 + 4 * v2 + 4);
+            v6 = *(v4 + 4 * v2);
+            v7 = (*(*v5 + 184))(v5);
+            if ( v7 < (*(*v6 + 184))(v6) )
+            {
+              *(this[1] + 4 * v2 + 4) = v6;
+              *(this[1] + 4 * v2) = v5;
+            }
+            ++v2;
+            result = this[4] - 1;
+          }
+          while ( v2 < result );
+        }
+        return result;
+      }
+   #### PSEUDOCODE MapClass_AddObjectToALayerX
+      char __thiscall MapClass_AddObjectToALayerX(VectorPtrObjectClass *this, _ObjectClass *a2, char sortable)
+      {
+        int count; // ecx
+        int incrementAmount; // eax
+        int length; // eax
+        PtrObjectClass *data; // edx
+      
+        if ( sortable )
+          return MapClass_AddObjectToALayer(this, a2) != 0;
+        count = this->count;
+        if ( this->length >= count )
+        {
+          if ( !this->IsAllocated && count )
+            return 0;
+          incrementAmount = this->incrementAmount;
+          if ( incrementAmount <= 0 || !(this->vt->Resize)(this, count + incrementAmount, 0) )
+            return 0;
+        }
+        length = this->length;
+        data = this->data;
+        this->length = length + 1;
+        data[length]._ = a2;
+        return 1;
+      }
+
+====================================================================================================
+S4) sub_647260：校验值调用频率与 DoList 的先后
+====================================================================================================
+---- sub_647260 全文 = sub_647260  [00647260 - 006475D5] ----
+   00647260  mov     al, byte ptr arg_ATTRACT_Flags
+   00647265  sub     esp, 74h
+   00647268  test    al, 2
+   0064726A  push    ebx
+   0064726B  push    ebp
+   0064726C  push    esi
+   0064726D  push    edi; OffendingEvent
+   0064726E  jz      loc_6474C7
+   00647274  mov     ecx, Keyboard
+   0064727A  mov     [esp+84h+var_70], 0
+   0064727F  call    sub_54F000
+   00647284  test    ax, ax
+   00647287  mov     ebx, 4
+   0064728C  jz      short loc_6472B6
+   0064728E  mov     ecx, Keyboard
+   00647294  call    sub_54F050
+   00647299  cmp     ax, 1Bh
+   0064729D  jz      short loc_6472A7
+   0064729F  test    byte ptr arg_ATTRACT_Flags, bl
+   006472A5  jz      short loc_6472FC
+   006472A7  pop     edi
+   006472A8  pop     esi
+   006472A9  pop     ebp
+   006472AA  mov     GameActive, 0
+   006472B1  pop     ebx
+   006472B2  add     esp, 74h
+   006472B5  retn
+   006472B6  test    byte ptr arg_ATTRACT_Flags, bl
+   006472BC  jz      short loc_6472FC
+   006472BE  mov     eax, Frame
+   006472C3  test    eax, eax
+   006472C5  jle     short loc_6472FC
+   006472C7  mov     ecx, WWMouse
+   006472CD  mov     eax, [ecx]
+   006472CF  call    dword ptr [eax+2Ch]
+   006472D2  cmp     dword_AC50F8, eax
+   006472D8  jnz     short loc_6472ED
+   006472DA  mov     ecx, WWMouse
+   006472E0  mov     edx, [ecx]
+   006472E2  call    dword ptr [edx+30h]
+   006472E5  cmp     dword_AC5200, eax
+   006472EB  jz      short loc_6472FC
+   006472ED  pop     edi
+   006472EE  pop     esi
+   006472EF  pop     ebp
+   006472F0  mov     GameActive, 0
+   006472F7  pop     ebx
+   006472F8  add     esp, 74h
+   006472FB  retn
+   006472FC  mov     ecx, WWMouse
+   00647302  mov     eax, [ecx]
+   00647304  call    dword ptr [eax+2Ch]
+   00647307  mov     ecx, WWMouse
+   0064730D  mov     dword_AC50F8, eax
+   00647312  mov     edx, [ecx]
+   00647314  call    dword ptr [edx+30h]
+   00647317  mov     dword_AC5200, eax
+   0064731C  call    sub_64DAB0
+   00647321  mov     ecx, Frame
+   00647327  mov     edx, dword_AC51FC
+   0064732D  mov     eax, ecx
+   0064732F  and     eax, 0FFh
+   00647334  mov     dword_B04474[eax*4], edx
+   0064733B  mov     eax, dword_A8E30C
+   00647340  cmp     ecx, eax
+   00647342  jl      short loc_64737F
+   00647344  mov     al, MPSYNCDEBUG
+   00647349  test    al, al
+   0064734B  jz      short loc_647366
+   0064734D  xor     edx, edx
+   0064734F  and     ecx, 800000FFh
+   00647355  jns     short loc_64735F
+   00647357  dec     ecx
+   00647358  or      ecx, 0FFFFFF00h
+   0064735E  inc     ecx
+   0064735F  call    Multiplay_LogToSync_MPDEBUG
+   00647364  jmp     short loc_64736D
+   00647366  xor     ecx, ecx
+   00647368  call    Multiplay_LogToSYNC_NOMPDEBUG
+   0064736D  call    Emergency_Exit
+   00647372  xor     ecx, ecx; int
+   00647374  call    __exit_0
+   00647379  mov     ecx, Frame
+   0064737F  mov     eax, Session
+   00647384  test    ecx, ecx
+   00647386  jnz     short loc_647392
+   00647388  test    eax, eax
+   0064738A  jnz     def_6474D5; default
+   00647390  jmp     short loc_6473BD
+   00647392  test    eax, eax
+   00647394  jz      short loc_6473BD
+   00647396  cmp     eax, 5
+   00647399  jz      short loc_6473BD
+   0064739B  cmp     dword_A8B24C, 2
+   006473A2  jnz     short loc_6473BD
+   006473A4  mov     esi, FrameSendRate
+   006473AA  xor     edx, edx
+   006473AC  lea     eax, [esi+ecx-1]
+   006473B0  div     esi
+   006473B2  imul    eax, esi
+   006473B5  cmp     ecx, eax
+   006473B7  jnz     def_6474D5; default
+   006473BD  lea     eax, [esp+84h+Buffer]
+   006473C1  push    ebx; int
+   006473C2  push    eax; lpBuffer
+   006473C3  mov     ecx, offset FileQ
+   006473C8  call    CCFileClass_ReadNextBytes
+   006473CD  cmp     eax, ebx
+   006473CF  jnz     loc_6474A9
+   006473D5  mov     eax, [esp+84h+Buffer]
+   006473D9  xor     ebx, ebx
+   006473DB  test    eax, eax
+   006473DD  jle     loc_647474
+   006473E3  mov     ebp, ds:__imp_timeGetTime; Get system time, in milliseconds
+   006473E9  lea     ecx, [esp+84h+var_70]
+   006473ED  push    6Fh ; 'o'; int
+   006473EF  push    ecx; lpBuffer
+   006473F0  mov     ecx, offset FileQ
+   006473F5  call    CCFileClass_ReadNextBytes
+   006473FA  cmp     eax, 6Fh ; 'o'
+   006473FD  jnz     loc_6474A9
+   00647403  mov     cl, [esp+84h+var_70+1]
+   00647407  mov     eax, EventClass_DoList
+   0064740C  and     cl, 0FEh
+   0064740F  cmp     eax, 4000h
+   00647414  mov     [esp+84h+var_70+1], cl
+   00647418  jge     short loc_647467
+   0064741A  mov     eax, dword_8B4200
+   0064741F  mov     ecx, 1Bh
+   00647424  lea     esi, [esp+84h+var_70]
+   00647428  lea     edx, [eax+eax*8]
+   0064742B  lea     eax, [eax+edx*4]
+   0064742E  lea     edi, NetworkPackets1.ev.EventKind[eax+eax*2]
+   00647435  rep movsd
+   00647437  movsw
+   00647439  movsb
+   0064743A  call    ebp ; __imp_timeGetTime; Get system time, in milliseconds
+   0064743C  mov     ecx, dword_8B4200
+   00647442  mov     dword_A70204[ecx*4], eax
+   00647449  mov     edx, dword_8B4200
+   0064744F  mov     eax, EventClass_DoList
+   00647454  inc     edx
+   00647455  and     edx, 3FFFh
+   0064745B  inc     eax
+   0064745C  mov     dword_8B4200, edx
+   00647462  mov     EventClass_DoList, eax
+   00647467  mov     eax, [esp+84h+Buffer]
+   0064746B  inc     ebx
+   0064746C  cmp     ebx, eax
+   0064746E  jl      loc_6473E9
+   00647474  mov     eax, Session
+   00647479  test    eax, eax
+   0064747B  jnz     short loc_647492
+   0064747D  mov     eax, HouseClass_PlayerPtr
+   00647482  mov     ecx, 1
+   00647487  mov     edx, [eax+34h]
+   0064748A  mov     edx, [edx+0B8h]
+   00647490  jmp     short loc_64749A
+   00647492  mov     ecx, gTeamCount; int
+   00647498  xor     edx, edx; int
+   0064749A  push    0; int
+   0064749C  push    0; int
+   0064749E  push    0; int
+   006474A0  call    DoList
+   006474A5  test    eax, eax
+   006474A7  jnz     short loc_6474B8
+   006474A9  pop     edi
+   006474AA  pop     esi
+   006474AB  pop     ebp
+   006474AC  mov     GameActive, 0
+   006474B3  pop     ebx
+   006474B4  add     esp, 74h
+   006474B7  retn
+   006474B8  xor     ecx, ecx
+   006474BA  call    sub_64D990
+   006474BF  pop     edi
+   006474C0  pop     esi
+   006474C1  pop     ebp
+   006474C2  pop     ebx
+   006474C3  add     esp, 74h
+   006474C6  retn
+   006474C7  mov     eax, Session
+   006474CC  cmp     eax, 5; switch 6 cases
+   006474CF  ja      def_6474D5; default
+   006474D5  jmp     ds:jpt_6474D5[eax*4]; switch jump
+   006474DC  mov     eax, EventClass_OutList; case 0x0
+   006474E1  test    eax, eax
+   006474E3  jz      loc_647586
+   006474E9  mov     ebp, ds:__imp_timeGetTime; Get system time, in milliseconds
+   006474EF  mov     eax, dword_A802CC
+   006474F4  lea     ecx, [eax+eax*8]
+   006474F7  lea     eax, [eax+ecx*4]
+   006474FA  mov     cl, [eax+eax*2+0A802D5h]
+   00647501  and     cl, 0FEh
+   00647504  mov     [eax+eax*2+0A802D5h], cl
+   0064750B  mov     eax, EventClass_DoList
+   00647510  cmp     eax, 4000h
+   00647515  jge     short loc_64756F
+   00647517  mov     eax, dword_A802CC
+   0064751C  lea     edx, [eax+eax*8]
+   0064751F  lea     eax, [eax+edx*4]
+   00647522  lea     esi, NetworkPackets0.ev.EventKind[eax+eax*2]
+   00647529  mov     eax, dword_8B4200
+   0064752E  lea     ecx, [eax+eax*8]
+   00647531  lea     eax, [eax+ecx*4]
+   00647534  mov     ecx, 1Bh
+   00647539  lea     edi, NetworkPackets1.ev.EventKind[eax+eax*2]
+   00647540  rep movsd
+   00647542  movsw
+   00647544  movsb
+   00647545  call    ebp ; __imp_timeGetTime; Get system time, in milliseconds
+   00647547  mov     edx, dword_8B4200
+   0064754D  mov     dword_A70204[edx*4], eax
+   00647554  mov     eax, dword_8B4200
+   00647559  inc     eax
+   0064755A  and     eax, 3FFFh
+   0064755F  mov     dword_8B4200, eax
+   00647564  mov     eax, EventClass_DoList
+   00647569  inc     eax
+   0064756A  mov     EventClass_DoList, eax
+   0064756F  mov     ecx, offset EventClass_OutList
+   00647574  call    sub_652540
+   00647579  mov     eax, EventClass_OutList
+   0064757E  test    eax, eax
+   00647580  jnz     loc_6474EF
+   00647586  test    byte ptr arg_ATTRACT_Flags, 1
+   0064758D  jz      short loc_647594
+   0064758F  call    sub_64D9E0
+   00647594  mov     ecx, HouseClass_PlayerPtr
+   0064759A  push    0; int
+   0064759C  push    0; int
+   0064759E  push    0; int
+   006475A0  mov     edx, [ecx+HouseClass_old.IHouse._.Country]
+   006475A3  mov     ecx, 1; int
+   006475A8  mov     edx, [edx+HouseTypeClass.indexInArray]; int
+   006475AE  call    DoList
+   006475B3  test    eax, eax
+   006475B5  jnz     loc_6474B8
+   006475BB  pop     edi
+   006475BC  pop     esi
+   006475BD  pop     ebp
+   006475BE  mov     GameActive, al
+   006475C3  pop     ebx
+   006475C4  add     esp, 74h
+   006475C7  retn
+   006475C8  call    sub_6475F0; case 0x1
+   006475CD  pop     edi; default
+   006475CE  pop     esi
+   006475CF  pop     ebp
+   006475D0  pop     ebx
+   006475D1  add     esp, 74h
+   006475D4  retn
+   #### PSEUDOCODE sub_647260 全文
+      int sub_647260()
+      {
+        int result; // eax
+        signed int v1; // ecx
+        int v2; // ebx
+        NetworkEventPacketEx *v3; // edi
+        int v4; // ecx
+        int indexInArray; // edx
+        NetworkEventPacketEx *v6; // esi
+        NetworkEventPacketEx *v7; // edi
+        NetworkEventPacketEx *v8; // [esp+0h] [ebp-84h]
+        int Buffer; // [esp+10h] [ebp-74h] BYREF
+        _BYTE v10[108]; // [esp+14h] [ebp-70h] BYREF
+        __int16 v11; // [esp+80h] [ebp-4h]
+        char v12; // [esp+82h] [ebp-2h]
+      
+        if ( (arg_ATTRACT_Flags & 2) != 0 )
+        {
+          v10[0] = 0;
+          if ( sub_54F000(Keyboard) )
+          {
+            result = sub_54F050(Keyboard);
+            if ( result == 27 || (arg_ATTRACT_Flags & 4) != 0 )
+            {
+              LOBYTE(GameActive) = 0;
+              return result;
+            }
+          }
+          else if ( (arg_ATTRACT_Flags & 4) != 0 && Frame > 0 )
+          {
+            result = (WWMouse->vt->anonymous_10)(WWMouse);
+            if ( dword_AC50F8 != result || (result = (WWMouse->vt->anonymous_11)(WWMouse), dword_AC5200 != result) )
+            {
+              LOBYTE(GameActive) = 0;
+              return result;
+            }
+          }
+          dword_AC50F8 = (WWMouse->vt->anonymous_10)(WWMouse);
+          dword_AC5200 = (WWMouse->vt->anonymous_11)(WWMouse);
+          sub_64DAB0();
+          v1 = Frame;
+          dword_B04474[Frame] = *&dword_AC51FC;
+          if ( v1 >= dword_A8E30C )
+          {
+            if ( MPSYNCDEBUG )
+              Multiplay_LogToSync_MPDEBUG(v1 % 256, 0);
+            else
+              Multiplay_LogToSYNC_NOMPDEBUG(v8);
+            Emergency_Exit(v8);
+            _exit_0(0);
+          }
+          result = Session.idxGameMode;
+          if ( v1 )
+          {
+            if ( Session.idxGameMode )
+            {
+              if ( Session.idxGameMode != 5 && dword_A8B24C == 2 )
+              {
+                result = FrameSendRate * ((FrameSendRate + v1 - 1) / FrameSendRate);
+                if ( v1 != result )
+                  return result;
+              }
+            }
+          }
+          else if ( Session.idxGameMode )
+          {
+            return result;
+          }
+          result = CCFileClass_ReadNextBytes(&Buffer, 4);
+          if ( result != 4 )
+            goto LABEL_33;
+          v2 = 0;
+          if ( Buffer > 0 )
+          {
+            do
+            {
+              result = CCFileClass_ReadNextBytes(v10, 111);
+              if ( result != 111 )
+                goto LABEL_33;
+              v10[1] &= ~1u;
+              if ( EventClass_DoList < 0x4000 )
+              {
+                v3 = &NetworkPackets1[dword_8B4200];
+                qmemcpy(v3, v10, 0x6Cu);
+                v3 = (v3 + 108);
+                *&v3->ev.EventKind = v11;
+                v3->ev.PlayerIdx = v12;
+                dword_A70204[dword_8B4200] = timeGetTime();
+                dword_8B4200 = (dword_8B4200 + 1) & 0x3FFF;
+                ++EventClass_DoList;
+              }
+            }
+            while ( ++v2 < Buffer );
+          }
+          if ( Session.idxGameMode )
+          {
+            v4 = gTeamCount;
+            indexInArray = 0;
+          }
+          else
+          {
+            v4 = 1;
+            indexInArray = HouseClass_PlayerPtr->Country->indexInArray;
+          }
+          result = DoList(v4, indexInArray, 0, 0, 0);
+          if ( !result )
+          {
+      LABEL_33:
+            LOBYTE(GameActive) = 0;
+            return result;
+          }
+          return sub_64D990(0);
+        }
+        else
+        {
+          result = Session.idxGameMode;
+          switch ( Session.idxGameMode )
+          {
+            case 0:
+            case 5:
+              while ( EventClass_OutList )
+              {
+                NetworkPackets0[dword_A802CC].ev.field_1 &= ~1u;
+                if ( EventClass_DoList < 0x4000 )
+                {
+                  v6 = &NetworkPackets0[dword_A802CC];
+                  v7 = &NetworkPackets1[dword_8B4200];
+                  qmemcpy(v7, v6, 0x6Cu);
+                  v6 = (v6 + 108);
+                  v7 = (v7 + 108);
+                  *&v7->ev.EventKind = *&v6->ev.EventKind;
+                  v7->ev.PlayerIdx = v6->ev.PlayerIdx;
+                  dword_A70204[dword_8B4200] = timeGetTime();
+                  dword_8B4200 = (dword_8B4200 + 1) & 0x3FFF;
+                  ++EventClass_DoList;
+                }
+                sub_652540(&EventClass_OutList);
+              }
+              if ( (arg_ATTRACT_Flags & 1) != 0 )
+                sub_64D9E0();
+              result = DoList(1, HouseClass_PlayerPtr->Country->indexInArray, 0, 0, 0);
+              if ( result )
+                return sub_64D990(0);
+              LOBYTE(GameActive) = 0;
+              break;
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+              result = sub_6475F0();
+              break;
+            default:
+              return result;
+          }
+        }
+        return result;
+      }
+
+====================================================================================================
+S5) sub_64DAB0 里 Z 分量（var_4）的最终去向
+====================================================================================================
+---- sub_64DAB0 层循环尾部  [0064DD5F - 0064DE00] ----
+   0064DD5F  mov     edx, dword_AC51FC
+   0064DD65  mov     ecx, edx
+   0064DD67  mov     edi, [esp+24h+arg]
+   0064DD6B  shr     ecx, 1Fh
+   0064DD6E  lea     ecx, [ecx+edx*2]
+   0064DD71  add     ecx, eax
+   0064DD73  mov     dword_AC51FC, ecx
+   0064DD79  mov     eax, [ebp+0]
+   0064DD7C  inc     edi
+   0064DD7D  cmp     edi, eax
+   0064DD7F  mov     [esp+24h+arg], edi
+   0064DD83  jl      loc_64DCFA
+   0064DD89  add     ebp, 18h
+   0064DD8C  cmp     ebp, offset dword_8A03E8
+   0064DD92  jl      loc_64DCE9
+   0064DD98  mov     eax, vec_Logics.length
+   0064DD9D  xor     ebp, ebp
+   0064DD9F  test    eax, eax
+   0064DDA1  jle     loc_64DE33
+   0064DDA7  mov     edx, vec_Logics.data
+   0064DDAD  mov     esi, [edx+ebp*4]
+   0064DDB0  mov     ecx, esi
+   0064DDB2  mov     eax, [esi]
+   0064DDB4  call    dword ptr [eax+2Ch]
+   0064DDB7  cmp     eax, 4
+   0064DDBA  jnz     short loc_64DDCB
+   0064DDBC  mov     ecx, [esi+4]
+   0064DDBF  lea     eax, [esi+4]
+   0064DDC2  push    eax
+   0064DDC3  call    dword ptr [ecx+10h]
+   0064DDC6  cmp     eax, 0FFFFFFFEh
+   0064DDC9  jz      short loc_64DE25
+   0064DDCB  lea     edx, [esi+9Ch]
+   0064DDD1  mov     ecx, esi
+   0064DDD3  mov     edi, [edx]
+   0064DDD5  mov     ebx, [edx+4]
+   0064DDD8  mov     eax, [edx+8]
+   0064DDDB  mov     edx, [esi]
+   0064DDDD  mov     [esp+24h+var_4], eax
+   0064DDE1  call    dword ptr [edx+2Ch]
+   0064DDE4  mov     ecx, eax
+   0064DDE6  mov     eax, 66666667h
+   0064DDEB  imul    ebx
+   0064DDED  sar     edx, 2
+   0064DDF0  mov     eax, edx
+   0064DDF2  shr     eax, 1Fh
+   0064DDF5  add     edx, eax
+   0064DDF7  mov     eax, 66666667h
+   0064DDFC  shl     edx, 10h
+   0064DDFF  add     ecx, edx
+---- sub_64DAB0 函数尾部  [0064DE00 - 0064DE80] ----
+   0064DE00  add     ecx, edx
+   0064DE01  imul    edi
+   0064DE03  sar     edx, 2
+   0064DE06  mov     eax, edx
+   0064DE08  add     edx, ecx
+   0064DE0A  shr     eax, 1Fh
+   0064DE0D  add     eax, edx
+   0064DE0F  mov     edx, dword_AC51FC
+   0064DE15  mov     ecx, edx
+   0064DE17  shr     ecx, 1Fh
+   0064DE1A  lea     ecx, [ecx+edx*2]
+   0064DE1D  add     ecx, eax
+   0064DE1F  mov     dword_AC51FC, ecx
+   0064DE25  mov     eax, vec_Logics.length
+   0064DE2A  inc     ebp
+   0064DE2B  cmp     ebp, eax
+   0064DE2D  jl      loc_64DDA7
+   0064DE33  mov     edx, Scenario
+   0064DE39  lea     ecx, [edx+218h]
+   0064DE3F  call    Random2Class::operator()
+   0064DE44  mov     edx, dword_AC51FC
+   0064DE4A  mov     ecx, edx
+   0064DE4C  shr     ecx, 1Fh
+   0064DE4F  lea     ecx, [ecx+edx*2]
+   0064DE52  add     ecx, eax
+   0064DE54  mov     dword_AC51FC, ecx
+   0064DE5A  mov     ecx, Frame
+   0064DE60  and     ecx, 800000FFh
+   0064DE66  jns     short loc_64DE70
+   0064DE68  dec     ecx
+   0064DE69  or      ecx, 0FFFFFF00h
+   0064DE6F  inc     ecx
+   0064DE70  call    sub_650A90
+   0064DE75  pop     edi
+   0064DE76  pop     esi
+   0064DE77  pop     ebp
+   0064DE78  pop     ebx
+   0064DE79  add     esp, 14h
+   0064DE7C  retn
+   0064DE7D  db 3 dup(90h)
+   [var_4] 0064DAF3 mov     [esp+28h+var_4], edx
+   [var_4] 0064DB8A mov     [esp+24h+var_4], ecx
+   [var_4] 0064DC48 mov     [esp+24h+var_4], ecx
+   [var_4] 0064DD2D mov     [esp+24h+var_4], eax
+   [var_4] 0064DDDD mov     [esp+24h+var_4], eax
+   var_4 相关指令 = 5
+
+====================================================================================================
+S6) TacticalClass_Draw -> Tactical_Draw_All -> 层数组消费
+====================================================================================================
+   Tactical_Draw_All <- 006D465F in TacticalClass_Draw : call    Tactical_Draw_All_6D8DB0
+
+---- TacticalClass_Draw = TacticalClass_Draw  [006D3D10 - 006D4B4B] ----
+   006D3D10  sub     esp, 0F4h
+   006D3D16  push    ebx
+   006D3D17  push    ebp
+   006D3D18  push    esi
+   006D3D19  push    edi
+   006D3D1A  mov     ebp, ecx
+   006D3D1C  sub     esp, 10h
+   006D3D1F  mov     eax, esp
+   006D3D21  mov     [ebp+TacticalClass.SelectionLength], 0
+   006D3D2B  mov     ecx, rect_mouseclass_vp.T
+   006D3D31  mov     edx, rect_mouseclass_vp.L
+   006D3D37  mov     [eax], ecx
+   006D3D39  mov     ecx, rect_mouseclass_vp.R
+   006D3D3F  mov     [eax+4], edx
+   006D3D42  mov     edx, rect_mouseclass_vp.B
+   006D3D48  mov     [eax+8], ecx
+   006D3D4B  mov     ecx, ebp; this
+   006D3D4D  mov     [eax+0Ch], edx
+   006D3D50  call    sub_6D9B50
+   006D3D55  mov     ebx, [ebp+TacticalClass.field_B8]
+   006D3D5B  mov     esi, [ebp+TacticalClass.someX]
+   006D3D61  mov     edx, [ebp+TacticalClass.someY]
+   006D3D67  mov     edi, [esp+104h+arg_8]
+   006D3D6E  sub     ebx, esi
+   006D3D70  mov     esi, [ebp+TacticalClass.field_BC]
+   006D3D76  sub     esi, edx
+   006D3D78  mov     cl, al
+   006D3D7A  test    edi, edi
+   006D3D7C  mov     [esp+104h+var_EC], ebx
+   006D3D80  mov     [esp+104h+var_F0], esi
+   006D3D84  jnz     loc_6D3E4B
+   006D3D8A  mov     eax, ebx
+   006D3D8C  cdq
+   006D3D8D  xor     eax, edx
+   006D3D8F  sub     eax, edx
+   006D3D91  mov     edx, rect_mouseclass_vp.R
+   006D3D97  cmp     eax, edx
+   006D3D99  jge     loc_6D3E37
+   006D3D9F  mov     eax, esi
+   006D3DA1  cdq
+   006D3DA2  xor     eax, edx
+   006D3DA4  sub     eax, edx
+   006D3DA6  mov     edx, rect_mouseclass_vp.B
+   006D3DAC  cmp     eax, edx
+   006D3DAE  jge     loc_6D3E37
+   006D3DB4  mov     byte_B0E63C, 0
+   006D3DBB  mov     al, byte ptr [esp+104h+arg_4]
+   006D3DC2  test    al, al
+   006D3DC4  jz      short loc_6D3DD0
+   006D3DC6  xor     ebx, ebx
+   006D3DC8  mov     [esp+104h+var_EC], ebx
+   006D3DCC  mov     [esp+104h+var_F0], ebx
+   006D3DD0  cmp     edi, 2
+   006D3DD3  jz      loc_6D4758
+   006D3DD9  mov     al, byte ptr [esp+104h+arg_4]
+   006D3DE0  test    al, al
+   006D3DE2  jnz     loc_6D3E9B
+   006D3DE8  mov     al, [ebp+TacticalClass.field_D7C]
+   006D3DEE  test    al, al
+   006D3DF0  mov     eax, vec_DirtyAreas.length
+   006D3DF5  jnz     short loc_6D3E65
+   006D3DF7  test    cl, cl
+   006D3DF9  jnz     loc_6D3E9B
+   006D3DFF  test    eax, eax
+   006D3E01  jnz     short loc_6D3E69
+   006D3E03  mov     cl, [ebp+TacticalClass.Redrawing]
+   006D3E09  test    cl, cl
+   006D3E0B  jnz     loc_6D3E9B
+   006D3E11  mov     ecx, [ebp+TacticalClass.field_D64]
+   006D3E17  mov     edx, [ebp+TacticalClass.field_D6C]
+   006D3E1D  cmp     ecx, edx
+   006D3E1F  jnz     short loc_6D3E69
+   006D3E21  mov     edx, [ebp+TacticalClass.field_D68]
+   006D3E27  mov     ecx, [ebp+TacticalClass.field_D70]
+   006D3E2D  cmp     edx, ecx
+   006D3E2F  jz      loc_6D4758
+   006D3E35  jmp     short loc_6D3E69
+   006D3E37  mov     byte ptr [esp+104h+arg_4], 1
+   006D3E3F  mov     byte_B0E63C, 1
+   006D3E46  jmp     loc_6D3DC6
+   006D3E4B  mov     al, byte_B0E63C
+   006D3E50  test    al, al
+   006D3E52  jz      loc_6D3DBB
+   006D3E58  mov     byte ptr [esp+104h+arg_4], 1
+   006D3E60  jmp     loc_6D3DC6
+   006D3E65  test    cl, cl
+   006D3E67  jnz     short loc_6D3E9B
+   006D3E69  mov     cl, [ebp+TacticalClass.Redrawing]
+   006D3E6F  test    cl, cl
+   006D3E71  jnz     short loc_6D3E9B
+
+   -- 谁调用 TacticalClass_Draw(0x6D3D10) --
+      <- 004F44DF in GScreenClass_DrawOnTop : call    TacticalClass_Draw
+      <- 004F44F4 in GScreenClass_DrawOnTop : call    TacticalClass_Draw
+      <- 004F4515 in GScreenClass_DrawOnTop : call    TacticalClass_Draw
+
+====================================================================================================
+S8) 0x887640 的 vtable[0x40] 与 Do_Blit 帧率限制
+====================================================================================================
+   [00887640] = FFFFFFFF (sub_FFFFFFFF)  -> 对象 vtable
+
+   -- GScreenClass::Do_Blit (0x4F4B??) 里的 Sleep --
+      004F4780 W?Do_Blit$:GScreenClass$n(ii)v
+---- W?Do_Blit$:GScreenClass$n(ii)v = W?Do_Blit$:GScreenClass$n(ii)v  [004F4780 - 004F4BAB] ----
+   004F4780  sub     esp, 5Ch
+   004F4783  mov     eax, [esp+5Ch+arg_0]
+   004F4787  push    esi
+   004F4788  test    eax, eax
+   004F478A  mov     esi, edx
+   004F478C  mov     [esp+60h+var_59], cl
+   004F4790  jnz     short loc_4F47C1
+   004F4792  mov     eax, [esi]
+   004F4794  lea     ecx, [esp+60h+var_20]
+   004F4798  push    ecx
+   004F4799  mov     ecx, esi
+   004F479B  call    dword ptr [eax+78h]
+   004F479E  mov     edx, [eax]
+   004F47A0  mov     [esp+60h+var_40], edx
+   004F47A4  mov     ecx, [eax+4]
+   004F47A7  mov     [esp+60h+var_3C], ecx
+   004F47AB  lea     ecx, [esp+60h+var_40]
+   004F47AF  mov     edx, [eax+8]
+   004F47B2  mov     [esp+60h+arg_0], ecx
+   004F47B6  mov     [esp+60h+var_38], edx
+   004F47BA  mov     eax, [eax+0Ch]
+   004F47BD  mov     dword ptr [esp+60h+var_34], eax
+   004F47C1  mov     eax, hWndParent
+   004F47C6  lea     edx, [esp+60h+Rect]
+   004F47CA  push    edx; lpRect
+   004F47CB  push    eax; hWnd
+   004F47CC  call    ds:GetClientRect; Get the coordinates of a window's client area
+   004F47D2  test    eax, eax
+   004F47D4  jz      loc_4F4BA4
+   004F47DA  mov     ecx, [esp+60h+Rect.left]
+   004F47DE  mov     edx, [esp+60h+Rect.top]
+   004F47E2  mov     [esp+60h+Point.y], ecx
+   004F47E6  mov     ecx, hWndParent
+   004F47EC  lea     eax, [esp+60h+Point.y]
+   004F47F0  mov     [esp+60h+var_44], edx
+   004F47F4  push    eax; lpPoint
+   004F47F5  push    ecx; hWnd
+   004F47F6  call    ds:ClientToScreen; Convert the client coordinates of a
+   004F47FC  test    eax, eax
+   004F47FE  jz      loc_4F4BA4
+   004F4804  mov     edx, [esi]
+   004F4806  push    ebx
+   004F4807  push    ebp
+   004F4808  push    edi
+   004F4809  mov     ecx, esi
+   004F480B  call    dword ptr [edx+80h]
+   004F4811  mov     edi, eax
+   004F4813  mov     eax, [esi]
+   004F4815  mov     ecx, esi
+   004F4817  call    dword ptr [eax+7Ch]
+   004F481A  mov     ebp, pos_x
+   004F4820  mov     ecx, [esp+60h+var_3C]
+   004F4824  mov     ebx, [esp+60h+var_38]
+   004F4828  mov     edx, pos_Y
+   004F482E  test    ebp, ebp
+   004F4830  mov     [esp+60h+var_24], ecx
+   004F4834  mov     [esp+60h+var_20], ebx
+   004F4838  mov     [esp+60h+var_1C], eax
+   004F483C  mov     [esp+60h+var_18], edi
+   004F4840  jnz     short loc_4F4848

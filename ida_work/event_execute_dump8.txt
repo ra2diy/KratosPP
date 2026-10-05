@@ -1,0 +1,21 @@
+=== code xrefs to 0x738890 (UnitClass_ClickedMission) ===
+
+=== code xrefs to 0x6FFBE0 (Player_Assign_Mission) ===
+   from 0x417CB4 in sub_417CA0
+
+=== code xrefs to 0x6FFE00 (TechnoClass_374 = ClickedEvent(NetworkEvents)) ===
+
+=== code xrefs to 0x738910 (UnitClass_140) ===
+
+=== code xrefs to 0x5F6A10 (TechnoClass_GetCell1) ===
+
+Player_Assign_Mission 0x6FFBE0..0x6FFDFA
+   0x006FFCBA  retn    10h
+   0x006FFDF7  retn    10h
+
+0x4C6860 = Networking_FillEvent
+0x4C65E0 = sub_4C65E0
+0x4C66C0 = Networking_AddEvent_Noopt
+0x639FD0 = sub_639FD0
+0x4C74CB = HandleEvent_ev_IDLE
+0x4C71CA = HandleEvent_ev_MEGAMISSION_F

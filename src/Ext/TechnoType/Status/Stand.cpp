@@ -6,6 +6,7 @@
 
 #include <Ext/EffectType/AttachEffectScript.h>
 #include <Ext/EffectType/Effect/StandEffect.h>
+#include <Ext/SyncEventType/TechnoScriptCommandEvent.h>
 
 void TechnoStatus::SetupStand(StandData data, TechnoClass* pMaster)
 {
@@ -185,4 +186,36 @@ bool TechnoStatus::OnSelect_VirtualUnit()
 		pMyMaster->Select();
 	}
 	return !VirtualUnit;
+}
+
+void TechnoStatus::OnGuardCommand_Stand()
+{
+	if (AmIStand())
+	{
+		// 替身收到 Guard：补发**原版** Guard 命令（＝"它也被选中按了 G"）。
+		// ★ 恰好一条、且两端判定可复现：只在"本机是发起者"（`IsCurrentInitiator()` ＝
+		//   事件 house == 本机 CurrentPlayer，由 Respond 派发前设置）**且**"引擎没发过"
+		//   （载荷 bit7，`IsEngineAlreadySent()`：对象当时在选中集里）时才调用。
+		//   发起端正是**原版热键会调用这一句的那台客户端**（原版 0x730DEB/0x730E56 就在按键端的
+		//   v_CurrentObjects 循环里调 `ClickedMission`+`GetCellAgain`）⇒ 每台机器的行为都等价于
+		//   "原版按下 G 时它该做的事" ⇒ 对称。该论证**不依赖** `ClickedMission` 没有本地副作用
+		//   （它在 planning 分支只构造+入队，正常分支还会播语音并 `Queue_Mission`）。
+		if (!TechnoScriptCommandEvent::IsEngineAlreadySent() && TechnoScriptCommandEvent::IsCurrentInitiator())
+		{
+			CellClass* pCell = pTechno->GetCellAgain();
+			pTechno->ClickedMission(Mission::Area_Guard, reinterpret_cast<ObjectClass*>(pCell), nullptr, nullptr);
+		}
+	}
+}
+
+void TechnoStatus::OnStopCommand_Stand()
+{
+	if (AmIStand())
+	{
+		// 同 OnGuardCommand_Stand：Stop 的原版命令是那条 IDLE（vtable+0x374）。
+		if (!TechnoScriptCommandEvent::IsEngineAlreadySent() && TechnoScriptCommandEvent::IsCurrentInitiator())
+		{
+			pTechno->ClickedEvent(NetworkEvents::Idle);
+		}
+	}
 }

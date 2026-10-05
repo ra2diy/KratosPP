@@ -23,7 +23,9 @@
 
 #include <Ext/Common/CommonStatus.h>
 #include <Ext/Common/ExpandAnimsManager.h>
+#include <Ext/EffectType/Effect/StandEffect.h>
 #include <Ext/ObjectType/AttachEffect.h>
+#include <Ext/SyncEventType/TechnoScriptCommandEvent.h>
 #include <Ext/TechnoType/AutoFireAreaWeapon.h>
 #include <Ext/TechnoType/JumpjetCarryall.h>
 #include <Ext/TechnoType/TechnoStatus.h>
@@ -492,6 +494,11 @@ DEFINE_HOOK(0x5F45A0, TechnoClass_Select, 0x5)
 	return 0;
 }
 
+// ⚠ 本机命令执行体（热键 / 鼠标 UI）：调用者只有 0x536D00/0x536B80（CommandClass 热键分发）
+// 与 0x6D0778/0x6D07D0（TabClass_MouseMove），体内遍历 v_CurrentObjects（本机选中集）。
+// 原版 Guard/Stop 任务本身走 EventClass 广播、两端一致；Kratos 原来在这里直接改模拟状态
+// （AircraftGuard::State/_onStopCommand、JumpjetCarryall::CancelMission、StandEffect 清目标）
+// ⇒ 按键那端才发生，另一端继续 ⇒ 失同步。现在这里的副作用全部撤掉，只保留纯广播动作。
 DEFINE_HOOK_AGAIN(0x730DEB, ObjectClass_GuardCommand, 0x6) // Building
 DEFINE_HOOK(0x730E56, ObjectClass_GuardCommand, 0x6)
 {
@@ -500,10 +507,17 @@ DEFINE_HOOK(0x730E56, ObjectClass_GuardCommand, 0x6)
 	TechnoClass* pTechno = nullptr;
 	if (CastToTechno(pThis, pTechno))
 	{
+		// ★ 主身自己的脚本通知也走隧道（两端各派发一次）：原来在本机直接 `cc->OnGuardCommand()`
+		//   会让 JumpjetCarryall::CancelMission / AircraftGuard 等状态改动只发生在按键那一端 ⇒ 失同步。
+		//   这条消息 `engineAlreadySent = true`：它在选中集里，原版 Guard 命令（MegaMission）由引擎发。
+		TechnoScriptCommandEvent::Raise(pTechno, TechnoScriptCommandEvent::Command::Guard);
 		if (auto pExt = TechnoExt::ExtMap.Find(pTechno))
 		{
 			pExt->_GameObject->Foreach([](Component* c)
-				{ if (auto cc = dynamic_cast<ITechnoScript*>(c)) { cc->OnGuardCommand(); } });
+				{
+					// 替身不在选中集里（引擎不会给它发命令）⇒ 这条消息 engineAlreadySent = false
+					if (auto se = dynamic_cast<StandEffect*>(c)) { se->RaiseGuardCommand(); }
+				});
 		}
 	}
 	return 0;
@@ -516,10 +530,15 @@ DEFINE_HOOK(0x730EEB, ObjectClass_StopCommand, 0x6)
 	TechnoClass* pTechno = nullptr;
 	if (CastToTechno(pThis, pTechno))
 	{
+		// ★ 同上：Stop 的脚本通知走隧道两端派发，不在本机直接改状态。
+		//   `engineAlreadySent = true`：原版 IDLE（vtable+0x374）由引擎为该被选中对象发出。
+		TechnoScriptCommandEvent::Raise(pTechno, TechnoScriptCommandEvent::Command::Stop);
 		if (auto pExt = TechnoExt::ExtMap.Find(pTechno))
 		{
 			pExt->_GameObject->Foreach([](Component* c)
-				{ if (auto cc = dynamic_cast<ITechnoScript*>(c)) { cc->OnStopCommand(); } });
+				{
+					if (auto se = dynamic_cast<StandEffect*>(c)) { se->RaiseStopCommand(); }
+				});
 		}
 	}
 	return 0;

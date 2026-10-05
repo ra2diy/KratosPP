@@ -78,6 +78,10 @@ bool PreOccupancyManager::IsSubCellAvailable(const CellStruct& cell, int subIdx)
 
 void PreOccupancyManager::MarkOccupied(TechnoClass* pTechno, const CoordStruct& pos)
 {
+	// 同一单位重复登记（例如重选落点）时，先把旧的预占摘掉，
+	// 否则旧格子里的子格位永远不会被释放 ⇒ 幽灵占格 / 双占。
+	ReleaseOccupancy(pTechno);
+
 	CellClass* pCell = MapClass::Instance->TryGetCellAt(pos);
 	if (!pCell)
 	{

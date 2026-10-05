@@ -45,6 +45,17 @@ public:
 	static void ClearAllArray(EventSystem* sender, Event e, void* args);
 
 	/**
+	 *@brief 清空预占用网格，防止跨局残留（挂 Events::ScenarioStartEvent）。
+	 */
+	static void ClearPreOcc(EventSystem* sender, Event e, void* args);
+
+	/**
+	 *@brief 对象销毁时释放它的预占用，避免留下一把悬垂 key 与幽灵占格
+	 * （挂 Events::ObjectUnInitEvent，args = 即将销毁的 ObjectClass*）。
+	 */
+	static void OnObjectUnInit(EventSystem* sender, Event e, void* args);
+
+	/**
 	 *@brief 储存可以作为基地建造节点的单位.
 	 * key = 单位, value = 做友军的基地建造节点
 	 */

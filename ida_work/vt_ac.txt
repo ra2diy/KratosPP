@@ -1,0 +1,129 @@
+### candidate  base=0x007E22A4
+    +0x000 = 0x00414290  AircraftClass_QueryInterface
+    +0x004 = 0x004142F0  AircraftClass_AddRef
+    +0x008 = 0x00414300  AircraftClass_Release
+    +0x02C = 0x0041C180  AircraftClass_GetAbstractDerivationID
+    +0x144 = 0x00417BD0  AircraftClass_ClickedMission
+    +0x184 = 0x005B3040  TechnoClass_184
+    +0x1C4 = 0x005F6A10  TechnoClass_GetCell1
+    +0x1C8 = 0x005F5F40  TechnoClass_GetHeight
+    +0x374 = 0x006FFE00  TechnoClass_374
+    +0x378 = 0x00417CA0  sub_417CA0
+
+### candidate  base=0x007E2468
+    +0x000 = 0x005F6A10  TechnoClass_GetCell1
+    +0x004 = 0x005F5F40  TechnoClass_GetHeight
+    +0x008 = 0x005F5FA0  TechnoClass_SetHeight
+    +0x02C = 0x0041B9F0  sub_41B9F0
+    +0x144 = 0x0041A570  W?Fire_Direction$:AircraftClass$n.x()$DirType$$
+    +0x184 = 0x004DFCB0  FootClass_EnterBattleBunker
+    +0x1C4 = 0x0041BF90  TechnoClass_388
+    +0x1C8 = 0x0070EFE0  TechnoClass_38C
+    +0x374 = 0x004DB1A0  FootClass_GetCurrentSpeed
+    +0x378 = 0x004D5690  FootClass_53C
+
+### candidate  base=0x007E20E0
+    +0x000 = 0x00411630  sub_411630
+    +0x004 = 0x00411640  sub_411640
+    +0x008 = 0x00411510  Surface_GetRect
+    +0x02C = 0x007BBB90  XSurface_Blit
+    +0x144 = 0x43800000  
+    +0x184 = 0x0041B7D0  AircraftClass_FlasherClass_IsLoaded
+    +0x1C4 = 0x00414290  AircraftClass_QueryInterface
+    +0x1C8 = 0x004142F0  AircraftClass_AddRef
+    +0x374 = 0x004D9C60  FootClass_1B0
+    +0x378 = 0x004DB810  FootClass_SetCoords
+
+### candidate  base=0x007E2120
+    +0x000 = 0x007BB340  sub_7BB340
+    +0x004 = 0x007BB350  sub_7BB350
+    +0x008 = 0x007BAEB0  sub_7BAEB0
+    +0x02C = 0x007BA8C0  sub_7BA8C0
+    +0x144 = 0x0041B7D0  AircraftClass_FlasherClass_IsLoaded
+    +0x184 = 0x00414290  AircraftClass_QueryInterface
+    +0x1C4 = 0x004104B0  AbstractClass_GetArrayIndex
+    +0x1C8 = 0x005F6690  TechnoClass_IsDead
+    +0x374 = 0x0041B9F0  sub_41B9F0
+    +0x378 = 0x0041BB30  AircraftClass_SetNewTarget
+
+### candidate  base=0x007E22A4
+    +0x000 = 0x00414290  AircraftClass_QueryInterface
+    +0x004 = 0x004142F0  AircraftClass_AddRef
+    +0x008 = 0x00414300  AircraftClass_Release
+    +0x02C = 0x0041C180  AircraftClass_GetAbstractDerivationID
+    +0x144 = 0x00417BD0  AircraftClass_ClickedMission
+    +0x184 = 0x005B3040  TechnoClass_184
+    +0x1C4 = 0x005F6A10  TechnoClass_GetCell1
+    +0x1C8 = 0x005F5F40  TechnoClass_GetHeight
+    +0x374 = 0x006FFE00  TechnoClass_374
+    +0x378 = 0x00417CA0  sub_417CA0
+
+### candidate  base=0x007E8C94
+    +0x000 = 0x00410260  AbstractClass_QueryInterface
+    +0x004 = 0x00410300  AbstractClass_AddRef
+    +0x008 = 0x00410310  AbstractClass_Release
+    +0x02C = 0x004C9150  purecall
+    +0x144 = 0x004D74E0  FootClass_ClickedMission
+    +0x184 = 0x005B3040  TechnoClass_184
+    +0x1C4 = 0x005F6A10  TechnoClass_GetCell1
+    +0x1C8 = 0x005F5F40  TechnoClass_GetHeight
+    +0x374 = 0x006FFE00  TechnoClass_374
+    +0x378 = 0x006FFBE0  W?Player_Assign_Mission$:TechnoClass$n($MissionType$$ll)v
+
+### candidate  base=0x007EB058
+    +0x000 = 0x00410260  AbstractClass_QueryInterface
+    +0x004 = 0x00410300  AbstractClass_AddRef
+    +0x008 = 0x00410310  AbstractClass_Release
+    +0x02C = 0x00523340  InfantryClass_GetAbstractDerivationID
+    +0x144 = 0x0051F190  InfantryClass_ClickedMission
+    +0x184 = 0x005B3040  TechnoClass_184
+    +0x1C4 = 0x005F6A10  TechnoClass_GetCell1
+    +0x1C8 = 0x005F5F40  TechnoClass_GetHeight
+    +0x374 = 0x006FFE00  TechnoClass_374
+    +0x378 = 0x006FFBE0  W?Player_Assign_Mission$:TechnoClass$n($MissionType$$ll)v
+
+### candidate  base=0x007F4960
+    +0x000 = 0x00410260  AbstractClass_QueryInterface
+    +0x004 = 0x00410300  AbstractClass_AddRef
+    +0x008 = 0x00410310  AbstractClass_Release
+    +0x02C = 0x004C9150  purecall
+    +0x144 = 0x005F4350  ObjectClass_ClickedMission
+    +0x184 = 0x005B3040  TechnoClass_184
+    +0x1C4 = 0x005F6A10  TechnoClass_GetCell1
+    +0x1C8 = 0x005F5F40  TechnoClass_GetHeight
+    +0x374 = 0x006FFE00  TechnoClass_374
+    +0x378 = 0x006FFBE0  W?Player_Assign_Mission$:TechnoClass$n($MissionType$$ll)v
+
+### candidate  base=0x007F5C70
+    +0x000 = 0x00410260  AbstractClass_QueryInterface
+    +0x004 = 0x00410300  AbstractClass_AddRef
+    +0x008 = 0x00410310  AbstractClass_Release
+    +0x02C = 0x00746E20  UnitClass_GetAbstractDerivationID
+    +0x144 = 0x00738890  UnitClass_ClickedMission
+    +0x184 = 0x005B3040  TechnoClass_184
+    +0x1C4 = 0x005F6A10  TechnoClass_GetCell1
+    +0x1C8 = 0x005F5F40  TechnoClass_GetHeight
+    +0x374 = 0x006FFE00  TechnoClass_374
+    +0x378 = 0x006FFBE0  W?Player_Assign_Mission$:TechnoClass$n($MissionType$$ll)v
+
+### candidate  base=0x007E3EBC
+    +0x000 = 0x00410260  AbstractClass_QueryInterface
+    +0x004 = 0x00410300  AbstractClass_AddRef
+    +0x008 = 0x00410310  AbstractClass_Release
+    +0x02C = 0x00459EC0  BuildingClass_2C
+    +0x144 = 0x00443410  W?Active_Click_With$:BuildingClass$n($ActionType$$s)v
+    +0x184 = 0x005B3040  TechnoClass_184
+    +0x1C4 = 0x005F6A10  TechnoClass_GetCell1
+    +0x1C8 = 0x005F5F40  TechnoClass_GetHeight
+    +0x374 = 0x006FFE00  TechnoClass_374
+    +0x378 = 0x006FFBE0  W?Player_Assign_Mission$:TechnoClass$n($MissionType$$ll)v
+
+[search .rdata for vtables whose +0x2C name contains Aircraft]
+   base=0x007E2868 whatami=AircraftTypeClass_GetAbstractDerivationID  +1C4=0x00410580 AbstractClass_INoticeSinkUnknown  +378=0x20202020 
+[also: any .rdata dword == 0x6FFBE0]
+   0x007E4234
+   0x007E900C
+   0x007EB3D0
+   0x007F4CD8
+   0x007F5FE8
+[done]

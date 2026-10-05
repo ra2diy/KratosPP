@@ -1,0 +1,308 @@
+[.rdata] 007E1608-00812000  QI=0x00410260 AbstractClass_QueryInterface
+[vtables with recognised WhatAmI implementation] 65
+
+  vt=0x007E2868  class=AircraftTypeClass_GetAbstractDerivationID       +1C4=0x00410580 AbstractClass_INoticeSinkU  +378=0x20202020 
+  vt=0x007E29A8  class=AirstrikeClass_GetAbstractDerivationID          +1C4=0x20202020                             +378=0xDBDBDBDB 
+  vt=0x007E2A50  class=AITriggerTypeClass_GetAbstractDerivationID      +1C4=0x20202020                             +378=0xDBDBDBDB 
+  vt=0x007E32A4  class=AlphaShapeClass_GetAbstractDerivationID         +1C4=0x00422CA0 AnimClass_Draw              +378=0x00428800 AnimTypeClass_Load
+  vt=0x007E3354  class=AnimClass_GetAbstractDerivationID               +1C4=0x005F6A10 TechnoClass_GetCell1        +378=0xD1AFDD24 
+  vt=0x007E3608  class=AnimTypeClass_GetAbstractDerivationID           +1C4=0x0042DB60 sub_42DB60                  +378=0x28272625 
+  vt=0x007E3AD0  class=BuildingLightClass_GetAbstractDerivationID      +1C4=0x005F6A10 TechnoClass_GetCell1        +378=0x00410540 AbstractClass_GetCoords_1arg
+  vt=0x007E3D10  class=BombClass_GetAbstractDerivationID               +1C4=0x00454190 BuildingClass_18            +378=0x005F5FA0 TechnoClass_SetHeight
+  vt=0x007E3DF0  class=NeuronClass_GetAbstractDerivationID             +1C4=0x005F65F0 W?Detach$:ObjectClass$n(pn  +378=0x00458DB0 BuildingClass_2AC
+  vt=0x007E3EBC  class=BuildingClass_2C                                +1C4=0x005F6A10 TechnoClass_GetCell1        +378=0x006FFBE0 W?Player_Assign_Mission$:TechnoClass$n($
+  vt=0x007E4570  class=BuildingTypeClass_GetAbstractDerivationID       +1C4=0x005F6B60 TechnoClass_OnFloor         +378=0x77777777 
+  vt=0x007E46E4  class=BulletClass_GetAbstractDerivationID             +1C4=0x005F6A10 TechnoClass_GetCell1        +378=0x0046CFC0 CampaignClass_GetCRC
+  vt=0x007E4948  class=BulletTypeClass_GetAbstractDerivationID         +1C4=0x00472B30 sub_472B30                  +378=0x0081859C aDamage
+  vt=0x007E4A28  class=CampaignClass_GetAbstractDerivationID           +1C4=0x3F91DF46                             +378=0x00477790 ??_GFilePipe@@UAEPAXI@Z
+  vt=0x007E4B40  class=CaptureManagerClass_GetAbstractDerivationID     +1C4=0x0081BDDC aFollowWaypoint             +378=0x000000FE 
+  vt=0x007E4EEC  class=CellClass_GetAbstractDerivationID               +1C4=0x004E1A00 Gadget_5C                   +378=0x0081D9CC aSpeed
+  vt=0x007E5FB8  class=DiskLaserClass_GetAbstractDerivationID          +1C4=0x004AEBE0 sub_4AEBE0                  +378=0x00000000 
+  vt=0x007E87A8  class=EMPulseClass_GetAbstractDerivationID            +1C4=0x004CA8E0 sub_4CA8E0                  +378=0x004105F0 j_AbstractClass_AddRef
+  vt=0x007E88D0  class=FactoryClass_GetAbstractDerivationID            +1C4=0x004B6630 LocomotionClass_ILocomotio  +378=0x004E0CE0 sub_4E0CE0
+  vt=0x007E8B38  class=FoggedObjectClass_GetAbstractDerivationID       +1C4=0x004DA4E0 W?Visual_Character$:FootCl  +378=0x004D5070 FootClass_Guard
+  vt=0x007EB058  class=InfantryClass_GetAbstractDerivationID           +1C4=0x005F6A10 TechnoClass_GetCell1        +378=0x006FFBE0 W?Player_Assign_Mission$:TechnoClass$n($
+  vt=0x007EB610  class=InfantryTypeClass_GetAbstractDerivationID       +1C4=0xD39103C9                             +378=0x00803980 ??_R4CombatantSelectCommandClass@@6B@
+  vt=0x007EC258  class=IsometricTileClass_GetAbstractDerivationID      +1C4=0x005F6A10 TechnoClass_GetCell1        +378=0xDBDBDBDB 
+  vt=0x007ECC48  class=IsometricTileTypeClass_GetAbstractDerivationID  +1C4=0x004B6640 LocomotionClass_ILocomotio  +378=0x00555520 sub_555520
+  vt=0x007ED028  class=LightSourceClass_GetAbstractDerivationID        +1C4=0x00558470 sub_558470                  +378=0x00000000 
+  vt=0x007EF3D4  class=OverlayClass_GetAbstractDerivationID            +1C4=0x005F6A10 TechnoClass_GetCell1        +378=0x00807888 ??_R4?$DynamicVectorClass@VHSVClass@@@@6
+  vt=0x007EF600  class=OverlayTypeClass_GetAbstractDerivationID        +1C4=0x00627F70 sub_627F70                  +378=0x00410470 AbstractClass_Init
+  vt=0x007EF890  class=ParasiteClass_GetAbstractDerivationID           +1C4=0x005F4320 ObjectClass_KickOutUnit     +378=0x005F3E30 ObjectClass_GetImage
+  vt=0x007EF954  class=ParticleClass_GetAbstractDerivationID           +1C4=0x005F6A10 TechnoClass_GetCell1        +378=0x0041BE80 ObjectClass_DrawRadialIndicator
+  vt=0x007EFB9C  class=ParticleSystemClass_GetAbstractDerivationID     +1C4=0x005F6A10 TechnoClass_GetCell1        +378=0x0063DE60 sub_63DE60
+  vt=0x007F00A8  class=ParticleSystemTypeClass_GetAbstractDerivationI  +1C4=0x0083727C aPowerFacilitie             +378=0x430C0000 
+  vt=0x007F0188  class=ParticleTypeClass_GetAbstractDerivationID       +1C4=0x0040D240 GScreenClass_Release        +378=0x00410230 W?Create_ID$:IRTTITypeInfo$:AbstractClas
+  vt=0x007F0810  class=RadSiteClass_GetAbstractDerivationID            +1C4=0x00000001                             +378=0x0055AB80 LocomotionClass_ILocomotion_Shove
+  vt=0x007F0F78  class=ScriptClass_GetAbstractDerivationID             +1C4=0x004A8960 W?Set_View_Dimensions$:Dis  +378=0xCCCCCCCD 
+  vt=0x007F1008  class=ScriptTypeClass_GetAbstractDerivationID         +1C4=0x0069C6B0 sub_69C6B0                  +378=0x00000000 
+  vt=0x007F2EC0  class=SideClass_GetAbstractDerivationID               +1C4=0x004F43F0 sub_4F43F0                  +378=0x006B13B0 sub_6B13B0
+  vt=0x007F31C8  class=SlaveManagerClass_GetAbstractDerivationID       +1C4=0x004263C0 ObjectClass_GetUIName       +378=0x006B58B0 SmudgeTypeClass_Save
+  vt=0x007F32FC  class=SmudgeClass_GetAbstractDerivationID             +1C4=0x005F6A10 TechnoClass_GetCell1        +378=0x00410470 AbstractClass_Init
+  vt=0x007F3528  class=SmudgeTypeClass_GetAbstractDerivationID         +1C4=0x006B81B0 sub_6B81B0                  +378=0x006C01D0 sub_6C01D0
+  vt=0x007F3650  class=SpawnManagerClass_GetAbstractDerivationID       +1C4=0x006BF940 sub_6BF940                  +378=0x006C1460 sub_6C1460
+  vt=0x007F3FE8  class=SuperClass_GetAbstractDerivationID              +1C4=0x06061A04                             +378=0x006DBE00 TacticalClass_Save
+  vt=0x007F4090  class=SuperWeaponTypeClass_GetAbstractDerivationID    +1C4=0x03030101                             +378=0x006E4840 sub_6E4840
+  vt=0x007F443C  class=TActionClass_GetAbstractDerivationID            +1C4=0x004104A0 AbstractClass_GetOwningHou  +378=0x004105E0 AbstractClass_QueryInterface_0
+  vt=0x007F44E0  class=TagClass_GetAbstractDerivationID                +1C4=0x00410470 AbstractClass_Init          +378=0x006F2210 sub_6F2210
+  vt=0x007F45C4  class=TagTypeClass_GetAbstractDerivationID            +1C4=0x00410540 AbstractClass_GetCoords_1a  +378=0x00410580 AbstractClass_INoticeSinkUnknown
+  vt=0x007F4680  class=TaskForceClass_GetAbstractDerivationID          +1C4=0x006F2290 sub_6F2290                  +378=0x005F42C0 ObjectClass_IsSellable
+  vt=0x007F4730  class=TeamClass_GetAbstractDerivationID               +1C4=0x00000003                             +378=0x006F9DD0 TechnoClass_BlinkDisguise
+  vt=0x007F47D0  class=TeamTypeClass_GetAbstractDerivationID           +1C4=0x0070C270 TechnoClass_GetCRC          +378=0x005B35E0 W?Assign_Mission$:MissionClass$n($Missio
+  vt=0x007F5180  class=TemporalClass_GetAbstractDerivationID           +1C4=0x0071C360 TerrainClass_118            +378=0x00000000 
+  vt=0x007F522C  class=TerrainClass_GetAbstractDerivationID            +1C4=0x005F6A10 TechnoClass_GetCell1        +378=0x0071FA60 TEventClass_GetAbstractDerivationID
+  vt=0x007F5458  class=TerrainTypeClass_GetAbstractDerivationID        +1C4=0x004E1450 Gadget_40                   +378=0x00724E10 sub_724E10
+  vt=0x007F5578  class=TEventClass_GetAbstractDerivationID             +1C4=0x00721E80 TiberiumClass_Load          +378=0x00410600 j_AbstractClass_Release
+  vt=0x007F5728  class=TiberiumClass_GetAbstractDerivationID           +1C4=0x004105F0 j_AbstractClass_AddRef      +378=0x0055ACE0 LocomotionClass_ILocomotion_ForceNewSlop
+  vt=0x007F5858  class=TriggerClass_GetAbstractDerivationID            +1C4=0x3F91DF46                             +378=0x00000000 
+  vt=0x007F5904  class=TriggerTypeClass_GetAbstractDerivationID        +1C4=0x004B6640 LocomotionClass_ILocomotio  +378=0x00746DE0 UnitClass_GetClassID
+  vt=0x007F59B0  class=TubeClass_GetAbstractDerivationID               +1C4=0x004E14C0 Gadget_30                   +378=0x005F6BD0 ObjectClass_ReturnRealYSort
+  vt=0x007F5C70  class=UnitClass_GetAbstractDerivationID               +1C4=0x005F6A10 TechnoClass_GetCell1        +378=0x006FFBE0 W?Player_Assign_Mission$:TechnoClass$n($
+  vt=0x007F6218  class=UnitTypeClass_GetAbstractDerivationID           +1C4=0x00426420 ObjectClass_IsDisguised     +378=0x004104C0 AbstractClass_GetCoords
+  vt=0x007F6318  class=VoxelAnimClass_GetAbstractDerivationID          +1C4=0x005F6A10 TechnoClass_GetCell1        +378=0x004105F0 j_AbstractClass_AddRef
+  vt=0x007F6548  class=VoxelAnimTypeClass_GetAbstractDerivationID      +1C4=0x00426390 ObjectClass_IsSelectable    +378=0x00751900 sub_751900
+  vt=0x007F66A8  class=VeinholeMonsterClass_GetAbstractDerivationID    +1C4=0x005F6A10 TechnoClass_GetCell1        +378=0x0055A7D0 LocomotionClass_ILocomotion_ShadowMatrix
+  vt=0x007F6B30  class=WarheadTypeClass_GetAbstractDerivationID        +1C4=0x005F4320 ObjectClass_KickOutUnit     +378=0x00410490 AbstractClass_GetOwningHouseIndex
+  vt=0x007F6BF4  class=WaveClass_GetAbstractDerivationID               +1C4=0x005F6A10 TechnoClass_GetCell1        +378=0x00765710 ??_G?$rc_ptr@VCampaignProperties@WorldDo
+  vt=0x007F6E70  class=WaypointPathClass_GetAbstractDerivationID       +1C4=0x00766FA0 sub_766FA0                  +378=0x0076A3F0 sub_76A3F0
+  vt=0x007F73B8  class=WeaponTypeClass_GetAbstractDerivationID         +1C4=0x2143C597                             +378=0x007AB3C0 sub_7AB3C0
+
+====================================================================================================
+### +0x1C4 (slot 113) : expected engine target 0x005F6A10
+  0x005F6A10  x15   SAME for all below
+        AnimClass_GetAbstractDerivationID
+        BuildingClass_2C
+        BuildingLightClass_GetAbstractDerivationID
+        BulletClass_GetAbstractDerivationID
+        InfantryClass_GetAbstractDerivationID
+        IsometricTileClass_GetAbstractDerivationID
+        OverlayClass_GetAbstractDerivationID
+        ParticleClass_GetAbstractDerivationID
+        ParticleSystemClass_GetAbstractDerivationID
+        SmudgeClass_GetAbstractDerivationID
+        TerrainClass_GetAbstractDerivationID
+        UnitClass_GetAbstractDerivationID
+        VeinholeMonsterClass_GetAbstractDerivationID
+        VoxelAnimClass_GetAbstractDerivationID
+        WaveClass_GetAbstractDerivationID
+  0x20202020  x2    SAME for all below
+        AITriggerTypeClass_GetAbstractDerivationID
+        AirstrikeClass_GetAbstractDerivationID
+  0x3F91DF46  x2    SAME for all below
+        CampaignClass_GetAbstractDerivationID
+        TriggerClass_GetAbstractDerivationID
+  0x004B6640  x2    SAME for all below
+        IsometricTileTypeClass_GetAbstractDerivationID
+        TriggerTypeClass_GetAbstractDerivationID
+  0x005F4320  x2    SAME for all below
+        ParasiteClass_GetAbstractDerivationID
+        WarheadTypeClass_GetAbstractDerivationID
+  0x00410580  x1    SAME for all below
+        AircraftTypeClass_GetAbstractDerivationID
+  0x00422CA0  x1    SAME for all below
+        AlphaShapeClass_GetAbstractDerivationID
+  0x0042DB60  x1    SAME for all below
+        AnimTypeClass_GetAbstractDerivationID
+  0x00454190  x1    SAME for all below
+        BombClass_GetAbstractDerivationID
+  0x005F65F0  x1    SAME for all below
+        NeuronClass_GetAbstractDerivationID
+  0x005F6B60  x1    SAME for all below
+        BuildingTypeClass_GetAbstractDerivationID
+  0x00472B30  x1    SAME for all below
+        BulletTypeClass_GetAbstractDerivationID
+  0x0081BDDC  x1    SAME for all below
+        CaptureManagerClass_GetAbstractDerivationID
+  0x004E1A00  x1    SAME for all below
+        CellClass_GetAbstractDerivationID
+  0x004AEBE0  x1    SAME for all below
+        DiskLaserClass_GetAbstractDerivationID
+  0x004CA8E0  x1    SAME for all below
+        EMPulseClass_GetAbstractDerivationID
+  0x004B6630  x1    SAME for all below
+        FactoryClass_GetAbstractDerivationID
+  0x004DA4E0  x1    SAME for all below
+        FoggedObjectClass_GetAbstractDerivationID
+  0xD39103C9  x1    SAME for all below
+        InfantryTypeClass_GetAbstractDerivationID
+  0x00558470  x1    SAME for all below
+        LightSourceClass_GetAbstractDerivationID
+  0x00627F70  x1    SAME for all below
+        OverlayTypeClass_GetAbstractDerivationID
+  0x0083727C  x1    SAME for all below
+        ParticleSystemTypeClass_GetAbstractDerivationID
+  0x0040D240  x1    SAME for all below
+        ParticleTypeClass_GetAbstractDerivationID
+  0x00000001  x1    SAME for all below
+        RadSiteClass_GetAbstractDerivationID
+  0x004A8960  x1    SAME for all below
+        ScriptClass_GetAbstractDerivationID
+  0x0069C6B0  x1    SAME for all below
+        ScriptTypeClass_GetAbstractDerivationID
+  0x004F43F0  x1    SAME for all below
+        SideClass_GetAbstractDerivationID
+  0x004263C0  x1    SAME for all below
+        SlaveManagerClass_GetAbstractDerivationID
+  0x006B81B0  x1    SAME for all below
+        SmudgeTypeClass_GetAbstractDerivationID
+  0x006BF940  x1    SAME for all below
+        SpawnManagerClass_GetAbstractDerivationID
+  0x06061A04  x1    SAME for all below
+        SuperClass_GetAbstractDerivationID
+  0x03030101  x1    SAME for all below
+        SuperWeaponTypeClass_GetAbstractDerivationID
+  0x004104A0  x1    SAME for all below
+        TActionClass_GetAbstractDerivationID
+  0x00410470  x1    SAME for all below
+        TagClass_GetAbstractDerivationID
+  0x00410540  x1    SAME for all below
+        TagTypeClass_GetAbstractDerivationID
+  0x006F2290  x1    SAME for all below
+        TaskForceClass_GetAbstractDerivationID
+  0x00000003  x1    SAME for all below
+        TeamClass_GetAbstractDerivationID
+  0x0070C270  x1    SAME for all below
+        TeamTypeClass_GetAbstractDerivationID
+  0x0071C360  x1    SAME for all below
+        TemporalClass_GetAbstractDerivationID
+  0x004E1450  x1    SAME for all below
+        TerrainTypeClass_GetAbstractDerivationID
+  0x00721E80  x1    SAME for all below
+        TEventClass_GetAbstractDerivationID
+  0x004105F0  x1    SAME for all below
+        TiberiumClass_GetAbstractDerivationID
+  0x004E14C0  x1    SAME for all below
+        TubeClass_GetAbstractDerivationID
+  0x00426420  x1    SAME for all below
+        UnitTypeClass_GetAbstractDerivationID
+  0x00426390  x1    SAME for all below
+        VoxelAnimTypeClass_GetAbstractDerivationID
+  0x00766FA0  x1    SAME for all below
+        WaypointPathClass_GetAbstractDerivationID
+  0x2143C597  x1    SAME for all below
+        WeaponTypeClass_GetAbstractDerivationID
+
+====================================================================================================
+### +0x378 (slot 222) : expected engine target 0x006FFBE0
+  0x00000000  x5    SAME for all below
+        DiskLaserClass_GetAbstractDerivationID
+        LightSourceClass_GetAbstractDerivationID
+        ScriptTypeClass_GetAbstractDerivationID
+        TemporalClass_GetAbstractDerivationID
+        TriggerClass_GetAbstractDerivationID
+  0xDBDBDBDB  x3    SAME for all below
+        AITriggerTypeClass_GetAbstractDerivationID
+        AirstrikeClass_GetAbstractDerivationID
+        IsometricTileClass_GetAbstractDerivationID
+  0x006FFBE0  x3    SAME for all below
+        BuildingClass_2C
+        InfantryClass_GetAbstractDerivationID
+        UnitClass_GetAbstractDerivationID
+  0x004105F0  x2    SAME for all below
+        EMPulseClass_GetAbstractDerivationID
+        VoxelAnimClass_GetAbstractDerivationID
+  0x00410470  x2    SAME for all below
+        OverlayTypeClass_GetAbstractDerivationID
+        SmudgeClass_GetAbstractDerivationID
+  0x20202020  x1    SAME for all below
+        AircraftTypeClass_GetAbstractDerivationID
+  0x00428800  x1    SAME for all below
+        AlphaShapeClass_GetAbstractDerivationID
+  0xD1AFDD24  x1    SAME for all below
+        AnimClass_GetAbstractDerivationID
+  0x28272625  x1    SAME for all below
+        AnimTypeClass_GetAbstractDerivationID
+  0x00410540  x1    SAME for all below
+        BuildingLightClass_GetAbstractDerivationID
+  0x005F5FA0  x1    SAME for all below
+        BombClass_GetAbstractDerivationID
+  0x00458DB0  x1    SAME for all below
+        NeuronClass_GetAbstractDerivationID
+  0x77777777  x1    SAME for all below
+        BuildingTypeClass_GetAbstractDerivationID
+  0x0046CFC0  x1    SAME for all below
+        BulletClass_GetAbstractDerivationID
+  0x0081859C  x1    SAME for all below
+        BulletTypeClass_GetAbstractDerivationID
+  0x00477790  x1    SAME for all below
+        CampaignClass_GetAbstractDerivationID
+  0x000000FE  x1    SAME for all below
+        CaptureManagerClass_GetAbstractDerivationID
+  0x0081D9CC  x1    SAME for all below
+        CellClass_GetAbstractDerivationID
+  0x004E0CE0  x1    SAME for all below
+        FactoryClass_GetAbstractDerivationID
+  0x004D5070  x1    SAME for all below
+        FoggedObjectClass_GetAbstractDerivationID
+  0x00803980  x1    SAME for all below
+        InfantryTypeClass_GetAbstractDerivationID
+  0x00555520  x1    SAME for all below
+        IsometricTileTypeClass_GetAbstractDerivationID
+  0x00807888  x1    SAME for all below
+        OverlayClass_GetAbstractDerivationID
+  0x005F3E30  x1    SAME for all below
+        ParasiteClass_GetAbstractDerivationID
+  0x0041BE80  x1    SAME for all below
+        ParticleClass_GetAbstractDerivationID
+  0x0063DE60  x1    SAME for all below
+        ParticleSystemClass_GetAbstractDerivationID
+  0x430C0000  x1    SAME for all below
+        ParticleSystemTypeClass_GetAbstractDerivationID
+  0x00410230  x1    SAME for all below
+        ParticleTypeClass_GetAbstractDerivationID
+  0x0055AB80  x1    SAME for all below
+        RadSiteClass_GetAbstractDerivationID
+  0xCCCCCCCD  x1    SAME for all below
+        ScriptClass_GetAbstractDerivationID
+  0x006B13B0  x1    SAME for all below
+        SideClass_GetAbstractDerivationID
+  0x006B58B0  x1    SAME for all below
+        SlaveManagerClass_GetAbstractDerivationID
+  0x006C01D0  x1    SAME for all below
+        SmudgeTypeClass_GetAbstractDerivationID
+  0x006C1460  x1    SAME for all below
+        SpawnManagerClass_GetAbstractDerivationID
+  0x006DBE00  x1    SAME for all below
+        SuperClass_GetAbstractDerivationID
+  0x006E4840  x1    SAME for all below
+        SuperWeaponTypeClass_GetAbstractDerivationID
+  0x004105E0  x1    SAME for all below
+        TActionClass_GetAbstractDerivationID
+  0x006F2210  x1    SAME for all below
+        TagClass_GetAbstractDerivationID
+  0x00410580  x1    SAME for all below
+        TagTypeClass_GetAbstractDerivationID
+  0x005F42C0  x1    SAME for all below
+        TaskForceClass_GetAbstractDerivationID
+  0x006F9DD0  x1    SAME for all below
+        TeamClass_GetAbstractDerivationID
+  0x005B35E0  x1    SAME for all below
+        TeamTypeClass_GetAbstractDerivationID
+  0x0071FA60  x1    SAME for all below
+        TerrainClass_GetAbstractDerivationID
+  0x00724E10  x1    SAME for all below
+        TerrainTypeClass_GetAbstractDerivationID
+  0x00410600  x1    SAME for all below
+        TEventClass_GetAbstractDerivationID
+  0x0055ACE0  x1    SAME for all below
+        TiberiumClass_GetAbstractDerivationID
+  0x00746DE0  x1    SAME for all below
+        TriggerTypeClass_GetAbstractDerivationID
+  0x005F6BD0  x1    SAME for all below
+        TubeClass_GetAbstractDerivationID
+  0x004104C0  x1    SAME for all below
+        UnitTypeClass_GetAbstractDerivationID
+  0x00751900  x1    SAME for all below
+        VoxelAnimTypeClass_GetAbstractDerivationID
+  0x0055A7D0  x1    SAME for all below
+        VeinholeMonsterClass_GetAbstractDerivationID
+  0x00410490  x1    SAME for all below
+        WarheadTypeClass_GetAbstractDerivationID
+  0x00765710  x1    SAME for all below
+        WaveClass_GetAbstractDerivationID
+  0x0076A3F0  x1    SAME for all below
+        WaypointPathClass_GetAbstractDerivationID
+  0x007AB3C0  x1    SAME for all below
+        WeaponTypeClass_GetAbstractDerivationID
+
+[done]

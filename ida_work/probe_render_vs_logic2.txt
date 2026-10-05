@@ -1,0 +1,1737 @@
+idb = D:\Workspace\ra2mod\platform\gamemd\gamemd.idb   hexrays=True
+====================================================================================================
+R1) dword_A8EDA0 / arg_ATTRACT_Flags / GameInFocus / Scenario->field_62C 的读写点
+====================================================================================================
+
+---- xrefs of dword_A8EDA0 (00A8EDA0) = dword_A8EDA0 ----
+   DATA 0048C8B0 type=3 in sub_48C8B0 : mov     eax, dword_A8EDA0
+   DATA 0048C951 type=3 in sub_48C8B0 : mov     eax, dword_A8EDA0
+   DATA 0048C97A type=3 in sub_48C8B0 : mov     eax, dword_A8EDA0
+   DATA 0048C98A type=2 in sub_48C8B0 : mov     dword_A8EDA0, ebp
+   DATA 0048C9A2 type=3 in sub_48C8B0 : mov     eax, dword_A8EDA0
+   DATA 0048C9BF type=3 in sub_48C8B0 : mov     eax, dword_A8EDA0
+   DATA 0048C9D2 type=3 in sub_48C8B0 : mov     eax, dword_A8EDA0
+   DATA 0048C9E1 type=2 in sub_48C8B0 : mov     dword_A8EDA0, eax
+   DATA 0048C9F9 type=2 in sub_48C8B0 : mov     dword_A8EDA0, eax
+   DATA 0048CA12 type=2 in sub_48C8B0 : mov     dword_A8EDA0, eax
+   DATA 0048CC31 type=2 in sub_48C8B0 : mov     dword_A8EDA0, ebp; default
+   DATA 0048CE6D type=2 in Main_Game : mov     dword_A8EDA0, ebx
+   DATA 004C7939 type=2 in Networking_RespondToEvent : mov     dword_A8EDA0, 1
+   DATA 004C7A14 type=3 in Networking_RespondToEvent : mov     eax, dword_A8EDA0; case 0x1C
+   DATA 004C80FF type=2 in Networking_RespondToEvent : mov     dword_A8EDA0, 7
+   DATA 004E237E type=2 in sub_4E1FE0 : mov     dword_A8EDA0, 6
+   DATA 004E23A3 type=2 in sub_4E1FE0 : mov     dword_A8EDA0, 4
+   DATA 004E23FC type=2 in sub_4E23C0 : mov     dword_A8EDA0, 6
+   DATA 004E2420 type=2 in sub_4E23C0 : mov     dword_A8EDA0, 4
+   DATA 004F14E2 type=2 in sub_4F11B0 : mov     dword_A8EDA0, 5
+   DATA 004F16D2 type=2 in sub_4F11B0 : mov     dword_A8EDA0, 2
+   DATA 004F16E0 type=2 in sub_4F11B0 : mov     dword_A8EDA0, 3
+   DATA 0055D883 type=3 in W?Main_Loop$n()i : mov     eax, dword_A8EDA0
+   DATA 0055E1F8 type=3 in sub_55E160 : cmp     dword_A8EDA0, ebp
+   DATA 0064859A type=3 in sub_648350 : mov     eax, dword_A8EDA0
+   DATA 006497F9 type=3 in sub_648710 : mov     eax, dword_A8EDA0
+   DATA 0065393A type=2 in RadarClass_MouseMove : mov     dword_A8EDA0, 8
+   DATA 00653946 type=2 in RadarClass_MouseMove : mov     dword_A8EDA0, 9
+   DATA 00653959 type=2 in RadarClass_MouseMove : mov     dword_A8EDA0, 1
+   DATA 006ABC49 type=2 in sub_6ABC40 : mov     dword_A8EDA0, 8
+   DATA 00759CD8 type=3 in VQAClass_AdvanceFrame : mov     eax, dword_A8EDA0
+   DATA 007776B5 type=3 in W?Windows_Procedure$n(pnvuiuil)l : cmp     dword_A8EDA0, ebx; jumptable 007776AE case 15
+
+---- xrefs of arg_ATTRACT_Flags (00A8D5F8) = arg_ATTRACT_Flags ----
+   DATA 0048CE0D type=3 in Main_Game : test    byte ptr arg_ATTRACT_Flags, 2
+   DATA 0048CF0E type=3 in Main_Game : test    byte ptr arg_ATTRACT_Flags, 3
+   DATA 0048CF35 type=3 in Main_Game : test    byte ptr arg_ATTRACT_Flags, 2
+   DATA 0048CF45 type=3 in Main_Game : test    byte ptr arg_ATTRACT_Flags, 2
+   DATA 0048CF6B type=3 in Main_Game : test    byte ptr arg_ATTRACT_Flags, 2
+   DATA 0048CF7E type=3 in Main_Game : test    byte ptr arg_ATTRACT_Flags, 2
+   DATA 0048CF87 type=3 in Main_Game : mov     eax, arg_ATTRACT_Flags
+   DATA 0048CF9A type=2 in Main_Game : mov     arg_ATTRACT_Flags, eax
+   DATA 004C7929 type=3 in Networking_RespondToEvent : test    byte ptr arg_ATTRACT_Flags, 2; case 0xB
+   DATA 004C80F6 type=3 in Networking_RespondToEvent : test    byte ptr arg_ATTRACT_Flags, 2; case 0x21
+   DATA 0052DB33 type=3 in W?Select_Game$n(i)i : test    byte ptr arg_ATTRACT_Flags, 2
+   DATA 0052DC34 type=3 in W?Select_Game$n(i)i : mov     eax, arg_ATTRACT_Flags
+   DATA 0052DC3B type=2 in W?Select_Game$n(i)i : mov     arg_ATTRACT_Flags, eax
+   DATA 0052DCE8 type=3 in W?Select_Game$n(i)i : test    byte ptr arg_ATTRACT_Flags, 4; case -0x1
+   DATA 0052DD00 type=3 in W?Select_Game$n(i)i : mov     edi, arg_ATTRACT_Flags
+   DATA 0052DD10 type=2 in W?Select_Game$n(i)i : mov     arg_ATTRACT_Flags, edi
+   DATA 0052DD23 type=3 in W?Select_Game$n(i)i : mov     eax, arg_ATTRACT_Flags
+   DATA 0052DD2A type=2 in W?Select_Game$n(i)i : mov     arg_ATTRACT_Flags, eax
+   DATA 0052E6F1 type=3 in W?Select_Game$n(i)i : test    byte ptr arg_ATTRACT_Flags, 2
+   DATA 0052E878 type=3 in W?Select_Game$n(i)i : test    byte ptr arg_ATTRACT_Flags, 1
+   DATA 0052E963 type=3 in W?Select_Game$n(i)i : mov     eax, arg_ATTRACT_Flags
+   DATA 0052E96A type=2 in W?Select_Game$n(i)i : mov     arg_ATTRACT_Flags, eax
+   DATA 0052E9C3 type=3 in W?Select_Game$n(i)i : test    byte ptr arg_ATTRACT_Flags, 2
+   DATA 0052F9EB type=3 in ProcessArguments : mov     eax, arg_ATTRACT_Flags
+   DATA 0052F9F2 type=2 in ProcessArguments : mov     arg_ATTRACT_Flags, eax
+   DATA 0052FC42 type=3 in sub_52FC20 : test    byte ptr arg_ATTRACT_Flags, 2
+   DATA 0055D463 type=3 in W?Main_Loop$n()i : test    byte ptr arg_ATTRACT_Flags, 2
+   DATA 0055D878 type=3 in W?Main_Loop$n()i : mov     ecx, arg_ATTRACT_Flags
+   DATA 0055D8F7 type=3 in W?Main_Loop$n()i : mov     ecx, arg_ATTRACT_Flags
+   DATA 0055DA42 type=3 in W?Main_Loop$n()i : mov     ecx, arg_ATTRACT_Flags
+   DATA 005F0040 type=3 in sub_5F0040 : test    byte ptr arg_ATTRACT_Flags, 2
+   DATA 005F0073 type=3 in sub_5F0070 : mov     al, byte ptr arg_ATTRACT_Flags
+   DATA 005F0859 type=3 in sub_5F0690 : mov     al, byte ptr arg_ATTRACT_Flags
+   DATA 005F0945 type=3 in sub_5F0690 : mov     al, byte ptr arg_ATTRACT_Flags
+   DATA 005F0F29 type=3 in sub_5F0D60 : mov     al, byte ptr arg_ATTRACT_Flags
+   DATA 005F1015 type=3 in sub_5F0D60 : mov     al, byte ptr arg_ATTRACT_Flags
+   DATA 00647260 type=3 in sub_647260 : mov     al, byte ptr arg_ATTRACT_Flags
+   DATA 0064729F type=3 in sub_647260 : test    byte ptr arg_ATTRACT_Flags, bl
+   DATA 006472B6 type=3 in sub_647260 : test    byte ptr arg_ATTRACT_Flags, bl
+   DATA 00647586 type=3 in sub_647260 : test    byte ptr arg_ATTRACT_Flags, 1
+   DATA 0064820E type=3 in sub_6475F0 : test    byte ptr arg_ATTRACT_Flags, 1
+   DATA 0064C9C3 type=3 in DoList : test    byte ptr arg_ATTRACT_Flags, 2
+   DATA 00685684 type=3 in sub_685670 : test    byte ptr arg_ATTRACT_Flags, 2
+   DATA 006857FC type=3 in sub_685670 : mov     cl, byte ptr arg_ATTRACT_Flags
+   DATA 0068592D type=3 in sub_685670 : test    byte ptr arg_ATTRACT_Flags, 2
+   DATA 00685DD4 type=3 in sub_685DC0 : test    byte ptr arg_ATTRACT_Flags, 2
+   DATA 00685F4B type=3 in sub_685DC0 : test    byte ptr arg_ATTRACT_Flags, 2
+   DATA 00686089 type=3 in sub_685DC0 : test    byte ptr arg_ATTRACT_Flags, 2
+   DATA 00698A28 type=3 in W?Read_MultiPlayer_Settings$:SessionClass$n()v : mov     al, byte ptr arg_ATTRACT_Flags
+   DATA 006A7D73 type=3 in sub_6A7D70 : mov     cl, byte ptr arg_ATTRACT_Flags
+   DATA 006D2540 type=3 in TacticalClass_Update : mov     al, byte ptr arg_ATTRACT_Flags
+   DATA 00759CCF type=3 in VQAClass_AdvanceFrame : test    byte ptr arg_ATTRACT_Flags, 2
+
+  GameInFocus 地址 = <未找到>
+  Scenario 全局 = 00A8B230
+
+---- xrefs of Scenario->field_62C (00A8B85C) = sub_A8B85C ----
+
+====================================================================================================
+R2) sub_55E160 / sub_48C8B0 / sub_647260（帧内是否还有第二次渲染 / 校验值的调用条件）
+====================================================================================================
+---- sub_55E160 (帧尾) = sub_55E160  [0055E160 - 0055E404] ----
+   0055E160  mov     ecx, spSpeedTimer
+   0055E166  sub     esp, 18h
+   0055E169  push    ebx
+   0055E16A  push    ebp
+   0055E16B  or      ebx, 0FFFFFFFFh
+   0055E16E  xor     ebp, ebp
+   0055E170  push    esi; dwMilliseconds
+   0055E171  mov     esi, dwMilliseconds
+   0055E177  cmp     ecx, ebx
+   0055E179  jz      short loc_55E197
+   0055E17B  mov     ecx, offset dword_88734C
+   0055E180  call    WinTimerClass::Get_System_Tick_Count
+   0055E185  mov     ecx, spSpeedTimer
+   0055E18B  sub     eax, ecx
+   0055E18D  cmp     eax, esi
+   0055E18F  jge     short loc_55E195
+   0055E191  sub     esi, eax
+   0055E193  jmp     short loc_55E197
+   0055E195  xor     esi, esi
+   0055E197  mov     eax, Session
+   0055E19C  push    edi
+   0055E19D  mov     edi, dword_A8E314
+   0055E1A3  add     edi, esi
+   0055E1A5  cmp     eax, ebp
+   0055E1A7  mov     dword_A8E314, edi
+   0055E1AD  jz      loc_55E2B4
+   0055E1B3  cmp     eax, 5
+   0055E1B6  jz      loc_55E2B4
+   0055E1BC  mov     edi, ds:Sleep
+   0055E1C2  mov     eax, TimerNFT.TimeStart
+   0055E1C7  mov     esi, TimerNFT.TimeLeft
+   0055E1CD  cmp     eax, ebx
+   0055E1CF  jz      short loc_55E1EB
+   0055E1D1  mov     ecx, offset TimerNFT.field_4
+   0055E1D6  call    timeGetTime
+   0055E1DB  sub     eax, TimerNFT.TimeStart
+   0055E1E1  cmp     eax, esi
+   0055E1E3  jge     loc_55E33B
+   0055E1E9  sub     esi, eax
+   0055E1EB  cmp     esi, ebp
+   0055E1ED  jz      loc_55E33B
+   0055E1F3  call    Call_Back
+   0055E1F8  cmp     dword_A8EDA0, ebp
+   0055E1FE  jnz     loc_55E2AC
+   0055E204  cmp     GameInFocus, 1
+   0055E20B  jnz     loc_55E2AC
+   0055E211  mov     eax, TimerNFT.TimeStart
+   0055E216  mov     esi, TimerNFT.TimeLeft
+   0055E21C  cmp     eax, ebx
+   0055E21E  mov     [esp+28h+var_18], ebp
+   0055E222  jz      short loc_55E23A
+   0055E224  mov     ecx, offset TimerNFT.field_4
+   0055E229  call    timeGetTime
+   0055E22E  sub     eax, TimerNFT.TimeStart
+   0055E234  cmp     eax, esi
+   0055E236  jge     short loc_55E278
+   0055E238  sub     esi, eax
+   0055E23A  cmp     esi, 0Ah
+   0055E23D  jle     short loc_55E278
+   0055E23F  lea     eax, [esp+28h+var_14]
+   0055E243  lea     ecx, [esp+28h+var_10]
+   0055E247  push    eax
+   0055E248  lea     edx, [esp+2Ch+var_18]
+   0055E24C  push    ecx
+   0055E24D  push    edx
+   0055E24E  mov     ecx, offset Map
+   0055E253  call    GScreenClass::Input
+   0055E258  lea     ecx, [esp+28h+var_18]
+   0055E25C  call    Keyboard_Process
+   0055E261  mov     ecx, TacticalMap
+   0055E267  mov     eax, [ecx]
+   0055E269  call    dword ptr [eax+5Ch]
+   0055E26C  mov     ecx, offset Map; this
+   0055E271  call    GScreenClass_DrawOnTop
+   0055E276  jmp     short loc_55E27B
+   0055E278  push    ebp; dwMilliseconds
+   0055E279  call    edi ; Sleep; ebp
+   0055E27B  mov     eax, TimerNFT.TimeStart
+   0055E280  mov     esi, TimerNFT.TimeLeft
+   0055E286  cmp     eax, ebx
+   0055E288  jz      short loc_55E2A4
+   0055E28A  mov     ecx, offset TimerNFT.field_4
+   0055E28F  call    timeGetTime
+   0055E294  sub     eax, TimerNFT.TimeStart
+   0055E29A  cmp     eax, esi
+   0055E29C  jge     loc_55E33B
+   0055E2A2  sub     esi, eax
+   0055E2A4  cmp     esi, ebp
+   0055E2A6  jz      loc_55E33B
+   0055E2AC  push    ebp; dwMilliseconds
+   0055E2AD  call    edi ; Sleep; ebp
+   0055E2AF  jmp     loc_55E1C2
+   0055E2B4  mov     esi, dwMilliseconds
+   0055E2BA  cmp     ecx, ebx
+   0055E2BC  jz      short loc_55E2D4
+   0055E2BE  mov     ecx, offset dword_88734C
+   0055E2C3  call    WinTimerClass::Get_System_Tick_Count
+   0055E2C8  sub     eax, spSpeedTimer
+   0055E2CE  cmp     eax, esi
+   0055E2D0  jge     short loc_55E33B
+   0055E2D2  sub     esi, eax
+   0055E2D4  cmp     esi, ebp
+   0055E2D6  jz      short loc_55E33B
+   0055E2D8  call    sub_4A4830
+   0055E2DD  mov     edi, ds:Sleep
+   0055E2E3  mov     ecx, spSpeedTimer
+   0055E2E9  mov     esi, dwMilliseconds
+   0055E2EF  cmp     ecx, ebx
+   0055E2F1  jz      short loc_55E30B
+   0055E2F3  mov     ecx, offset dword_88734C
+   0055E2F8  call    WinTimerClass::Get_System_Tick_Count
+   0055E2FD  mov     ecx, spSpeedTimer
+   0055E303  sub     eax, ecx
+   0055E305  cmp     eax, esi
+   0055E307  jge     short loc_55E33B
+   0055E309  sub     esi, eax
+   0055E30B  cmp     esi, ebp
+   0055E30D  jz      short loc_55E33B
+   0055E30F  mov     esi, dwMilliseconds
+   0055E315  cmp     ecx, ebx
+   0055E317  jz      short loc_55E336
+   0055E319  mov     ecx, offset dword_88734C
+   0055E31E  call    WinTimerClass::Get_System_Tick_Count
+   0055E323  sub     eax, spSpeedTimer
+   0055E329  cmp     eax, esi
+   0055E32B  jge     short loc_55E334
+   0055E32D  sub     esi, eax
+   0055E32F  push    esi; dwMilliseconds
+   0055E330  call    edi ; Sleep; esi
+   0055E332  jmp     short loc_55E2E3
+   0055E334  xor     esi, esi
+   0055E336  push    esi; dwMilliseconds
+   0055E337  call    edi ; Sleep; esi
+   0055E339  jmp     short loc_55E2E3
+   0055E33B  mov     al, byte_ABCD94
+   0055E340  pop     edi
+   0055E341  test    al, 1
+   0055E343  jnz     short loc_55E372
+   0055E345  mov     dl, al
+   0055E347  mov     ecx, offset dword_ABCD8C
+   0055E34C  or      dl, 1
+   0055E34F  mov     byte_ABCD94, dl
+   0055E355  call    WinTimerClass::Get_System_Tick_Count
+   0055E35A  mov     dword_ABCD88, eax
+   0055E35F  mov     dword_ABCD90, ebp
+   0055E365  push    offset nullsub_22; void (*)(void)
+   0055E36A  call    _atexit
+   0055E36F  add     esp, 4
+   0055E372  mov     eax, dword_ABCD88
+   0055E377  mov     esi, dword_ABCD90
+   0055E37D  cmp     eax, ebx
+   0055E37F  jz      short loc_55E397
+   0055E381  mov     ecx, offset dword_ABCD8C
+   0055E386  call    WinTimerClass::Get_System_Tick_Count
+   0055E38B  sub     eax, dword_ABCD88
+   0055E391  cmp     eax, esi
+   0055E393  jge     short loc_55E39B
+   0055E395  sub     esi, eax
+   0055E397  cmp     esi, ebp
+   0055E399  jnz     short loc_55E3FD
+   0055E39B  mov     eax, dword_ABCD40
+   0055E3A0  mov     ecx, dword_ABCD48
+   0055E3A6  mov     edx, dword_ABCD4C
+   0055E3AC  add     ecx, eax
+   0055E3AE  inc     edx
+   0055E3AF  cmp     ecx, 7FFFFFFFh
+   0055E3B5  mov     DetailFrameRate, eax
+   0055E3BA  mov     dword_ABCD40, ebp
+   0055E3C0  mov     dword_ABCD48, ecx
+   0055E3C6  mov     dword_ABCD4C, edx
+   0055E3CC  jbe     short loc_55E3DA
+   0055E3CE  mov     dword_ABCD48, ebp
+   0055E3D4  mov     dword_ABCD4C, ebp
+   0055E3DA  lea     ecx, [esp+24h+var_8]
+   0055E3DE  call    WinTimerClass::Get_System_Tick_Count
+   0055E3E3  mov     edx, [esp+24h+var_8]
+   0055E3E7  mov     ecx, 3Ch ; '<'
+   0055E3EC  mov     dword_ABCD88, eax
+   0055E3F1  mov     dword_ABCD8C, edx
+   0055E3F7  mov     dword_ABCD90, ecx
+   0055E3FD  pop     esi
+   0055E3FE  pop     ebp
+   0055E3FF  pop     ebx
+   0055E400  add     esp, 18h
+   0055E403  retn
+
+#### PSEUDOCODE sub_55E160 (帧尾) @ 0055E160 (sub_55E160) ####
+   int sub_55E160()
+   {
+     int TimeStart; // ecx
+     signed int v1; // esi
+     int System_Tick_Count; // eax
+     signed int v3; // eax
+     int TimeLeft; // esi
+     signed int v5; // eax
+     int v6; // esi
+     signed int v7; // eax
+     int v8; // esi
+     signed int v9; // eax
+     signed int v10; // esi
+     int v11; // eax
+     int v12; // ecx
+     signed int v13; // esi
+     int v14; // eax
+     signed int v15; // eax
+     signed int v16; // esi
+     int v17; // eax
+     int result; // eax
+     int v19; // esi
+     int v20; // ecx
+     _BOOL1 v21; // cc
+     int v22; // [esp+Ch] [ebp-18h] BYREF
+     char v23[4]; // [esp+10h] [ebp-14h] BYREF
+     char v24[8]; // [esp+14h] [ebp-10h] BYREF
+     int v25; // [esp+1Ch] [ebp-8h]
+   
+     TimeStart = spSpeedTimer.TimeStart;
+     v1 = dwMilliseconds;
+     if ( spSpeedTimer.TimeStart != -1 )
+     {
+       System_Tick_Count = WinTimerClass::Get_System_Tick_Count();
+       TimeStart = spSpeedTimer.TimeStart;
+       v3 = System_Tick_Count - spSpeedTimer.TimeStart;
+       if ( v3 >= v1 )
+         v1 = 0;
+       else
+         v1 -= v3;
+     }
+     dword_A8E314 += v1;
+     if ( Session.idxGameMode && Session.idxGameMode != 5 )
+     {
+       while ( 1 )
+       {
+         TimeLeft = TimerNFT.TimeLeft;
+         if ( TimerNFT.TimeStart != -1 )
+         {
+           v5 = timeGetTime() - TimerNFT.TimeStart;
+           if ( v5 >= TimeLeft )
+             goto LABEL_38;
+           TimeLeft -= v5;
+         }
+         if ( !TimeLeft )
+           goto LABEL_38;
+         Call_Back();
+         if ( !dword_A8EDA0 && GameInFocus == 1 )
+           break;
+   LABEL_23:
+         Sleep(0);
+       }
+       v6 = TimerNFT.TimeLeft;
+       v22 = 0;
+       if ( TimerNFT.TimeStart != -1 )
+       {
+         v7 = timeGetTime() - TimerNFT.TimeStart;
+         if ( v7 >= v6 )
+           goto LABEL_18;
+         v6 -= v7;
+       }
+       if ( v6 > 10 )
+       {
+         GScreenClass::Input(&v22, v24, v23);
+         Keyboard_Process(&v22);
+         (*(TacticalMap->vt + 23))(TacticalMap);
+         GScreenClass_DrawOnTop(&Map);
+         goto LABEL_19;
+       }
+   LABEL_18:
+       Sleep(0);
+   LABEL_19:
+       v8 = TimerNFT.TimeLeft;
+       if ( TimerNFT.TimeStart != -1 )
+       {
+         v9 = timeGetTime() - TimerNFT.TimeStart;
+         if ( v9 >= v8 )
+           goto LABEL_38;
+         v8 -= v9;
+       }
+       if ( !v8 )
+         goto LABEL_38;
+       goto LABEL_23;
+     }
+     v10 = dwMilliseconds;
+     if ( TimeStart != -1 )
+     {
+       v11 = WinTimerClass::Get_System_Tick_Count() - spSpeedTimer.TimeStart;
+       if ( v11 >= v10 )
+         goto LABEL_38;
+       v10 -= v11;
+     }
+     if ( v10 )
+     {
+       sub_4A4830();
+       while ( 1 )
+       {
+         while ( 1 )
+         {
+           v12 = spSpeedTimer.TimeStart;
+           v13 = dwMilliseconds;
+           if ( spSpeedTimer.TimeStart != -1 )
+           {
+             v14 = WinTimerClass::Get_System_Tick_Count();
+             v12 = spSpeedTimer.TimeStart;
+             v15 = v14 - spSpeedTimer.TimeStart;
+             if ( v15 >= v13 )
+               goto LABEL_38;
+             v13 -= v15;
+           }
+   ... (58 more lines)
+
+---- xrefs of sub_55E160 (帧尾) (0055E160) = sub_55E160 ----
+   CODE 0055D854 type=17 in W?Main_Loop$n()i : call    sub_55E160
+----   ctx around 0055D854  [0055D83A - 0055D855] ----
+   0055D83A  call    ChronoScreenEffect_Update
+   0055D83F  mov     ecx, TacticalMap
+   0055D845  mov     edx, [ecx]
+   0055D847  call    dword ptr [edx+5Ch]
+   0055D84A  mov     ecx, offset Map; this
+   0055D84F  call    GScreenClass_DrawOnTop
+   0055D854  call    sub_55E160
+   CODE 0055DE9A type=17 in W?Main_Loop$n()i : call    sub_55E160
+----   ctx around 0055DE9A  [0055DE87 - 0055DE9B] ----
+   0055DE87  jz      short loc_55DE9A
+   0055DE89  mov     ecx, edx
+   0055DE8B  cmp     eax, ecx
+   0055DE8D  jge     short loc_55DE9A
+   0055DE8F  call    sub_684290
+   0055DE94  mov     dword_B07784, edi
+   0055DE9A  call    sub_55E160
+---- sub_48C8B0 (帧循环每轮都调) = sub_48C8B0  [0048C8B0 - 0048CC82] ----
+   0048C8B0  mov     eax, dword_A8EDA0
+   0048C8B5  sub     esp, 158h
+   0048C8BB  push    ebp
+   0048C8BC  xor     ebp, ebp
+   0048C8BE  cmp     eax, ebp
+   0048C8C0  jz      loc_48CC7A
+   0048C8C6  cmp     Session, ebp
+   0048C8CC  jz      short loc_48C918
+   0048C8CE  mov     eax, HouseClass_PlayerPtr
+   0048C8D3  mov     cl, [eax+1F8h]
+   0048C8D9  test    cl, cl
+   0048C8DB  jnz     loc_48C98A
+   0048C8E1  mov     cl, [eax+1F7h]
+   0048C8E7  test    cl, cl
+   0048C8E9  jnz     loc_48C98A
+   0048C8EF  mov     cl, [eax+1F6h]
+   0048C8F5  test    cl, cl
+   0048C8F7  jnz     loc_48C98A
+   0048C8FD  mov     cl, byte_822CFC
+   0048C903  test    cl, cl
+   0048C905  jnz     short loc_48C918
+   0048C907  mov     cl, [eax+1F5h]
+   0048C90D  test    cl, cl
+   0048C90F  jz      short loc_48C98A
+   0048C911  mov     byte_822CFC, 1
+   0048C918  call    ScenarioClass_Pause
+   0048C91D  mov     ecx, WWMouse
+   0048C923  mov     eax, [ecx]
+   0048C925  call    dword ptr [eax+14h]
+   0048C928  mov     ecx, WWMouse
+   0048C92E  mov     edx, [ecx]
+   0048C930  call    dword ptr [edx+28h]
+   0048C933  test    eax, eax
+   0048C935  jz      short loc_48C951
+   0048C937  mov     ecx, WWMouse
+   0048C93D  mov     eax, [ecx]
+   0048C93F  call    dword ptr [eax+10h]
+   0048C942  mov     ecx, WWMouse
+   0048C948  mov     edx, [ecx]
+   0048C94A  call    dword ptr [edx+28h]
+   0048C94D  test    eax, eax
+   0048C94F  jnz     short loc_48C937
+   0048C951  mov     eax, dword_A8EDA0
+   0048C956  push    esi
+   0048C957  cmp     eax, ebp
+   0048C959  push    edi
+   0048C95A  jz      loc_48CC37
+   0048C960  lea     ecx, [eax-1]; switch 9 cases
+   0048C963  cmp     ecx, 8
+   0048C966  ja      short def_48C968; default
+   0048C968  jmp     ds:jpt_48C968[ecx*4]; switch jump
+   0048C96F  mov     ecx, Scenario; case 0x9
+   0048C975  call    sub_65F520
+   0048C97A  mov     eax, dword_A8EDA0
+   0048C97F  cmp     eax, 9
+   0048C982  jz      def_48CA2D; default
+   0048C988  jmp     short def_48C968; default
+   0048C98A  mov     dword_A8EDA0, ebp
+   0048C990  pop     ebp
+   0048C991  add     esp, 158h
+   0048C997  retn
+   0048C998  mov     ecx, offset Map; case 0x8
+   0048C99D  call    sub_6586D0
+   0048C9A2  mov     eax, dword_A8EDA0
+   0048C9A7  cmp     eax, 8
+   0048C9AA  jz      def_48CA2D; default
+   0048C9B0  cmp     eax, ebp; default
+   0048C9B2  jz      loc_48CC37
+   0048C9B8  jmp     short loc_48C960
+   0048C9BA  call    sub_4F10E0; case 0x1
+   0048C9BF  mov     eax, dword_A8EDA0
+   0048C9C4  cmp     eax, 1
+   0048C9C7  jmp     short loc_48C9AA
+   0048C9C9  lea     ecx, [esp+164h+var_154]; case 0x5
+   0048C9CD  call    sub_4E1D00
+   0048C9D2  mov     eax, dword_A8EDA0
+   0048C9D7  cmp     eax, 5
+   0048C9DA  jnz     short def_48C968; default
+   0048C9DC  mov     eax, 1
+   0048C9E1  mov     dword_A8EDA0, eax
+   0048C9E6  jmp     loc_48C960
+   0048C9EB  lea     ecx, [esp+164h+var_155]; case 0x6
+   0048C9EF  call    sub_6B6230
+   0048C9F4  mov     eax, 5
+   0048C9F9  mov     dword_A8EDA0, eax
+   0048C9FE  jmp     loc_48C960
+   0048CA03  mov     ecx, offset Options; case 0x4
+   0048CA08  call    sub_5FBEF0
+   0048CA0D  mov     eax, 5
+   0048CA12  mov     dword_A8EDA0, eax
+   0048CA17  jmp     loc_48C960
+   0048CA1C  call    sub_4F1840; case 0x3
+   0048CA21  add     eax, 0FFFFFFFEh; switch 4 cases
+   0048CA24  cmp     eax, 3
+   0048CA27  ja      def_48CA2D; default
+   0048CA2D  jmp     ds:jpt_48CA2D[eax*4]; switch jump
+   0048CA34  mov     eax, HouseClass_PlayerPtr; case 0x3
+   0048CA39  push    ev_DESTRUCT; eventKind
+   0048CA3B  mov     ecx, [eax+30h]
+   0048CA3E  push    ecx; PlayerNumber
+   0048CA3F  lea     ecx, [esp+16Ch+var_150]; this
+   0048CA43  call    Networking_AddEvent_Noopt
+   0048CA48  cmp     EventClass_OutList, 80h ; '€'
+   0048CA52  jge     short loc_48CAA1
+   0048CA54  mov     ecx, Networking_FirstUnusedPacket
+   0048CA5A  mov     esi, eax
+   0048CA5C  lea     edx, [ecx+ecx*8]
+   0048CA5F  lea     ecx, [ecx+edx*4]
+   0048CA62  lea     edi, NetworkPackets0.ev.EventKind[ecx+ecx*2]
+   0048CA69  mov     ecx, 1Bh
+   0048CA6E  rep movsd
+   0048CA70  movsw
+   0048CA72  movsb
+   0048CA73  call    ds:__imp_timeGetTime; Get system time, in milliseconds
+   0048CA79  mov     ecx, Networking_FirstUnusedPacket
+   0048CA7F  mov     Networking_Timestamps[ecx*4], eax
+   0048CA86  mov     edx, Networking_FirstUnusedPacket
+   0048CA8C  mov     eax, EventClass_OutList
+   0048CA91  inc     edx
+   0048CA92  and     edx, 7Fh
+   0048CA95  inc     eax
+   0048CA96  mov     Networking_FirstUnusedPacket, edx
+   0048CA9C  mov     EventClass_OutList, eax
+   0048CAA1  mov     byte_822CFC, 0
+   0048CAA8  call    sub_6471A0; case 0x2
+   0048CAAD  jmp     def_48CA2D; default
+   0048CAB2  mov     eax, HouseClass_PlayerPtr; case 0x4
+   0048CAB7  push    ev_DESTRUCT; eventKind
+   0048CAB9  mov     ecx, [eax+30h]
+   0048CABC  push    ecx; PlayerNumber
+   0048CABD  lea     ecx, [esp+16Ch+this]; this
+   0048CAC4  call    Networking_AddEvent_Noopt
+   0048CAC9  cmp     EventClass_OutList, 80h ; '€'
+   0048CAD3  jge     short loc_48CB22
+   0048CAD5  mov     ecx, Networking_FirstUnusedPacket
+   0048CADB  mov     esi, eax
+   0048CADD  lea     edx, [ecx+ecx*8]
+   0048CAE0  lea     ecx, [ecx+edx*4]
+   0048CAE3  lea     edi, NetworkPackets0.ev.EventKind[ecx+ecx*2]
+   0048CAEA  mov     ecx, 1Bh
+   0048CAEF  rep movsd
+   0048CAF1  movsw
+   0048CAF3  movsb
+   0048CAF4  call    ds:__imp_timeGetTime; Get system time, in milliseconds
+   0048CAFA  mov     ecx, Networking_FirstUnusedPacket
+   0048CB00  mov     Networking_Timestamps[ecx*4], eax
+   0048CB07  mov     edx, Networking_FirstUnusedPacket
+   0048CB0D  mov     eax, EventClass_OutList
+   0048CB12  inc     edx
+   0048CB13  and     edx, 7Fh
+   0048CB16  inc     eax
+   0048CB17  mov     Networking_FirstUnusedPacket, edx
+   0048CB1D  mov     EventClass_OutList, eax
+   0048CB22  mov     byte_822CFC, 0
+   0048CB29  jmp     def_48CA2D; default
+   0048CB2E  mov     byte_8B41C0, 1; case 0x5
+   0048CB35  jmp     def_48CA2D; default
+   0048CB3A  cmp     dword_AC10C8, ebp; case 0x2
+   0048CB40  jz      short loc_48CB4C
+   0048CB42  call    sub_6471A0
+   0048CB47  jmp     def_48CA2D; default
+   0048CB4C  mov     eax, HouseClass_PlayerPtr
+   0048CB51  mov     cl, [eax+HouseClass_old.IHouse._.Defeated]
+   0048CB57  test    cl, cl
+   0048CB59  jnz     def_48CA2D; default
+   0048CB5F  mov     cl, [eax+HouseClass_old.IHouse._.field_1CB]
+   0048CB65  test    cl, cl
+   0048CB67  jnz     def_48CA2D; default
+   0048CB6D  mov     cl, [eax+HouseClass_old.IHouse._.field_1CC]
+   0048CB73  test    cl, cl
+   0048CB75  jnz     def_48CA2D; default
+   0048CB7B  mov     cl, [eax+HouseClass_old.IHouse._.field_1CA]
+   0048CB81  test    cl, cl
+   0048CB83  jnz     def_48CA2D; default
+   0048CB89  push    1E7h; int
+   0048CB8E  push    offset aDRa2mdpostConquer_cpp; "D:\\ra2mdpost\\Conquer.CPP"
+   0048CB93  xor     edx, edx; a2
+   0048CB95  mov     ecx, offset aTxt_surrender; "TXT_SURRENDER"
+   0048CB9A  call    Get_String; ecx = TXT_SURRENDER
+   0048CB9F  mov     ecx, eax
+   0048CBA1  call    UI_ConfirmSurrender
+   0048CBA6  test    eax, eax
+   0048CBA8  jz      def_48CA2D; default
+   0048CBAE  mov     eax, HouseClass_PlayerPtr
+   0048CBB3  push    ev_DESTRUCT; eventKind
+   0048CBB5  mov     ecx, [eax+30h]
+   0048CBB8  push    ecx; PlayerNumber
+   0048CBB9  lea     ecx, [esp+16Ch+var_70]; this
+   0048CBC0  call    Networking_AddEvent_Noopt
+   0048CBC5  cmp     EventClass_OutList, 80h ; '€'
+   0048CBCF  jge     short loc_48CC1E
+   0048CBD1  mov     ecx, Networking_FirstUnusedPacket
+   0048CBD7  mov     esi, eax
+   0048CBD9  lea     edx, [ecx+ecx*8]
+   0048CBDC  lea     ecx, [ecx+edx*4]
+   0048CBDF  lea     edi, NetworkPackets0.ev.EventKind[ecx+ecx*2]
+   0048CBE6  mov     ecx, 1Bh
+   0048CBEB  rep movsd
+   0048CBED  movsw
+   0048CBEF  movsb
+
+#### PSEUDOCODE sub_48C8B0 (帧循环每轮都调) @ 0048C8B0 (sub_48C8B0) ####
+   HouseClass *sub_48C8B0()
+   {
+     HouseClass *result; // eax
+     int v1; // eax
+     _BOOL1 v2; // zf
+     NetworkEventPacketEx *v3; // eax
+     NetworkEventPacketEx *v4; // eax
+     wchar_t *String; // eax
+     NetworkEventPacketEx *v6; // eax
+     int v7; // edx
+     char v8; // [esp+7h] [ebp-155h] BYREF
+     char v9[4]; // [esp+8h] [ebp-154h] BYREF
+     NetworkEventPacketEx v10; // [esp+Ch] [ebp-150h] BYREF
+     NetworkEventPacketEx this; // [esp+7Ch] [ebp-E0h] BYREF
+     NetworkEventPacketEx v12; // [esp+ECh] [ebp-70h] BYREF
+   
+     result = dword_A8EDA0;
+     if ( !dword_A8EDA0 )
+       return result;
+     if ( Session.idxGameMode )
+     {
+       result = HouseClass_PlayerPtr;
+       if ( HouseClass_PlayerPtr->field_1CC || HouseClass_PlayerPtr->field_1CB || HouseClass_PlayerPtr->field_1CA )
+         goto LABEL_15;
+       if ( !byte_822CFC )
+       {
+         if ( HouseClass_PlayerPtr->Defeated )
+         {
+           byte_822CFC = 1;
+           goto LABEL_9;
+         }
+   LABEL_15:
+         dword_A8EDA0 = 0;
+         return result;
+       }
+     }
+   LABEL_9:
+     ScenarioClass_Pause();
+     (WWMouse->vt->anonymous_4)(WWMouse);
+     while ( (WWMouse->vt->anonymous_9)(WWMouse) )
+       (WWMouse->vt->anonymous_3)(WWMouse);
+     v1 = dword_A8EDA0;
+     if ( dword_A8EDA0 )
+     {
+       while ( 2 )
+       {
+         switch ( v1 )
+         {
+           case 1:
+             sub_4F10E0();
+             v1 = dword_A8EDA0;
+             v2 = dword_A8EDA0 == 1;
+             goto LABEL_17;
+           case 2:
+             if ( dword_AC10C8 )
+             {
+   LABEL_34:
+               sub_6471A0();
+             }
+             else if ( !HouseClass_PlayerPtr->Defeated
+                    && !HouseClass_PlayerPtr->field_1CB
+                    && !HouseClass_PlayerPtr->field_1CC
+                    && !HouseClass_PlayerPtr->field_1CA )
+             {
+               String = Get_String("TXT_SURRENDER", 0, "D:\\ra2mdpost\\Conquer.CPP", 487);
+               if ( UI_ConfirmSurrender(String) )
+               {
+                 v6 = Networking_AddEvent_Noopt(&v12, HouseClass_PlayerPtr->PlayerNumber, ev_DESTRUCT);
+                 if ( EventClass_OutList < 128 )
+                 {
+                   qmemcpy(&NetworkPackets0[Networking_FirstUnusedPacket], v6, sizeof(NetworkEventPacketEx));
+                   Networking_Timestamps[Networking_FirstUnusedPacket] = timeGetTime();
+                   Networking_FirstUnusedPacket = (Networking_FirstUnusedPacket + 1) & 0x7F;
+                   ++EventClass_OutList;
+                 }
+                 sub_6471A0();
+                 byte_822CFC = 0;
+               }
+             }
+             goto LABEL_44;
+           case 3:
+             switch ( sub_4F1840() )
+             {
+               case 2:
+                 goto LABEL_34;
+               case 3:
+                 v3 = Networking_AddEvent_Noopt(&v10, HouseClass_PlayerPtr->PlayerNumber, ev_DESTRUCT);
+                 if ( EventClass_OutList < 128 )
+                 {
+                   qmemcpy(&NetworkPackets0[Networking_FirstUnusedPacket], v3, sizeof(NetworkEventPacketEx));
+                   Networking_Timestamps[Networking_FirstUnusedPacket] = timeGetTime();
+                   Networking_FirstUnusedPacket = (Networking_FirstUnusedPacket + 1) & 0x7F;
+                   ++EventClass_OutList;
+                 }
+                 byte_822CFC = 0;
+                 goto LABEL_34;
+               case 4:
+                 v4 = Networking_AddEvent_Noopt(&this, HouseClass_PlayerPtr->PlayerNumber, ev_DESTRUCT);
+                 if ( EventClass_OutList < 128 )
+                 {
+                   qmemcpy(&NetworkPackets0[Networking_FirstUnusedPacket], v4, sizeof(NetworkEventPacketEx));
+                   Networking_Timestamps[Networking_FirstUnusedPacket] = timeGetTime();
+                   Networking_FirstUnusedPacket = (Networking_FirstUnusedPacket + 1) & 0x7F;
+                   ++EventClass_OutList;
+                 }
+                 byte_822CFC = 0;
+                 break;
+               case 5:
+                 byte_8B41C0 = 1;
+                 break;
+               default:
+                 goto LABEL_44;
+             }
+             goto LABEL_44;
+           case 4:
+             sub_5FBEF0(&Options);
+             v1 = 5;
+             dword_A8EDA0 = 5;
+             continue;
+           case 5:
+   ... (47 more lines)
+
+---- xrefs of sub_48C8B0 (帧循环每轮都调) (0048C8B0) = sub_48C8B0 ----
+   CODE 0048CE9C type=17 in Main_Game : call    sub_48C8B0
+----   ctx around 0048CE9C  [0048CE8A - 0048CE9D] ----
+   0048CE8A  call    Main_Loop
+   0048CE8F  test    al, al
+   0048CE91  jz      short loc_48CE9C
+   0048CE93  call    sub_55CFD0
+   0048CE98  test    al, al
+   0048CE9A  jnz     short loc_48CEAA
+   0048CE9C  call    sub_48C8B0
+---- sub_647260 (校验值驱动) = sub_647260  [00647260 - 006475D5] ----
+   00647260  mov     al, byte ptr arg_ATTRACT_Flags
+   00647265  sub     esp, 74h
+   00647268  test    al, 2
+   0064726A  push    ebx
+   0064726B  push    ebp
+   0064726C  push    esi
+   0064726D  push    edi; OffendingEvent
+   0064726E  jz      loc_6474C7
+   00647274  mov     ecx, Keyboard
+   0064727A  mov     byte ptr [esp+84h+var_70], 0
+   0064727F  call    sub_54F000
+   00647284  test    ax, ax
+   00647287  mov     ebx, 4
+   0064728C  jz      short loc_6472B6
+   0064728E  mov     ecx, Keyboard
+   00647294  call    sub_54F050
+   00647299  cmp     ax, 1Bh
+   0064729D  jz      short loc_6472A7
+   0064729F  test    byte ptr arg_ATTRACT_Flags, bl
+   006472A5  jz      short loc_6472FC
+   006472A7  pop     edi
+   006472A8  pop     esi
+   006472A9  pop     ebp
+   006472AA  mov     GameActive, 0
+   006472B1  pop     ebx
+   006472B2  add     esp, 74h
+   006472B5  retn
+   006472B6  test    byte ptr arg_ATTRACT_Flags, bl
+   006472BC  jz      short loc_6472FC
+   006472BE  mov     eax, Frame
+   006472C3  test    eax, eax
+   006472C5  jle     short loc_6472FC
+   006472C7  mov     ecx, WWMouse
+   006472CD  mov     eax, [ecx]
+   006472CF  call    dword ptr [eax+2Ch]
+   006472D2  cmp     dword_AC50F8, eax
+   006472D8  jnz     short loc_6472ED
+   006472DA  mov     ecx, WWMouse
+   006472E0  mov     edx, [ecx]
+   006472E2  call    dword ptr [edx+30h]
+   006472E5  cmp     dword_AC5200, eax
+   006472EB  jz      short loc_6472FC
+   006472ED  pop     edi
+   006472EE  pop     esi
+   006472EF  pop     ebp
+   006472F0  mov     GameActive, 0
+   006472F7  pop     ebx
+   006472F8  add     esp, 74h
+   006472FB  retn
+   006472FC  mov     ecx, WWMouse
+   00647302  mov     eax, [ecx]
+   00647304  call    dword ptr [eax+2Ch]
+   00647307  mov     ecx, WWMouse
+   0064730D  mov     dword_AC50F8, eax
+   00647312  mov     edx, [ecx]
+   00647314  call    dword ptr [edx+30h]
+   00647317  mov     dword_AC5200, eax
+   0064731C  call    sub_64DAB0
+   00647321  mov     ecx, Frame
+   00647327  mov     edx, dword_AC51FC
+   0064732D  mov     eax, ecx
+   0064732F  and     eax, 0FFh
+   00647334  mov     dword_B04474[eax*4], edx
+   0064733B  mov     eax, dword_A8E30C
+   00647340  cmp     ecx, eax
+   00647342  jl      short loc_64737F
+   00647344  mov     al, MPSYNCDEBUG
+   00647349  test    al, al
+   0064734B  jz      short loc_647366
+   0064734D  xor     edx, edx
+   0064734F  and     ecx, 800000FFh
+   00647355  jns     short loc_64735F
+   00647357  dec     ecx
+   00647358  or      ecx, 0FFFFFF00h
+   0064735E  inc     ecx
+   0064735F  call    Multiplay_LogToSync_MPDEBUG
+   00647364  jmp     short loc_64736D
+   00647366  xor     ecx, ecx
+   00647368  call    Multiplay_LogToSYNC_NOMPDEBUG
+   0064736D  call    Emergency_Exit
+   00647372  xor     ecx, ecx; int
+   00647374  call    __exit_0
+   00647379  mov     ecx, Frame
+   0064737F  mov     eax, Session
+   00647384  test    ecx, ecx
+   00647386  jnz     short loc_647392
+   00647388  test    eax, eax
+   0064738A  jnz     def_6474D5; default
+   00647390  jmp     short loc_6473BD
+   00647392  test    eax, eax
+   00647394  jz      short loc_6473BD
+   00647396  cmp     eax, 5
+   00647399  jz      short loc_6473BD
+   0064739B  cmp     dword_A8B24C, 2
+   006473A2  jnz     short loc_6473BD
+   006473A4  mov     esi, FrameSendRate
+   006473AA  xor     edx, edx
+   006473AC  lea     eax, [esi+ecx-1]
+   006473B0  div     esi
+   006473B2  imul    eax, esi
+   006473B5  cmp     ecx, eax
+   006473B7  jnz     def_6474D5; default
+   006473BD  lea     eax, [esp+84h+Buffer]
+   006473C1  push    ebx; int
+   006473C2  push    eax; lpBuffer
+   006473C3  mov     ecx, offset FileQ
+   006473C8  call    CCFileClass_ReadNextBytes
+   006473CD  cmp     eax, ebx
+   006473CF  jnz     loc_6474A9
+   006473D5  mov     eax, [esp+84h+Buffer]
+   006473D9  xor     ebx, ebx
+   006473DB  test    eax, eax
+   006473DD  jle     loc_647474
+   006473E3  mov     ebp, ds:__imp_timeGetTime; Get system time, in milliseconds
+   006473E9  lea     ecx, [esp+84h+var_70]
+   006473ED  push    6Fh ; 'o'; int
+   006473EF  push    ecx; lpBuffer
+   006473F0  mov     ecx, offset FileQ
+   006473F5  call    CCFileClass_ReadNextBytes
+   006473FA  cmp     eax, 6Fh ; 'o'
+   006473FD  jnz     loc_6474A9
+   00647403  mov     cl, byte ptr [esp+84h+var_70+1]
+   00647407  mov     eax, EventClass_DoList
+   0064740C  and     cl, 0FEh
+   0064740F  cmp     eax, 4000h
+   00647414  mov     byte ptr [esp+84h+var_70+1], cl
+   00647418  jge     short loc_647467
+   0064741A  mov     eax, dword_8B4200
+   0064741F  mov     ecx, 1Bh
+   00647424  lea     esi, [esp+84h+var_70]
+   00647428  lea     edx, [eax+eax*8]
+   0064742B  lea     eax, [eax+edx*4]
+   0064742E  lea     edi, NetworkPackets1.ev.EventKind[eax+eax*2]
+   00647435  rep movsd
+   00647437  movsw
+   00647439  movsb
+   0064743A  call    ebp ; __imp_timeGetTime; Get system time, in milliseconds
+   0064743C  mov     ecx, dword_8B4200
+   00647442  mov     dword_A70204[ecx*4], eax
+   00647449  mov     edx, dword_8B4200
+   0064744F  mov     eax, EventClass_DoList
+   00647454  inc     edx
+   00647455  and     edx, 3FFFh
+   0064745B  inc     eax
+   0064745C  mov     dword_8B4200, edx
+   00647462  mov     EventClass_DoList, eax
+   00647467  mov     eax, [esp+84h+Buffer]
+   0064746B  inc     ebx
+   0064746C  cmp     ebx, eax
+   0064746E  jl      loc_6473E9
+   00647474  mov     eax, Session
+   00647479  test    eax, eax
+   0064747B  jnz     short loc_647492
+   0064747D  mov     eax, HouseClass_PlayerPtr
+   00647482  mov     ecx, 1
+   00647487  mov     edx, [eax+34h]
+   0064748A  mov     edx, [edx+0B8h]
+   00647490  jmp     short loc_64749A
+   00647492  mov     ecx, gTeamCount; int
+   00647498  xor     edx, edx; int
+   0064749A  push    0; int
+   0064749C  push    0; int
+   0064749E  push    0; int
+   006474A0  call    DoList
+   006474A5  test    eax, eax
+   006474A7  jnz     short loc_6474B8
+   006474A9  pop     edi
+   006474AA  pop     esi
+   006474AB  pop     ebp
+   006474AC  mov     GameActive, 0
+   006474B3  pop     ebx
+   006474B4  add     esp, 74h
+   006474B7  retn
+   006474B8  xor     ecx, ecx
+   006474BA  call    sub_64D990
+   006474BF  pop     edi
+   006474C0  pop     esi
+   006474C1  pop     ebp
+   006474C2  pop     ebx
+   006474C3  add     esp, 74h
+   006474C6  retn
+   006474C7  mov     eax, Session
+   006474CC  cmp     eax, 5; switch 6 cases
+   006474CF  ja      def_6474D5; default
+   006474D5  jmp     ds:jpt_6474D5[eax*4]; switch jump
+   006474DC  mov     eax, EventClass_OutList; case 0x0
+   006474E1  test    eax, eax
+   006474E3  jz      loc_647586
+   006474E9  mov     ebp, ds:__imp_timeGetTime; Get system time, in milliseconds
+   006474EF  mov     eax, dword_A802CC
+   006474F4  lea     ecx, [eax+eax*8]
+   006474F7  lea     eax, [eax+ecx*4]
+   006474FA  mov     cl, [eax+eax*2+0A802D5h]
+   00647501  and     cl, 0FEh
+   00647504  mov     [eax+eax*2+0A802D5h], cl
+   0064750B  mov     eax, EventClass_DoList
+   00647510  cmp     eax, 4000h
+   00647515  jge     short loc_64756F
+   00647517  mov     eax, dword_A802CC
+   0064751C  lea     edx, [eax+eax*8]
+
+#### PSEUDOCODE sub_647260 (校验值驱动) @ 00647260 (sub_647260) ####
+   int sub_647260()
+   {
+     int result; // eax
+     signed int v1; // ecx
+     int v2; // ebx
+     NetworkEventPacketEx *v3; // edi
+     int v4; // ecx
+     int indexInArray; // edx
+     NetworkEventPacketEx *v6; // esi
+     NetworkEventPacketEx *v7; // edi
+     NetworkEventPacketEx *v8; // [esp+0h] [ebp-84h]
+     int Buffer; // [esp+10h] [ebp-74h] BYREF
+     _BYTE v10[108]; // [esp+14h] [ebp-70h] BYREF
+     __int16 v11; // [esp+80h] [ebp-4h]
+     char v12; // [esp+82h] [ebp-2h]
+   
+     if ( (arg_ATTRACT_Flags & 2) != 0 )
+     {
+       v10[0] = 0;
+       if ( sub_54F000(Keyboard) )
+       {
+         result = sub_54F050(Keyboard);
+         if ( result == 27 || (arg_ATTRACT_Flags & 4) != 0 )
+         {
+           LOBYTE(GameActive) = 0;
+           return result;
+         }
+       }
+       else if ( (arg_ATTRACT_Flags & 4) != 0 && Frame > 0 )
+       {
+         result = (WWMouse->vt->anonymous_10)(WWMouse);
+         if ( dword_AC50F8 != result || (result = (WWMouse->vt->anonymous_11)(WWMouse), dword_AC5200 != result) )
+         {
+           LOBYTE(GameActive) = 0;
+           return result;
+         }
+       }
+       dword_AC50F8 = (WWMouse->vt->anonymous_10)(WWMouse);
+       dword_AC5200 = (WWMouse->vt->anonymous_11)(WWMouse);
+       sub_64DAB0();
+       v1 = Frame;
+       dword_B04474[Frame] = *&dword_AC51FC;
+       if ( v1 >= dword_A8E30C )
+       {
+         if ( MPSYNCDEBUG )
+           Multiplay_LogToSync_MPDEBUG(v1 % 256, 0);
+         else
+           Multiplay_LogToSYNC_NOMPDEBUG(v8);
+         Emergency_Exit(v8);
+         _exit_0(0);
+       }
+       result = Session.idxGameMode;
+       if ( v1 )
+       {
+         if ( Session.idxGameMode )
+         {
+           if ( Session.idxGameMode != 5 && dword_A8B24C == 2 )
+           {
+             result = FrameSendRate * ((FrameSendRate + v1 - 1) / FrameSendRate);
+             if ( v1 != result )
+               return result;
+           }
+         }
+       }
+       else if ( Session.idxGameMode )
+       {
+         return result;
+       }
+       result = CCFileClass_ReadNextBytes(&Buffer, 4);
+       if ( result != 4 )
+         goto LABEL_33;
+       v2 = 0;
+       if ( Buffer > 0 )
+       {
+         do
+         {
+           result = CCFileClass_ReadNextBytes(v10, 111);
+           if ( result != 111 )
+             goto LABEL_33;
+           v10[1] &= ~1u;
+           if ( EventClass_DoList < 0x4000 )
+           {
+             v3 = &NetworkPackets1[dword_8B4200];
+             qmemcpy(v3, v10, 0x6Cu);
+             v3 = (v3 + 108);
+             *&v3->ev.EventKind = v11;
+             v3->ev.PlayerIdx = v12;
+             dword_A70204[dword_8B4200] = timeGetTime();
+             dword_8B4200 = (dword_8B4200 + 1) & 0x3FFF;
+             ++EventClass_DoList;
+           }
+         }
+         while ( ++v2 < Buffer );
+       }
+       if ( Session.idxGameMode )
+       {
+         v4 = gTeamCount;
+         indexInArray = 0;
+       }
+       else
+       {
+         v4 = 1;
+         indexInArray = HouseClass_PlayerPtr->Country->indexInArray;
+       }
+       result = DoList(v4, indexInArray, 0, 0, 0);
+       if ( !result )
+       {
+   LABEL_33:
+         LOBYTE(GameActive) = 0;
+         return result;
+       }
+       return sub_64D990(0);
+     }
+     else
+     {
+       result = Session.idxGameMode;
+       switch ( Session.idxGameMode )
+       {
+         case 0:
+         case 5:
+   ... (37 more lines)
+
+---- xrefs of sub_647260 (校验值驱动) (00647260) = sub_647260 ----
+   CODE 0055DE40 type=17 in W?Main_Loop$n()i : call    sub_647260
+----   ctx around 0055DE40  [0055DE25 - 0055DE41] ----
+   0055DE25  mov     edx, dword_A8B560
+   0055DE2B  mov     ecx, dword_A8B564
+   0055DE31  add     edx, eax
+   0055DE33  inc     ecx
+   0055DE34  mov     dword_A8B560, edx
+   0055DE3A  mov     dword_A8B564, ecx
+   0055DE40  call    sub_647260
+
+====================================================================================================
+R3) 网络路径是否会中途渲染：Call_Back / Networking_RespondToEvent
+====================================================================================================
+  符号 004C6CB0 Networking_RespondToEvent
+     <- 0064C911 in DoList : call    Networking_RespondToEvent
+     <- 0064CC0A in DoList : call    Networking_RespondToEvent
+  符号 0048D080 W?Call_Back$n()v
+     <- 004070E1 in sub_4070B0 : call    Call_Back
+     <- 00408129 in sub_4080F0 : call    Call_Back
+     <- 0046FBE9 in sub_46FBD0 : call    Call_Back
+     <- 0048D1D0 in W?RMG_Call_Back$n()v : call    Call_Back
+     <- 004AD016 in W?Read_INI$:DisplayClass$n(rn$CCINIClass$$)v : call    Call_Back
+     <- 004AD0B4 in W?Read_INI$:DisplayClass$n(rn$CCINIClass$$)v : call    Call_Back
+     <- 004AD33E in W?Read_INI$:DisplayClass$n(rn$CCINIClass$$)v : call    Call_Back
+     <- 004AD71B in W?Read_INI$:DisplayClass$n(rn$CCINIClass$$)v : call    Call_Back
+     <- 004AD754 in W?Read_INI$:DisplayClass$n(rn$CCINIClass$$)v : call    Call_Back
+     <- 004B7883 in ScenarioClass_GenerateDropshipLoadout : call    Call_Back
+     <- 004C4726 in ScenarioClass_ShowCredits : call    Call_Back
+     <- 004C47BE in ScenarioClass_ShowCredits : call    Call_Back
+     <- 004C7AE9 in Networking_RespondToEvent : call    Call_Back
+     <- 004F8649 in HouseClass_Update : call    Call_Back
+     <- 004F8772 in HouseClass_Update : call    Call_Back
+     <- 0052C399 in InitGame : call    Call_Back
+     <- 0052CB77 in sub_52CB50 : jmp     Call_Back
+     <- 0052DCD0 in W?Select_Game$n(i)i : call    Call_Back
+     <- 0052E076 in W?Select_Game$n(i)i : call    Call_Back
+     <- 0052E7D3 in W?Select_Game$n(i)i : call    Call_Back
+     <- 0052EA9C in W?Select_Game$n(i)i : call    Call_Back
+     <- 0052EB2F in W?Select_Game$n(i)i : call    Call_Back
+     <- 005316F9 in Init_BulkData : call    Call_Back
+     <- 005316FE in Init_BulkData : call    Call_Back
+     <- 00534CCA in Theater_Init : call    Call_Back
+     <- 00534DA1 in Theater_Init : call    Call_Back
+     <- 00545C9D in IsometricTileTypeClass_CreateFromINIList : call    Call_Back
+     <- 00546F1C in sub_546DA0 : call    Call_Back
+     <- 0055CF92 in sub_55CF10 : call    Call_Back
+     <- 0055D313 in sub_55CFD0 : call    Call_Back
+     <- 0055D835 in W?Main_Loop$n()i : call    Call_Back
+     <- 0055DE4A in W?Main_Loop$n()i : call    Call_Back
+     <- 0055E1F3 in sub_55E160 : call    Call_Back
+     <- 00565A02 in MapClass_InitClear : call    Call_Back
+     <- 00565A24 in MapClass_InitClear : call    Call_Back
+     <- 00565A30 in MapClass_InitClear : call    Call_Back
+     <- 005B6177 in sub_5B6020 : call    Call_Back
+     <- 005B6441 in sub_5B6020 : call    Call_Back
+     <- 005B7042 in sub_5B6F30 : call    Call_Back
+     <- 005B72AE in sub_5B7090 : call    Call_Back
+     <- 005B741F in MapPreview_Download : call    Call_Back
+     <- 005BA1CA in sub_5BA060 : call    Call_Back
+     <- 005BAC12 in ModemHost_SignOff : call    Call_Back
+     <- 005BAFF8 in ModemHost_StartGame : call    Call_Back
+     <- 005BB060 in ModemHost_StartGame : call    Call_Back
+     <- 005BB27E in sub_5E66F0 : call    Call_Back
+     <- 005BB35C in sub_5BB290 : call    Call_Back
+     <- 005BB392 in sub_5BB290 : call    Call_Back
+     <- 005D2437 in sub_5D2410 : call    Call_Back
+     <- 005D91EF in sub_5D90E0 : call    Call_Back
+     <- 005D92A7 in sub_5D9220 : call    Call_Back
+     <- 005DAF20 in sub_46FBD0 : call    Call_Back
+     <- 005DAFB5 in sub_5DAF30 : call    Call_Back
+     <- 005DB982 in sub_5DB720 : call    Call_Back
+     <- 005DC438 in sub_5DC350 : call    Call_Back
+     <- 005DC48F in sub_5DC350 : call    Call_Back
+     <- 005DC709 in sub_5DC350 : call    Call_Back
+     <- 005DC7B1 in sub_5DC350 : call    Call_Back
+     <- 005DC876 in sub_5DC350 : call    Call_Back
+     <- 005DC918 in sub_5DC350 : call    Call_Back
+     <- 005DD453 in sub_5DC350 : call    Call_Back
+     <- 005DD62B in sub_5DC350 : call    Call_Back
+     <- 005DD690 in sub_5DC350 : call    Call_Back
+     <- 005DD96C in sub_5DD8A0 : call    Call_Back
+     <- 005DDB37 in sub_5DD8A0 : call    Call_Back
+     <- 005DDBA6 in sub_5DD8A0 : call    Call_Back
+     <- 005DE4B8 in sub_5DE360 : call    Call_Back
+     <- 005DE508 in sub_5DE360 : call    Call_Back
+     <- 005DEB4E in sub_5DE520 : call    Call_Back
+     <- 005DF93E in sub_5DF8C0 : call    Call_Back
+     <- 005E00D6 in sub_5E00B0 : call    Call_Back
+     <- 005E0A46 in sub_5E00B0 : call    Call_Back
+     <- 005E0AB3 in sub_5E00B0 : call    Call_Back
+     <- 005E14B1 in sub_5E00B0 : call    Call_Back
+     <- 005E1BE8 in sub_5E00B0 : call    Call_Back
+     <- 005E361C in ? : call    Call_Back
+     <- 005E36CB in sub_5E3630 : call    Call_Back
+     <- 005E382F in sub_5E3720 : call    Call_Back
+     <- 005E39A5 in sub_5E3850 : call    Call_Back
+     <- 005E6886 in sub_5E66F0 : call    Call_Back
+     <- 005E75CD in sub_5E74E0 : call    Call_Back
+     <- 005E75E6 in sub_5E74E0 : call    Call_Back
+     <- 005E77FD in sub_5E74E0 : call    Call_Back
+     <- 005E79C9 in sub_5E7920 : call    Call_Back
+     <- 005E79DE in sub_5E7920 : call    Call_Back
+     <- 005E8190 in sub_5E7EB0 : call    Call_Back
+     <- 005E81D0 in sub_5E7EB0 : call    Call_Back
+     <- 005E8295 in sub_5E7EB0 : call    Call_Back
+     <- 005F33B1 in sub_5F33B0 : call    Call_Back
+     <- 00608211 in sub_608070 : call    Call_Back
+     <- 0060D412 in sub_60D380 : call    Call_Back
+     <- 0062315A in sub_623120 : call    Call_Back
+     <- 0062427C in sub_6241F0 : call    Call_Back
+     <- 00648595 in sub_648350 : call    Call_Back
+     <- 00648A5C in sub_648710 : call    Call_Back
+     <- 006497EC in sub_648710 : call    Call_Back
+     <- 0065250C in sub_6523A0 : call    Call_Back
+     <- 00663B1B in sub_6639D0 : call    Call_Back
+     <- 00664085 in sub_663DB0 : call    Call_Back
+     <- 006645E5 in sub_664530 : call    Call_Back
+     <- 006843F4 in sub_684370 : call    Call_Back
+     <- 00684B72 in W?Read_Scenario$n(pna)i : call    Call_Back
+     <- 0068577A in sub_685670 : call    Call_Back
+     <- 00685F06 in sub_685DC0 : call    Call_Back
+     <- 0068652F in sub_6863E0 : call    Call_Back
+     <- 0068667E in sub_686570 : call    Call_Back
+     <- 00686900 in W?Remove_AI_Players$n()v : call    Call_Back
+     <- 00686957 in W?Remove_AI_Players$n()v : call    Call_Back
+     <- 0068699C in W?Remove_AI_Players$n()v : call    Call_Back
+     <- 006876BD in INIClass_ReadScenario : call    Call_Back
+     <- 0068773F in INIClass_ReadScenario : call    Call_Back
+     <- 00687975 in INIClass_ReadScenario : call    Call_Back
+     <- 00687A04 in INIClass_ReadScenario : call    Call_Back
+     <- 00687A2D in INIClass_ReadScenario : call    Call_Back
+     <- 00687A39 in INIClass_ReadScenario : call    Call_Back
+     <- 00687A79 in INIClass_ReadScenario : call    Call_Back
+     <- 00687AAC in INIClass_ReadScenario : call    Call_Back
+     <- 00687AC4 in INIClass_ReadScenario : call    Call_Back
+     <- 00687AD0 in INIClass_ReadScenario : call    Call_Back
+     <- 00687AEF in INIClass_ReadScenario : call    Call_Back
+     <- 00687B07 in INIClass_ReadScenario : call    Call_Back
+     <- 00687B13 in INIClass_ReadScenario : call    Call_Back
+     <- 00687B87 in INIClass_ReadScenario : call    Call_Back
+     <- 00687BA8 in INIClass_ReadScenario : call    Call_Back
+     <- 00687BC3 in INIClass_ReadScenario : call    Call_Back
+     <- 00687BF1 in INIClass_ReadScenario : call    Call_Back
+     <- 00687C0C in INIClass_ReadScenario : call    Call_Back
+     <- 00687C51 in INIClass_ReadScenario : call    Call_Back
+     <- 0068A73C in Scenario_ReadLightingAndBasic : call    Call_Back
+     <- 0068ACA5 in Scenario_ReadLightingAndBasic : call    Call_Back
+     <- 0068AD39 in Scenario_ReadLightingAndBasic : call    Call_Back
+     <- 0068AD58 in Scenario_ReadLightingAndBasic : call    Call_Back
+     <- 0068CF76 in sub_68CD20 : call    Call_Back
+     <- 0068D04A in sub_68CD20 : call    Call_Back
+     <- 0068D40B in sub_68CD20 : call    Call_Back
+     <- 0068FC61 in sub_68FBB0 : call    Call_Back
+     <- 00690240 in sub_690160 : call    Call_Back
+     <- 00693CB2 in Get_File_From_Host : call    Call_Back
+     <- 00693D26 in Get_File_From_Host : call    Call_Back
+     <- 00693DB3 in Get_File_From_Host : call    Call_Back
+     <- 00693E97 in Get_File_From_Host : call    Call_Back
+     <- 00694096 in Get_File_From_Host : call    Call_Back
+     <- 0069410A in Get_File_From_Host : call    Call_Back
+     <- 006943A8 in sub_6941A0 : call    Call_Back
+     <- 00694534 in sub_6941A0 : call    Call_Back
+     <- 006948C0 in sub_694760 : call    Call_Back
+     <- 00694930 in sub_694760 : call    Call_Back
+     <- 006949EC in sub_694760 : call    Call_Back
+     <- 00694A86 in sub_694760 : call    Call_Back
+     <- 00694B60 in sub_694760 : call    Call_Back
+     <- 00694BCE in sub_694760 : call    Call_Back
+     <- 00694DC2 in sub_694760 : call    Call_Back
+     <- 00694EEF in sub_694760 : call    Call_Back
+     <- 00694F3B in sub_694760 : call    Call_Back
+     <- 00694FC0 in sub_694760 : call    Call_Back
+     <- 0069B015 in SessionClass_Progess_5EF930 : call    Call_Back
+     <- 0069B067 in SessionClass_Progess_5EF930 : call    Call_Back
+     <- 0069B07B in SessionClass_Progess_5EF930 : call    Call_Back
+     <- 0069B148 in SessionClass_Progess_5EF930 : call    Call_Back; default
+     <- 0077FF0E in sub_77F900 : call    Call_Back
+     <- 00794C80 in sub_794BA0 : call    Call_Back
+     <- 00795DBC in Negotiate_Scenario_Transfer : call    Call_Back
+     <- 00796112 in Negotiate_Scenario_Transfer : call    Call_Back
+     <- 007962C9 in Negotiate_Scenario_Transfer : call    Call_Back
+     <- 00796405 in Negotiate_Scenario_Transfer : call    Call_Back
+     <- 0079651A in Negotiate_Scenario_Transfer : call    Call_Back
+     <- 007967BB in sub_796710 : call    Call_Back
+     <- 00796A2E in sub_796960 : call    Call_Back
+     <- 00796ACD in sub_796960 : call    Call_Back
+     <- 00796B09 in sub_796960 : call    Call_Back
+     <- 00425245 in FireNuke : push    offset Call_Back; _DWORD
+     <- 0052E668 in W?Select_Game$n(i)i : push    offset Call_Back; _DWORD
+     <- 0052EAB5 in W?Select_Game$n(i)i : push    offset Call_Back; _DWORD
+     <- 00684A10 in W?Read_Scenario$n(pna)i : push    offset Call_Back; _DWORD
+     <- 00685DA9 in sub_685670 : push    offset Call_Back; _DWORD
+  符号 0048D1D0 W?RMG_Call_Back$n()v
+     <- 00598979 in MapSeedClass_Generate : call    eax ; RMG_Call_Back
+     <- 005989CD in MapSeedClass_Generate : call    eax ; RMG_Call_Back
+     <- 00598A5B in MapSeedClass_Generate : call    eax ; RMG_Call_Back
+     <- 00598A82 in MapSeedClass_Generate : call    eax ; RMG_Call_Back
+     <- 00598ADA in MapSeedClass_Generate : call    eax ; RMG_Call_Back
+     <- 00598B59 in MapSeedClass_Generate : call    eax ; RMG_Call_Back
+     <- 00598B9C in MapSeedClass_Generate : call    eax ; RMG_Call_Back
+     <- 00598BDF in MapSeedClass_Generate : call    eax ; RMG_Call_Back
+     <- 00598C22 in MapSeedClass_Generate : call    eax ; RMG_Call_Back
+     <- 00598D42 in MapSeedClass_Generate : call    eax ; RMG_Call_Back
+     <- 00598DC8 in MapSeedClass_Generate : call    eax ; RMG_Call_Back
+     <- 00598E16 in MapSeedClass_Generate : call    eax ; RMG_Call_Back
+     <- 00598E64 in MapSeedClass_Generate : call    eax ; RMG_Call_Back
+     <- 00598EE3 in MapSeedClass_Generate : call    eax ; RMG_Call_Back
+     <- 00598F02 in MapSeedClass_Generate : call    eax ; RMG_Call_Back
+     <- 0059903A in MapSeedClass_Generate : call    eax ; RMG_Call_Back
+     <- 0059909C in MapSeedClass_Generate : call    eax ; RMG_Call_Back
+     <- 005990DF in MapSeedClass_Generate : call    eax ; RMG_Call_Back
+     <- 00599128 in MapSeedClass_Generate : call    eax ; RMG_Call_Back
+     <- 0059916F in MapSeedClass_Generate : call    eax ; RMG_Call_Back
+     <- 005991CA in MapSeedClass_Generate : call    eax ; RMG_Call_Back
+     <- 00599213 in MapSeedClass_Generate : call    eax ; RMG_Call_Back
+     <- 005992B9 in MapSeedClass_Generate : call    eax ; RMG_Call_Back
+     <- 005992FC in MapSeedClass_Generate : call    eax ; RMG_Call_Back
+     <- 00599352 in MapSeedClass_Generate : call    eax ; RMG_Call_Back
+     <- 00599399 in MapSeedClass_Generate : call    eax ; RMG_Call_Back
+     <- 00599A11 in MapSeedClass_Generate_InitRandomMap : call    eax ; RMG_Call_Back
+     <- 00599BE0 in MapSeedClass_Generate_InitRandomMap : call    eax ; RMG_Call_Back
+     <- 00599C60 in MapSeedClass_Generate_InitRandomMap : call    eax ; RMG_Call_Back
+     <- 00599C70 in MapSeedClass_Generate_InitRandomMap : call    eax ; RMG_Call_Back
+     <- 00599D27 in MapSeedClass_Generate_InitRandomMap : call    eax ; RMG_Call_Back
+     <- 00599E6E in MapSeedClass_Generate_InitRandomMap : call    eax ; RMG_Call_Back
+     <- 00599EC2 in MapSeedClass_Generate_InitRandomMap : call    eax ; RMG_Call_Back
+     <- 00599F54 in MapSeedClass_Generate_InitRandomMap : call    eax ; RMG_Call_Back
+     <- 0059A054 in MapSeedClass_Generate_InitRandomMap : call    eax ; RMG_Call_Back
+     <- 0059A0CA in MapSeedClass_Generate_InitRandomMap : call    eax ; RMG_Call_Back
+     <- 0059A148 in MapSeedClass_Generate_InitRandomMap : call    eax ; RMG_Call_Back
+     <- 0059A1C0 in MapSeedClass_Generate_InitRandomMap : call    eax ; RMG_Call_Back
+     <- 0059A20F in MapSeedClass_Generate_InitRandomMap : call    eax ; RMG_Call_Back
+     <- 0059A21A in MapSeedClass_Generate_InitRandomMap : call    eax ; RMG_Call_Back
+     <- 0059A225 in MapSeedClass_Generate_InitRandomMap : call    eax ; RMG_Call_Back
+     <- 0059A241 in MapSeedClass_Generate_InitRandomMap : call    eax ; RMG_Call_Back
+     <- 0059A25C in MapSeedClass_Generate_InitRandomMap : call    eax ; RMG_Call_Back
+     <- 0059A278 in MapSeedClass_Generate_InitRandomMap : call    eax ; RMG_Call_Back
+     <- 0059A2E6 in MapSeedClass_Generate_InitRandomMap : call    eax ; RMG_Call_Back
+     <- 0059A41E in MapSeedClass_Generate_InitRandomMap : call    eax ; RMG_Call_Back
+     <- 00595C4D in sub_595BC0 : mov     _RMGCallback, offset RMG_Call_Back
+     <- 005E85B5 in sub_5E8590 : mov     ecx, offset RMG_Call_Back
+     <- 0082AF14 in ? : dd offset RMG_Call_Back
+  符号 0081D710 aSendingNet_port_probePacketsInCall_back
+     <- 0048D2F0 in sub_48D1E0 : push    offset aSendingNet_port_probePacketsInCall_back; "Sending NET_PORT_PROBE packets in Call_"...
+  Call_Back = 0048D080
+
+#### PSEUDOCODE Call_Back @ 0048D080 (W?Call_Back$n()v) ####
+   char Call_Back()
+   {
+     int idxGameMode; // eax
+     char v2[4]; // [esp+10h] [ebp-100h] BYREF
+     int v3[6]; // [esp+14h] [ebp-FCh] BYREF
+     char v4[5]; // [esp+2Ch] [ebp-E4h]
+   
+     sub_406F70();
+     if ( vec_MovieHandles.length > 0 && vec_MovieHandles.data->_ )
+       (vec_MovieHandles.data->_->vt->anonymous_1)(vec_MovieHandles.data->_);
+     idxGameMode = Session.idxGameMode;
+     if ( Session.idxGameMode == gmLAN || Session.idxGameMode == gmInternet )
+     {
+       sub_48D1E0();
+       idxGameMode = Session.idxGameMode;
+     }
+     if ( idxGameMode == 1 )
+     {
+       if ( (dword_A8DAB8 & 1) == 0 )
+         return idxGameMode;
+       goto LABEL_11;
+     }
+     if ( idxGameMode == 2 )
+     {
+   LABEL_11:
+       sub_5F1C60(&dword_A8EA70);
+       if ( LOBYTE(Scenario->InitTime) && sub_5F1C30(v3, v2) > 0 )
+       {
+         do
+         {
+           if ( v3[0] == 108 && v4[0] != dword_A8DB30 )
+             sub_643C50(&ProgressScreen, 1, *&v4[1], -1, -1);
+         }
+         while ( sub_5F1C30(v3, v2) > 0 );
+       }
+       idxGameMode = Session.idxGameMode;
+     }
+     if ( idxGameMode == 4 )
+     {
+       LOBYTE(idxGameMode) = byte_B77DC2;
+       if ( !byte_B77DC2 )
+       {
+         idxGameMode = time(0);
+         if ( idxGameMode != dword_89E9B0 )
+         {
+           if ( ppv && !dword_B77DCC )
+             (*(*ppv + 12))(ppv);
+           if ( dword_AC1170 )
+             (*(*dword_AC1170 + 28))(dword_AC1170);
+           idxGameMode = time(0);
+           dword_89E9B0 = idxGameMode;
+         }
+       }
+     }
+     return idxGameMode;
+   }
+     0048D08C call    sub_406F70 -> sub_406F70
+     0048D0A7 call    dword ptr [edx+8] -> sub_8
+     0048D0B9 call    sub_48D1E0 -> sub_48D1E0
+     0048D0E5 call    sub_5F1C60 -> sub_5F1C60
+     0048D108 call    sub_5F1C30 -> sub_5F1C30
+     0048D144 call    sub_643C50 -> sub_643C50
+     0048D158 call    sub_5F1C30 -> sub_5F1C30
+     0048D176 call    _time -> _time
+     0048D19E call    dword ptr [ecx+0Ch] -> sub_C
+     0048D1AD call    dword ptr [edx+1Ch] -> sub_1C
+     0048D1B2 call    _time -> _time
+
+====================================================================================================
+R4) ObjectClass_Update 0x5F3??? 里的 Submit/Remove（层数组每帧维护点）
+====================================================================================================
+  Submit 调用点 0x5F400E / Remove 调用点 0x5F414C 所在函数 = ObjectClass_Update [005F3E70-005F4158]
+---- ObjectClass_Update Submit/Remove 区段  [005F3FA0 - 005F41C0] ----
+   005F3FA0  mov     byte ptr [eax+195h], 0
+   005F3FA4  mov     al, [this+OverlayClass.o.InLimbo]
+   005F3FAA  test    al, al
+   005F3FAC  jnz     loc_5F4146
+   005F3FB2  mov     al, [this+OverlayClass.o.HasParachute]
+   005F3FB8  test    al, al
+   005F3FBA  jz      short loc_5F3FD7
+   005F3FBC  mov     edi, [this+OverlayClass.o.FallRate]
+   005F3FBF  dec     edi
+   005F3FC0  mov     [this+OverlayClass.o.FallRate], edi
+   005F3FC3  mov     ecx, RulesData
+   005F3FC9  mov     eax, edi
+   005F3FCB  mov     ecx, [ecx+7B8h]
+   005F3FD1  cmp     eax, ecx
+   005F3FD3  jg      short loc_5F3FFA
+   005F3FD5  jmp     short loc_5F3FF8
+   005F3FD7  fild    dword ptr [this+2Ch]
+   005F3FDA  fsub    ds:dbl_7EF248; 1.4
+   005F3FE0  call    Float_To_Int_Floor
+   005F3FE5  mov     [this+2Ch], eax
+   005F3FE8  mov     edx, RulesData
+   005F3FEE  mov     ecx, [edx+7BCh]
+   005F3FF4  cmp     eax, ecx
+   005F3FF6  jg      short loc_5F3FFA
+   005F3FF8  mov     eax, ecx
+   005F3FFA  mov     [this+2Ch], eax
+   005F3FFD  mov     eax, [this]
+   005F3FFF  mov     ecx, this
+   005F4001  call    dword ptr [eax+78h]
+   005F4004  cmp     ebp, eax
+   005F4006  jz      short loc_5F4013
+   005F4008  push    this; anim
+   005F4009  mov     ecx, offset Map; this
+   005F400E  call    DisplayClass::Submit
+   005F4013  mov     al, [this+OverlayClass.o.Falling]
+   005F4019  test    al, al
+   005F401B  jnz     lct_Out
+   005F4021  mov     al, [this+OverlayClass.o.IsABomb]
+   005F4027  test    al, al
+   005F4029  jz      short loc_5F405B
+   005F402B  mov     eax, [this+OverlayClass.o.Health]
+   005F402E  test    eax, eax
+   005F4030  jle     short loc_5F405B
+   005F4032  mov     edx, [this]
+   005F4034  mov     [esp+1Ch+var_10], eax
+   005F4038  mov     eax, RulesData
+   005F403D  push    0
+   005F403F  push    1
+   005F4041  push    1
+   005F4043  mov     ecx, [eax+0FA8h]
+   005F4049  push    0
+   005F404B  push    ecx
+   005F404C  lea     eax, [esp+30h+var_10]
+   005F4050  push    0
+   005F4052  push    eax
+   005F4053  mov     ecx, this
+   005F4055  call    dword ptr [edx+16Ch]
+   005F405B  mov     edx, [this]
+   005F405D  mov     ecx, this
+   005F405F  call    dword ptr [edx+2Ch]
+   005F4062  cmp     eax, 4
+   005F4065  jnz     lct_Out
+   005F406B  mov     eax, [this+(OverlayClass.o.field_20+0A4h)]
+   005F4071  mov     cl, [eax+354h]
+   005F4077  test    cl, cl
+   005F4079  jz      lct_Out
+   005F407F  mov     byte ptr [this+19Ah], 1
+   005F4086  mov     eax, Frame
+   005F408B  lea     edx, [this+0B4h]
+   005F4091  mov     ecx, 1
+   005F4096  mov     [this+0C0h], ecx
+   005F409C  add     this, 9Ch
+   005F40A2  mov     [edx], eax
+   005F40A4  mov     eax, [esp+1Ch+var_8]
+   005F40A8  mov     [edx+4], eax
+   005F40AB  mov     [edx+8], ecx
+   005F40AE  mov     ecx, [this+2Ch]
+   005F40B1  mov     edx, [ecx+350h]
+   005F40B7  mov     ecx, this
+   005F40B9  lea     eax, ds:1[edx*8]
+   005F40C0  mov     edx, [ecx]
+   005F40C2  mov     [this+10h], eax
+   005F40C5  mov     [esp+1Ch+a2], edx
+   005F40C9  mov     eax, [ecx+4]
+   005F40CC  lea     edx, [esp+1Ch+a2]
+   005F40D0  push    edx; a2
+   005F40D1  mov     [esp+20h+var_8], eax
+   005F40D5  mov     ecx, [ecx+8]
+   005F40D8  mov     [esp+20h+var_4], ecx
+   005F40DC  mov     ecx, offset Map; this
+   005F40E1  call    MapClass_Get_Target_Cell
+   005F40E6  cmp     dword ptr [eax+0ECh], 2
+   005F40ED  jnz     short lct_Out
+   005F40EF  push    1C8h; sz
+   005F40F4  call    new
+   005F40F9  add     esp, 4
+   005F40FC  test    eax, eax
+   005F40FE  jz      short lct_Out
+   005F4100  mov     edx, [this]
+   005F4102  mov     edi, [this+4]
+   005F4105  mov     this, [this+8]
+   005F4108  push    0; a8
+   005F410A  push    0; ForcedZAdjust
+   005F410C  mov     [esp+24h+a2], edx
+   005F4110  mov     edx, RulesData
+   005F4116  push    600h; flags
+   005F411B  add     this, 3
+   005F411E  push    1; loopCount
+   005F4120  lea     ecx, [esp+2Ch+a2]
+   005F4124  push    0; a4
+   005F4126  mov     [esp+30h+var_8], edi
+   005F412A  mov     [esp+30h+var_4], this
+   005F412E  push    ecx; pos
+   005F412F  mov     ecx, [edx+0BC4h]
+   005F4135  mov     edx, [ecx]
+   005F4137  mov     ecx, eax; this
+   005F4139  push    edx; AnimType
+   005F413A  call    AnimClass::AnimClass
+   005F413F  pop     edi
+   005F4140  pop     this
+   005F4141  pop     ebp
+   005F4142  add     esp, 10h
+   005F4145  retn
+   005F4146  push    this; a1
+   005F4147  mov     ecx, offset Map; this
+   005F414C  call    DisplayClass::Remove
+   005F4151  pop     edi
+   005F4152  pop     this
+   005F4153  pop     ebp
+   005F4154  add     esp, 10h
+   005F4157  retn
+   005F4158  db 8 dup(90h)
+   005F4160  sub     esp, 10h
+   005F4163  push    esi
+   005F4164  mov     esi, ecx
+   005F4166  push    0
+   005F4168  mov     eax, [esi]
+   005F416A  mov     byte ptr [esi+8Dh], 1
+   005F4171  mov     byte ptr [esi+8Fh], 1
+   005F4178  call    dword ptr [eax+124h]
+   005F417E  push    esi; a1
+   005F417F  mov     ecx, offset Map; this
+   005F4184  call    DisplayClass::Remove
+   005F4189  push    esi; anim
+   005F418A  mov     ecx, offset Map; this
+   005F418F  mov     byte ptr [esi+8Ch], 0
+   005F4196  call    DisplayClass::Submit
+   005F419B  mov     edx, [esi]
+   005F419D  push    1
+   005F419F  mov     ecx, esi
+   005F41A1  call    dword ptr [edx+124h]
+   005F41A7  test    esi, esi
+   005F41A9  jz      loc_5F4238
+   005F41AF  mov     al, [esi+14h]
+   005F41B2  shr     al, 2
+   005F41B5  and     al, 1
+   005F41B7  mov     [esp+14h+var_D], al
+   005F41BB  jz      short loc_5F4238
+   005F41BD  mov     eax, [esi+674h]
+
+#### PSEUDOCODE ObjectClass_Update @ 005F3E70 (ObjectClass_Update) ####
+   void __thiscall ObjectClass_Update(_TechnoClass *a1)
+   {
+     vt_UnitClass *vt; // edx
+     _ObjectTypeClass *v3; // eax
+     int v4; // ecx
+     int v5; // ebp
+     int v6; // edi
+     vt_TechnoClass *v7; // edx
+     vt_TechnoClass *v8; // eax
+     AnimClass *Parachute; // eax
+     int v10; // edi
+     signed int v11; // eax
+     int ParachuteMaxFallRate; // ecx
+     vt_TechnoClass *v13; // edx
+     signed int v14; // eax
+     _DWORD *p_QueuedMission; // edx
+     int *p_X; // esi
+     int v17; // edx
+     AnimClass *v18; // eax
+     int v19; // edx
+     int v20; // edi
+     int v21; // esi
+     int Health; // [esp+20h] [ebp-10h] BYREF
+     Point3D a2; // [esp+24h] [ebp-Ch] BYREF
+   
+     _ESI = a1;
+     if ( !a1->t.r.m.o.InLimbo )
+     {
+       if ( a1->vt->r.m.o.GetType(a1) && _ESI->vt->r.m.o.GetType(_ESI)->o.AmbientSound != -1 )
+       {
+         a2.X = _ESI->t.r.m.o.pos.X;
+         a2.Y = _ESI->t.r.m.o.pos.Y;
+         vt = _ESI->vt;
+         a2.Z = _ESI->t.r.m.o.pos.Z;
+         v3 = vt->vt.vt.r.m.o.GetType(_ESI);
+         Sound_Effect(v3->o.AmbientSound, &a2.X, &_ESI->t.r.m.o.structX1);
+       }
+       v4 = _ESI->t.r.m.o.field_60;
+       if ( v4 != -1 )
+       {
+         a2 = _ESI->t.r.m.o.pos;
+         Sound_Effect(v4, &a2.X, &_ESI->t.r.m.o.structX2);
+       }
+     }
+     if ( _ESI->t.r.m.o.Falling )
+     {
+       v5 = (_ESI->vt->r.m.o.InWhichLayer)(_ESI);
+       v6 = _ESI->t.r.m.o.FallRate + (_ESI->vt->r.m.o.GetZ)(_ESI);
+       if ( _ESI->t.r.m.o.field_6C )
+       {
+         _ESI->vt->r.m.o.Mark(_ESI, Underground);
+         v7 = _ESI->vt;
+         _ESI->t.r.m.o.pos.Z = v6;
+         v7->r.m.o.Mark(_ESI, Surface);
+       }
+       else
+       {
+         _ESI->t.r.m.o.pos.Z = v6;
+       }
+       if ( (_ESI->vt->r.m.o.GetHeight)(_ESI) <= 0 )
+       {
+         (_ESI->vt->r.m.o.SetHeight)(_ESI, 0);
+         v8 = _ESI->vt;
+         _ESI->t.r.m.o.Falling = 0;
+         (v8->r.m.o.UpdatePosition)(_ESI, 2);
+         Parachute = _ESI->t.r.m.o.Parachute;
+         if ( Parachute )
+           Parachute->RemainingLoops = 0;
+       }
+       if ( _ESI->t.r.m.o.InLimbo )
+       {
+         DisplayClass::Remove(&Map, _ESI);
+         return;
+       }
+       if ( _ESI->t.r.m.o.HasParachute )
+       {
+         v10 = _ESI->t.r.m.o.FallRate - 1;
+         _ESI->t.r.m.o.FallRate = v10;
+         v11 = v10;
+         ParachuteMaxFallRate = RulesData->ParachuteMaxFallRate;
+         if ( v10 <= ParachuteMaxFallRate )
+           goto LABEL_19;
+       }
+       else
+       {
+         __asm
+         {
+           fild    dword ptr [this+2Ch]
+           fsub    ds:dbl_7EF248; 1.4
+         }
+         v11 = Float_To_Int_Floor();
+         _ESI->t.r.m.o.FallRate = v11;
+         ParachuteMaxFallRate = RulesData->NoParachuteMaxFallRate;
+         if ( v11 <= ParachuteMaxFallRate )
+   LABEL_19:
+           v11 = ParachuteMaxFallRate;
+       }
+       _ESI->t.r.m.o.FallRate = v11;
+       if ( v5 != (_ESI->vt->r.m.o.InWhichLayer)(_ESI) )
+         DisplayClass::Submit(&Map, _ESI);
+       if ( !_ESI->t.r.m.o.Falling )
+       {
+         if ( _ESI->t.r.m.o.IsABomb && _ESI->t.r.m.o.Health > 0 )
+         {
+           v13 = _ESI->vt;
+           Health = _ESI->t.r.m.o.Health;
+           v13->r.m.o.ReceiveDamage(_ESI, &Health, 0, RulesData->C4Warhead, 0, 1, 1, 0);
+         }
+         if ( _ESI->vt->r.m.o.a.What_Am_I(_ESI) == eAnim )
+         {
+           if ( *(_ESI->t.r.m.MissionTimer.TimeStart + 852) )
+           {
+             BYTE2(_ESI->t.IronTintTimer.TimeStart) = 1;
+             v14 = Frame;
+             p_QueuedMission = &_ESI->t.r.m.QueuedMission;
+             _ESI->t.r.m.CurrentMissionStartTime = 1;
+             p_X = &_ESI->t.r.m.o.pos.X;
+             *p_QueuedMission = v14;
+             p_QueuedMission[1] = a2.Y;
+             p_QueuedMission[2] = 1;
+             v17 = *p_X;
+             p_X[4] = 8 * *(p_X[11] + 848) + 1;
+             a2.X = v17;
+             a2.Y = p_X[1];
+             a2.Z = p_X[2];
+             if ( MapClass_Get_Target_Cell(&Map, &a2)->LandType == 2 )
+             {
+               v18 = new(0x1C8u);
+               if ( v18 )
+               {
+                 v19 = *p_X;
+                 v20 = p_X[1];
+                 v21 = p_X[2];
+                 a2.X = v19;
+                 a2.Y = v20;
+                 a2.Z = v21 + 3;
+                 AnimClass::AnimClass(v18, RulesData->field_BC0.data->_, &a2, 0, 1, 0x600u, 0, 0);
+               }
+             }
+           }
+   ... (4 more lines)
+  附：0x005F4184 在 TechnoClass_EC
+  附：0x005F4196 在 TechnoClass_EC
+
+====================================================================================================
+R5) 0x9C 的字段身份：GetCoords / SetLocation / 结构体成员
+====================================================================================================
+  NAME 004104C0 AbstractClass_GetCoords
+  NAME 004104F0 AbstractClass_GetCoords_2arg
+  NAME 00410540 AbstractClass_GetCoords_1arg
+  NAME 0041BE00 ObjectClass_GetCoords_2
+  NAME 00422BE0 AnimClass_GetCoords
+  NAME 00486840 CellClass_GetCoords
+  NAME 00486890 CellClass_GetCoords_unknown2
+  NAME 004DBDF0 FootClass_GetCoords_unknown1
+  NAME 00514D10 HoverLocomotionClass_ILocomotion_GetCoords
+  NAME 005F6C80 ObjectClass_GetCoords_1
+  NAME 0070BCB0 TechnoClass_PredictTargetCoords
+
+!!!! EXCEPTION !!!!
+Traceback (most recent call last):
+  File "D:/Workspace/ra2mod/platform/KratosPP/ida_work/probe_render_vs_logic2.py", line 214, in <module>
+    if tif is None or tif.empty():
+                      ^^^^^^^^^
+AttributeError: 'int' object has no attribute 'empty'

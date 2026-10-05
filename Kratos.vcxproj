@@ -124,6 +124,7 @@
     <ClCompile Include="src\Ext\StateType\State\TeleportState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\TransformState.cpp" />
     <ClCompile Include="src\Ext\SyncEventType\AttachEffectEvent.cpp" />
+    <ClCompile Include="src\Ext\SyncEventType\TechnoScriptCommandEvent.cpp" />
     <ClCompile Include="src\Ext\TechnoType\AircraftAttitude.cpp" />
     <ClCompile Include="src\Ext\TechnoType\AircraftDive.cpp" />
     <ClCompile Include="src\Ext\TechnoType\AircraftGuard.cpp" />
@@ -383,6 +384,7 @@
     <ClInclude Include="src\Ext\StateType\State\TransformData.h" />
     <ClInclude Include="src\Ext\StateType\State\TransformState.h" />
     <ClInclude Include="src\Ext\SyncEventType\AttachEffectEvent.h" />
+    <ClInclude Include="src\Ext\SyncEventType\TechnoScriptCommandEvent.h" />
     <ClInclude Include="src\Ext\TechnoType\AircraftAttitude.h" />
     <ClInclude Include="src\Ext\TechnoType\AircraftAttitudeData.h" />
     <ClInclude Include="src\Ext\TechnoType\AircraftDive.h" />

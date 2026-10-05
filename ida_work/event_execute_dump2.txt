@@ -1,0 +1,884 @@
+=== IDLE handler tail (continues at 0x4C75C0) (0x4C75C0-0x4C7700) ===
+0x004C75C0  mov     dword ptr [esi+520h], 0FFFFFFFFh
+0x004C75C7  mov     byte ptr [esi+686h], 0
+0x004C75CE  mov     [esi+524h], eax
+0x004C75D4  mov     [esi+528h], ecx
+0x004C75DA  mov     edx, [esi]
+0x004C75DC  push    3
+0x004C75DE  mov     ecx, esi
+0x004C75E0  call    dword ptr [edx+280h]
+0x004C75E6  mov     eax, [esi]
+0x004C75E8  push    1
+0x004C75EA  push    edi
+0x004C75EB  mov     ecx, esi
+0x004C75ED  call    dword ptr [eax+480h]
+0x004C75F3  mov     edx, [esi]
+0x004C75F5  push    edi
+0x004C75F6  mov     ecx, esi
+0x004C75F8  call    dword ptr [edx+3C8h]
+0x004C75FE  mov     eax, [esi]
+0x004C7600  mov     ecx, esi
+0x004C7602  call    dword ptr [eax+84h]
+0x004C7608  mov     cl, [eax+0D6Ah]
+0x004C760E  test    cl, cl
+0x004C7610  jz      short loc_4C762A
+0x004C7612  mov     edx, [esi]
+0x004C7614  push    1
+0x004C7616  push    edi
+0x004C7617  mov     ecx, esi
+0x004C7619  call    dword ptr [edx+480h]
+0x004C761F  mov     eax, [esi]
+0x004C7621  push    edi
+0x004C7622  mov     ecx, esi
+0x004C7624  call    dword ptr [eax+3C8h]
+0x004C762A  mov     ecx, [esi+2D0h]; this  ; this
+0x004C7630  cmp     ecx, edi
+0x004C7632  jz      short loc_4C7639
+0x004C7634  call    SpawnManagerClass_CreateNode
+0x004C7639  mov     edx, [esi]
+0x004C763B  mov     ecx, esi
+0x004C763D  call    dword ptr [edx+84h]
+0x004C7643  mov     cl, [eax+5E4h]
+0x004C7649  test    cl, cl
+0x004C764B  jz      short loc_4C7655
+0x004C764D  push    edi
+0x004C764E  mov     ecx, esi
+0x004C7650  call    sub_710550
+0x004C7655  mov     eax, [esi]
+0x004C7657  mov     ecx, esi
+0x004C7659  call    dword ptr [eax+2Ch]
+0x004C765C  cmp     eax, 1
+0x004C765F  jnz     HandleEvent_ev_PACKETTIMING; default
+0x004C7665  mov     ecx, [esi+6C4h]
+0x004C766B  mov     al, [ecx+UnitTypeClass.Harvester]
+0x004C7671  test    al, al
+0x004C7673  jz      short loc_4C769C
+0x004C7675  mov     eax, [esi+0ACh]
+0x004C767B  cmp     eax, 0Ah
+0x004C767E  jz      short loc_4C7685
+0x004C7680  cmp     eax, 0Ch
+0x004C7683  jnz     short loc_4C769C
+0x004C7685  mov     edx, [esi]
+0x004C7687  push    edi
+0x004C7688  push    5
+0x004C768A  mov     ecx, esi
+0x004C768C  call    dword ptr [edx+1E8h]
+0x004C7692  mov     eax, [esi]
+0x004C7694  mov     ecx, esi
+0x004C7696  call    dword ptr [eax+1ECh]
+0x004C769C  mov     esi, [esi+2D8h]
+0x004C76A2  cmp     esi, edi
+0x004C76A4  jz      HandleEvent_ev_PACKETTIMING; default
+0x004C76AA  mov     ecx, esi
+0x004C76AC  call    sub_6B0C80
+0x004C76B1  pop     edi
+0x004C76B2  pop     esi
+0x004C76B3  pop     ebp
+0x004C76B4  pop     ebx
+0x004C76B5  add     esp, 370h
+0x004C76BB  retn
+0x004C76BC  lea     ecx, [esi+7]; case 0x8
+0x004C76BF  call    TargetClass::As_Techno
+0x004C76C4  mov     esi, eax
+0x004C76C6  xor     edx, edx
+0x004C76C8  mov     ecx, esi
+0x004C76CA  call    sub_6386E0
+0x004C76CF  test    esi, esi
+0x004C76D1  jz      HandleEvent_ev_PACKETTIMING; default
+0x004C76D7  mov     al, [esi+90h]
+0x004C76DD  test    al, al
+0x004C76DF  jz      HandleEvent_ev_PACKETTIMING; default
+0x004C76E5  mov     al, [esi+81h]
+0x004C76EB  test    al, al
+0x004C76ED  jnz     HandleEvent_ev_PACKETTIMING; default
+0x004C76F3  mov     al, [esi+418h]
+0x004C76F9  test    al, al
+0x004C76FB  jnz     HandleEvent_ev_PACKETTIMING; default
+
+=== unknown xref to IDLE branch (0x4C8090-0x4C8150) ===
+0x004C8090  mov     Factory_BuildSpeedMult, eax
+0x004C8092  cmp     ecx, eax
+0x004C8094  ja      short loc_4C809B
+0x004C8096  mov     Max_MaxAhead, eax
+0x004C809B  xor     edx, edx
+0x004C809D  pop     edi
+0x004C809E  mov     dl, [esi+0Bh]
+0x004C80A1  pop     esi
+0x004C80A2  pop     ebp
+0x004C80A3  mov     FrameSendRate, edx
+0x004C80A9  pop     ebx
+0x004C80AA  add     esp, 370h
+0x004C80B0  retn
+0x004C80B1  mov     edx, NameNodeTypes.length; case 0x20
+0x004C80B7  xor     eax, eax
+0x004C80B9  test    edx, edx
+0x004C80BB  jle     short HandleEvent_ev_PACKETTIMING; default
+0x004C80BD  mov     edi, NameNodeTypes.data
+0x004C80C3  mov     ecx, edi
+0x004C80C5  mov     ebp, [ecx]
+0x004C80C7  cmp     ebx, [ebp+6Fh]
+0x004C80CA  jz      short loc_4C80DF
+0x004C80CC  inc     eax
+0x004C80CD  add     ecx, 4
+0x004C80D0  cmp     eax, edx
+0x004C80D2  jl      short loc_4C80C5
+0x004C80D4  pop     edi
+0x004C80D5  pop     esi
+0x004C80D6  pop     ebp
+0x004C80D7  pop     ebx
+0x004C80D8  add     esp, 370h
+0x004C80DE  retn
+0x004C80DF  mov     edx, [edi+eax*4]
+0x004C80E2  xor     ecx, ecx
+0x004C80E4  mov     cx, [esi+7]
+0x004C80E8  pop     edi
+0x004C80E9  pop     esi
+0x004C80EA  pop     ebp
+0x004C80EB  mov     [edx+73h], ecx
+0x004C80EE  pop     ebx
+0x004C80EF  add     esp, 370h
+0x004C80F5  retn
+0x004C80F6  test    byte ptr arg_ATTRACT_Flags, 2; case 0x21
+0x004C80FD  jnz     short HandleEvent_ev_PACKETTIMING; default
+0x004C80FF  mov     dword_A8EDA0, 7
+0x004C8109  pop     edi; default
+0x004C810A  pop     esi
+0x004C810B  pop     ebp
+0x004C810C  pop     ebx
+0x004C810D  add     esp, 370h
+0x004C8113  retn
+0x004C8114  dd offset HandleEvent_ev_POWERON; jump table for switch statement  ; jump table for switch statement
+
+=== caller of RespondToEvent #1 (0x64C8B0-0x64C940) ===
+0x0064C8B0  push    offset aExitEventIdDSE; "Exit Event: ID:%d (%s),  Event Frame:%d"...
+0x0064C8B3  call    WWDebugString; Exit Event: ID:%d (%s),  Event Frame:%d,  My Frame:%d  ; Exit Event: ID:%d (%s),  Event Frame:%d,  My Frame:%d
+
+0x0064C8B8  add     esp, 14h
+0x0064C8BB  mov     ecx, dword_8B41FC
+0x0064C8C1  mov     esi, HouseClass_PlayerPtr
+0x0064C8C7  lea     eax, [ecx+ebp]
+0x0064C8CA  mov     edi, [esi+30h]
+0x0064C8CD  and     eax, 3FFFh
+0x0064C8D2  lea     edx, [eax+eax*8]
+0x0064C8D5  lea     ecx, [eax+edx*4]
+0x0064C8D8  movsx   edx, byte ptr [ecx+ecx*2+8B4206h]
+0x0064C8E0  cmp     edx, edi
+0x0064C8E2  jnz     short @@26
+0x0064C8E4  mov     esi, dword_A70204[eax*4]
+0x0064C8EB  call    ds:__imp_timeGetTime; Get system time, in milliseconds
+0x0064C8F1  sub     eax, esi
+0x0064C8F3  mov     dword_8373A0, eax
+0x0064C8F8  mov     eax, dword_8B41FC
+0x0064C8FD  add     eax, ebp
+0x0064C8FF  and     eax, 3FFFh
+0x0064C904  lea     ecx, [eax+eax*8]
+0x0064C907  lea     eax, [eax+ecx*4]
+0x0064C90A  lea     ecx, NetworkPackets1.ev.EventKind[eax+eax*2]; this  ; this
+0x0064C911  call    Networking_RespondToEvent
+0x0064C916  jmp     @@35
+0x0064C91B  cmp     byte ptr NetworkPackets1.ev.EventKind[ecx+ecx*2], 13h
+0x0064C923  jnz     @@35
+0x0064C929  mov     edx, Frame
+0x0064C92F  push    edx
+0x0064C930  push    offset aProcessingExit; "Processing EXIT event on frame %d\n"
+0x0064C935  call    WWDebugString; Processing EXIT event on frame %d  ; Processing EXIT event on frame %d
+
+0x0064C93A  mov     eax, Session
+0x0064C93F  add     esp, 8
+
+=== caller of RespondToEvent #2 (0x64CBC0-0x64CC40) ===
+0x0064CBC0  jmp     short @@45
+0x0064CBC2  mov     ecx, EventClass_MegaMissionList
+0x0064CBC8  dec     ecx
+0x0064CBC9  cmp     esi, ecx
+0x0064CBCB  jnz     short @@45
+0x0064CBCD  mov     ecx, [esp+50h+var_3C]
+0x0064CBD1  mov     edx, esi
+0x0064CBD3  sub     edx, ecx
+0x0064CBD5  inc     edx
+0x0064CBD6  cmp     edx, 1
+0x0064CBD9  jle     short @@45
+0x0064CBDB  call    sub_64CDA0
+0x0064CBE0  mov     edi, dword_A83ED4
+0x0064CBE6  mov     eax, EventClass_MegaMissionList
+0x0064CBEB  inc     esi
+0x0064CBEC  cmp     esi, eax
+0x0064CBEE  jl      @@38
+0x0064CBF4  mov     eax, EventClass_MegaMissionList
+0x0064CBF9  test    eax, eax
+0x0064CBFB  jz      short @@49
+0x0064CBFD  lea     eax, [edi+edi*8]
+0x0064CC00  lea     eax, [edi+eax*4]
+0x0064CC03  lea     ecx, NetworkPackets2.ev.EventKind[eax+eax*2]; this  ; this
+0x0064CC0A  call    Networking_RespondToEvent
+0x0064CC0F  mov     eax, EventClass_MegaMissionList
+0x0064CC14  test    eax, eax
+0x0064CC16  jz      short @@48
+0x0064CC18  mov     ecx, dword_A83ED4
+0x0064CC1E  lea     edi, [ecx+1]
+0x0064CC21  and     edi, 0FFh
+0x0064CC27  dec     eax
+0x0064CC28  mov     dword_A83ED4, edi
+0x0064CC2E  mov     EventClass_MegaMissionList, eax
+0x0064CC33  jnz     short @@47
+0x0064CC35  jmp     short @@49
+0x0064CC37  mov     edi, dword_A83ED4
+0x0064CC3D  mov     eax, [esp+50h+idxHouse]
+
+=== Networking_RespondToEvent switch body (mid) (0x4C6D60-0x4C7400) ===
+0x004C6D60  test    esi, esi
+0x004C6D62  jz      HandleEvent_ev_PACKETTIMING; default
+0x004C6D68  mov     al, [esi+_TechnoClass.t.r.m.o.Alive]
+0x004C6D6E  test    al, al
+0x004C6D70  jz      HandleEvent_ev_PACKETTIMING; default
+0x004C6D76  mov     al, [esi+_TechnoClass.t.r.m.o.InLimbo]
+0x004C6D7C  test    al, al
+0x004C6D7E  jnz     HandleEvent_ev_PACKETTIMING; default
+0x004C6D84  mov     ecx, [esi+BuildingClass.BuildingType]
+0x004C6D8A  mov     al, [ecx+BuildingTypeClass.FirestormWall]
+0x004C6D90  test    al, al
+0x004C6D92  jnz     HandleEvent_ev_PACKETTIMING; default
+0x004C6D98  mov     ecx, esi; this  ; this
+0x004C6D9A  call    BuildingClass_GoOffline
+0x004C6D9F  pop     edi
+0x004C6DA0  pop     esi
+0x004C6DA1  pop     ebp
+0x004C6DA2  pop     ebx
+0x004C6DA3  add     esp, 370h
+0x004C6DA9  retn
+0x004C6DAA  lea     ecx, [esi+7]; case 0x1D
+0x004C6DAD  call    TargetClass::As_Techno
+0x004C6DB2  mov     edi, eax
+0x004C6DB4  xor     edx, edx
+0x004C6DB6  mov     ecx, edi
+0x004C6DB8  call    sub_6386E0
+0x004C6DBD  test    edi, edi
+0x004C6DBF  jz      HandleEvent_ev_PACKETTIMING; default
+0x004C6DC5  mov     al, [edi+_TechnoClass.t.r.m.o.Alive]
+0x004C6DCB  test    al, al
+0x004C6DCD  jz      HandleEvent_ev_PACKETTIMING; default
+0x004C6DD3  lea     ecx, [esi+0Ch]
+0x004C6DD6  call    sub_6E6E20
+0x004C6DDB  push    eax; a2  ; a2
+0x004C6DDC  mov     ecx, edi; this  ; this
+0x004C6DDE  call    TechnoClass_Assign_Destination_Cell
+0x004C6DE3  pop     edi
+0x004C6DE4  pop     esi
+0x004C6DE5  pop     ebp
+0x004C6DE6  pop     ebx
+0x004C6DE7  add     esp, 370h
+0x004C6DED  retn
+0x004C6DEE  mov     edx, [esi+7]; case 0x2
+0x004C6DF1  mov     ecx, [ecx+edx*4]
+0x004C6DF4  push    ecx; h2  ; h2
+0x004C6DF5  mov     ecx, edi; this  ; this
+0x004C6DF7  call    HouseClass::Is_Ally
+0x004C6DFC  test    al, al
+0x004C6DFE  push    1; a3  ; a3
+0x004C6E00  jz      short loc_4C6E18
+0x004C6E02  mov     eax, [esi+7]
+0x004C6E05  mov     ecx, edi; this  ; this
+0x004C6E07  push    eax; idx  ; idx
+0x004C6E08  call    HouseClass_MakeEnemyByIdx
+0x004C6E0D  pop     edi
+0x004C6E0E  pop     esi
+0x004C6E0F  pop     ebp
+0x004C6E10  pop     ebx
+0x004C6E11  add     esp, 370h
+0x004C6E17  retn
+0x004C6E18  mov     ecx, [esi+7]
+0x004C6E1B  push    ecx; a2  ; a2
+0x004C6E1C  mov     ecx, edi; this  ; this
+0x004C6E1E  call    HouseClass::Make_Ally
+0x004C6E23  pop     edi
+0x004C6E24  pop     esi
+0x004C6E25  pop     ebp
+0x004C6E26  pop     ebx
+0x004C6E27  add     esp, 370h
+0x004C6E2D  retn
+0x004C6E2E  test    edi, edi; case 0x2C
+0x004C6E30  jz      HandleEvent_ev_PACKETTIMING; default
+0x004C6E36  mov     ecx, edi
+0x004C6E38  call    HouseClass_AllCheer
+0x004C6E3D  pop     edi
+0x004C6E3E  pop     esi
+0x004C6E3F  pop     ebp
+0x004C6E40  pop     ebx
+0x004C6E41  add     esp, 370h
+0x004C6E47  retn
+0x004C6E48  test    edi, edi; case 0x17
+0x004C6E4A  jz      HandleEvent_ev_PACKETTIMING; default
+0x004C6E50  mov     edx, [esi+7]
+0x004C6E53  mov     ecx, Scenario
+0x004C6E59  mov     ScenarioFlagsBackup, edx
+0x004C6E5F  mov     eax, [esi+7]
+0x004C6E62  lea     edx, [edi+HouseClass_old.IHouse._.Name]
+0x004C6E68  mov     [ecx], eax
+0x004C6E6A  push    edx; Format  ; Format
+0x004C6E6B  push    3B9h; int  ; int
+0x004C6E70  push    offset aDRa2mdpostEven; "D:\\ra2mdpost\\Event.CPP"
+0x004C6E75  xor     edx, edx; a2  ; a2
+0x004C6E77  mov     ecx, offset aTxt_special_wa; "TXT_SPECIAL_WARNING"
+0x004C6E7C  call    Get_String; ecx = TXT_SPECIAL_WARNING  ; ecx = TXT_SPECIAL_WARNING
+0x004C6E81  push    eax; wchar_t *  ; wchar_t *
+0x004C6E82  lea     eax, [esp+388h+var_2A0]
+0x004C6E89  push    eax; wchar_t *  ; wchar_t *
+0x004C6E8A  call    _swprintf
+0x004C6E8F  mov     ecx, [edi+HouseClass_old.IHouse._.ColourScheme]
+0x004C6E95  add     esp, 0Ch
+0x004C6E98  lea     edx, [esp+380h+var_2A0]
+0x004C6E9F  push    0; int  ; int
+0x004C6EA1  push    4B0h; char  ; char
+0x004C6EA6  push    4046h; int  ; int
+0x004C6EAB  push    ecx; int  ; int
+0x004C6EAC  push    edx; wchar_t *  ; wchar_t *
+0x004C6EAD  push    0; int  ; int
+0x004C6EAF  push    0; wchar_t *  ; wchar_t *
+0x004C6EB1  mov     ecx, offset unk_A8BC60
+0x004C6EB6  call    MessageListClass_PrintMessage
+0x004C6EBB  push    0; a2  ; a2
+0x004C6EBD  mov     ecx, offset Map; this  ; this
+0x004C6EC2  call    GScreen_FlagToRedraw
+0x004C6EC7  pop     edi
+0x004C6EC8  pop     esi
+0x004C6EC9  pop     ebp
+0x004C6ECA  pop     ebx
+0x004C6ECB  add     esp, 370h
+0x004C6ED1  retn
+0x004C6ED2  lea     ecx, [esi+7]; case 0x14
+0x004C6ED5  call    TargetClass::As_Techno
+0x004C6EDA  mov     esi, eax
+0x004C6EDC  xor     edx, edx
+0x004C6EDE  mov     ecx, esi
+0x004C6EE0  call    sub_6386E0
+0x004C6EE5  test    esi, esi
+0x004C6EE7  jz      HandleEvent_ev_PACKETTIMING; default
+0x004C6EED  mov     al, [esi+_ObjectClass.o.Alive]
+0x004C6EF3  test    al, al
+0x004C6EF5  jz      HandleEvent_ev_PACKETTIMING; default
+0x004C6EFB  mov     eax, [esi]
+0x004C6EFD  push    0FFFFFFFFh; mode  ; mode
+0x004C6EFF  mov     ecx, esi; this  ; this
+0x004C6F01  call    [eax+vt_TechnoClass.r.m.o.SetRepairState]
+0x004C6F07  pop     edi
+0x004C6F08  pop     esi
+0x004C6F09  pop     ebp
+0x004C6F0A  pop     ebx
+0x004C6F0B  add     esp, 370h
+0x004C6F11  retn
+0x004C6F12  lea     ecx, [esi+7]; case 0x15
+0x004C6F15  call    TargetClass::As_Techno
+0x004C6F1A  mov     edi, eax
+0x004C6F1C  xor     edx, edx
+0x004C6F1E  mov     ecx, edi
+0x004C6F20  call    sub_6386E0
+0x004C6F25  test    edi, edi
+0x004C6F27  jz      HandleEvent_ev_PACKETTIMING; default
+0x004C6F2D  mov     al, [edi+90h]
+0x004C6F33  test    al, al
+0x004C6F35  jz      HandleEvent_ev_PACKETTIMING; default
+0x004C6F3B  mov     ecx, [edi+21Ch]
+0x004C6F41  movsx   edx, byte ptr [esi+2]
+0x004C6F45  cmp     [ecx+30h], edx
+0x004C6F48  jnz     HandleEvent_ev_PACKETTIMING; default
+0x004C6F4E  mov     eax, [edi]
+0x004C6F50  mov     ecx, edi
+0x004C6F52  call    dword ptr [eax+2Ch]
+0x004C6F55  cmp     eax, 6
+0x004C6F58  jz      short loc_4C6F9C
+0x004C6F5A  mov     edx, [edi]
+0x004C6F5C  mov     ecx, edi
+0x004C6F5E  call    dword ptr [edx+2Ch]
+0x004C6F61  cmp     eax, 1
+0x004C6F64  jz      short loc_4C6F76
+0x004C6F66  mov     eax, [edi]
+0x004C6F68  mov     ecx, edi
+0x004C6F6A  call    dword ptr [eax+2Ch]
+0x004C6F6D  cmp     eax, 2
+0x004C6F70  jnz     HandleEvent_ev_PACKETTIMING; default
+0x004C6F76  mov     edx, [edi]
+0x004C6F78  lea     eax, [esp+380h+var_31C]
+0x004C6F7C  push    eax
+0x004C6F7D  mov     ecx, edi
+0x004C6F7F  call    dword ptr [edx+48h]
+0x004C6F82  push    eax; a2  ; a2
+0x004C6F83  mov     ecx, offset Map; this  ; this
+0x004C6F88  call    MapClass_Get_Target_Cell
+0x004C6F8D  mov     ecx, eax; this  ; this
+0x004C6F8F  call    CellClass::Cell_Building
+0x004C6F94  test    eax, eax
+0x004C6F96  jz      HandleEvent_ev_PACKETTIMING; default
+0x004C6F9C  mov     edx, [edi]
+0x004C6F9E  push    0FFFFFFFFh; mode  ; mode
+0x004C6FA0  mov     ecx, edi; this  ; this
+0x004C6FA2  call    [edx+vt_TechnoClass.r.m.o.Sell]; bunkered unit selling
+0x004C6FA8  pop     edi
+0x004C6FA9  pop     esi
+0x004C6FAA  pop     ebp
+0x004C6FAB  pop     ebx
+0x004C6FAC  add     esp, 370h
+0x004C6FB2  retn
+0x004C6FB3  mov     cx, [esi+9]; case 0x16
+0x004C6FB7  mov     ax, [esi+7]
+0x004C6FBB  lea     edx, [esp+380h+var_34C]
+0x004C6FBF  mov     [esp+380h+var_34C.Y], cx
+0x004C6FC4  push    0; a3  ; a3
+0x004C6FC6  push    edx; coords  ; coords
+0x004C6FC7  mov     ecx, edi; this  ; this
+0x004C6FC9  mov     [esp+388h+var_34C.X], ax
+0x004C6FCE  call    HouseClass_SellOverlay
+0x004C6FD3  pop     edi
+0x004C6FD4  pop     esi
+0x004C6FD5  pop     ebp
+0x004C6FD6  pop     ebx
+0x004C6FD7  add     esp, 370h
+0x004C6FDD  retn
+0x004C6FDE  mov     ecx, [esi+13h]; case 0x13
+0x004C6FE1  mov     eax, [esi+0Fh]
+0x004C6FE4  lea     edx, [esp+380h+a2]
+0x004C6FE8  mov     [esp+380h+var_364], ecx
+0x004C6FEC  push    edx; loc  ; loc
+0x004C6FED  mov     ecx, offset Map; this  ; this
+0x004C6FF2  mov     [esp+384h+a2], eax
+0x004C6FF6  mov     [esp+384h+var_360], 0
+0x004C6FFE  call    MapClass_GetCellFloorHeight
+0x004C7003  mov     [esp+380h+var_360], eax
+0x004C7007  lea     eax, [esp+380h+a2]
+0x004C700B  push    eax; a2  ; a2
+0x004C700C  mov     ecx, offset Map; this  ; this
+0x004C7011  call    MapClass_Get_Target_Cell
+0x004C7016  mov     ecx, [eax+140h]
+0x004C701C  test    ch, 1
+0x004C701F  jz      short loc_4C7031
+0x004C7021  mov     ecx, dword_8A39EC
+0x004C7027  mov     eax, [esp+380h+var_360]
+0x004C702B  add     eax, ecx
+0x004C702D  mov     [esp+380h+var_360], eax
+0x004C7031  mov     eax, [esi+7]
+0x004C7034  push    size AnimClass; unsigned int  ; unsigned int
+0x004C7039  cmp     eax, 0FFFFFFFFh
+0x004C703C  jnz     short loc_4C706E
+0x004C703E  call    new; size AnimClass  ; size AnimClass
+0x004C7043  add     esp, 4
+0x004C7046  test    eax, eax
+0x004C7048  jz      HandleEvent_ev_PACKETTIMING; default
+0x004C704E  mov     ecx, RulesData
+0x004C7054  push    0; unsigned int  ; unsigned int
+0x004C7056  push    0
+0x004C7058  push    600h
+0x004C705D  push    1
+0x004C705F  lea     edx, [esp+390h+a2]
+0x004C7063  push    0
+0x004C7065  push    edx
+0x004C7066  mov     edx, [ecx+(RulesClass+0BB4h)]
+0x004C706C  jmp     short loc_4C709C
+0x004C706E  call    new
+0x004C7073  add     esp, 4
+0x004C7076  test    eax, eax
+0x004C7078  jz      HandleEvent_ev_PACKETTIMING; default
+0x004C707E  mov     edx, [esi+7]
+0x004C7081  push    0; a8  ; a8
+0x004C7083  push    0; ForcedZAdjust  ; ForcedZAdjust
+0x004C7085  push    600h; flags  ; flags
+0x004C708A  push    1; loopCount  ; loopCount
+0x004C708C  lea     ecx, [esp+390h+a2]
+0x004C7090  push    0; a4  ; a4
+0x004C7092  push    ecx; pos  ; pos
+0x004C7093  mov     ecx, vec_AnimTypes.data
+0x004C7099  mov     edx, [ecx+edx*4]
+0x004C709C  push    edx; AnimType  ; AnimType
+0x004C709D  mov     ecx, eax; this  ; this
+0x004C709F  call    AnimClass::AnimClass; 600h  ; 600h
+0x004C70A4  mov     edi, eax
+0x004C70A6  test    edi, edi
+0x004C70A8  jz      HandleEvent_ev_PACKETTIMING; default
+0x004C70AE  mov     esi, [esi+0Bh]
+0x004C70B1  cmp     esi, 0FFFFFFFFh
+0x004C70B4  jz      HandleEvent_ev_PACKETTIMING; default
+0x004C70BA  mov     eax, vec_Houses.Vector
+0x004C70BF  mov     ecx, [eax+esi*4]; this  ; this
+0x004C70C2  call    HouseClass::Is_Player
+0x004C70C7  test    al, al
+0x004C70C9  jnz     HandleEvent_ev_PACKETTIMING; default
+0x004C70CF  mov     byte ptr [edi+19Dh], 1
+0x004C70D6  pop     edi
+0x004C70D7  pop     esi
+0x004C70D8  pop     ebp
+0x004C70D9  pop     ebx
+0x004C70DA  add     esp, 370h
+0x004C70E0  retn
+0x004C70E1  mov     cx, [esi+13h]; case 0xA
+0x004C70E5  mov     dx, [esi+15h]
+0x004C70E9  lea     eax, [esp+380h+a5]
+0x004C70ED  mov     word ptr [esp+380h+a5], cx
+0x004C70F2  push    eax; a5  ; a5
+0x004C70F3  mov     eax, [esi+0Fh]
+0x004C70F6  test    eax, eax
+0x004C70F8  mov     eax, [esi+7]
+0x004C70FB  mov     word ptr [esp+384h+a5+2], dx
+0x004C7100  mov     edx, [esi+0Bh]
+0x004C7103  setnz   cl
+0x004C7106  push    ecx; arg8  ; arg8
+0x004C7107  push    edx; idx  ; idx
+0x004C7108  push    eax; abstractID  ; abstractID
+0x004C7109  mov     ecx, edi; this  ; this
+0x004C710B  call    HouseClass_UnitFromFactory
+0x004C7110  pop     edi
+0x004C7111  pop     esi
+0x004C7112  pop     ebp
+0x004C7113  pop     ebx
+0x004C7114  add     esp, 370h
+0x004C711A  retn
+0x004C711B  mov     eax, [esi+0Fh]; case 0xD
+0x004C711E  mov     edx, [esi+0Bh]
+0x004C7121  test    eax, eax
+0x004C7123  mov     eax, [esi+7]
+0x004C7126  push    0; a4  ; a4
+0x004C7128  setnz   cl
+0x004C712B  push    ecx; isNaval  ; isNaval
+0x004C712C  push    edx; idx  ; idx
+0x004C712D  push    eax; abstractID  ; abstractID
+0x004C712E  mov     ecx, edi; a1  ; a1
+0x004C7130  call    HouseClass_BeginProductionOf
+0x004C7135  pop     edi
+0x004C7136  pop     esi
+0x004C7137  pop     ebp
+0x004C7138  pop     ebx
+0x004C7139  add     esp, 370h
+0x004C713F  retn
+0x004C7140  mov     eax, [esi+0Fh]; case 0xE
+0x004C7143  mov     edx, [esi+0Bh]
+0x004C7146  test    eax, eax
+0x004C7148  mov     eax, [esi+7]
+0x004C714B  setnz   cl
+0x004C714E  push    ecx
+0x004C714F  push    edx
+0x004C7150  push    eax
+0x004C7151  mov     ecx, edi
+0x004C7153  call    HouseClass_SuspendProductionOf
+0x004C7158  pop     edi
+0x004C7159  pop     esi
+0x004C715A  pop     ebp
+0x004C715B  pop     ebx
+0x004C715C  add     esp, 370h
+0x004C7162  retn
+0x004C7163  push    0; case 0xF
+0x004C7165  mov     eax, [esi+0Fh]
+0x004C7168  mov     edx, [esi+0Bh]
+0x004C716B  test    eax, eax
+0x004C716D  mov     eax, [esi+7]
+0x004C7170  setnz   cl
+0x004C7173  push    ecx; a4  ; a4
+0x004C7174  push    edx; idx  ; idx
+0x004C7175  push    eax; abstractID  ; abstractID
+0x004C7176  mov     ecx, edi; this  ; this
+0x004C7178  call    HouseClass_AbandonProductionOf
+0x004C717D  pop     edi
+0x004C717E  pop     esi
+0x004C717F  pop     ebp
+0x004C7180  pop     ebx
+0x004C7181  add     esp, 370h
+0x004C7187  retn
+0x004C7188  push    1; case 0x2D
+0x004C718A  jmp     short loc_4C7165
+0x004C718C  lea     ecx, [esi+7]; case 0x10
+0x004C718F  call    sub_6E7A80
+0x004C7194  mov     esi, eax
+0x004C7196  xor     edx, edx
+0x004C7198  mov     ecx, esi
+0x004C719A  call    sub_6386E0
+0x004C719F  test    esi, esi
+0x004C71A1  jz      HandleEvent_ev_PACKETTIMING; default
+0x004C71A7  mov     al, [esi+90h]
+0x004C71AD  test    al, al
+0x004C71AF  jz      HandleEvent_ev_PACKETTIMING; default
+0x004C71B5  mov     edx, [esi]
+0x004C71B7  mov     ecx, esi; this  ; this
+0x004C71B9  call    [edx+vt_BuildingClass.SelectPrimary]
+0x004C71BF  pop     edi
+0x004C71C0  pop     esi
+0x004C71C1  pop     ebp
+0x004C71C2  pop     ebx
+0x004C71C3  add     esp, 370h
+0x004C71C9  retn
+0x004C71CA  lea     ecx, [esi+7]; case 0x3
+0x004C71CD  call    TargetClass::As_Techno
+0x004C71D2  mov     edi, eax
+0x004C71D4  mov     al, [esi+1Dh]
+0x004C71D7  cmp     al, 1
+0x004C71D9  jnz     short loc_4C71ED
+0x004C71DB  mov     ecx, esi; this  ; this
+0x004C71DD  call    Networking_RespondTo_PlanningEvent
+0x004C71E2  pop     edi
+0x004C71E3  pop     esi
+0x004C71E4  pop     ebp
+0x004C71E5  pop     ebx
+0x004C71E6  add     esp, 370h
+0x004C71EC  retn
+0x004C71ED  mov     edx, esi
+0x004C71EF  mov     ecx, edi
+0x004C71F1  call    sub_6386E0
+0x004C71F6  test    edi, edi
+0x004C71F8  jz      HandleEvent_ev_PACKETTIMING; default
+0x004C71FE  mov     al, [edi+90h]
+0x004C7204  test    al, al
+0x004C7206  jz      HandleEvent_ev_PACKETTIMING; default
+0x004C720C  mov     eax, [edi+6Ch]
+0x004C720F  test    eax, eax
+0x004C7211  jle     HandleEvent_ev_PACKETTIMING; default
+0x004C7217  mov     al, [edi+81h]
+0x004C721D  test    al, al
+0x004C721F  jnz     HandleEvent_ev_PACKETTIMING; default
+0x004C7225  mov     al, [esi+12h]
+0x004C7228  xor     ebx, ebx
+0x004C722A  test    al, al
+0x004C722C  jz      short loc_4C7263
+0x004C722E  lea     ecx, [esi+0Eh]
+0x004C7231  call    sub_6E6FF0
+0x004C7236  mov     ebx, eax
+0x004C7238  test    ebx, ebx
+0x004C723A  jz      short loc_4C7263
+0x004C723C  mov     al, [ebx+90h]
+0x004C7242  test    al, al
+0x004C7244  jz      HandleEvent_ev_PACKETTIMING; default
+0x004C724A  mov     eax, [ebx+6Ch]
+0x004C724D  test    eax, eax
+0x004C724F  jz      HandleEvent_ev_PACKETTIMING; default
+0x004C7255  mov     al, [ebx+81h]
+0x004C725B  test    al, al
+0x004C725D  jnz     HandleEvent_ev_PACKETTIMING; default
+0x004C7263  mov     al, [esi+17h]
+0x004C7266  test    al, al
+0x004C7268  jz      short loc_4C729F
+0x004C726A  lea     ecx, [esi+13h]
+0x004C726D  call    sub_6E6FF0
+0x004C7272  mov     ebx, eax
+0x004C7274  test    ebx, ebx
+0x004C7276  jz      short loc_4C729F
+0x004C7278  mov     al, [ebx+90h]
+0x004C727E  test    al, al
+0x004C7280  jz      HandleEvent_ev_PACKETTIMING; default
+0x004C7286  mov     eax, [ebx+6Ch]
+0x004C7289  test    eax, eax
+0x004C728B  jz      HandleEvent_ev_PACKETTIMING; default
+0x004C7291  mov     al, [ebx+81h]
+0x004C7297  test    al, al
+0x004C7299  jnz     HandleEvent_ev_PACKETTIMING; default
+0x004C729F  cmp     byte ptr [esi+0Ch], 7
+0x004C72A3  jnz     short loc_4C72E8
+0x004C72A5  cmp     dword ptr [edi+0ACh], 7
+0x004C72AC  jnz     short loc_4C72E8
+0x004C72AE  mov     al, [edi+14h]
+0x004C72B1  shr     al, 2
+0x004C72B4  and     al, 1
+0x004C72B6  mov     byte ptr [esp+380h+var_370+3], al
+0x004C72BA  jz      short loc_4C72E8
+0x004C72BC  lea     ecx, [esi+13h]
+0x004C72BF  call    sub_6E6E20
+0x004C72C4  mov     ebp, eax
+0x004C72C6  test    ebp, ebp
+0x004C72C8  jz      short loc_4C72E8
+0x004C72CA  mov     edx, [ebp+0]
+0x004C72CD  mov     ecx, ebp
+0x004C72CF  call    dword ptr [edx+2Ch]
+0x004C72D2  cmp     eax, 6
+0x004C72D5  jnz     short loc_4C72E8
+0x004C72D7  push    0; idx  ; idx
+0x004C72D9  mov     ecx, edi; this  ; this
+0x004C72DB  call    RadioClass_GetNthEntry
+0x004C72E0  cmp     eax, ebp
+0x004C72E2  jz      HandleEvent_ev_PACKETTIMING; default
+0x004C72E8  mov     al, [edi+418h]
+0x004C72EE  test    al, al
+0x004C72F0  jnz     short loc_4C7300
+0x004C72F2  mov     eax, [edi]
+0x004C72F4  push    3
+0x004C72F6  mov     ecx, edi
+0x004C72F8  call    dword ptr [eax+274h]
+0x004C72FE  jmp     short loc_4C7349
+0x004C7300  push    0; idx  ; idx
+0x004C7302  mov     ecx, edi; this  ; this
+0x004C7304  call    RadioClass_GetNthEntry
+0x004C7309  mov     ebp, eax
+0x004C730B  test    ebp, ebp
+0x004C730D  jz      short loc_4C7349
+0x004C730F  mov     al, [ebp+90h]
+0x004C7315  test    al, al
+0x004C7317  jz      short loc_4C7349
+0x004C7319  mov     edx, [ebp+0]
+0x004C731C  mov     ecx, ebp
+0x004C731E  call    dword ptr [edx+2Ch]
+0x004C7321  cmp     eax, 6
+0x004C7324  jnz     short loc_4C7349
+0x004C7326  mov     eax, [ebp+520h]
+0x004C732C  mov     cl, [eax+BuildingTypeClass.DockUnload]
+0x004C7332  test    cl, cl
+0x004C7334  jz      short loc_4C7349
+0x004C7336  mov     edx, [edi]
+0x004C7338  push    3; a7  ; a7
+0x004C733A  mov     ecx, edi
+0x004C733C  call    dword ptr [edx+274h]
+0x004C7342  mov     byte ptr [edi+418h], 0
+0x004C7349  mov     eax, [edi+500h]
+0x004C734F  test    eax, eax
+0x004C7351  jz      short loc_4C735D
+0x004C7353  mov     dword ptr [edi+500h], 0
+0x004C735D  mov     al, [edi+14h]
+0x004C7360  shr     al, 2
+0x004C7363  and     al, 1
+0x004C7365  mov     byte ptr [esp+380h+var_370+3], al
+0x004C7369  jz      short loc_4C7385
+0x004C736B  mov     ecx, [edi+5D4h]; this  ; this
+0x004C7371  test    ecx, ecx
+0x004C7373  jz      short loc_4C7385
+0x004C7375  cmp     byte ptr [esi+0Ch], 10h
+0x004C7379  jz      short loc_4C7385
+0x004C737B  push    1; count  ; count
+0x004C737D  push    0FFFFFFFFh; idx  ; idx
+0x004C737F  push    edi; Unit  ; Unit
+0x004C7380  call    TeamClass::Remove
+0x004C7385  test    ebx, ebx
+0x004C7387  jz      short loc_4C73A5
+0x004C7389  mov     ecx, HouseClass_PlayerPtr; this  ; this
+0x004C738F  push    edi; a2  ; a2
+0x004C7390  call    HouseClass::Is_Ally
+0x004C7395  test    al, al
+0x004C7397  jz      short loc_4C73A5
+0x004C7399  mov     edx, [ebx]
+0x004C739B  push    7
+0x004C739D  mov     ecx, ebx
+0x004C739F  call    dword ptr [edx+148h]
+0x004C73A5  mov     eax, [edi]
+0x004C73A7  push    esi
+0x004C73A8  mov     ecx, edi
+0x004C73AA  call    dword ptr [eax+4A4h]
+0x004C73B0  mov     edx, [edi]
+0x004C73B2  mov     ebx, eax
+0x004C73B4  push    0
+0x004C73B6  push    ebx
+0x004C73B7  mov     ecx, edi
+0x004C73B9  call    dword ptr [edx+1E8h]
+0x004C73BF  test    byte ptr [edi+14h], 4
+0x004C73C3  jz      short loc_4C7440
+0x004C73C5  mov     ebp, edi
+0x004C73C7  mov     dword ptr [edi+5A8h], 0
+0x004C73D1  mov     ecx, [edi+2D8h]
+0x004C73D7  mov     dword ptr [edi+2B8h], 0
+0x004C73E1  test    ecx, ecx
+0x004C73E3  jz      short loc_4C73EF
+0x004C73E5  cmp     ebx, 1
+0x004C73E8  jz      short loc_4C73EF
+0x004C73EA  call    sub_6B0C80
+0x004C73EF  cmp     byte ptr [esi+0Ch], 0Bh
+0x004C73F3  jnz     short loc_4C7444
+0x004C73F5  mov     al, [edi+14h]
+0x004C73F8  shr     al, 2
+0x004C73FB  and     al, 1
+0x004C73FD  mov     byte ptr [esp+380h+var_370+3], al
+
+symbol vt_TechnoClass -> 0xFFFFFFFF
+
+symbol ??_7TechnoClass@@6B@ -> 0xFFFFFFFF
+
+symbol vt_UnitClass -> 0xFFFFFFFF
+
+symbol vt_FootClass -> 0xFFFFFFFF
+
+0x6386E0 = sub_6386E0 (0x6386E0)
+=== prologue of 0x6386E0 (0x6386E0-0x638720) ===
+0x006386E0  sub     esp, 0Ch
+0x006386E3  push    ebx
+0x006386E4  push    esi
+0x006386E5  mov     esi, ecx
+0x006386E7  push    edi
+0x006386E8  test    esi, esi
+0x006386EA  mov     edi, edx
+0x006386EC  jz      loc_63882A
+0x006386F2  call    TechnoClass_GetPlanningToken
+0x006386F7  mov     ebx, eax
+0x006386F9  test    ebx, ebx
+0x006386FB  mov     [esp+18h+var_4], ebx
+0x006386FF  jz      loc_63882A
+0x00638705  test    edi, edi
+0x00638707  jz      short loc_638715
+0x00638709  movsx   eax, byte ptr [edi+1Dh]
+0x0063870D  test    eax, eax
+0x0063870F  jnz     loc_638826
+0x00638715  mov     eax, [ebx+14h]
+0x00638718  test    eax, eax
+0x0063871A  jle     loc_638826
+
+0x6E7A80 = sub_6E7A80 (0x6E7A80)
+=== prologue of 0x6E7A80 (0x6E7A80-0x6E7AC0) ===
+0x006E7A80  push    esi
+0x006E7A81  mov     esi, ecx
+0x006E7A83  cmp     byte ptr [esi+4], 34h ; '4'
+0x006E7A87  jnz     loc_6E7B48
+0x006E7A8D  mov     ecx, vec_TechTypeLinks.count
+0x006E7A93  push    ebx
+0x006E7A94  test    ecx, ecx
+0x006E7A96  push    edi
+0x006E7A97  jz      short loc_6E7B17
+0x006E7A99  mov     edx, vec_TechTypeLinks.SpecialK
+0x006E7A9F  test    edx, edx
+0x006E7AA1  jz      short loc_6E7AAF
+0x006E7AA3  mov     eax, [edx]
+0x006E7AA5  mov     edi, [esi]
+0x006E7AA7  cmp     eax, edi
+0x006E7AA9  jz      loc_6E7B43
+0x006E7AAF  mov     al, vec_TechTypeLinks.sorted
+0x006E7AB4  test    al, al
+0x006E7AB6  jnz     short loc_6E7AE6
+0x006E7AB8  push    offset VecSymlinks_Comparator; int __cdecl (*)(const void *,const void *)  ; int __cdecl (*)(const void *,const void *)
+0x006E7ABD  push    8; size_t  ; size_t
+0x006E7ABF  push    ecx; size_t  ; size_t
+
+0x6E6E20 = sub_6E6E20 (0x6E6E20)
+=== prologue of 0x6E6E20 (0x6E6E20-0x6E6E60) ===
+0x006E6E20  sub     esp, 8
+0x006E6E23  push    esi
+0x006E6E24  mov     esi, ecx
+0x006E6E26  mov     al, [esi+4]
+0x006E6E29  cmp     al, 34h ; '4'
+0x006E6E2B  jnz     loc_6E6ED0
+0x006E6E31  mov     edx, vec_TechTypeLinks.count; a2  ; a2
+0x006E6E37  test    edx, edx
+0x006E6E39  jz      short loc_6E6EAD
+0x006E6E3B  mov     eax, vec_TechTypeLinks.SpecialK
+0x006E6E40  test    eax, eax
+0x006E6E42  jz      short loc_6E6E4E
+0x006E6E44  mov     ecx, [eax]
+0x006E6E46  push    edi
+0x006E6E47  mov     edi, [esi]
+0x006E6E49  cmp     ecx, edi
+0x006E6E4B  pop     edi
+0x006E6E4C  jz      short loc_6E6EA8
+0x006E6E4E  test    edx, edx
+0x006E6E50  jz      short loc_6E6EAD
+0x006E6E52  mov     al, vec_TechTypeLinks.sorted
+0x006E6E57  test    al, al
+0x006E6E59  jnz     short loc_6E6E89
+0x006E6E5B  push    offset VecSymlinks_Comparator; int __cdecl (*)(const void *,const void *)  ; int __cdecl (*)(const void *,const void *)
+
+0x710550 = sub_710550 (0x710550)
+=== prologue of 0x710550 (0x710550-0x710584) ===
+0x00710550  push    esi
+0x00710551  push    edi
+0x00710552  add     ecx, 114h; a1  ; a1
+0x00710558  call    CargoClass::Attached_Object
+0x0071055D  mov     esi, eax
+0x0071055F  test    esi, esi
+0x00710561  jz      short loc_71057F
+0x00710563  mov     edi, [esp+8+arg_0]
+0x00710567  mov     eax, [esi]
+0x00710569  push    edi
+0x0071056A  mov     ecx, esi
+0x0071056C  call    dword ptr [eax+3C8h]
+0x00710572  mov     esi, [esi+30h]
+0x00710575  test    esi, esi
+0x00710577  jz      short loc_71057F
+0x00710579  test    byte ptr [esi+14h], 4
+0x0071057D  jnz     short loc_710567
+0x0071057F  pop     edi
+0x00710580  pop     esi
+0x00710581  retn    4
