@@ -29,3 +29,7 @@ __pycache__/
 
 # AI 助手的工作记忆（私有工作状态，不入库；确实要提交时用 git add -f）
 /.workbuddy/
+
+# 构建日志（临时产物，不是分析证据；分析证据是 ida_work/ida_*.log 与 *_probe.txt）
+/ida_work/build_*.log
+/out_build*.log
