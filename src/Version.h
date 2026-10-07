@@ -40,6 +40,27 @@
 	#endif // VERSION_PATCH
 #endif // DEBUG
 
+// ---- 纯版本号（**无前缀**），供"版本更新检查"做逐段比对 ----------------------
+// 与上面 VERSION_SHORT_* 是**同一口径**（同一个 DEBUG / VERSION_PATCH 分支），
+// 区别只是不带 "Debug " / "Ver." 前缀 —— 加载器/更新检查只认 "0.2.4" / "0.2.4p1"。
+//
+// 为什么单独定义而不是在运行期去剥 VERSION_SHORT_WSTR 的前缀：
+//   前缀是 "Debug "（后有空格）还是 "Ver."（无空格）取决于编译分支，
+//   在运行期按字符串截断去猜，等于把"编译期常量"降级成"运行期约定"，
+//   分支一改就静默错位。这里让编译器把两份串在同一处拼出来，口径必然一致。
+//
+// ★ 改动本段时务必与 VERSION_SHORT_* 的 DEBUG / VERSION_PATCH 分支同步：
+//   DEBUG 下不加补丁后缀（与 VERSION_SHORT_* 一致）。
+#ifdef DEBUG
+	#define VERSION_PLAIN_WSTR WSTR(VERSION_MAJOR) L"." WSTR(VERSION_MINOR) L"." WSTR(VERSION_REVISION)
+#else // Release build
+	#if VERSION_PATCH == 0
+		#define VERSION_PLAIN_WSTR WSTR(VERSION_MAJOR) L"." WSTR(VERSION_MINOR) L"." WSTR(VERSION_REVISION)
+	#else
+		#define VERSION_PLAIN_WSTR WSTR(VERSION_MAJOR) L"." WSTR(VERSION_MINOR) L"." WSTR(VERSION_REVISION) L"p" WSTR(VERSION_PATCH)
+	#endif // VERSION_PATCH
+#endif // DEBUG
+
 // version infomation
 #define PRODUCT_NAME "Kratos"
 #define COMPANY_NAME "ChrisLv_CN (https://space.bilibili.com/276838)"
