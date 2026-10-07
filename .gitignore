@@ -13,14 +13,16 @@ output
 /scripts/run_ion_shock.bat
 /scripts/run_yr.bat
 
-# IDA 数据库（约 219MB）体积过大不入库，需要时从 platform\gamemd 复制
-/ida_work/*.idb
-/ida_work/*.i64
-/ida_work/*.nam
-/ida_work/*.til
-# 强杀 IDA 后残留的未打包库，以及临时改名存放它们的目录（用完整套即删，勿长期堆积）
-/ida_work/*.id0
-/ida_work/*.id1
+# IDA 产物：数据库（约 219MB，正本在 platform\gamemd\gamemd.idb）、类型库、
+# 以及强杀 IDA 后残留的未打包库。仓库内任何位置都不入库（含 idb 被复制/改名到别处）。
+*.idb
+*.i64
+*.id0
+*.id1
+*.id2
+*.nam
+*.til
+# 临时改名存放 idb 残骸的目录（用完整套即删，勿长期堆积）
 /ida_work/_stale_ida*/
 
 # Python 工具（tools/gen_hook_conflict.py 等）的字节码缓存
@@ -30,8 +32,38 @@ __pycache__/
 # AI 助手的工作记忆（私有工作状态，不入库；确实要提交时用 git add -f）
 /.workbuddy/
 
-# 构建日志（临时产物，不是分析证据；分析证据是 ida_work/ida_*.log 与 *_probe.txt）
-/ida_work/build_*.log
+# 静态库的调试符号（5.9MB，非必需产物，不入库；本地文件保留供编译/调试）
+/lib/*.pdb
+
+# ================= ida_work 白名单 =================
+# ida_work 里【只有分析脚本 *.py、命令启动器 *.cmd 与文档 *.md 入库】。
+# 其余一切——IDA/探针跑出来的日志、反汇编转储、probe/audit 输出、*_report.txt 与
+# *.tsv 证据表、测试夹具、out*/、*.obj、*.idb——都是本地生成物，不入库。
+# 文件保留在磁盘上，随时用 ida_work/*.py 重新跑出来即可。
+# 注意：负向规则要先放行目录，否则 git 不会进入被忽略的目录。
+# 目录用途与跑法见 /ida_work/README.md。
+/ida_work/**
+!/ida_work/**/
+!/ida_work/**/*.py
+!/ida_work/**/*.md
+!/ida_work/**/*.cmd
+
+# 例外：一次性测试脚手架/夹具目录，即使里面是 *.py 也不入库（放在白名单之后才生效）
+/ida_work/port_unit_test/
+/ida_work/_logs/
+/ida_work/e2e_logs/
+/ida_work/e2e_https/
+/ida_work/_tables_tmp/
+/ida_work/_stale_ida*/
+/ida_work/vtprobe/
+
+# 仓库其它位置的散落产物（根目录手工试编译会漏出 port_unit_test.obj / url_config_probe.obj 等）
 /out_build*.log
-# 仓库根目录下的零散构建日志（例如手工跑 msbuild 时重定向出来的 build_fix*.log）
 /build_*.log
+*.log
+*.obj
+*.recipe
+*.tlog
+*.lastbuildstate
+*.ilk
+*.exp

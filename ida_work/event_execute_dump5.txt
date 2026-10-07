@@ -1,6 +1,0 @@
-hits=5
-  0x00417BD0  AircraftClass_ClickedMission
-  0x004D74E0  FootClass_ClickedMission
-  0x0051F190  InfantryClass_ClickedMission
-  0x005F4350  ObjectClass_ClickedMission
-  0x00738890  UnitClass_ClickedMission

@@ -1,63 +1,0 @@
-WalkLoco_InWhichLayer 0x0075C7E0 -> func LocomotionClass_ILocomotion_InWhichLayer [0x0075C7E0..0x0075C7E8]
-ShipLoco_InWhichLayer 0x006A3E50 -> func sub_6A3E50 [0x006A3E50..0x006A3E58]
-DriveLoco_InWhichLayer 0x004B4820 -> func sub_4B4820 [0x004B4820..0x004B4828]
-InfantryClass_Update? 0x00517F00 -> func InfantryClass_DTOR [0x00517D90..0x00517F95]
-FootClass_AI_hook 0x004DA87A -> func W?AI$:FootClass$n()v [0x004DA530..0x004DAF08]
-
-== WalkLocomotionClass::InWhichLayer 原始字节  0x0075C7D0..0x0075C820 ==
-   0075C7D0: 44 24 28 00 FF 52 10 5F        | mov     ) byte ptr  	[	!esp!	+	1Ch	+	arg_8	]	)	,	 *0*
-   0075C7D4: FF 52 10 5F 8B C3 5E 5B        | call    ) dword ptr  	[	!edx!	+	10h	]	)
-   0075C7D7: 5F 8B C3 5E 5B C2 0C 00        | pop     )!edi!)
-   0075C7D8: 8B C3 5E 5B C2 0C 00 90        | mov     )!eax!)	,	 *!ebx!*
-   0075C7DA: 5E 5B C2 0C 00 90 B8 02        | pop     )!esi!)
-   0075C7DB: 5B C2 0C 00 90 B8 02 00        | pop     )!ebx!)
-   0075C7DC: C2 0C 00 90 B8 02 00 00        | retn    )0Ch)
-   0075C7DF: 90 B8 02 00 00 00 C2 04        |  align  10h
->> 0075C7E0: B8 02 00 00 00 C2 04 00        | mov     )!eax!)	,	 *2*
-   0075C7E5: C2 04 00 90 90 90 90 90        | retn    )4)
-   0075C7E8: 90 90 90 90 90 90 90 90        |  db   8 dup(90h) 
-   0075C7F0: 53 8B 5C 24 08 55 8B 6C        | push    )!ebx!)
-   0075C7F1: 8B 5C 24 08 55 8B 6C 24        | mov     )!ebx!)	,	 *	[	!esp!	+	4	+	this	]	*
-   0075C7F5: 55 8B 6C 24 14 56 8B 74        | push    )!ebp!)
-   0075C7F6: 8B 6C 24 14 56 8B 74 24        | mov     )!ebp!)	,	 *	[	!esp!	+	8	+	dest	]	*
-   0075C7FA: 56 8B 74 24 14 55 56 53        | push    )!esi!)
-   0075C7FB: 8B 74 24 14 55 56 53 E8        | mov     )!esi!)	,	 *	[	!esp!	+	0Ch	+	iid	]	*
-   0075C7FF: 55 56 53 E8 A9 E1 DF FF        | push    )!ebp!); dest
-   0075C800: 56 53 E8 A9 E1 DF FF 3D        | push    )!esi!); iid
-   0075C801: 53 E8 A9 E1 DF FF 3D 02        | push    )!ebx!); this
-   0075C802: E8 A9 E1 DF FF 3D 02 40        | call    )%(0055A9B0LocomotionClass_QueryInterface%)
-   0075C807: 3D 02 40 00 80 75 39 57        | cmp     )!eax!)	,	 *80004002h*
-   0075C80C: 75 39 57 B9 04 00 00 00        | jnz      short  )(0075C847loc_75C847)
-   0075C80E: 57 B9 04 00 00 00 BF 10        | push    )!edi!)
-   0075C80F: B9 04 00 00 00 BF 10 9B        | mov     )!ecx!)	,	 *4*
-   0075C814: BF 10 9B 7E 00 33 C0 F3        | mov     )!edi!)	,	 * offset  $(007E9B10unk_7E9B10$*
-   0075C819: 33 C0 F3 A7 5F 75 0E 85        | xor     )!eax!)	,	 *!eax!*
-   0075C81B: F3 A7 5F 75 0E 85 DB 74        | repe cmpsd
-   0075C81D: 5F 75 0E 85 DB 74 05 8D        | pop     )!edi!)
-   0075C81E: 75 0E 85 DB 74 05 8D 43        | jnz      short  )(0075C82Eloc_75C82E)
-
-== ShipLocomotionClass::InWhichLayer 原始字节  0x006A3E40..0x006A3E70 ==
-   006A3E40: 4C ED FF C2 04 00 90 90        | call    )%(00578AD0TechnoClass_CanTraverse%)
-   006A3E43: C2 04 00 90 90 90 90 90        | retn    )4)
-   006A3E46: 90 90 90 90 90 90 90 90        |  db   0Ah dup(90h) 
->> 006A3E50: B8 02 00 00 00 C2 04 00        | mov     )!eax!)	,	 *2*
-   006A3E55: C2 04 00 90 90 90 90 90        | retn    )4)
-   006A3E58: 90 90 90 90 90 90 90 90        |  db   8 dup(90h) 
-   006A3E60: 8B 44 24 08 85 C0 75 08        | mov     )!eax!)	,	 *	[	!esp!	+	arg_4	]	*
-   006A3E64: 85 C0 75 08 B8 03 40 00        | test    )!eax!)	,	 *!eax!*
-   006A3E66: 75 08 B8 03 40 00 80 C2        | jnz      short  )(006A3E70loc_6A3E70)
-   006A3E68: B8 03 40 00 80 C2 08 00        | mov     )!eax!)	,	 *80004003h*
-   006A3E6D: C2 08 00 8B 0D B0 9A 7E        | retn    )8)
-
-== DriveLocomotionClass::InWhichLayer 原始字节  0x004B4810..0x004B4840 ==
-   004B4810: 42 0C 00 C2 04 00 90 90        | call    )%(00578AD0TechnoClass_CanTraverse%)
-   004B4813: C2 04 00 90 90 90 90 90        | retn    )4)
-   004B4816: 90 90 90 90 90 90 90 90        |  db   0Ah dup(90h) 
->> 004B4820: B8 02 00 00 00 C2 04 00        | mov     )!eax!)	,	 *2*
-   004B4825: C2 04 00 90 90 90 90 90        | retn    )4)
-   004B4828: 90 90 90 90 90 90 90 90        |  db   8 dup(90h) 
-   004B4830: 8B 44 24 08 85 C0 75 08        | mov     )!eax!)	,	 *	[	!esp!	+	arg_4	]	*
-   004B4834: 85 C0 75 08 B8 03 40 00        | test    )!eax!)	,	 *!eax!*
-   004B4836: 75 08 B8 03 40 00 80 C2        | jnz      short  )(004B4840loc_4B4840)
-   004B4838: B8 03 40 00 80 C2 08 00        | mov     )!eax!)	,	 *80004003h*
-   004B483D: C2 08 00 8B 0D 30 9A 7E        | retn    )8)

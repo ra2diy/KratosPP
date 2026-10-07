@@ -1,57 +1,0 @@
-== 0x004A975E [DisplayClass_Submit_KeepStandAboveMaster]  size=0x2  源=Kratos 本次新增
-   16 字节: 84 C0 74 06 89 BE 94 00 00 00 5F 5E C2 04 00 90
-     +0  0x004A975E (2 字节) | test    )!al!)	,	 *!al!*
-   累加长度 = 2 (0x2)  vs  声明 size = 2 (0x2)   => OK
-
-== 0x0065C7D0 [Random2Class_Random_SyncLog]  size=0x1  源=Kratos/Phobos 均有
-   16 字节: C3 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
-     +0  0x0065C7D0 (1 字节) | retn
-   累加长度 = 1 (0x1)  vs  声明 size = 1 (0x1)   => OK
-
-== 0x0065C88A [Random2Class_RandomRanged_SyncLog]  size=0x3  源=Kratos/Phobos 均有
-   16 字节: C2 08 00 90 90 90 8B 54 24 08 8B C1 8B 4C 24 04
-     +0  0x0065C88A (3 字节) | retn    )8)
-   累加长度 = 3 (0x3)  vs  声明 size = 3 (0x3)   => OK
-
-== 0x0046C722 [BulletTypeClass_Load_Suffix]  size=0x4  源=Kratos
-   16 字节: 5E C2 08 00 90 90 90 90 90 90 90 90 90 90 8B 44
-     +0  0x0046C722 (1 字节) | pop     )!esi!)
-     +1  0x0046C723 (3 字节) | retn    )8)
-   累加长度 = 4 (0x4)  vs  声明 size = 4 (0x4)   => OK
-
-== 0x0046C74A [BulletTypeClass_Save_Suffix]  size=0x3  源=Kratos
-   16 字节: C2 0C 00 90 90 90 8B 44 24 08 85 C0 75 08 B8 03
-     +0  0x0046C74A (3 字节) | retn    )0Ch)
-   累加长度 = 3 (0x3)  vs  声明 size = 3 (0x3)   => OK
-
-== 0x0042898A [AnimTypeClass_Save_Suffix]  size=0x3  源=Kratos
-   16 字节: C2 0C 00 90 90 90 8B 44 24 08 85 C0 75 08 B8 03
-     +0  0x0042898A (3 字节) | retn    )0Ch)
-   累加长度 = 3 (0x3)  vs  声明 size = 3 (0x3)   => OK
-
-== 0x006CE8EA [SuperWeaponTypeClass_Save_Suffix]  size=0x3  源=Kratos
-   16 字节: C2 0C 00 90 90 90 B8 20 00 00 00 C3 90 90 90 90
-     +0  0x006CE8EA (3 字节) | retn    )0Ch)
-   累加长度 = 3 (0x3)  vs  声明 size = 3 (0x3)   => OK
-
-== 0x006F42F7 [TechnoClass_Init]  size=0x2  源=Phobos
-   16 字节: 5E C3 90 90 90 90 90 90 90 53 55 8B 6C 24 0C 56
-     +0  0x006F42F7 (1 字节) | pop     )!esi!)
-     +1  0x006F42F8 (1 字节) | retn
-   累加长度 = 2 (0x2)  vs  声明 size = 2 (0x2)   => OK
-
-== 0x0050B669 [HouseClass_ShouldDisableCameo_GreyCameo]  size=0x3  源=Phobos
-   16 字节: C2 04 00 3E B4 50 00 67 B4 50 00 5C B4 50 00 B9
-     +0  0x0050B669 (3 字节) | retn    )4)
-   累加长度 = 3 (0x3)  vs  声明 size = 3 (0x3)   => OK
-
-== 0x00518505 [InfantryClass_ReceiveDamage_NotHuman]  size=0x4  源=Phobos
-   16 字节: 8B 16 6A 00 6A 01 6A 0B 8B CE FF 92 58 05 00 00
-     +0  0x00518505 (2 字节) | mov     )!edx!)	,	 *	[	!esi!	+	InfantryClass.vt	]	*
-     +2  0x00518507 (2 字节) | push    )0); int
-   累加长度 = 4 (0x4)  vs  声明 size = 4 (0x4)   => OK
-
-== 0x006CDE40 [SuperClass_Place_FireExt]  size=0x3  源=Phobos
-   16 字节: C2 08 00 90 67 DA 6C 00 64 CE 6C 00 3F CD 6C 00
-     +0  0x006CDE40 (3 字节) | retn    )8)
-   累加长度 = 3 (0x3)  vs  声明 size = 3 (0x3)   => OK

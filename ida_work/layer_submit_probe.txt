@@ -1,248 +1,0 @@
-0x4DA87A 属于函数 W?AI$:FootClass$n()v [0x004DA530..0x004DAF08]
-
-== 0x4DA87A 前后上下文  0x004DA840..0x004DA900 ==
-   004DA840: 84 00 00 00 38 98 92 06        | call    ) dword ptr  	[	!eax!	+	84h	]	)
-   004DA844: 38 98 92 06 00 00 0F 84        | cmp     )	[	!eax!	+	_TechnoTypeClass.t.Pushy	]	)	,	 *!bl!*
-   004DA84A: 0F 84 B1 01 00 00 38 9E        | jz      )(004DAA01loc_4DAA01)
-   004DA850: 38 9E 81 00 00 00 0F 85        | cmp     )	[	!esi!	+	81h	]	)	,	 *!bl!*
-   004DA856: 0F 85 A5 01 00 00 39 9E        | jnz     )(004DAA01loc_4DAA01)
-   004DA85C: 39 9E 74 06 00 00 75 0A        | cmp     )	[	!esi!	+	674h	]	)	,	 *!ebx!*
-   004DA862: 75 0A 68 03 40 00 80 E8        | jnz      short  )(004DA86Eloc_4DA86E)
-   004DA864: 68 03 40 00 80 E8 B2 1E        | push    )80004003h); HRESULT
-   004DA869: E8 B2 1E 30 00 8B 86 74        | call    )%(007DC720RaiseError%)
-   004DA86E: 8B 86 74 06 00 00 50 8B        | mov     )!eax!)	,	 *	[	!esi!	+	674h	]	*
-   004DA874: 50 8B 08 FF 51 40 38 9E        | push    )!eax!)
-   004DA875: 8B 08 FF 51 40 38 9E 90        | mov     )!ecx!)	,	 *	[	!eax!	]	*
-   004DA877: FF 51 40 38 9E 90 00 00        | call    ) dword ptr  	[	!ecx!	+	40h	]	)
->> 004DA87A: 38 9E 90 00 00 00 0F 84        | cmp     )	[	!esi!	+	90h	]	)	,	 *!bl!*
-   004DA880: 0F 84 7A 06 00 00 3B F3        | jz      )(004DAF00loc_4DAF00)
-   004DA886: 3B F3 75 04 33 FF EB 12        | cmp     )!esi!)	,	 *!ebx!*
-   004DA888: 75 04 33 FF EB 12 8B 16        | jnz      short  )(004DA88Eloc_4DA88E)
-   004DA88A: 33 FF EB 12 8B 16 8B CE        | xor     )!edi!)	,	 *!edi!*
-   004DA88C: EB 12 8B 16 8B CE FF 52        | jmp      short  )(004DA8A0loc_4DA8A0)
-   004DA88E: 8B 16 8B CE FF 52 2C 8B        | mov     )!edx!)	,	 *	[	!esi!	]	*
-   004DA890: 8B CE FF 52 2C 8B F8 4F        | mov     )!ecx!)	,	 *!esi!*
-   004DA892: FF 52 2C 8B F8 4F F7 DF        | call    ) dword ptr  	[	!edx!	+	2Ch	]	)
-   004DA895: 8B F8 4F F7 DF 1B FF F7        | mov     )!edi!)	,	 *!eax!*
-   004DA897: 4F F7 DF 1B FF F7 D7 23        | dec     )!edi!)
-   004DA898: F7 DF 1B FF F7 D7 23 FE        | neg     )!edi!)
-   004DA89A: 1B FF F7 D7 23 FE 39 9E        | sbb     )!edi!)	,	 *!edi!*
-   004DA89C: F7 D7 23 FE 39 9E 74 06        | not     )!edi!)
-   004DA89E: 23 FE 39 9E 74 06 00 00        | and     )!edi!)	,	 *!esi!*
-   004DA8A0: 39 9E 74 06 00 00 75 0A        | cmp     )	[	!esi!	+	674h	]	)	,	 *!ebx!*
-   004DA8A6: 75 0A 68 03 40 00 80 E8        | jnz      short  )(004DA8B2loc_4DA8B2)
-   004DA8A8: 68 03 40 00 80 E8 6E 1E        | push    )80004003h); HRESULT
-   004DA8AD: E8 6E 1E 30 00 8B 86 74        | call    )%(007DC720RaiseError%)
-   004DA8B2: 8B 86 74 06 00 00 50 8B        | mov     )!eax!)	,	 *	[	!esi!	+	674h	]	*
-   004DA8B8: 50 8B 08 FF 91 80 00 00        | push    )!eax!)
-   004DA8B9: 8B 08 FF 91 80 00 00 00        | mov     )!ecx!)	,	 *	[	!eax!	]	*
-   004DA8BB: FF 91 80 00 00 00 84 C0        | call    ) dword ptr  	[	!ecx!	+	80h	]	)
-   004DA8C1: 84 C0 74 0E 8B 16 8B CE        | test    )!al!)	,	 *!al!*
-   004DA8C3: 74 0E 8B 16 8B CE FF 92        | jz       short  )(004DA8D3loc_4DA8D3)
-   004DA8C5: 8B 16 8B CE FF 92 D8 01        | mov     )!edx!)	,	 *	[	!esi!	]	*
-   004DA8C7: 8B CE FF 92 D8 01 00 00        | mov     )!ecx!)	,	 *!esi!*
-   004DA8C9: FF 92 D8 01 00 00 84 C0        | call    ) dword ptr  	[	!edx!	+	1D8h	]	)
-   004DA8CF: 84 C0 74 29 39 9E B4 02        | test    )!al!)	,	 *!al!*
-   004DA8D1: 74 29 39 9E B4 02 00 00        | jz       short  )(004DA8FCloc_4DA8FC)
-   004DA8D3: 39 9E B4 02 00 00 74 65        | cmp     )	[	!esi!	+	2B4h	]	)	,	 *!ebx!*
-   004DA8D9: 74 65 8B 06 8B CE FF 90        | jz       short  )(004DA940loc_4DA940)
-   004DA8DB: 8B 06 8B CE FF 90 84 00        | mov     )!eax!)	,	 *	[	!esi!	]	*
-   004DA8DD: 8B CE FF 90 84 00 00 00        | mov     )!ecx!)	,	 *!esi!*
-   004DA8DF: FF 90 84 00 00 00 38 98        | call    ) dword ptr  	[	!eax!	+	84h	]	)
-   004DA8E5: 38 98 90 03 00 00 74 53        | cmp     )	[	!eax!	+	_TechnoTypeClass.t.HoverAttack	]	)	,	 *!bl!*
-   004DA8EB: 74 53 3B FB 74 4F 8B CF        | jz       short  )(004DA940loc_4DA940)
-   004DA8ED: 3B FB 74 4F 8B CF E8 88        | cmp     )!edi!)	,	 *!ebx!*
-   004DA8EF: 74 4F 8B CF E8 88 C4 26        | jz       short  )(004DA940loc_4DA940)
-   004DA8F1: 8B CF E8 88 C4 26 00 84        | mov     )!ecx!)	,	 *!edi!*; a1
-   004DA8F3: E8 88 C4 26 00 84 C0 75        | call    )%(00746D80UnitClass_Deployed%)
-   004DA8F8: 84 C0 75 44 8B 16 8B CE        | test    )!al!)	,	 *!al!*
-   004DA8FA: 75 44 8B 16 8B CE FF 92        | jnz      short  )(004DA940loc_4DA940)
-   004DA8FC: 8B 16 8B CE FF 92 84 00        | mov     )!edx!)	,	 *	[	!esi!	]	*
-   004DA8FE: 8B CE FF 92 84 00 00 00        | mov     )!ecx!)	,	 *!esi!*
-
-== 所在函数完整（前 0x200 字节）  0x004DA530..0x004DA730 ==
-   004DA530: 83 EC 14 53 55 56 57 8B        | sub     )!esp!)	,	 *14h*
-   004DA533: 53 55 56 57 8B F1 E8 12        | push    )!ebx!); a5
-   004DA534: 55 56 57 8B F1 E8 12 F9        | push    )!ebp!); a4
-   004DA535: 56 57 8B F1 E8 12 F9 21        | push    )!esi!); TagObject
-   004DA536: 57 8B F1 E8 12 F9 21 00        | push    )!edi!)
-   004DA537: 8B F1 E8 12 F9 21 00 8A        | mov     )!esi!)	,	 *!ecx!*
-   004DA539: E8 12 F9 21 00 8A 86 90        | call    )%(006F9E50TechnoClass_Update%)
-   004DA53E: 8A 86 90 00 00 00 33 DB        | mov     )!al!)	,	 *	[	!esi!	+	90h	]	*
-   004DA544: 33 DB 3A C3 0F 84 B2 09        | xor     )!ebx!)	,	 *!ebx!*
-   004DA546: 3A C3 0F 84 B2 09 00 00        | cmp     )!al!)	,	 *!bl!*
-   004DA548: 0F 84 B2 09 00 00 88 9E        | jz      )(004DAF00loc_4DAF00)
-   004DA54E: 88 9E B3 06 00 00 A1 84        | mov     )	[	!esi!	+	6B3h	]	)	,	 *!bl!*
-   004DA554: A1 84 ED A8 00 8B 0D E0        | mov     )!eax!)	,	 *(00A8ED84Frame*
-   004DA559: 8B 0D E0 71 88 00 99 F7        | mov     )!ecx!)	,	 *(008871E0RulesData*
-   004DA55F: 99 F7 B9 08 18 00 00 85        | cdq
-   004DA560: F7 B9 08 18 00 00 85 D2        | idiv    *	[	!ecx!	+(	RulesClass.DamageFireTypes.count	+	1560h	)]	*
-   004DA566: 85 D2 0F 85 CD 00 00 00        | test    )!edx!)	,	 *!edx!*
-   004DA568: 0F 85 CD 00 00 00 8B 16        | jnz     )(004DA63Bloc_4DA63B)
-   004DA56E: 8B 16 8B CE FF 92 84 00        | mov     )!edx!)	,	 *	[	!esi!	]	*
-   004DA570: 8B CE FF 92 84 00 00 00        | mov     )!ecx!)	,	 *!esi!*
-   004DA572: FF 92 84 00 00 00 38 98        | call    ) dword ptr  	[	!edx!	+	84h	]	)
-   004DA578: 38 98 37 0D 00 00 0F 85        | cmp     )	[	!eax!	+	_TechnoTypeClass.t.ImmuneToRadiation	]	)	,	 *!bl!*
-   004DA57E: 0F 85 B7 00 00 00 8B 06        | jnz     )(004DA63Bloc_4DA63B)
-   004DA584: 8B 06 8B CE FF 50 54 84        | mov     )!eax!)	,	 *	[	!esi!	]	*
-   004DA586: 8B CE FF 50 54 84 C0 0F        | mov     )!ecx!)	,	 *!esi!*
-   004DA588: FF 50 54 84 C0 0F 85 A8        | call    ) dword ptr  	[	!eax!	+	54h	]	)
-   004DA58B: 84 C0 0F 85 A8 00 00 00        | test    )!al!)	,	 *!al!*
-   004DA58D: 0F 85 A8 00 00 00 38 9E        | jnz     )(004DA63Bloc_4DA63B)
-   004DA593: 38 9E 81 00 00 00 0F 85        | cmp     )	[	!esi!	+	81h	]	)	,	 *!bl!*
-   004DA599: 0F 85 9C 00 00 00 8B 16        | jnz     )(004DA63Bloc_4DA63B)
-   004DA59F: 8B 16 8D 44 24 18 50 8B        | mov     )!edx!)	,	 *	[	!esi!	]	*
-   004DA5A1: 8D 44 24 18 50 8B CE FF        | lea     )!eax!)	,	 *	[	!esp!	+	24h	+	pos	+	8	]	*
-   004DA5A5: 50 8B CE FF 52 48 8B C8        | push    )!eax!)
-   004DA5A6: 8B CE FF 52 48 8B C8 8B        | mov     )!ecx!)	,	 *!esi!*
-   004DA5A8: FF 52 48 8B C8 8B 01 99        | call    ) dword ptr  	[	!edx!	+	48h	]	)
-   004DA5AB: 8B C8 8B 01 99 81 E2 FF        | mov     )!ecx!)	,	 *!eax!*
-   004DA5AD: 8B 01 99 81 E2 FF 00 00        | mov     )!eax!)	,	 *	[	!ecx!	]	*
-   004DA5AF: 99 81 E2 FF 00 00 00 03        | cdq
-   004DA5B0: 81 E2 FF 00 00 00 03 C2        | and     )!edx!)	,	 *0FFh*
-   004DA5B6: 03 C2 C1 F8 08 66 89 44        | add     )!eax!)	,	 *!edx!*
-   004DA5B8: C1 F8 08 66 89 44 24 10        | sar     )!eax!)	,	 *8*
-   004DA5BB: 66 89 44 24 10 8B 41 04        | mov     ) word ptr  	[	!esp!	+	24h	+	pos	]	)	,	 *!ax!*
-   004DA5C0: 8B 41 04 99 81 E2 FF 00        | mov     )!eax!)	,	 *	[	!ecx!	+	4	]	*
-   004DA5C3: 99 81 E2 FF 00 00 00 03        | cdq
-   004DA5C4: 81 E2 FF 00 00 00 03 C2        | and     )!edx!)	,	 *0FFh*
-   004DA5CA: 03 C2 8D 54 24 14 C1 F8        | add     )!eax!)	,	 *!edx!*
-   004DA5CC: 8D 54 24 14 C1 F8 08 66        | lea     )!edx!)	,	 *	[	!esp!	+	24h	+	pos	+	4	]	*
-   004DA5D0: C1 F8 08 66 89 44 24 12        | sar     )!eax!)	,	 *8*
-   004DA5D3: 66 89 44 24 12 8B 4C 24        | mov     ) word ptr  	[	!esp!	+	24h	+	pos	+	2	]	)	,	 *!ax!*
-   004DA5D8: 8B 4C 24 10 89 4C 24 14        | mov     )!ecx!)	,	 *	[	!esp!	+	24h	+	pos	]	*
-   004DA5DC: 89 4C 24 14 52 B9 E8 F7        | mov     )	[	!esp!	+	24h	+	pos	+	4	]	)	,	 *!ecx!*
-   004DA5E0: 52 B9 E8 F7 87 00 E8 B5        | push    )!edx!); coords
-   004DA5E1: B9 E8 F7 87 00 E8 B5 B1        | mov     )!ecx!)	,	 * offset  (0087F7E8Map*; this
-   004DA5E6: E8 B5 B1 08 00 8B C8 E8        | call    )%(005657A0MapClass::Coord_Cell%)
-   004DA5EB: 8B C8 E8 BE D6 FA FF 3B        | mov     )!ecx!)	,	 *!eax!*; this
-   004DA5ED: E8 BE D6 FA FF 3B C3 89        | call    )%(00487CB0CellClass_GetRadLevel%)
-   004DA5F2: 3B C3 89 44 24 10 7E 41        | cmp     )!eax!)	,	 *!ebx!*
-   004DA5F4: 89 44 24 10 7E 41 DB 44        | mov     )	[	!esp!	+	24h	+	pos	]	)	,	 *!eax!*
-   004DA5F8: 7E 41 DB 44 24 10 8B 3D        | jle      short  )(004DA63Bloc_4DA63B)
-   004DA5FA: DB 44 24 10 8B 3D E0 71        | fild    *	[	!esp!	+	24h	+	pos	]	*
-   004DA5FE: 8B 3D E0 71 88 00 DC 8F        | mov     )!edi!)	,	 *(008871E0RulesData*
-   004DA604: DC 8F 18 18 00 00 E8 F1        | fmul    * qword ptr  	[	!edi!	+(	RulesClass.WeatherConClouds.incrementAmount	+	1548h	)]	*
-   004DA60A: E8 F1 B8 2E 00 53 89 44        | call    )%(007C5F00Float_To_Int_Floor%)
-   004DA60F: 53 89 44 24 14 8B 8F 34        | push    )!ebx!)
-   004DA610: 89 44 24 14 8B 8F 34 18        | mov     )	[	!esp!	+	28h	+	pos	]	)	,	 *!eax!*
-   004DA614: 8B 8F 34 18 00 00 8B 06        | mov     )!ecx!)	,	 *	[	!edi!	+(	RulesClass.WeatherConBolts.incrementAmount	+	1548h	)]	*
-   004DA61A: 8B 06 6A 01 53 53 51 8D        | mov     )!eax!)	,	 *	[	!esi!	]	*
-   004DA61C: 6A 01 53 53 51 8D 54 24        | push    )1)
-   004DA61E: 53 53 51 8D 54 24 24 53        | push    )!ebx!)
-   004DA61F: 53 51 8D 54 24 24 53 52        | push    )!ebx!)
-   004DA620: 51 8D 54 24 24 53 52 8B        | push    )!ecx!)
-   004DA621: 8D 54 24 24 53 52 8B CE        | lea     )!edx!)	,	 *	[	!esp!	+	38h	+	pos	]	*
-   004DA625: 53 52 8B CE FF 90 6C 01        | push    )!ebx!)
-   004DA626: 52 8B CE FF 90 6C 01 00        | push    )!edx!)
-   004DA627: 8B CE FF 90 6C 01 00 00        | mov     )!ecx!)	,	 *!esi!*
-   004DA629: FF 90 6C 01 00 00 38 9E        | call    )	[	!eax!	+	vt_FootClass.vt.r.m.o.ReceiveDamage	]	)
-   004DA62F: 38 9E 90 00 00 00 0F 84        | cmp     )	[	!esi!	+	90h	]	)	,	 *!bl!*
-   004DA635: 0F 84 C5 08 00 00 38 9E        | jz      )(004DAF00loc_4DAF00)
-   004DA63B: 38 9E D5 03 00 00 75 34        | cmp     )	[	!esi!	+	3D5h	]	)	,	 *!bl!*
-   004DA641: 75 34 8B 06 8B CE FF 90        | jnz      short  )(004DA677loc_4DA677)
-   004DA643: 8B 06 8B CE FF 90 84 00        | mov     )!eax!)	,	 *	[	!esi!	]	*
-   004DA645: 8B CE FF 90 84 00 00 00        | mov     )!ecx!)	,	 *!esi!*
-   004DA647: FF 90 84 00 00 00 38 98        | call    ) dword ptr  	[	!eax!	+	84h	]	)
-   004DA64D: 38 98 6A 0D 00 00 74 22        | cmp     )	[	!eax!	+	_TechnoTypeClass.t.BalloonHover	]	)	,	 *!bl!*
-   004DA653: 74 22 8B 16 6A 01 8B CE        | jz       short  )(004DA677loc_4DA677)
-   004DA655: 8B 16 6A 01 8B CE FF 92        | mov     )!edx!)	,	 *	[	!esi!	]	*
-   004DA657: 6A 01 8B CE FF 92 BC 01        | push    )1); a3
-   004DA659: 8B CE FF 92 BC 01 00 00        | mov     )!ecx!)	,	 *!esi!*
-   004DA65B: FF 92 BC 01 00 00 50 B9        | call    ) dword ptr  	[	!edx!	+	1BCh	]	)
-   004DA661: 50 B9 E8 F7 87 00 E8 D4        | push    )!eax!); a2
-   004DA662: B9 E8 F7 87 00 E8 D4 DE        | mov     )!ecx!)	,	 * offset  (0087F7E8Map*; this
-   004DA667: E8 D4 DE 09 00 84 C0 74        | call    )%(00578540MapClass_IsCellTainted%)
-   004DA66C: 84 C0 74 07 C6 86 D5 03        | test    )!al!)	,	 *!al!*
-   004DA66E: 74 07 C6 86 D5 03 00 00        | jz       short  )(004DA677loc_4DA677)
-   004DA670: C6 86 D5 03 00 00 01 39        | mov     ) byte ptr  	[	!esi!	+	3D5h	]	)	,	 *1*
-   004DA677: 39 9E 74 06 00 00 75 0A        | cmp     )	[	!esi!	+	674h	]	)	,	 *!ebx!*
-   004DA67D: 75 0A 68 03 40 00 80 E8        | jnz      short  )(004DA689loc_4DA689)
-   004DA67F: 68 03 40 00 80 E8 97 20        | push    )80004003h); HRESULT
-   004DA684: E8 97 20 30 00 8B 86 74        | call    )%(007DC720RaiseError%)
-   004DA689: 8B 86 74 06 00 00 50 8B        | mov     )!eax!)	,	 *	[	!esi!	+	674h	]	*
-   004DA68F: 50 8B 08 FF 91 80 00 00        | push    )!eax!); eventKind
-   004DA690: 8B 08 FF 91 80 00 00 00        | mov     )!ecx!)	,	 *	[	!eax!	]	*
-   004DA692: FF 91 80 00 00 00 84 C0        | call    ) dword ptr  	[	!ecx!	+	80h	]	)
-   004DA698: 84 C0 0F 84 10 01 00 00        | test    )!al!)	,	 *!al!*
-   004DA69A: 0F 84 10 01 00 00 8B 16        | jz      )(004DA7B0loc_4DA7B0)
-   004DA6A0: 8B 16 8B CE FF 52 54 84        | mov     )!edx!)	,	 *	[	!esi!	]	*
-   004DA6A2: 8B CE FF 52 54 84 C0 0F        | mov     )!ecx!)	,	 *!esi!*
-   004DA6A4: FF 52 54 84 C0 0F 84 01        | call    ) dword ptr  	[	!edx!	+	54h	]	)
-   004DA6A7: 84 C0 0F 84 01 01 00 00        | test    )!al!)	,	 *!al!*
-   004DA6A9: 0F 84 01 01 00 00 A1 4C        | jz      )(004DA7B0loc_4DA7B0)
-   004DA6AF: A1 4C 3D A8 00 8B 8E 1C        | mov     )!eax!)	,	 *(00A83D4CHouseClass_PlayerPtr*
-   004DA6B4: 8B 8E 1C 02 00 00 50 E8        | mov     )!ecx!)	,	 *	[	!esi!	+	21Ch	]	*; this
-   004DA6BA: 50 E8 90 F3 01 00 84 C0        | push    )!eax!); h2
-   004DA6BB: E8 90 F3 01 00 84 C0 0F        | call    )%(004F9A50HouseClass::Is_Ally%)
-   004DA6C0: 84 C0 0F 84 E8 00 00 00        | test    )!al!)	,	 *!al!*
-   004DA6C2: 0F 84 E8 00 00 00 8B 96        | jz      )(004DA7B0loc_4DA7B0)
-   004DA6C8: 8B 96 5C 06 00 00 8B 86        | mov     )!edx!)	,	 *	[	!esi!	+	65Ch	]	*
-   004DA6CE: 8B 86 64 06 00 00 83 FA        | mov     )!eax!)	,	 *	[	!esi!	+	664h	]	*
-   004DA6D4: 83 FA FF 74 0E 8B 0D 84        | cmp     )!edx!)	,	 *0FFFFFFFFh*
-   004DA6D7: 74 0E 8B 0D 84 ED A8 00        | jz       short  )(004DA6E7loc_4DA6E7)
-   004DA6D9: 8B 0D 84 ED A8 00 2B CA        | mov     )!ecx!)	,	 *(00A8ED84Frame*
-   004DA6DF: 2B CA 3B C8 7D 0A 2B C1        | sub     )!ecx!)	,	 *!edx!*
-   004DA6E1: 3B C8 7D 0A 2B C1 3B C3        | cmp     )!ecx!)	,	 *!eax!*
-   004DA6E3: 7D 0A 2B C1 3B C3 0F 85        | jge      short  )(004DA6EFloc_4DA6EF)
-   004DA6E5: 2B C1 3B C3 0F 85 C1 00        | sub     )!eax!)	,	 *!ecx!*
-   004DA6E7: 3B C3 0F 85 C1 00 00 00        | cmp     )!eax!)	,	 *!ebx!*
-   004DA6E9: 0F 85 C1 00 00 00 8B 16        | jnz     )(004DA7B0loc_4DA7B0)
-   004DA6EF: 8B 16 53 53 53 53 8B CE        | mov     )!edx!)	,	 *	[	!esi!	]	*
-   004DA6F1: 53 53 53 53 8B CE FF 92        | push    )!ebx!)
-   004DA6F2: 53 53 53 8B CE FF 92 8C        | push    )!ebx!)
-   004DA6F3: 53 53 8B CE FF 92 8C 04        | push    )!ebx!)
-   004DA6F4: 53 8B CE FF 92 8C 04 00        | push    )!ebx!)
-   004DA6F5: 8B CE FF 92 8C 04 00 00        | mov     )!ecx!)	,	 *!esi!*
-   004DA6F7: FF 92 8C 04 00 00 8B 06        | call    ) dword ptr  	[	!edx!	+	48Ch	]	)
-   004DA6FD: 8B 06 53 53 53 53 53 8B        | mov     )!eax!)	,	 *	[	!esi!	]	*
-   004DA6FF: 53 53 53 53 53 8B CE FF        | push    )!ebx!)
-   004DA700: 53 53 53 53 8B CE FF 90        | push    )!ebx!)
-   004DA701: 53 53 53 8B CE FF 90 88        | push    )!ebx!)
-   004DA702: 53 53 8B CE FF 90 88 04        | push    )!ebx!)
-   004DA703: 53 8B CE FF 90 88 04 00        | push    )!ebx!)
-   004DA704: 8B CE FF 90 88 04 00 00        | mov     )!ecx!)	,	 *!esi!*
-   004DA706: FF 90 88 04 00 00 8B 16        | call    ) dword ptr  	[	!eax!	+	488h	]	)
-   004DA70C: 8B 16 8B CE FF 92 C8 01        | mov     )!edx!)	,	 *	[	!esi!	]	*
-   004DA70E: 8B CE FF 92 C8 01 00 00        | mov     )!ecx!)	,	 *!esi!*
-   004DA710: FF 92 C8 01 00 00 8B 8E        | call    ) dword ptr  	[	!edx!	+	1C8h	]	)
-   004DA716: 8B 8E 64 02 00 00 3B C8        | mov     )!ecx!)	,	 *	[	!esi!	+	264h	]	*
-   004DA71C: 3B C8 8D 86 9C 00 00 00        | cmp     )!ecx!)	,	 *!eax!*
-   004DA71E: 8D 86 9C 00 00 00 8B 8E        | lea     )!eax!)	,	 *	[	!esi!	+	9Ch	]	*
-   004DA724: 8B 8E 9C 00 00 00 74 24        | mov     )!ecx!)	,	 *	[	!esi!	+	9Ch	]	*
-   004DA72A: 74 24 8B 50 04 89 4C 24        | jz       short  )(004DA750loc_4DA750)
-   004DA72C: 8B 50 04 89 4C 24 18 8B        | mov     )!edx!)	,	 *	[	!eax!	+	4	]	*
-   004DA72F: 89 4C 24 18 8B 8E 60 02        | mov     )	[	!esp!	+	24h	+	pos	+	8	]	)	,	 *!ecx!*
-
-== 所有 call/jmp 到 DisplayClass::Submit (0x004A9720) 的站点 ==
-    00424C00  in  W?Attach_To$:AnimClass$n(pn$ObjectClass$$)v
-    00424C7C  in  W?Attach_To$:AnimClass$n(pn$ObjectClass$$)v
-    00468B6D  in  BulletClass_SetMovement
-    004CD4E7  in  sub_4CD2A0
-    004CD792  in  sub_4CD600
-    0054B18E  in  JumpjetLocomotionClass_Process
-    0054CC0D  in  sub_54CA90
-    005F400E  in  ObjectClass_Update
-    005F4196  in  TechnoClass_EC
-    005F4FE2  in  W?Unlimbo$:ObjectClass$n(ul$DirType$$)i
-    0066242C  in  RocketLocomotionClass_ILocomotion_Process
-    0066290D  in  RocketLocomotionClass_ILocomotion_Process
-    0075F952  in  W?Unlimbo$:WaveClass$n(ul$DirType$$)i
-    (共 13 处)
-
-== 所有 call/jmp 到 DisplayClass::Remove (0x004A9770) 的站点 ==
-    004229CA  in  AnimClass_DTOR
-    00424B74  in  W?Attach_To$:AnimClass$n(pn$ObjectClass$$)v
-    00424C2B  in  W?Attach_To$:AnimClass$n(pn$ObjectClass$$)v
-    0042517A  in  AnimClass_PointerGotInvalid
-    0042559B  in  AnimClass_Remove0
-    004686F5  in  BulletClass_SetMovement
-    004A9734  in  W?Submit$:DisplayClass$n(pnx$ObjectClass$$$LayerType$$)v
-    004CD333  in  sub_4CD2A0
-    004CD75A  in  sub_4CD600
-    0054CBD4  in  sub_54CA90
-    005F414C  in  ObjectClass_Update
-    005F4184  in  TechnoClass_EC
-    005F4D79  in  ObjectClass_Remove0
-    0075F9B2  in  sub_75F980
-    (共 14 处)

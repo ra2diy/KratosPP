@@ -1,5 +1,0 @@
-IDA has found an unpacked version of database: D:\Workspace\ra2mod\platform\KratosPP\ida_work\gamemd_vt.idb
-on the disk.
-It appears IDA did not close properly;
-it is probably safer to restart your work from the packed database -> ~R~estore packed base
-D:\Workspace\ra2mod\platform\KratosPP\ida_work\gamemd_vt.id0: Permission denied -> OK

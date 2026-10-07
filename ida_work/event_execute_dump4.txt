@@ -1,6 +1,0 @@
-get_named_type(vt_TechnoClass) -> True size=0x4D4
-Traceback (most recent call last):
-  File "D:/Workspace/ra2mod/platform/KratosPP/ida_work/dump_event_execute4.py", line 10, in <module>
-    tid = t.get_tid()
-          ^^^^^^^^^
-AttributeError: 'tinfo_t' object has no attribute 'get_tid'
