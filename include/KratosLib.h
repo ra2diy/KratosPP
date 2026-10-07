@@ -58,9 +58,9 @@ bool       KL_Update(KL_Session s, const void* signedBlob, uint32_t n);
 bool       KL_UpdateAsync(KL_Session s);
 /* 版本号快照（当前生效的那份）。返回所需字符数（不含结尾 NUL）；
    传 outBuf = nullptr / bufSize = 0 仅探长度，此时不写缓冲区。 */
-uint32_t   KL_GetHostVersion(KL_Session s, char* outBuf, uint32_t bufSize);
+uint32_t   KL_GetVersion(KL_Session s, char* outBuf, uint32_t bufSize);
 /* 版本号快照（本次运行成功取得的那份）。缓冲区语义同上：nullptr/0 仅探长度。 */
-uint32_t   KL_GetDownloadedHostVersion(KL_Session s, char* outBuf, uint32_t bufSize);
+uint32_t   KL_GetDownloadedVersion(KL_Session s, char* outBuf, uint32_t bufSize);
 /* 环境检测结果回读（结论在 Initialize 时一次性算出，本函数只回读缓存）。 */
 bool       KL_Tick(KL_Session s, KL_Reason* outReason);
 /* 以 hostHash 派生一份会话证明，写入 outMac[32]。 */
@@ -79,8 +79,8 @@ typedef bool(*KL_Fn_OpenContent)(KL_Session, uint32_t, const void*, uint32_t, vo
 typedef bool(*KL_Fn_GetTable)(KL_Session, KL_TableId, const void**, uint32_t*);
 typedef bool(*KL_Fn_Update)(KL_Session, const void*, uint32_t);
 typedef bool(*KL_Fn_UpdateAsync)(KL_Session);
-typedef uint32_t(*KL_Fn_GetHostVersion)(KL_Session, char*, uint32_t);
-typedef uint32_t(*KL_Fn_GetDownloadedHostVersion)(KL_Session, char*, uint32_t);
+typedef uint32_t(*KL_Fn_GetVersion)(KL_Session, char*, uint32_t);
+typedef uint32_t(*KL_Fn_GetDownloadedVersion)(KL_Session, char*, uint32_t);
 typedef bool(*KL_Fn_Tick)(KL_Session, KL_Reason*);
 typedef bool(*KL_Fn_Attest)(KL_Session, uint64_t, uint8_t*);
 typedef void(*KL_Fn_Shutdown)(KL_Session);
@@ -99,8 +99,8 @@ namespace KratosLibApi
 		[[maybe_unused]] const KL_Fn_GetTable                 pin5  = &KL_GetTable;
 		[[maybe_unused]] const KL_Fn_Update                   pin6  = &KL_Update;
 		[[maybe_unused]] const KL_Fn_UpdateAsync              pin7  = &KL_UpdateAsync;
-		[[maybe_unused]] const KL_Fn_GetHostVersion           pin8  = &KL_GetHostVersion;
-		[[maybe_unused]] const KL_Fn_GetDownloadedHostVersion pin9  = &KL_GetDownloadedHostVersion;
+		[[maybe_unused]] const KL_Fn_GetVersion           pin8  = &KL_GetVersion;
+		[[maybe_unused]] const KL_Fn_GetDownloadedVersion pin9  = &KL_GetDownloadedVersion;
 		[[maybe_unused]] const KL_Fn_Tick                     pin10 = &KL_Tick;
 		[[maybe_unused]] const KL_Fn_Attest                   pin11 = &KL_Attest;
 		[[maybe_unused]] const KL_Fn_Shutdown                 pin12 = &KL_Shutdown;

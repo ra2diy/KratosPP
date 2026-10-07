@@ -26,8 +26,8 @@
 #pragma comment(linker, "/include:_KL_GetTable@20")
 #pragma comment(linker, "/include:_KL_Update@16")
 #pragma comment(linker, "/include:_KL_UpdateAsync@8")
-#pragma comment(linker, "/include:_KL_GetHostVersion@16")
-#pragma comment(linker, "/include:_KL_GetDownloadedHostVersion@16")
+#pragma comment(linker, "/include:_KL_GetVersion@16")
+#pragma comment(linker, "/include:_KL_GetDownloadedVersion@16")
 #pragma comment(linker, "/include:_KL_Tick@12")
 #pragma comment(linker, "/include:_KL_Attest@20")
 #pragma comment(linker, "/include:_KL_Shutdown@8")
@@ -160,29 +160,14 @@ void KratosPortDetail::SimulateUpdateUrl(const char* url)
 #endif
 
 // 宿主自己的版本串（**无前缀**纯版本号），用于日志/显示。
-//
-// ★ 单一来源：直接取 Version.h 的 VERSION_PLAIN_WSTR。
-//   Version.h 负责"DEBUG 不加补丁后缀 / Release 的 VERSION_PATCH 分支"这套口径，
-//   本函数不做任何二次拼装 —— 这样开发机与发布机是**同一条编译期规则**，
-//   不会出现"一边拼出 0.2.4p1、一边拼出 0.2.4"的口径漂移。
-//   （曾经的写法是在这里用 VERSION_PATCH != 0 手工拼 "p"，与 Version.h 的
-//    DEBUG 分支不一致：Debug 构建明明显示 "Debug 0.2.4"，比较时却当成 "0.2.4p1"。）
-//
-// ⚠ 本函数**只用于显示/日志**。版本比较请用 HostVersionComponents() ——
-//   比较是"4 个数字逐位比"，不需要经过字符串。
+// 直接取 Version.h 的 VERSION_PLAIN_WSTR。只用于显示/日志，不参与比较。
 std::wstring KratosPort::HostVersionString()
 {
 	return VERSION_PLAIN_WSTR;
 }
 
-// 宿主自己的版本号（4 个数字），供版本比较使用。
-//
-// ★ 直接从 Version.h 的 4 个宏构造，**完全不经过字符串**。
-//   这是"拆成 4 个数字逐个比对"的落地方式，好处是：
-//     * 不存在"DEBUG 下字符串里有没有 p 后缀"的问题 —— 4 个宏与 DEBUG 无关，
-//       第 4 个数字永远是 VERSION_PATCH；
-//     * 不需要解析自己的版本串，零解析失败风险；
-//     * 与载荷侧解析出的 4 个数字是**同一种数据结构**，比较即逐位比较。
+// 宿主自己的版本号（4 个数字），版本比较的唯一依据。
+// 直接从 Version.h 的 VERSION_MAJOR / MINOR / REVISION / PATCH 构造。
 KratosVersion::Components KratosPort::HostVersionComponents()
 {
 	KratosVersion::Components out{};
@@ -193,17 +178,10 @@ KratosVersion::Components KratosPort::HostVersionComponents()
 	return out;
 }
 
-// 取"**下载到的**"宿主版本（lib 侧锁内快照）。
-//
-// ★ 判据来源（用户口径）：**调用 lib 接口**读取这次运行真的从远程**下载到**、
-//   并通过 RSA 验签 + AES-256-GCM 解密的那份载荷里的 hostVersion；
-//   而不是从宿主自己的任何解析路径/编译期常量拿。
-//   * 下载失败（离线/超时/非 200/验签失败/解密失败）⇒ lib 返回空串 ⇒ 本函数返回空串
-//     ⇒ 上层不提示（fail-quiet）；
-//   * 内置兜底载荷的版本号**不**从这里出来（它只在 lib 内部的"生效版本"里），
-//     所以"没下到东西却提示玩家"这条路不存在。
-//
-// 两段式：先探长度，再取值（lib 侧是 Win32 约定：缓冲区不足时返回需要的字符数）。
+// 取"**下载到的**"版本号（lib 侧锁内快照）。
+// 来源是 lib 接口 KL_GetDownloadedVersion，即本次运行远程下载并通过验签 + 解密
+// 的那份载荷里的 hostVersion。下载失败 ⇒ lib 返回空串 ⇒ 本函数返回空串。
+// 两段式：先探长度，再取值（缓冲区不足时 lib 返回需要的字符数）。
 std::string KratosPort::AvailableHostVersion()
 {
 	if (Disabled())
@@ -211,14 +189,14 @@ std::string KratosPort::AvailableHostVersion()
 		return {};
 	}
 
-	const uint32_t needed = KL_GetDownloadedHostVersion(_session, nullptr, 0);
+	const uint32_t needed = KL_GetDownloadedVersion(_session, nullptr, 0);
 	if (needed == 0)
 	{
-		return {}; // 没有"下载到的版本"：调用方必须按"不提示"处理
+		return {}; // 没有"下载到的版本"：调用方按"不提示"处理
 	}
 
 	std::string out(static_cast<size_t>(needed), '\0');
-	const uint32_t written = KL_GetDownloadedHostVersion(_session, out.data(), needed + 1u);
+	const uint32_t written = KL_GetDownloadedVersion(_session, out.data(), needed + 1u);
 	if (written != needed)
 	{
 		return {};
@@ -228,14 +206,7 @@ std::string KratosPort::AvailableHostVersion()
 }
 
 // 是否该提示"可更新"：载荷的 4 个数字 > 宿主本机的 4 个数字 ⇒ true。
-// 任一侧无值/非法 ⇒ false（不提示）。
-//
-// ★ 判据是**4 个数字逐位比**，不是字符串比较。因此：
-//   * **不区分 DEBUG / Release** —— 两侧的数字都来自同一组 Version.h 宏，
-//     DEBUG 只影响显示前缀，不改变数字；
-//   * **不关心补丁写成 "p1" 还是省略** —— 落到 patch 位就是同一个数；
-//   * **载荷版本更低（或相同）一律不提示** —— 只有严格更高才算"有更新"。
-// 全部判定都在宿主侧完成（lib 只提供字符串快照，不做任何版本判定）。
+// 任一侧无值/非法 ⇒ false（不提示）。逐位比较，高位优先，只有严格更高才提示。
 bool KratosPort::UpdateAvailable()
 {
 	const std::string available = AvailableHostVersion();
@@ -248,25 +219,22 @@ bool KratosPort::UpdateAvailable()
 	KratosVersion::Components payload{};
 	if (!KratosVersion::ParseComponents(available, &payload))
 	{
-		Debug::Log("[KratosPort] version check: downloaded hostVersion \"%s\" -> unparsable, no notice\n",
+		Debug::Log("[KratosPort] version check: downloaded version \"%s\" -> unparsable, no notice\n",
 			available.c_str());
 		return false;
 	}
 	const KratosVersion::Components host = HostVersionComponents();
 
-	// 逐位比较（高位优先）。这里显式写出来，让"4 个数字"这个判据在代码里可见。
+	// 逐位比较（高位优先）。
 	int cmp = 0;
 	if (payload.major != host.major) { cmp = payload.major > host.major ? 1 : -1; }
 	else if (payload.minor != host.minor) { cmp = payload.minor > host.minor ? 1 : -1; }
 	else if (payload.revision != host.revision) { cmp = payload.revision > host.revision ? 1 : -1; }
 	else if (payload.patch != host.patch) { cmp = payload.patch > host.patch ? 1 : -1; }
 
-	// 统一的证据日志：两侧都按 4 个数字打印，便于直接核对是哪一位不同。
 	if (cmp <= 0)
 	{
 		// 载荷不高于本机（含"更低"与"相同"）⇒ 不提示。
-		// ★ "载荷比当前更低"是必须处理的正常情形（回退 / 误发布 / 旧载荷重放），
-		//   那不是"有更新"，绝不能提示。
 		Debug::Log("[KratosPort] version check: payload %llu.%llu.%llu.%llu vs host %llu.%llu.%llu.%llu"
 			" -> %s, no notice\n",
 			(unsigned long long)payload.major, (unsigned long long)payload.minor,
@@ -324,7 +292,7 @@ bool KratosPort::Initialize()
 	{
 		Debug::Log("[KratosPort] update url (builtin): \"%s\" -> passed to KL_HostInfo.updateUrl (download-first inside KL_Initialize)\n", builtinUrl);
 	}
-	Debug::Log("[KratosPort] host version = \"%ls\" (Version.h), downloaded hostVersion will be compared by KratosVersion.h rules\n",
+	Debug::Log("[KratosPort] host version = \"%ls\" (Version.h)\n",
 		HostVersionString().c_str());
 
 	if (self)
@@ -451,17 +419,12 @@ bool KratosPort::TryUpdateAsync()
 
 // "有更新版本"提示的门闸：**一次性判定 + 一次性放行**（三态，语义见 KratosPort.h）。
 //
-// ★ 判据（用户口径）：**调用 lib 接口读取"下载到的"hostVersion**，在宿主侧用
-//   Common/KratosVersion.h 的规则与本机 KRATOS_VERSION 比较；无值/解析失败 ⇒ 不提示。
+// 判据：调用 lib 接口读取"下载到的"版本号，在宿主侧用 Common/KratosVersion.h
+// 的规则与本机版本比较；无值/解析失败 ⇒ 不提示。
 //
-// ★ 时机（用户口径："等下载有结论之后再判一次（下载失败⇒无提示）"）：
-//   下载是**同步**跑在 KL_Initialize 的"先下载"里的（KratosPort::Initialize →
-//   Kratos::ExeRun，游戏主循环开始之前），所以本门闸第一次被问到时，结论**已经**
-//   定稿：拿得到"下载到的版本" ⇒ 立刻比一次；拿不到（下载失败） ⇒ 直接 Quiet。
-//   因此这里不需要"等几十秒再放弃"的中间态——Pending 分支保留只为 UI/状态机兼容
-//   （当前路径下第一次调用就会给出最终结论）。
-//   "每次运行最多提示一次"由 _updateNoticeShown 保证（返回 Available 后立即置位）。
-//   判定与日志都只发生一次（缓存），所以调用方可以每渲染帧问一次而不刷日志。
+// 时机：下载同步跑在 KL_Initialize 里（游戏主循环开始之前），所以本门闸第一次被
+// 问到时结论已经定稿。Pending 分支保留只为 UI/状态机兼容。
+// 判定与日志都只发生一次（缓存），调用方可以每渲染帧问一次而不刷日志。
 KratosPort::UpdateNoticeState KratosPort::PollUpdateNotice()
 {
 	if (Disabled())
@@ -481,7 +444,7 @@ KratosPort::UpdateNoticeState KratosPort::PollUpdateNotice()
 		_updateNoticeShown = true;
 		const std::string available = AvailableHostVersion();
 		const std::wstring current = HostVersionString();
-		Debug::Log("[KratosPort] update available: downloaded hostVersion \"%s\" > host \"%ls\""
+		Debug::Log("[KratosPort] update available: downloaded version \"%s\" > host \"%ls\""
 			" -> one-time notice granted to UI (this run only)\n",
 			available.c_str(), current.c_str());
 		return UpdateNoticeState::Available;
@@ -494,7 +457,7 @@ KratosPort::UpdateNoticeState KratosPort::PollUpdateNotice()
 		// 下载失败（离线/超时/非 200/验签失败/解密失败）⇒ 没有任何"下载到的版本"
 		// ⇒ fail-quiet：不提示。内置兜底载荷的版本号不参与这里。
 		_updateNoticeVerdict = _verdictQuiet;
-		Debug::Log("[KratosPort] version check: no downloaded hostVersion (download failed/absent)"
+		Debug::Log("[KratosPort] version check: no downloaded version (download failed/absent)"
 			" -> no notice (fail-quiet); builtin offline list is in use\n");
 		return UpdateNoticeState::Quiet;
 	}
@@ -508,7 +471,7 @@ KratosPort::UpdateNoticeState KratosPort::PollUpdateNotice()
 
 	_updateNoticeShown = true;
 	const std::wstring current = HostVersionString();
-	Debug::Log("[KratosPort] update available: downloaded hostVersion \"%s\" > host \"%ls\""
+	Debug::Log("[KratosPort] update available: downloaded version \"%s\" > host \"%ls\""
 		" -> one-time notice granted to UI (this run only)\n",
 		available.c_str(), current.c_str());
 	return UpdateNoticeState::Available;
