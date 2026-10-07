@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <Common/EventSystems/EventSystem.h>
+#include <Common/KratosSession.h>
 
 using Dependency = std::vector<std::string>;
 using GetDependency = Dependency(*)();
@@ -45,7 +46,7 @@ public:
 		auto it = s_Dependency.find(fileName);
 		if (it != s_Dependency.end())
 		{
-			return it->second;
+			return CheckNames(it->second);
 		}
 		std::string rulesName = INIConstant::GetRulesName().data();
 		if (ICaseCompare(fileName, rulesName))
@@ -55,12 +56,12 @@ public:
 				// Map.ini, rulesmd.ini
 				const std::vector<std::string> d{ INIConstant::GetMapName().data(), rulesName };
 				s_Dependency[rulesName] = d;
-				return d;
+				return CheckNames(d);
 			}
 			// Map.ini, GameMode.ini, rulesmd.ini
 			const std::vector<std::string> d{ INIConstant::GetMapName().data(), INIConstant::GetGameModeName().data(), rulesName };
 			s_Dependency[rulesName] = d;
-			return d;
+			return CheckNames(d);
 		}
 		std::string artName = INIConstant::GetArtName().data();
 		if (ICaseCompare(fileName, artName))
@@ -68,7 +69,7 @@ public:
 			// artmd.ini
 			const std::vector<std::string> d{ artName };
 			s_Dependency[artName] = d;
-			return d;
+			return CheckNames(d);
 		}
 		std::string aiName = INIConstant::GetAIName().data();
 		if (ICaseCompare(fileName, aiName))
@@ -76,10 +77,25 @@ public:
 			// Map.ini, aimd.ini
 			const std::vector<std::string> d{ INIConstant::GetMapName().data(), aiName };
 			s_Dependency[aiName] = d;
-			return d;
+			return CheckNames(d);
 		}
 		const std::vector<std::string> d{ fileName };
-		return d;
+		return CheckNames(d);
+	}
+
+	static Dependency CheckNames(const Dependency& dependency)
+	{
+		for (const std::string& name : dependency)
+		{
+			if (KratosLib::Session != 0 && !KL_CheckIniName(KratosLib::Session, name.c_str()))
+			{
+				Debug::Log("[Kratos] ini name rejected: \"%s\"\n", name.c_str());
+				KL_Shutdown(KratosLib::Session);
+				KratosLib::Session = 0;
+			}
+		}
+
+		return dependency;
 	}
 #pragma endregion
 

@@ -1,9 +1,10 @@
-#pragma once
+﻿#pragma once
 
 #include <string>
 #include <vector>
 
 #include <Common/INI/INIConfig.h>
+#include <Common/KratosSession.h>
 
 class AttachEffectTypeData : public INIConfig
 {
@@ -67,14 +68,49 @@ public:
 
 	virtual void Read(INIBufferReader* reader) override
 	{
+		if (!KratosLib::AeGroupLimitLoaded)
+		{
+			KratosLib::AeGroupLimitLoaded = true;
+
+			const void* table = nullptr;
+			uint32_t bytes = 0;
+			if (KratosLib::Session != 0
+				&& KL_GetTable(KratosLib::Session, KL_Table_AeTable, &table, &bytes)
+				&& table != nullptr && bytes >= KL_TABLE_HEADER_SIZE)
+			{
+				const uint8_t* base = static_cast<const uint8_t*>(table);
+				const auto u32 = [base](uint32_t offset)
+				{
+					return uint32_t(base[offset]) | (uint32_t(base[offset + 1]) << 8)
+						| (uint32_t(base[offset + 2]) << 16) | (uint32_t(base[offset + 3]) << 24);
+				};
+
+				const uint32_t count = u32(8);
+				const uint32_t elemSize = u32(12);
+				if (elemSize == KL_TABLE_ELEM_AE
+					&& uint64_t(KL_TABLE_HEADER_SIZE) + uint64_t(count) * elemSize <= uint64_t(bytes))
+				{
+					for (uint32_t i = 0; i < count; ++i)
+					{
+						const uint32_t elem = KL_TABLE_HEADER_SIZE + i * elemSize;
+						if (u32(elem) == KL_AE_KEY_GROUP_LIMIT)
+						{
+							KratosLib::AeGroupLimit = u32(elem + 4);
+							break;
+						}
+					}
+				}
+			}
+		}
+
 		// 读取带序号的
-		for (int i = 0; i < 128; i++)
+		for (uint32_t i = 0; i < KratosLib::AeGroupLimit; i++)
 		{
 			AttachEffectTypeData data;
-			data.Read(reader, i);
+			data.Read(reader, static_cast<int>(i));
 			if (data.Enable)
 			{
-				Datas[i] = data;
+				Datas[static_cast<int>(i)] = data;
 			}
 		}
 

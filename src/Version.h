@@ -41,13 +41,8 @@
 #endif // DEBUG
 
 // ---- 纯版本号（**无前缀**），供日志/显示使用 --------------------------------
-// 与上面 VERSION_SHORT_* 是**同一口径**（同一个 DEBUG / VERSION_PATCH 分支），
-// 区别只是不带 "Debug " / "Ver." 前缀。
-//
-// ⚠ 本宏**只用于显示**。版本更新的**比较**走"4 个数字"那条路
-//   （KratosPort::HostVersionComponents() 直接读下面 4 个宏，
-//   载荷侧由 KratosVersion::ParseComponents() 解析），
-//   所以比较结果与 DEBUG / Release 无关 —— 不存在"字符串里有没有 p 后缀"的问题。
+// 与上面 VERSION_SHORT_* 同一口径，区别只是不带 "Debug " / "Ver." 前缀。
+// ⚠ 本宏**只用于显示**。版本比较走下面 4 个宏（数字），与 DEBUG / Release 无关。
 #ifdef DEBUG
 	#define VERSION_PLAIN_WSTR WSTR(VERSION_MAJOR) L"." WSTR(VERSION_MINOR) L"." WSTR(VERSION_REVISION)
 #else // Release build
