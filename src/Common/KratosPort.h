@@ -2,6 +2,8 @@
 
 #include <KratosLib.h>
 
+#include <Common/KratosVersion.h>
+
 #include <cstdint>
 #include <string>
 
@@ -74,12 +76,18 @@ public:
 
 	/// <summary>
 	/// 宿主自己的版本串（**无前缀**纯版本号，形如 L"0.2.4" / L"0.2.4p1"）。
-	/// 单一来源：Version.h 的 VERSION_PLAIN_WSTR —— 与 VERSION_SHORT_WSTR 同一
-	/// DEBUG / VERSION_PATCH 分支，只是不带 "Debug " / "Ver." 前缀，
-	/// 保证开发机与发布机的比较口径完全一致。
-	/// 与 lib 提供的"下载到的 hostVersion"用 KratosVersion.h 的规则比较。
+	/// 单一来源：Version.h 的 VERSION_PLAIN_WSTR。
+	/// ⚠ **只用于显示/日志**；版本比较请用 HostVersionComponents()。
 	/// </summary>
 	static std::wstring HostVersionString();
+
+	/// <summary>
+	/// 宿主自己的版本号：**4 个数字**（主.次.修订.补丁），直接从 Version.h 的
+	/// VERSION_MAJOR / MINOR / REVISION / PATCH 构造，不经过任何字符串。
+	/// 版本比较的唯一依据 —— 与载荷侧解析出的 4 个数字逐位比。
+	/// 因为是数字而非字符串，**不区分 DEBUG / Release**（DEBUG 只影响显示前缀）。
+	/// </summary>
+	static KratosVersion::Components HostVersionComponents();
 
 	/// <summary>
 	/// **下载到的**宿主版本（lib 侧锁内快照，纯 ASCII）—— 调用 lib 接口
@@ -91,11 +99,12 @@ public:
 
 	/// <summary>
 	/// "下载到的版本"是否比宿主版本新 ⇒ 该提示玩家"有更新版本"。
-	/// 比较规则见 Common/KratosVersion.h（分段数值比较 + 后缀字母序）；
-	/// 任一侧无值/非法 ⇒ false（**不提示**，fail-quiet）。
-	/// 载荷版本**更低**或相同 ⇒ 同样不提示（只有严格"更新"才算）。
-	/// DEBUG 构建一律返回 false（Debug 版本串不带补丁后缀，与发布版不同口径，
-	/// 提示只会误导开发机；见实现里的说明）。
+	/// 判据是**4 个数字逐位比较**（见 KratosVersion.h 的 ParseComponents）：
+	///   * 只有**严格更高**才提示；**更低或相同一律不提示**
+	///     （lib 完全可能提供一个比当前更低的版本号，那不是"有更新"）；
+	///   * 任一侧无值/非法 ⇒ false（**不提示**，fail-quiet）；
+	///   * **不区分 DEBUG / Release** —— 两侧数字同源于 Version.h 的 4 个宏，
+	///     DEBUG 只改变显示前缀，不改变数字。
 	/// 只在结论定稿时被调用一次（结论缓存在 PollUpdateNotice 里），
 	/// 因此它的证据日志每次运行最多一行，不会刷屏。
 	/// </summary>

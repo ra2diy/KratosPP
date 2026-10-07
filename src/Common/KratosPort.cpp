@@ -159,7 +159,7 @@ void KratosPortDetail::SimulateUpdateUrl(const char* url)
 }
 #endif
 
-// 宿主自己的版本串（**无前缀**纯版本号），用于和载荷 hostVersion 比较。
+// 宿主自己的版本串（**无前缀**纯版本号），用于日志/显示。
 //
 // ★ 单一来源：直接取 Version.h 的 VERSION_PLAIN_WSTR。
 //   Version.h 负责"DEBUG 不加补丁后缀 / Release 的 VERSION_PATCH 分支"这套口径，
@@ -168,11 +168,29 @@ void KratosPortDetail::SimulateUpdateUrl(const char* url)
 //   （曾经的写法是在这里用 VERSION_PATCH != 0 手工拼 "p"，与 Version.h 的
 //    DEBUG 分支不一致：Debug 构建明明显示 "Debug 0.2.4"，比较时却当成 "0.2.4p1"。）
 //
-// 规则见 KratosVersion.h（分段数值比较 + 后缀字母序）。
-// 宽字符形态：Version.h 的宏本来就是 ASCII 字面量，不做任何编码转换。
+// ⚠ 本函数**只用于显示/日志**。版本比较请用 HostVersionComponents() ——
+//   比较是"4 个数字逐位比"，不需要经过字符串。
 std::wstring KratosPort::HostVersionString()
 {
 	return VERSION_PLAIN_WSTR;
+}
+
+// 宿主自己的版本号（4 个数字），供版本比较使用。
+//
+// ★ 直接从 Version.h 的 4 个宏构造，**完全不经过字符串**。
+//   这是"拆成 4 个数字逐个比对"的落地方式，好处是：
+//     * 不存在"DEBUG 下字符串里有没有 p 后缀"的问题 —— 4 个宏与 DEBUG 无关，
+//       第 4 个数字永远是 VERSION_PATCH；
+//     * 不需要解析自己的版本串，零解析失败风险；
+//     * 与载荷侧解析出的 4 个数字是**同一种数据结构**，比较即逐位比较。
+KratosVersion::Components KratosPort::HostVersionComponents()
+{
+	KratosVersion::Components out{};
+	out.major = static_cast<uint64_t>(VERSION_MAJOR);
+	out.minor = static_cast<uint64_t>(VERSION_MINOR);
+	out.revision = static_cast<uint64_t>(VERSION_REVISION);
+	out.patch = static_cast<uint64_t>(VERSION_PATCH);
+	return out;
 }
 
 // 取"**下载到的**"宿主版本（lib 侧锁内快照）。
@@ -209,66 +227,63 @@ std::string KratosPort::AvailableHostVersion()
 	return out;
 }
 
-// 是否该提示"可更新"：载荷版本 > 宿主版本 ⇒ true。任一侧无值/非法 ⇒ false（不提示）。
+// 是否该提示"可更新"：载荷的 4 个数字 > 宿主本机的 4 个数字 ⇒ true。
+// 任一侧无值/非法 ⇒ false（不提示）。
+//
+// ★ 判据是**4 个数字逐位比**，不是字符串比较。因此：
+//   * **不区分 DEBUG / Release** —— 两侧的数字都来自同一组 Version.h 宏，
+//     DEBUG 只影响显示前缀，不改变数字；
+//   * **不关心补丁写成 "p1" 还是省略** —— 落到 patch 位就是同一个数；
+//   * **载荷版本更低（或相同）一律不提示** —— 只有严格更高才算"有更新"。
 // 全部判定都在宿主侧完成（lib 只提供字符串快照，不做任何版本判定）。
 bool KratosPort::UpdateAvailable()
 {
-#ifdef DEBUG
-	// ★ Debug 构建一律不提示"有更新版本"。
-	//
-	// 理由：Debug 版本串是 "Debug 0.2.4"（见 Version.h），它**故意不带补丁后缀**，
-	// 和发布版的 "0.2.4p1" 不是同一口径；拿它去和载荷里的 hostVersion 比，
-	// 结论必然是"载荷更新"，于是每个跑 Debug 的开发机都会看到一条
-	// 与事实无关的更新提示。开发机本来就该从源码走，不需要这条提示。
-	//
-	// 保留日志一行：万一有人确实想在 Debug 下核对版本关系，
-	// 日志里仍能看到"两侧各是什么"（判定结果恒为不提示）。
-	Debug::Log("[KratosPort] version check: DEBUG build -> update notice suppressed"
-		" (host=\"%ls\", downloaded=\"%s\")\n",
-		HostVersionString().c_str(), AvailableHostVersion().c_str());
-	return false;
-#else
 	const std::string available = AvailableHostVersion();
 	if (available.empty())
 	{
 		return false;
 	}
 
-	// 宿主版本串折成 ASCII 字节串用于比较（Version.h 的宏只可能是 0-9 与 'p'）。
-	// 逐字符 static_cast 而不是直接用迭代器构造 string：宽字符迭代器转窄字符容器
-	// 会触发 /W4 的 C4244（从 const wchar_t 到 const char 可能丢数据）。
-	// 这里本来就只可能是 ASCII，逐字符转换同时把这个前提写成代码。
-	const std::wstring currentWide = HostVersionString();
-	std::string current;
-	current.reserve(currentWide.size());
-	for (const wchar_t c : currentWide)
+	// 载荷侧的版本串 → 4 个数字；宿主侧直接用 4 个宏构造。
+	KratosVersion::Components payload{};
+	if (!KratosVersion::ParseComponents(available, &payload))
 	{
-		current.push_back(static_cast<char>(c));
-	}
-
-	const KratosVersion::Compare cmp = KratosVersion::CompareStrings(available, current);
-	if (cmp == KratosVersion::Compare::Unknown)
-	{
-		Debug::Log("[KratosPort] version check: downloaded hostVersion \"%s\" vs host \"%s\" -> unparsable, no notice\n",
-			available.c_str(), current.c_str());
+		Debug::Log("[KratosPort] version check: downloaded hostVersion \"%s\" -> unparsable, no notice\n",
+			available.c_str());
 		return false;
 	}
-	if (cmp != KratosVersion::Compare::Higher)
+	const KratosVersion::Components host = HostVersionComponents();
+
+	// 逐位比较（高位优先）。这里显式写出来，让"4 个数字"这个判据在代码里可见。
+	int cmp = 0;
+	if (payload.major != host.major) { cmp = payload.major > host.major ? 1 : -1; }
+	else if (payload.minor != host.minor) { cmp = payload.minor > host.minor ? 1 : -1; }
+	else if (payload.revision != host.revision) { cmp = payload.revision > host.revision ? 1 : -1; }
+	else if (payload.patch != host.patch) { cmp = payload.patch > host.patch ? 1 : -1; }
+
+	// 统一的证据日志：两侧都按 4 个数字打印，便于直接核对是哪一位不同。
+	if (cmp <= 0)
 	{
-		// 载荷版本不高于本机（含"更低"与"相同"）⇒ 不提示。
-		// ★ 这是请求里点名的场景：lib 完全可能提供一个比当前**更低**的版本号，
+		// 载荷不高于本机（含"更低"与"相同"）⇒ 不提示。
+		// ★ "载荷比当前更低"是必须处理的正常情形（回退 / 误发布 / 旧载荷重放），
 		//   那不是"有更新"，绝不能提示。
-		Debug::Log("[KratosPort] version check: downloaded hostVersion \"%s\" vs host \"%s\" -> %s, no notice\n",
-			available.c_str(), current.c_str(),
-			cmp == KratosVersion::Compare::Lower ? "LOWER than host"
-			: cmp == KratosVersion::Compare::Equal ? "equal to host" : "not newer");
+		Debug::Log("[KratosPort] version check: payload %llu.%llu.%llu.%llu vs host %llu.%llu.%llu.%llu"
+			" -> %s, no notice\n",
+			(unsigned long long)payload.major, (unsigned long long)payload.minor,
+			(unsigned long long)payload.revision, (unsigned long long)payload.patch,
+			(unsigned long long)host.major, (unsigned long long)host.minor,
+			(unsigned long long)host.revision, (unsigned long long)host.patch,
+			cmp < 0 ? "LOWER than host" : "equal to host");
 		return false;
 	}
 
-	Debug::Log("[KratosPort] version check: downloaded hostVersion \"%s\" vs host \"%s\" -> NEWER, notice is due\n",
-		available.c_str(), current.c_str());
+	Debug::Log("[KratosPort] version check: payload %llu.%llu.%llu.%llu > host %llu.%llu.%llu.%llu"
+		" -> NEWER, notice is due\n",
+		(unsigned long long)payload.major, (unsigned long long)payload.minor,
+		(unsigned long long)payload.revision, (unsigned long long)payload.patch,
+		(unsigned long long)host.major, (unsigned long long)host.minor,
+		(unsigned long long)host.revision, (unsigned long long)host.patch);
 	return true;
-#endif
 }
 
 bool KratosPort::Initialize()
