@@ -26,9 +26,9 @@ class KratosPort
 public:
 	/// <summary>
 	/// 初始化端口并发起一次会话。DLL 装载完成后（ExeRun）调用。
-	/// ★ "启动先下载"就在这一步里：KL_Initialize 先做**一次**有界的远程下载
-	///   （总预算 ~4s，同步），成功 ⇒ 用下载到的名单/版本做一次性环境检测；
-	///   失败（离线/超时/非 200/验签失败/解密失败）⇒ 用内置离线载荷。
+	/// 本步内 KL_Initialize 先做**一次**有界的远程下载（总预算 ~4s，同步）：
+	/// 成功 ⇒ 用下载到的名单/版本做一次性环境检测；
+	/// 失败（离线/超时/非 200/验签失败/解密失败）⇒ 用内置离线载荷。
 	/// 返回 true 表示端口可用。
 	/// </summary>
 	static bool Initialize();
@@ -59,12 +59,10 @@ public:
 	/// 一次性的在线名单更新调用点：让端口层执行"下载 → 按第一个 '|' 切分 → RSA 验签
 	/// → AES-GCM 解密 → 写入变量/列表"（**不做版本比较、没有单调守卫、不做提示**）。
 	///
-	/// ★ 真正的联网发生在**上一步** KratosPort::Initialize() → KL_Initialize()
-	///   的"启动先下载"里（用户口径：联网时机 = DLL 载入期/最早初始化路径，
-	///   不是 DllMain、也不是对局中；加载被拖慢是可接受的，但有界 ~4s）。
-	///   所以本函数在正常路径上拿到的是 false：端口层写一行
-	///   "single fetch already happened at startup (one-shot)" 就直接返回，
-	///   不发第二次请求、不创建任何线程（本库现在根本不创建线程）。
+	/// 真正的联网发生在 KratosPort::Initialize() → KL_Initialize() 的"启动先下载"里，
+	/// 所以本函数在正常路径上返回 false：端口层写一行
+	/// "single fetch already happened at startup (one-shot)" 就直接返回，
+	/// 不发第二次请求、不创建任何线程。
 	///
 	/// URL **编译内置在 KratosPP 侧**（KratosPP/src/Common/KratosUpdateUrl.h 的
 	/// KratosUpdate::kUpdateUrl），**不再从 rulesmd.ini 读取**：
@@ -90,8 +88,8 @@ public:
 	static KratosVersion::Components HostVersionComponents();
 
 	/// <summary>
-	/// **下载到的**宿主版本（lib 侧锁内快照，纯 ASCII）—— 调用 lib 接口
-	/// KL_GetDownloadedHostVersion 得到，不是宿主自己解析出来的。
+	/// **下载到的**版本号（lib 侧锁内快照，纯 ASCII）—— 调用 lib 接口
+	/// KL_GetDownloadedVersion 得到。
 	/// 只有"本次运行远程下载 + 验签 + AES-GCM 解密全部成功"才有值；
 	/// 下载失败（离线/超时/非 200/验签失败/解密失败）/ 端口停用 ⇒ 空串 ⇒ 不提示（fail-quiet）。
 	/// </summary>

@@ -34,15 +34,11 @@
 
 // ---- ABI 签名比对 --------------------------------------------------------
 // 编译期比对本机 <KratosLib.h> 与链接用的 KratosPPLib.lib 是否同一版 ABI。
+// CheckSignatures() 是 constexpr 且返回 bool，可直接用作 static_assert 的条件。
 //
-// KratosLibApi::CheckSignatures() 是 constexpr 且返回 bool，所以可以直接做
-// static_assert 的条件：签名一变，include 到这里就编译报错，
-// 比"链到一半报 LNK2019"定位清楚得多。
-//
-// ★ 不要把它的结果先存进一个变量再断言 ——
-//   `const bool f = CheckSignatures(); static_assert(f, ...);` 在 C++20 里
-//   f 不是常量表达式，MSVC 会报 C2131（表达式的计算结果不是常数）。
-//   直接写进 static_assert 才是合法的常量求值。
+// 必须直接写进 static_assert，不要先存进变量：
+//   `const bool f = CheckSignatures(); static_assert(f, ...);` 在 C++20 下 f
+//   不是常量表达式，MSVC 报 C2131。
 static_assert(KratosLibApi::CheckSignatures(), "KratosPort: KratosLib 签名表比对未通过");
 
 const char* KratosPort::ReasonName(KL_Reason reason)
@@ -122,10 +118,9 @@ uint64_t KratosPort::SelfHash()
 //     就早退，零 WinHTTP 调用、完全不触碰网络，只用内置离线载荷；
 //   * 非法地址 ⇒ lib 同样在发请求之前拒绝（零网络）。
 //
-// 为什么删掉"读 ini"这条路：更新地址是产品自己的发布通道，不是玩家的可调项；
-//   放在 ini 里既容易被清空/误改（静默失去更新能力），也让"零网络"无法静态审计。
-//   现在是否联网只由上面那一个常量决定，构建产物即事实（本函数只负责取常量 + 记日志，
-//   不做任何文件 IO、不读任何配置）。
+// 更新地址由 KratosUpdate::kUpdateUrl 决定，不从任何 ini/配置文件读取：
+// 是否联网只由这一个常量决定，构建产物即事实。本函数只取常量 + 记日志，
+// 不做文件 IO、不读配置。
 // -----------------------------------------------------------------------------
 const char* KratosPortDetail::BuiltinUpdateUrl()
 {
@@ -385,19 +380,15 @@ bool KratosPort::TryUpdateAsync()
 	_updateStarted = true;
 
 	// 传会话给端口层，由端口层执行"下载 → 按第一个 '|' 切分 → RSA 验签 →
-	// AES-GCM 解密 → 写入变量/列表"这一件事（无版本比较、无守卫、无提示）。
+	// AES-GCM 解密 → 写入变量/列表"（无版本比较、无守卫、无提示）。
 	//
-	// ★ 时序（用户口径："联网时机 = DLL 载入期/最早初始化路径"）：
-	//   真正的联网发生在**上一步 KratosPort::Initialize() → KL_Initialize()** 里
-	//   （"启动先下载"，有界总预算 ~4s；此后再没有任何网络动作）。
-	//   所以本函数在正常路径上只会拿到 false —— 端口层会写一行
-	//   "this run's single fetch already happened at startup (one-shot)" 并直接返回，
-	//   **不会**发第二次请求、也不会创建任何线程。这不是错误路径。
-	//   保留本调用点是为了保持"初始化后立刻确认更新状态"的语义与 ABI 兼容。
+	// 真正的联网发生在 KratosPort::Initialize() → KL_Initialize()（"启动先下载"，
+	// 有界总预算 ~4s；此后再无网络动作）。所以本函数在正常路径上只拿到 false ——
+	// 端口层写一行 "this run's single fetch already happened at startup (one-shot)"
+	// 并直接返回，不发第二次请求、不创建线程。
 	//
-	// 版本提示**不在这里**做：提示由玩家可见的渲染时机负责
-	// （Kratos::DrawVersionText -> KratosPort::PollUpdateNotice()，见 Kratos.cpp）。
-	// 这里只把"本次运行"的判定状态复位（每次运行最多提示一次）。
+	// 版本提示不在这里做：由 Kratos::DrawVersionText -> PollUpdateNotice() 负责。
+	// 这里只复位"本次运行"的判定状态（每次运行最多提示一次）。
 	_updateNoticeShown = false;
 	_updateNoticeVerdict = _verdictUnknown;
 
