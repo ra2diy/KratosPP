@@ -20,7 +20,7 @@ void TechnoStatus::OnReceiveDamageEnd_Vampire(int* pRealDamage, WarheadTypeClass
 				{
 					// 检查可否影响
 					if ((!ae->AEData.Vampire.DeactiveWhenCivilian || !IsCivilian(pAttackingHouse))
-						&& (ae->AEData.Vampire.AffectInAir || inAir)
+						&& (ae->AEData.Vampire.AffectInAir || !inAir)
 						&& ae->AEData.Vampire.CanAffectHouse(pAttackingHouse, pHouse)
 						&& ae->AEData.Vampire.CanAffectType(pTechno)
 						&& ae->AEData.OnMark(this->AEManager()->GetMarks())
