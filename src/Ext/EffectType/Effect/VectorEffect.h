@@ -53,9 +53,17 @@ public:
 	void CacheTargetNow();
 
 	// ========================================================================
-	// 主入口：每帧计算位移
+	// 主入口：每帧计算位移（GetVectorResult = 位移计算 + 地面钳位收尾，外部只调它）
 	// ========================================================================
 	VectorResult GetVectorResult();
+
+	// 位移计算本体：各模式分支在此 return；地面钳位统一在 GetVectorResult 收尾，
+	// 避免在十几个模式出口逐个插入（新增模式不会漏掉钳位）
+	VectorResult ComputeVectorResult();
+
+	// Vector.SetToGroundHeight：按【当前位置 + 本帧位移】预测下一帧位置，
+	// 预测沉入地面则把物体直接摆到该处地面高度（只钳高度，不结束 Vector）
+	void ApplySetToGroundHeight(VectorResult& result);
 
 	// ========================================================================
 	// OnStart 子步骤（.cpp 实现）
@@ -320,6 +328,13 @@ public:
 	bool _circleDynamicSampled = false;   // 小圆已采样（冻结期后首运动帧现算半径/圆心Z，只一次）
 	bool _originDynamicSampled = false;   // 大圆已采样（同上）
 
+	// 圆的基准高度（仅单位宿主、仅 Vector.CircleHeightDynamic 生效时记录）：
+	// 生效瞬间取【所在地面高度 + 引擎离地高度】，记录一次后固定，作为小圆圆心的高度。
+	// 悬浮单位（jumpjet 等）的悬浮高度不在坐标 Z 里（坐标 Z 是地面高度），
+	// 必须走引擎高度接口——这是圆心不落到地面高度的唯一依据。
+	bool _circleBaseHeightValid = false;
+	int _circleBaseHeight = 0;
+
 	// ========================================================================
 	// 帧工具
 	// ========================================================================
@@ -362,7 +377,9 @@ public:
 			.Process(this->_motion)
 			.Process(this->_originMotion)
 			.Process(this->_circleDynamicSampled)
-			.Process(this->_originDynamicSampled);
+			.Process(this->_originDynamicSampled)
+			.Process(this->_circleBaseHeightValid)
+			.Process(this->_circleBaseHeight);
 		return stream.Success();
 	};
 

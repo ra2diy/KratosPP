@@ -125,6 +125,8 @@ void VectorEffect::Clean()
 
 	_circleDynamicSampled = false;
 	_originDynamicSampled = false;
+	_circleBaseHeightValid = false;
+	_circleBaseHeight = 0;
 }
 
 // ============================================================================
@@ -1183,7 +1185,56 @@ void VectorEffect::OnStart()
 }
 
 // ============================================================================
+// 主入口：先算位移，再做地面钳位收尾。
+// 钳位单独收在这一层，是为了让各模式分支（ComputeVectorResult 内有十余个 return 出口）自动覆盖，
+// 新增模式也不会漏掉钳位。
 VectorResult VectorEffect::GetVectorResult()
+{
+	VectorResult result = ComputeVectorResult();
+	ApplySetToGroundHeight(result);
+	return result;
+}
+
+// Vector.SetToGroundHeight：按【当前位置 + 本帧位移】预测下一帧位置，预测沉入地面则把物体钳到该处地面高度。
+// 只管【别钻地】这一件事：不结束 Vector、不碰引爆流程，与 RemoveOnUnderground（入地结束 Vector）互不相干。
+// 钳位后同步修正位移结果——帧尾位移管线会按【本帧起点 + 位移】再摆一次位置，不同步修正会把钳位覆盖回去。
+void VectorEffect::ApplySetToGroundHeight(VectorResult& result)
+{
+	if (!Data->SetToGroundHeight || !pObject)
+		return;
+
+	CoordStruct currentPos = pObject->GetCoords();
+	CoordStruct predicted = currentPos;
+	predicted.X += result.MoveDisp.X;
+	predicted.Y += result.MoveDisp.Y;
+	predicted.Z += result.MoveDisp.Z;
+
+	int floorHeight = MapClass::Instance->GetCellFloorHeight(predicted); // 官方API，不得修改
+	if (predicted.Z >= floorHeight)
+		return;
+
+	// 钳到地面高度（贴地）；水平位置保持预测位置，水平轨迹不受影响
+	predicted.Z = floorHeight;
+	if (pBullet)
+	{
+		pBullet->SetLocation(predicted);
+	}
+	else if (pTechno)
+	{
+		// 单位：摆位要带占位更新（同 ReachTarget 到位处理）
+		bool onBridge = pTechno->OnBridge;
+		pTechno->UpdatePlacement(PlacementType::Remove);
+		pTechno->OnBridge = onBridge;
+		pTechno->SetLocation(predicted);
+		pTechno->UpdatePlacement(PlacementType::Put);
+	}
+
+	result.MoveDisp.X = predicted.X - currentPos.X;
+	result.MoveDisp.Y = predicted.Y - currentPos.Y;
+	result.MoveDisp.Z = predicted.Z - currentPos.Z;
+}
+
+VectorResult VectorEffect::ComputeVectorResult()
 {
 	VectorResult result;
 	// Vector 接管期悬崖/撞地引爆免疫（Vector.SubjectToCliffs=no 默认免疫；yes 则受悬崖影响爆炸）
@@ -1199,6 +1250,21 @@ VectorResult VectorEffect::GetVectorResult()
 	{
 		AdvanceFrame();
 		return result;
+	}
+
+	// Vector.RemoveOnUnderground：宿主沉入地下就结束 Vector（只管结束 Vector 本身，
+	// 与 SubjectToCliffs 的撞地引爆、与引爆流程互不相干）。判定放在启动之后——启动延迟期内不判。
+	// 判据：宿主坐标高度 < 该位置地面高度 − 容差（容差默认 384 lepton，0 = 低于地面一点即算）。
+	if (Data->RemoveOnUnderground)
+	{
+		CoordStruct hostPos = pObject->GetCoords();
+		int floorHeight = MapClass::Instance->GetCellFloorHeight(hostPos); // 官方API，不得修改
+		if (hostPos.Z < floorHeight - Data->RemoveOnUndergroundTolerance)
+		{
+			Deactivate();
+			AdvanceFrame();
+			return result;
+		}
 	}
 
 	// 每帧运动刷新目标缓存：挂载时（OnStart）已写第一笔，这里跟随目标移动刷新；
@@ -1647,7 +1713,7 @@ VectorResult VectorEffect::GetVectorResult()
 		// 无锚 + 快照已建立：停更，startPoint 保持 _lastPoint（完整解算点），不覆写
 	}
 
-// GetVectorResult：每帧计算位移（主体内联，段落化）
+// ComputeVectorResult：每帧计算位移（主体内联，段落化；地面钳位在外层 GetVectorResult 收尾）
 
 	// ========================================================================
 	// 成熟机制，别乱动 — 模式 C: Circle（独立圆周，圆心=Origin，三选二参数）
@@ -1703,6 +1769,12 @@ VectorResult VectorEffect::GetVectorResult()
 	// （Origin 参考点/格子/冻结值）决定，不再依赖弹体历史位置（打目标/打格子的
 	// OriginFLH 竖直偏移直接抬升参考点）。
 	CoordStruct smallCircleCenter = startPoint;
+
+	// 圆的基准高度：单位宿主生效瞬间记下的真实高度（见 _circleBaseHeight 声明与记录点）。
+	// 值只算一次、这里每帧套用——悬浮单位（jumpjet 等）的悬浮高度不在坐标 Z 里，
+	// 圆心若不套用它就被算到地面高度那一层，圆会贴地转。
+	if (_circleBaseHeightValid)
+		smallCircleCenter.Z = _circleBaseHeight;
 
 		// 圆心移动：Vector.Origin.* 系统
 		if (!Data->OriginMoveTo.IsEmpty() || Data->OriginReachTarget || Data->OriginLinearSpeed >= 0 || !Data->OriginTargetFLH.IsEmpty()
@@ -1833,6 +1905,24 @@ VectorResult VectorEffect::GetVectorResult()
 				bigCircleStartPoint.X += _randomBigCircleOriginOffset.X;
 				bigCircleStartPoint.Y += _randomBigCircleOriginOffset.Y;
 				bigCircleStartPoint.Z += _randomBigCircleOriginOffset.Z;
+
+				// 大圆动态圆高：Vector.CircleDynamic 或 Vector.Origin.CircleDynamic 任一为 yes 时，
+				// 基准点高度改用【生效瞬间记下的宿主真实高度】，覆盖参考单位坐标/挂点偏移/随机偏移
+				// 算出的 Z——即明确无视 Origin.OriginFLH 的竖直分量。
+				// 为什么要覆盖：基准点高度取自参考单位时，悬浮宿主（jumpjet 等）的参考单位若在地面，
+				// 基准点 Z 就是地面高度，圆心随之贴地，斜圆面取点的 Z 修正会把宿主从悬浮高度拽下来。
+				// 高度值固定不变（只在生效帧记一次），因此宿主被摆到该高度后不会自己往下沉。
+				if (Data->CircleDynamic || Data->OriginCircleDynamic)
+				{
+					if (!_circleBaseHeightValid && pObject)
+					{
+						int dynamicFloor = MapClass::Instance->GetCellFloorHeight(currentPos); // 官方API，不得修改
+						_circleBaseHeight = dynamicFloor + pObject->GetHeight(); // 官方API，不得修改
+						_circleBaseHeightValid = true;
+					}
+					if (_circleBaseHeightValid)
+						bigCircleStartPoint.Z = _circleBaseHeight;
+				}
 
 				// 快照 = 完整最终结果（首帧或锚单位活时每帧刷新；NoUpdate=yes 只有首帧走这里）
 				_bigCircleStartPoint = bigCircleStartPoint;
@@ -2293,27 +2383,43 @@ VectorResult VectorEffect::GetVectorResult()
 		if (Data->CircleDynamic && !_circleDynamicSampled)
 		{
 			_circleDynamicSampled = true;
-			// 圆心高度动态：仅当存在挂点偏移才需覆写（无偏移时圆心 Z 不参与消费，弹体天然保持自身高度）
-			if (Data->CircleHeightDynamic && !Data->OriginFLH.IsEmpty())
+			// 圆心高度动态：两种来源各走各的——配了挂点偏移就抬偏移的 Z，没配则直接记宿主真实高度
+			if (Data->CircleHeightDynamic)
 			{
-				// 活摆判定（同 ResolveOriginTilting 每帧重摆条件）：NoUpdate=no 且锚单位活（Self 恒活）
-				bool originAlive = Data->Origin == VectorData::VectorOrigin::Self;
-				if (!originAlive)
+				if (!Data->OriginFLH.IsEmpty())
 				{
-					TechnoClass* pAnchor = FindOriginTechno();
-					originAlive = pAnchor && !IsDeadOrInvisible(pAnchor);
+					// 活摆判定（同 ResolveOriginTilting 每帧重摆条件）：NoUpdate=no 且锚单位活（Self 恒活）
+					bool originAlive = Data->Origin == VectorData::VectorOrigin::Self;
+					if (!originAlive)
+					{
+						TechnoClass* pAnchor = FindOriginTechno();
+						originAlive = pAnchor && !IsDeadOrInvisible(pAnchor);
+					}
+					if (!Data->OriginNoUpdate && originAlive)
+					{
+						// 活摆：覆写 OriginFLH 的 Z（偏移输入一次，INI 的 Z 作废），后续帧解算自然抬圆心到弹体进入高度
+						Data->OriginFLH.Z += currentPos.Z - smallCircleCenter.Z;
+						smallCircleCenter.Z = currentPos.Z; // 本帧消费同步（自愈式，下帧起解算自带）
+					}
+					else
+					{
+						// 冻结：圆心 = 最后完整解算点（_lastPoint）不再重摆 → 直接改其 Z 一次
+						_lastPoint.Z = currentPos.Z;
+						smallCircleCenter.Z = currentPos.Z;
+					}
 				}
-				if (!Data->OriginNoUpdate && originAlive)
+				else if (pObject)
 				{
-					// 活摆：覆写 OriginFLH 的 Z（偏移输入一次，INI 的 Z 作废），后续帧解算自然抬圆心到弹体进入高度
-					Data->OriginFLH.Z += currentPos.Z - smallCircleCenter.Z;
-					smallCircleCenter.Z = currentPos.Z; // 本帧消费同步（自愈式，下帧起解算自带）
-				}
-				else
-				{
-					// 冻结：圆心 = 最后完整解算点（_lastPoint）不再重摆 → 直接改其 Z 一次
-					_lastPoint.Z = currentPos.Z;
-					smallCircleCenter.Z = currentPos.Z;
+					// 没配挂点偏移：记下宿主真实高度作圆的基准高度（见 _circleBaseHeight 声明）。
+					// 悬浮单位（jumpjet 等）的悬浮高度由引擎单独维护、不含在坐标 Z 里，
+					// 所以取【所在地面高度 + 宿主引擎高度】——只读坐标 Z 会把圆心定到地面那层。
+					// 宿主高度一律走 pObject（单位/弹体通用），不用只对单位有效的取法。
+					// 值只算这一次；本段在圆心定值之后，故本帧不回写圆心（那会覆盖大圆已算出的圆心），
+					// 从下一帧起由圆心定值处套用。
+					int floorHeight = MapClass::Instance->GetCellFloorHeight(currentPos); // 官方API，不得修改
+					int hostHeight = pObject->GetHeight(); // 官方API，不得修改
+					_circleBaseHeight = floorHeight + hostHeight;
+					_circleBaseHeightValid = true;
 				}
 			}
 			// 半径动态：半径 = 弹体到圆心水平距（丢弃高度差；dx/dy 为上方现成的首帧弹体→圆心向量）

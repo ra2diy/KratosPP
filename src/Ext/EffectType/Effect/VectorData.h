@@ -39,6 +39,18 @@ public:
 	bool OriginIsOnTurret = false;       // yes=挂炮塔（TurretFacing，炮塔差角跟随），no=挂车身（PrimaryFacing，默认）。INI: Vector.OriginIsOnTurret（改名自 OriginIsOnBody，语义反转）
 	bool SubjectToCliffs = false;        // Vector 接管期是否受悬崖/撞地影响（与原版弹体标签同义；默认 no=接管期无视，免疫引爆）
 
+	// 宿主坐标沉入地下时结束 Vector。只管【结束 Vector 本身】这一件事，与 SubjectToCliffs 的
+	// 撞地引爆、与引爆流程均无关联（两个互不相干的机制，不得互相牵连）。
+	// 判据：宿主坐标高度 < 该位置地面高度 − RemoveOnUndergroundTolerance（lepton）。
+	// 判定从 Vector 开始运动后生效（启动延迟期内不判）。
+	bool RemoveOnUnderground = false;      // INI: Vector.RemoveOnUnderground，默认 no（不判定）
+	int RemoveOnUndergroundTolerance = 384; // INI: Vector.RemoveOnUndergroundTolerance，深度阈值（384 = 1.5 格）；0 = 低于地面一点即算
+
+	// 入地时把物体钳到地面高度（表现为贴地平移）。与 RemoveOnUnderground 互不相干、各自独立启用：
+	// 本项只钳高度、不结束 Vector；持续入地则每帧都被钳回地面。
+	// 判据：按【当前位置 + 本帧位移】预测下一帧位置，预测高度低于该处地面高度即钳到地面高度。
+	bool SetToGroundHeight = false;         // INI: Vector.SetToGroundHeight，默认 no（不钳位）
+
 	enum class VectorOrigin : int
 	{
 		Self = 0, Launcher = 1, Target = 2, Source = 3,
@@ -303,6 +315,9 @@ public:
 		OriginIsOnWorld = reader->Get(title + "OriginIsOnWorld", OriginIsOnWorld);
 		OriginIsOnTurret = reader->Get(title + "OriginIsOnTurret", false); // 默认挂车身（no）；旧键 OriginIsOnBody 失效
 		SubjectToCliffs = reader->Get(title + "SubjectToCliffs", SubjectToCliffs);
+		RemoveOnUnderground = reader->Get(title + "RemoveOnUnderground", false);
+		RemoveOnUndergroundTolerance = reader->Get(title + "RemoveOnUndergroundTolerance", 384);
+		SetToGroundHeight = reader->Get(title + "SetToGroundHeight", false);
 
 		std::string originStr = reader->Get(title + "Origin", std::string{ "Self" });
 		if (originStr == "Launcher") Origin = VectorOrigin::Launcher;
@@ -580,6 +595,8 @@ private:
 	{
 		stream
 			.Process(this->TimeStep).Process(this->DisabledFrames).Process(this->SyncFacing).Process(this->OriginIsOnWorld).Process(this->OriginIsOnTurret).Process(this->SubjectToCliffs)
+			.Process(this->RemoveOnUnderground).Process(this->RemoveOnUndergroundTolerance)
+			.Process(this->SetToGroundHeight)
 			.Process(this->Origin)
 			.Process(this->OriginFLH)
 			.Process(this->OriginNoUpdate)
