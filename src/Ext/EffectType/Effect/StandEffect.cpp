@@ -603,7 +603,10 @@ void StandEffect::SetLocation(CoordStruct location)
 	{
 		pStand->SetHeight(0);
 	}
-	pStand->SetFocus(nullptr);
+	if (!standIsBuilding)
+	{
+		pStand->SetFocus(nullptr);
+	}
 }
 
 void StandEffect::SetFacing(DirStruct dir, bool forceSetTurret)
