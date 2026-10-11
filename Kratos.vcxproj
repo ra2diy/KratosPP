@@ -73,6 +73,7 @@
     <ClCompile Include="src\Ext\EffectType\Effect\CrateBuffEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\CounterEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\CountTriggerEffect.cpp" />
+    <ClCompile Include="src\Ext\EffectType\Effect\DamageControlEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\DamageSelfEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\ExtraFireEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\Effect\FireSuperEffect.cpp" />
@@ -108,6 +109,7 @@
     <ClCompile Include="src\Ext\StateType\StateScript.cpp" />
     <ClCompile Include="src\Ext\StateType\State\AntiBulletState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\BlackHoleState.cpp" />
+    <ClCompile Include="src\Ext\StateType\State\DamageControlState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\DamageReactionState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\DeselectState.cpp" />
     <ClCompile Include="src\Ext\StateType\State\DestroyAnimState.cpp" />
@@ -300,6 +302,8 @@
     <ClInclude Include="src\Ext\EffectType\Effect\CounterEffect.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\CountTriggerData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\CountTriggerEffect.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\DamageControlData.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\DamageControlEffect.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\DamageSelfData.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\DamageSelfEffect.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\EffectData.h" />
@@ -354,6 +358,7 @@
     <ClInclude Include="src\Ext\StateType\State\AntiBulletState.h" />
     <ClInclude Include="src\Ext\StateType\State\BlackHoleData.h" />
     <ClInclude Include="src\Ext\StateType\State\BlackHoleState.h" />
+    <ClInclude Include="src\Ext\StateType\State\DamageControlState.h" />
     <ClInclude Include="src\Ext\StateType\State\DamageReactionData.h" />
     <ClInclude Include="src\Ext\StateType\State\DamageReactionState.h" />
     <ClInclude Include="src\Ext\StateType\State\DeselectData.h" />
