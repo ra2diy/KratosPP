@@ -292,6 +292,11 @@ public:
 				burst.pTarget = nullptr;
 				burst.Invalid = true;
 			}
+			if (burst.pAttacker == pInvalid)
+			{
+				burst.pAttacker = nullptr;
+				burst.Invalid = true;
+			}
 		}
 	}
 

@@ -285,8 +285,10 @@ void AttachFire::OnUpdate()
 					WeaponTypeClass* pWeapon = burst.pWeapon;
 
 					TechnoClass* pTargetTechno = nullptr;
+					TechnoClass* pCheckAttacker = burst.pAttacker;
 					// 检查目标幸存和射程
 					if (pWeapon && pTarget
+						&& (!pCheckAttacker || !IsDeadOrInvisible(pCheckAttacker)) // 攻击者存活（或为空）
 						&& (!CastToTechno(pTarget, pTargetTechno) || (!IsDeadOrInvisible(pTargetTechno) && !pTargetTechno->IsFallingDown)) // 如果目标是单位，检查存活情况
 						&& (!burst.WeaponTypeData.CheckRange || IsInRange(pTarget, burst)) // 射程之内
 						&& (!burst.WeaponTypeData.CheckAA || !pTarget->IsInAir() || pWeapon->Projectile->AA) // 检查AA
