@@ -24,6 +24,7 @@
 // TODO Add new State
 #include <Ext/StateType/State/AntiBulletState.h>
 #include <Ext/StateType/State/BlackHoleState.h>
+#include <Ext/StateType/State/DamageControlState.h>
 #include <Ext/StateType/State/DamageReactionState.h>
 #include <Ext/StateType/State/DeselectState.h>
 #include <Ext/StateType/State/DestroyAnimState.h>
@@ -269,6 +270,7 @@ public:
 		// 状态机
 		_AntiBullet = nullptr;
 		_BlackHole = nullptr;
+		_DamageControl = nullptr;
 		_DamageReaction = nullptr;
 		_Deselect = nullptr;
 		_DestroyAnim = nullptr;
@@ -327,6 +329,7 @@ public:
 	// 状态机
 	STATE_VAR_DEFINE(AntiBullet);
 	STATE_VAR_DEFINE(BlackHole);
+	STATE_VAR_DEFINE(DamageControl);
 	STATE_VAR_DEFINE(DamageReaction);
 	STATE_VAR_DEFINE(Deselect);
 	STATE_VAR_DEFINE(DestroyAnim);
@@ -346,6 +349,7 @@ public:
 	{
 		STATE_VAR_INIT(AntiBullet);
 		STATE_VAR_INIT(BlackHole);
+		STATE_VAR_INIT(DamageControl);
 		STATE_VAR_INIT(DamageReaction);
 		STATE_VAR_INIT(Deselect);
 		STATE_VAR_INIT(DestroyAnim);
@@ -388,6 +392,7 @@ public:
 		if (false) {}
 		STATE_VAR_TRYGET(AntiBullet)
 			STATE_VAR_TRYGET(BlackHole)
+			STATE_VAR_TRYGET(DamageControl)
 			STATE_VAR_TRYGET(DamageReaction)
 			STATE_VAR_TRYGET(Deselect)
 			STATE_VAR_TRYGET(DestroyAnim)
