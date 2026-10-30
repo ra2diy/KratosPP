@@ -39,7 +39,7 @@ inline bool Parser<FindOrder>::TryParse(const char* pValue, FindOrder* outValue)
 	{
 		return false;
 	}
-	std::string key = uploadcast(std::string(pValue));
+	std::string key = uppercase(std::string(pValue));
 	FindOrder value = FindOrder::None;
 	if (key == "NONE" || key == "0" || key == "NO")
 	{
