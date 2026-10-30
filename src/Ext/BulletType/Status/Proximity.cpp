@@ -92,13 +92,14 @@ void BulletStatus::OnUpdateEnd_Proximity(CoordStruct& sourcePos)
 				CoordStruct cellPos = pSourceCell->GetCoordsWithBridge();
 				CellStruct currentCell = pSourceCell->MapCoords;
 				// 获取这个格子上的所有对象
-				std::vector<TechnoClass*> pTechnoList = GetCellSpreadTechnos(currentCell, checkPos, cellSpread,
+				std::vector<TechnoDistance> pTechnoList = GetCellSpreadTechnos(currentCell, checkPos, cellSpread,
 					data->Blade, data->Blade || data->Arm > Unsorted::LevelHeight, false,
 					pSourceHouse,
 					data->AffectsOwner, data->AffectsAllies, data->AffectsEnemies, data->AffectsEnemies);
 				// 筛选并处理找到的对象
-				for (TechnoClass* pTarget : pTechnoList)
+				for (TechnoDistance& item : pTechnoList)
 				{
+					TechnoClass* pTarget = item.pTechno;
 					if (!IsDeadOrInvisible(pTarget))
 					{
 						CoordStruct	targetPos = pTarget->GetCoords();

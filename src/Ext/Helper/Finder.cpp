@@ -1,4 +1,4 @@
-#include "Finder.h"
+﻿#include "Finder.h"
 
 #include <iterator>
 #include <algorithm>
@@ -42,6 +42,47 @@ double Finder::DistanceFrom(CoordStruct sourcePos, CoordStruct targetPos, bool f
 		return tempSource.DistanceFrom(tempTarget);
 	}
 	return sourcePos.DistanceFrom(targetPos);
+}
+
+long long Finder::DistanceToKey(double distance)
+{
+	// 定点 1/256 lepton：1 格 = 256 lepton，精度远够，且把 double 比较换成整数比较，
+	// 各客户端对同一距离必然得到同一键（唯一输出来源就是同步的坐标与阵营）
+	if (!(distance > 0.0))
+	{
+		return 0;                              // 0 / 负值 / NaN 一律归 0
+	}
+	if (distance > 3.0e13)
+	{
+		return 0x7FFFFFFFFFFFFFFFLL;           // 防溢出（实际坐标差最大约 5.7万，永不触发）
+	}
+	return static_cast<long long>(distance * 256.0);
+}
+
+unsigned int Finder::MixSortKey(unsigned int id, unsigned int salt)
+{
+	// 整数混合（murmur3 finalizer 变体），各端对同一输入必然得到同一结果
+	unsigned int x = id * 0x9E3779B1u ^ salt;
+	x ^= x >> 16;
+	x *= 0x85EBCA6Bu;
+	x ^= x >> 13;
+	x *= 0xC2B2AE35u;
+	x ^= x >> 16;
+	return x;
+}
+
+void Finder::SortCandidates(std::vector<Candidate>& list, FindOrder order)
+{
+	if (order == FindOrder::None || list.size() < 2)
+	{
+		return;
+	}
+	// key 相同必须用 UniqueID 破平：指针地址各客户端不同，比指针会导致目标选择分歧
+	auto less = [](const Candidate& a, const Candidate& b)
+	{
+		return a.key != b.key ? a.key < b.key : a.pTarget->UniqueID < b.pTarget->UniqueID;
+	};
+	std::sort(list.begin(), list.end(), less);
 }
 
 bool Finder::InRange(CoordStruct location, CoordStruct targetLocation,
@@ -143,7 +184,7 @@ TechnoClass* FindRandomTechno(HouseClass* pHouse)
 	return nullptr;
 }
 
-std::vector<TechnoClass*> GetCellSpreadTechnos(CellStruct centerCell, CoordStruct location, double spread, bool fullAirspace, bool includeInAir, bool ignoreBuildingOuter,
+std::vector<TechnoDistance> GetCellSpreadTechnos(CellStruct centerCell, CoordStruct location, double spread, bool fullAirspace, bool includeInAir, bool ignoreBuildingOuter,
 	HouseClass* pHouse,
 	bool owner, bool allied, bool enemies, bool civilian)
 {
@@ -183,7 +224,7 @@ std::vector<TechnoClass*> GetCellSpreadTechnos(CellStruct centerCell, CoordStruc
 	}
 
 	// 筛选并去掉不可用项目
-	std::vector<TechnoClass*> pTechnoList;
+	std::vector<TechnoDistance> pTechnoList;
 	for (TechnoClass* pTechno : pTechnoSet)
 	{
 		if (!IsDeadOrInvisible(pTechno) && CanAffectHouse(pHouse, pTechno->Owner, owner, allied, enemies, civilian))
@@ -217,14 +258,14 @@ std::vector<TechnoClass*> GetCellSpreadTechnos(CellStruct centerCell, CoordStruc
 
 			if (!checkDistance || dist <= spread * Unsorted::LeptonsPerCell)
 			{
-				pTechnoList.push_back(pTechno);
+				pTechnoList.push_back({ pTechno, dist });
 			}
 		}
 	}
 	return pTechnoList;
 }
 
-std::vector<TechnoClass*> GetCellSpreadTechnos(CoordStruct location, double spread, bool fullAirspace, bool includeInAir, bool ignoreBuildingOuter,
+std::vector<TechnoDistance> GetCellSpreadTechnos(CoordStruct location, double spread, bool fullAirspace, bool includeInAir, bool ignoreBuildingOuter,
 	HouseClass* pHouse,
 	bool owner, bool allied, bool enemies, bool civilian)
 {
@@ -238,7 +279,10 @@ void FindTechnoOnMark(std::function<bool(TechnoClass*, AttachEffect*)> func,
 	CoordStruct location, double maxSpread, double minSpread, bool fullAirspace,
 	HouseClass* pHouse, FilterData data, ObjectClass* exclude)
 {
-	std::vector<TechnoClass*> pTechnoList;
+	// 取用顺序：只有"只取有限数量"的调用方需要排序，默认 None 走原路径、零额外开销
+	bool needSort = data.SortBy != FindOrder::None;
+	// 取样结果：对象与距离同一个结构体，无需按下标对齐
+	std::vector<TechnoDistance> pTechnoList;
 	if (maxSpread <= 0)
 	{
 		// 搜索全部单位
@@ -267,16 +311,37 @@ void FindTechnoOnMark(std::function<bool(TechnoClass*, AttachEffect*)> func,
 				if (data.AffectInAir || !pTarget->IsInAir()) pTechnoSet.insert(pTarget); return false;
 				}, pHouse, data.AffectsOwner, data.AffectsAllies, data.AffectsEnemies, data.AffectsCivilian);
 		}
-		pTechnoList.assign(pTechnoSet.begin(), pTechnoSet.end());
+		pTechnoList.reserve(pTechnoSet.size());
+		for (TechnoClass* pTarget : pTechnoSet)
+		{
+			pTechnoList.push_back({ pTarget, -1.0 }); // 全图搜索不判距离，标记为未算
+		}
 	}
 	else
 	{
-		// 小范围搜索
-		pTechnoList = GetCellSpreadTechnos(location, maxSpread, fullAirspace, data.AffectInAir, true, pHouse, data.AffectsOwner, data.AffectsAllies, data.AffectsEnemies, data.AffectsCivilian);
+		// 小范围搜索：距离随对象一起返回
+		pTechnoList = GetCellSpreadTechnos(location, maxSpread, fullAirspace, data.AffectInAir, true, pHouse,
+			data.AffectsOwner, data.AffectsAllies, data.AffectsEnemies, data.AffectsCivilian);
 	}
-	// 去除不符合的目标
-	for (TechnoClass* pTarget : pTechnoList)
+	std::vector<Finder::Candidate> pSortedList;
+	if (needSort)
 	{
+		pSortedList.reserve(pTechnoList.size());
+	}
+	// 距离：取样阶段已算好的直接复用；全图搜索（Distance<0）时才现算，一次算完两处复用
+	auto getDistance = [&](TechnoClass* pTarget)->double
+	{
+		double distance = Finder::DistanceFrom(pTarget->GetCoords(), location, fullAirspace);
+		if (!fullAirspace && pTarget->IsInAir() && pTarget->WhatAmI() == AbstractType::Aircraft)
+		{
+			distance *= 0.5;
+		}
+		return distance;
+	};
+	// 去除不符合的目标
+	for (TechnoDistance& item : pTechnoList)
+	{
+		TechnoClass* pTarget = item.pTechno;
 		if (IsDeadOrInvisible(pTarget) || (!data.AffectSelf && pTarget == exclude))
 		{
 			continue;
@@ -290,12 +355,11 @@ void FindTechnoOnMark(std::function<bool(TechnoClass*, AttachEffect*)> func,
 		// 检查最小距离
 		if (minSpread > 0)
 		{
-			double distance = Finder::DistanceFrom(pTarget->GetCoords(), location, fullAirspace);
-			if (!fullAirspace && pTarget->IsInAir() && pTarget->WhatAmI() == AbstractType::Aircraft)
+			if (item.Distance < 0)
 			{
-				distance *= 0.5;
+				item.Distance = getDistance(pTarget);
 			}
-			if (distance < minSpread * Unsorted::LeptonsPerCell)
+			if (item.Distance < minSpread * Unsorted::LeptonsPerCell)
 			{
 				continue;
 			}
@@ -304,8 +368,44 @@ void FindTechnoOnMark(std::function<bool(TechnoClass*, AttachEffect*)> func,
 		AttachEffect* aeManager = nullptr;
 		if (data.CanAffectType(pTarget) && TryGetAEManager<TechnoExt>(pTarget, aeManager) && data.OnMark(aeManager->GetMarks()))
 		{
-			// 执行动作
-			if (func(pTarget, aeManager))
+			if (!needSort)
+			{
+				// 执行动作
+				if (func(pTarget, aeManager))
+				{
+					break;
+				}
+				continue;
+			}
+			// 排序键：距离直接用判定时那个真实距离转定点整数（省回一次 sqrt，且与判定同源）；
+			// 随机用哈希键，不碰同步随机数
+			long long key = 0;
+			if (data.SortBy == FindOrder::Random)
+			{
+				key = Finder::MixSortKey(pTarget->UniqueID, static_cast<unsigned int>(Unsorted::CurrentFrame));
+			}
+			else
+			{
+				if (item.Distance < 0)
+				{
+					item.Distance = getDistance(pTarget);
+				}
+				key = Finder::DistanceToKey(item.Distance);
+				// 升序取用，最远优先就取负
+				if (data.SortBy == FindOrder::Farthest)
+				{
+					key = -key;
+				}
+			}
+			pSortedList.push_back({ pTarget, aeManager, key });
+		}
+	}
+	if (needSort)
+	{
+		Finder::SortCandidates(pSortedList, data.SortBy);
+		for (Finder::Candidate& candidate : pSortedList)
+		{
+			if (func(static_cast<TechnoClass*>(candidate.pTarget), candidate.pAEManager))
 			{
 				break;
 			}
@@ -322,16 +422,55 @@ void FindBulletOnMark(std::function<bool(BulletClass*, AttachEffect*)> func,
 	FindObject<BulletClass>(BulletClass::Array.get(), [&](BulletClass* pTarget)->bool {
 		if (!IsDeadOrInvisible(pTarget) && (data.AffectSelf || pTarget != exclude) && data.CanAffectType(pTarget)) pBulletSet.insert(pTarget); return false;
 		}, location, maxSpread, minSpread, fullAirspace, pHouse, data.AffectsOwner, data.AffectsAllies, data.AffectsEnemies, data.AffectsCivilian);
-	// 去除不符合的目标
+	if (data.SortBy == FindOrder::None)
+	{
+		// 默认路径，保持原有收集顺序
+		for (BulletClass* pTarget : pBulletSet)
+		{
+			AttachEffect* aeManager = nullptr;
+			if (TryGetAEManager<BulletExt>(pTarget, aeManager))
+			{
+				if (func(pTarget, aeManager))
+				{
+					break;
+				}
+			}
+		}
+		return;
+	}
+	// 取用顺序：只取有限数量时才需要
+	std::vector<Finder::Candidate> pSortedList;
+	pSortedList.reserve(pBulletSet.size());
 	for (BulletClass* pTarget : pBulletSet)
 	{
 		AttachEffect* aeManager = nullptr;
-		if (TryGetAEManager<BulletExt>(pTarget, aeManager))
+		if (!TryGetAEManager<BulletExt>(pTarget, aeManager))
 		{
-			if (func(pTarget, aeManager))
+			continue;
+		}
+		long long key = 0;
+		if (data.SortBy == FindOrder::Random)
+		{
+			key = Finder::MixSortKey(pTarget->UniqueID, static_cast<unsigned int>(Unsorted::CurrentFrame));
+		}
+		else
+		{
+			// 子弹走的是 FindObject（采样距离无出口），这里只能现算一次；
+			// 口径与 FindTechnoOnMark 完全一致：Finder::DistanceFrom + DistanceToKey
+			key = Finder::DistanceToKey(Finder::DistanceFrom(pTarget->GetCoords(), location, fullAirspace));
+			if (data.SortBy == FindOrder::Farthest)
 			{
-				break;
+				key = -key;
 			}
+		}
+		pSortedList.push_back({ pTarget, aeManager, key });
+	}
+	Finder::SortCandidates(pSortedList, data.SortBy);
+	for (Finder::Candidate& candidate : pSortedList)
+	{
+		if (func(static_cast<BulletClass*>(candidate.pTarget), candidate.pAEManager))
+		{
+			break;
 		}
 	}
 }
@@ -377,10 +516,10 @@ void FindAndAttachEffect(CoordStruct location, int damage, WarheadTypeClass* pWH
 			double cellSpread = pWH->CellSpread;
 			bool affectInAir = warheadTypeData->AffectInAir;
 			// 检索爆炸范围内的单位类型
-			std::vector<TechnoClass*> pTechnoList = GetCellSpreadTechnos(location, cellSpread, fullAirspace, affectInAir, false);
+			std::vector<TechnoDistance> pTechnoList = GetCellSpreadTechnos(location, cellSpread, fullAirspace, affectInAir, false);
 			DistinctCollector<TechnoClass*> pTargetList;
-			for (auto* p : pTechnoList)
-				pTargetList.insert(p);
+			for (TechnoDistance& item : pTechnoList)
+				pTargetList.insert(item.pTechno);
 			if (warheadTypeData->AffectStand)
 			{
 				std::vector<TechnoClass*> pStandArray;

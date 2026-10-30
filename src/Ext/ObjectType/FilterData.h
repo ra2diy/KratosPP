@@ -18,6 +18,56 @@
 #include <Ext/Helper/Status.h>
 #include <Ext/Helper/StringEx.h>
 
+/**
+ *@brief 查找目标的取用顺序
+ *
+ * 只对"只取有限数量"的查找有意义（回调返回 true 提前中断）。
+ * 全量遍历（回调恒返回 false）时排序是纯浪费，保持 None。
+ */
+enum class FindOrder : int
+{
+	None = 0,     // 默认，保持原有收集顺序，零额外开销
+	Nearest = 1,  // 最近优先
+	Farthest = 2, // 最远优先
+	Random = 3    // 完全随机（按 UniqueID 与帧号取哈希键，不消耗同步随机数）
+};
+
+template <>
+inline bool Parser<FindOrder>::TryParse(const char* pValue, FindOrder* outValue)
+{
+	if (!pValue || !*pValue)
+	{
+		return false;
+	}
+	std::string key = uploadcast(std::string(pValue));
+	FindOrder value = FindOrder::None;
+	if (key == "NONE" || key == "0" || key == "NO")
+	{
+		value = FindOrder::None;
+	}
+	else if (key == "NEAREST" || key == "N" || key == "NEAR" || key == "CLOSE")
+	{
+		value = FindOrder::Nearest;
+	}
+	else if (key == "FARTHEST" || key == "F" || key == "FAR" || key == "REMOTE")
+	{
+		value = FindOrder::Farthest;
+	}
+	else if (key == "RANDOM" || key == "R" || key == "RAND")
+	{
+		value = FindOrder::Random;
+	}
+	else
+	{
+		return false;
+	}
+	if (outValue)
+	{
+		*outValue = value;
+	}
+	return true;
+}
+
 class FilterData : public INIConfig
 {
 public:
@@ -46,6 +96,8 @@ public:
 	bool AffectStand = false;
 	bool AffectSelf = false;
 	bool AffectInAir = true;
+	// 取用顺序
+	FindOrder SortBy = FindOrder::None;
 	std::vector<std::string> NotAffectMarks{};
 	std::vector<std::string> OnlyAffectMarks{};
 
@@ -98,6 +150,7 @@ public:
 		AffectStand = reader->Get(title + "AffectStand", AffectStand);
 		AffectSelf = reader->Get(title + "AffectSelf", AffectSelf);
 		AffectInAir = reader->Get(title + "AffectInAir", AffectInAir);
+		SortBy = reader->Get(title + "SortBy", SortBy);
 
 		NotAffectMarks = reader->GetList(title + "NotAffectMarks", NotAffectMarks);
 		ClearIfGetNone(NotAffectMarks);
@@ -248,6 +301,7 @@ public:
 			.Process(this->AffectStand)
 			.Process(this->AffectSelf)
 			.Process(this->AffectInAir)
+			.Process(this->SortBy)
 			.Process(this->NotAffectMarks)
 			.Process(this->OnlyAffectMarks)
 

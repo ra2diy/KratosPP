@@ -81,6 +81,52 @@ namespace Finder
 		CoordStruct location, double maxRange, double minRange, bool fullAirspace,
 		HouseClass* pHouse,
 		bool owner, bool allied, bool enemies, bool civilian);
+
+	/**
+	 *@brief 距离换算为整数排序键（定点 1/256 lepton）
+	 *
+	 * 入参必须是取样链里判定用的那个真实距离（已含飞机 ×0.5 与 fullAirspace 归零），
+	 * 这样"谁先谁后"与"谁在范围内"用的是同一个数，不存在第二套距离口径。
+	 * 用整数而非 double 比较：跨端确定性最稳，Farthest 取负也干净。
+	 *
+	 * @param distance 真实距离
+	 * @return long long
+	 */
+	long long DistanceToKey(double distance);
+
+	/**
+	 *@brief 跨端一致的伪随机键
+	 *
+	 * 刻意不使用 ScenarioClass::Random：洗牌要按候选数消耗随机数，
+	 * 两端候选集一旦不同就会让同步随机数流永久分叉。哈希键零消耗、纯确定性。
+	 *
+	 * @param id 对象 UniqueID（各端一致）
+	 * @param salt 同步帧号等各端一致的量
+	 * @return unsigned int
+	 */
+	unsigned int MixSortKey(unsigned int id, unsigned int salt);
+
+	/**
+	 *@brief 排序候选项（key 已含正负号，按升序取用即可）
+	 */
+	struct Candidate
+	{
+		ObjectClass* pTarget;
+		AttachEffect* pAEManager;
+		long long key;
+	};
+
+	/**
+	 *@brief 按 FindOrder 排列候选（全排序）
+	 *
+	 * 不做 partial_sort：它只保证前 k 个有序、其余顺序不确定，
+	 * 会让"取用数量"和"只有前 k 个可信"变成隐式契约，误用即错序。
+	 * 候选集通常只有几十个，全排序的额外成本可以忽略。
+	 *
+	 * @param list 候选列表
+	 * @param order 取用顺序
+	 */
+	void SortCandidates(std::vector<Candidate>& list, FindOrder order);
 }
 
 /**
@@ -185,6 +231,20 @@ void FindAllObject(std::vector<TBase*> array, std::function<bool(TBase*)> func,
  * @return TechnoClass* 搜索到的单位
  */
 TechnoClass* FindRandomTechno(HouseClass* pHouse);
+
+/**
+ *@brief 取样结果：对象 + 判定时用掉的真实距离
+ *
+ * 距离与对象绑定在一起返回，避免"两个容器按下标对齐"这种隐式约定；
+ * 已含飞机 ×0.5 与 fullAirspace 的 Z 归零，可直接当排序键的输入。
+ * Distance < 0 表示取样链没有算距离（全图搜索路径），使用方需自行现算。
+ */
+struct TechnoDistance
+{
+	TechnoClass* pTechno;
+	double Distance;
+};
+
 /**
  *@brief 按照CellSpread搜索一个点附近的单位
  *
@@ -199,9 +259,9 @@ TechnoClass* FindRandomTechno(HouseClass* pHouse);
  * @param allied 包含友军
  * @param enemies 包含敌人
  * @param civilian 包含平民
- * @return std::vector<TechnoClass*>
+ * @return std::vector<TechnoDistance>
  */
-std::vector<TechnoClass*> GetCellSpreadTechnos(CellStruct centerCell, CoordStruct location, double spread, bool fullAirspace, bool includeInAir, bool ignoreBuildingOuter,
+std::vector<TechnoDistance> GetCellSpreadTechnos(CellStruct centerCell, CoordStruct location, double spread, bool fullAirspace, bool includeInAir, bool ignoreBuildingOuter,
 	HouseClass* pHouse = nullptr,
 	bool owner = true, bool allied = true, bool enemies = true, bool civilian = true);
 
@@ -218,9 +278,9 @@ std::vector<TechnoClass*> GetCellSpreadTechnos(CellStruct centerCell, CoordStruc
  * @param allied 包含友军
  * @param enemies 包含敌人
  * @param civilian 包含平民
- * @return std::vector<TechnoClass*>
+ * @return std::vector<TechnoDistance>
  */
-std::vector<TechnoClass*> GetCellSpreadTechnos(CoordStruct location, double spread, bool fullAirspace, bool includeInAir, bool ignoreBuildingOuter,
+std::vector<TechnoDistance> GetCellSpreadTechnos(CoordStruct location, double spread, bool fullAirspace, bool includeInAir, bool ignoreBuildingOuter,
 	HouseClass* pHouse = nullptr,
 	bool owner = true, bool allied = true, bool enemies = true, bool civilian = true);
 

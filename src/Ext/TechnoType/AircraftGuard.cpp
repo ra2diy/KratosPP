@@ -166,10 +166,11 @@ bool AircraftGuard::FoundAndAttack(CoordStruct location)
 			// 使用Cell搜索目标
 			bool canAA = (hasPrimary && pPrimary->WeaponType->Projectile->AA) || (hasSecondary && pSecondary->WeaponType->Projectile->AA);
 			// 检索范围内的单位类型
-			std::vector<TechnoClass*> pTechnoList = GetCellSpreadTechnos(sourcePos, cellSpread, false, canAA, false);
+			std::vector<TechnoDistance> pTechnoList = GetCellSpreadTechnos(sourcePos, cellSpread, false, canAA, false);
 			// TODO 对检索到的单位按威胁值排序
-			for (TechnoClass* pTargetTechno : pTechnoList)
+			for (TechnoDistance& item : pTechnoList)
 			{
+				TechnoClass* pTargetTechno = item.pTechno;
 				// 检查能否攻击
 				if (CheckTarget(pTargetTechno))
 				{
