@@ -250,6 +250,7 @@
     <ClInclude Include="src\Ext\Common\SpringyRefresh.h" />
     <ClInclude Include="src\Ext\Common\SpringySHP.h" />
     <ClInclude Include="src\Ext\Common\SpringyVoxelSprite.h" />
+    <ClInclude Include="src\Ext\Common\SpringyVoxelCache.h" />
     <ClInclude Include="src\Ext\EffectType\Effect\SpringyEffect.h" />
     <ClInclude Include="src\Ext\StateType\State\SpringyData.h" />
     <ClInclude Include="src\Ext\StateType\State\SpringyState.h" />
