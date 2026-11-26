@@ -153,6 +153,11 @@ public:
 		// 踩箱子获得的buff
 		CrateBuff = {};
 
+		// 碾压等级缓存
+		CrushLevelCache = 0;
+		CrushableLevelCache = 0;
+		CrushLevelReady = false;
+
 		// 破隐状态
 		ForceDecloakActive = false;
 		ExternalCloakable = false;
@@ -412,6 +417,12 @@ public:
 
 	// 踩箱子获得的buff
 	CrateBuffData CrateBuff{};
+
+	// 碾压等级缓存：类型基准 + 箱子/AE 加成，每帧刷新（RecalculateStatus）
+	// 碾压判定在移动钩子里逐格触发，不能现场遍历 AE，只能读缓存
+	int CrushLevelCache = 0;
+	int CrushableLevelCache = 0;
+	bool CrushLevelReady = false;
 
 	// 替身的配置
 	StandData MyStandData{};
