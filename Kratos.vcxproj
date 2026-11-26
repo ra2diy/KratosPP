@@ -184,6 +184,7 @@
     <ClCompile Include="src\Hooks\BuildingExtHook.cpp" />
     <ClCompile Include="src\Hooks\BulletExtHook.cpp" />
     <ClCompile Include="src\Hooks\BulletTypeExtHook.cpp" />
+    <ClCompile Include="src\Hooks\DrawExHook.cpp" />
     <ClCompile Include="src\Hooks\EBoltExtHook.cpp" />
     <ClCompile Include="src\Hooks\HouseExtHook.cpp" />
     <ClCompile Include="src\Hooks\GeneralHook.cpp" />
@@ -197,8 +198,6 @@
     <ClCompile Include="src\Hooks\PointerExpireHook.cpp" />
     <ClCompile Include="src\Hooks\SaveGameHook.cpp" />
     <ClCompile Include="src\Hooks\SpawnManagerExtHook.cpp" />
-    <ClCompile Include="src\Hooks\SpringyAnimHook.cpp" />
-    <ClCompile Include="src\Hooks\SpringyExtHook.cpp" />
     <ClCompile Include="src\Hooks\StandExtHook.cpp" />
     <ClCompile Include="src\Hooks\SuperWeaponTypeHook.cpp" />
     <ClCompile Include="src\Hooks\SyncEventHook.cpp" />
