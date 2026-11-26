@@ -50,6 +50,7 @@
 #include <Ext/StateType/State/PaintballData.h>
 #include <Ext/StateType/State/PumpData.h>
 #include <Ext/StateType/State/ScatterData.h>
+#include <Ext/StateType/State/SpringyData.h>
 #include <Ext/StateType/State/TeleportData.h>
 #include <Ext/StateType/State/TransformData.h>
 
@@ -201,6 +202,7 @@ public:
 	EFFECT_VAR_DEFINE(Paintball);
 	EFFECT_VAR_DEFINE(Pump);
 	EFFECT_VAR_DEFINE(Scatter);
+	EFFECT_VAR_DEFINE(Springy);
 	EFFECT_VAR_DEFINE(Teleport);
 	EFFECT_VAR_DEFINE(Transform);
 
@@ -249,6 +251,7 @@ public:
 		EFFECT_VAR_READ(Paintball);
 		EFFECT_VAR_READ(Pump);
 		EFFECT_VAR_READ(Scatter);
+		EFFECT_VAR_READ(Springy);
 		EFFECT_VAR_READ(Teleport);
 		EFFECT_VAR_READ(Transform);
 	}
@@ -300,6 +303,7 @@ public:
 		EFFECT_VAR_SCRIPT_NAME(Paintball);
 		EFFECT_VAR_SCRIPT_NAME(Pump);
 		EFFECT_VAR_SCRIPT_NAME(Scatter);
+		EFFECT_VAR_SCRIPT_NAME(Springy);
 		EFFECT_VAR_SCRIPT_NAME(Teleport);
 		EFFECT_VAR_SCRIPT_NAME(Transform);
 
@@ -355,6 +359,8 @@ public:
 			EFFECT_VAR_PROCESS(Scatter)
 			EFFECT_VAR_PROCESS(Teleport)
 			EFFECT_VAR_PROCESS(Transform)
+			// 追加在末尾：中间插入会改变存档字段顺序，导致旧存档读错位
+			EFFECT_VAR_PROCESS(Springy)
 			;
 	}
 

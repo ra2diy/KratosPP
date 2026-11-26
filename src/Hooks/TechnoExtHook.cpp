@@ -627,21 +627,21 @@ DEFINE_HOOK(0x6F72E3, TechnoClass_In_Range, 0x6)
 
 DEFINE_HOOK(0x7067F1, TechnoClass_DrawVxl_DisableCache, 0x6)
 {
+	// 这个位置上 ECX 早已被前面的指令改写成缓存 key、EBX 是缓存表，
+	// 只有 EBP 一路是 this
 	GET(unsigned int, esi, ESI);
 	GET(unsigned int, eax, EAX);
 
 	if (esi != eax)
 	{
-		GET(TechnoClass*, pTechno, ECX);
 		TechnoStatus* status = nullptr;
-		if (TryGetStatus<TechnoExt>(pTechno, status) && status->DisableVoxelCache)
+		if (TryGetStatus<TechnoExt>(R->EBP<TechnoClass*>(), status) && status->DisableVoxelCache)
 		{
-			// 强制禁用缓存
+			// 强制禁用缓存：旋转过的精灵不能复用按原朝向光栅化的缓存
 			return 0x706875;
 		}
-		return 0x7067F7;
 	}
-	return 0x706879;
+	return 0;
 }
 
 DEFINE_HOOK(0x6FC016, TechnoClass_Select_SkipVoice, 0x8)
@@ -677,18 +677,6 @@ DEFINE_HOOK(0x7063FF, TechnoClass_DrawSHP_Colour, 0x7)
 	{
 		status->DrawSHP_Paintball(R);
 		status->DrawSHP_Colour(R);
-	}
-	return 0;
-}
-
-// vxl turret of building
-DEFINE_HOOK(0x706640, TechnoClass_DrawVXL_Colour_BuildingTurret, 0x5)
-{
-	GET(TechnoClass*, pTechno, ECX);
-	TechnoStatus* status = nullptr;
-	if (TryGetStatus<TechnoExt>(pTechno, status) && status->IsBuilding())
-	{
-		status->DrawVXL_Paintball(R, true);
 	}
 	return 0;
 }

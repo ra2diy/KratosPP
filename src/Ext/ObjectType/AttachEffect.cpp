@@ -13,6 +13,7 @@
 #include <Ext/Helper/SurfaceEx.h>
 #include <Ext/Helper/Weapon.h>
 #include <Ext/Common/PrintTextManager.h>
+#include <Ext/Common/SpringyHelper.h>
 
 #include <Ext/EffectType/AttachEffectScript.h>
 #include <Ext/EffectType/Effect/AttackBeaconEffect.h>
@@ -1529,6 +1530,15 @@ void AttachEffect::OnLogicUpdate(EventSystem* sender, Event e, void* args)
 						// 堆叠偏移
 						OffsetData offsetData = aeData.Stand.Offset;
 						CoordStruct standOffset = this->StackOffset(aeData, offsetData, standMarks, standGroupMarks, standGroupFirstMarks);
+						// Springy：母体放大了，替身的挂接点要按同一比例外移，否则替身会缩进母体内部。
+						// 只在这里乘，不回写 StandData —— 那是共享的配置数据，改了会污染同类型的其它替身
+						if (const SpringySnapshot* springy = SpringyHelper::GetSnapshot(pTechno))
+						{
+							offsetData.Offset = SpringyHelper::ScaleFLH(offsetData.Offset, *springy);
+							offsetData.StackOffset = SpringyHelper::ScaleFLH(offsetData.StackOffset, *springy);
+							offsetData.StackGroupOffset = SpringyHelper::ScaleFLH(offsetData.StackGroupOffset, *springy);
+							standOffset = SpringyHelper::ScaleFLH(standOffset, *springy);
+						}
 						// 抛射体上的替身取**当帧**实际坐标，不做"下一帧"外推
 						LocationMark locationMark = GetRelativeLocation(pObject, offsetData, standOffset, false);
 						ae->UpdateStandLocation(locationMark);
