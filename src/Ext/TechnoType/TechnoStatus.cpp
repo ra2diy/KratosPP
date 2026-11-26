@@ -203,6 +203,8 @@ void TechnoStatus::OnUpdate()
 		OnUpdate_Freeze();
 		OnUpdate_Paintball();
 		OnUpdate_Passenger();
+		// 渲染缩放快照要早于本帧的绘制事件，放在这里刷新
+		OnUpdate_Springy();
 		OnUpdate_TargetLaser();
 		// TurretSpin AE 激活时，引擎 Rotation_AI 的瞄准/回正写入已被 UnitExtHook 的
 		// 0x736A26/0x736BBB/0x736BCA 拦截跳过，此处只做每帧累加写入炮塔朝向

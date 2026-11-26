@@ -3,6 +3,7 @@
 #include <Ext/BulletType/BulletStatus.h>
 #include <Ext/Common/ExpandAnimsManager.h>
 #include <Ext/Common/FireSuperManager.h>
+#include <Ext/Common/SpringyHelper.h>
 #include <Ext/Helper/CastEx.h>
 #include <Ext/Helper/Scripts.h>
 
@@ -198,19 +199,33 @@ void AnimStatus::OnUpdate()
 	if (!IsDead(pAttachOwner))
 	{
 		CoordStruct location{};
+
+		// Springy：动画贴在放大了的单位身上时，挂接偏移要跟着放大，否则会缩到单位内部。
+		// 只在这里临时乘一次，绝不回写 Offset / _offsetData —— 它们每帧都会被 AE 逻辑
+		// 重新写成原始值，改存储值会逐帧累积放大
+		CoordStruct offset = Offset;
+		OffsetData offsetData = _offsetData;
+		if (const SpringySnapshot* springy = SpringyHelper::GetSnapshot(abstract_cast<TechnoClass*>(pAttachOwner)))
+		{
+			offset = SpringyHelper::ScaleFLH(offset, *springy);
+			offsetData.Offset = SpringyHelper::ScaleFLH(offsetData.Offset, *springy);
+			offsetData.StackOffset = SpringyHelper::ScaleFLH(offsetData.StackOffset, *springy);
+			offsetData.StackGroupOffset = SpringyHelper::ScaleFLH(offsetData.StackGroupOffset, *springy);
+		}
+
 		if (pAnim->IsBuildingAnim)
 		{
-			location = pAttachOwner->GetRenderCoords() + Offset;
+			location = pAttachOwner->GetRenderCoords() + offset;
 		}
 		else
 		{
-			if (!_offsetData.Offset.IsEmpty())
+			if (!offsetData.Offset.IsEmpty())
 			{
-				location = GetRelativeLocation(pAttachOwner, _offsetData, Offset).Location;
+				location = GetRelativeLocation(pAttachOwner, offsetData, offset).Location;
 			}
 			else
 			{
-				location = pAttachOwner->GetCoords() + Offset;
+				location = pAttachOwner->GetCoords() + offset;
 			}
 		}
 		if (!location.IsEmpty())

@@ -19,6 +19,12 @@
     <ClCompile Include="src\Common\Components\ComponentPool.cpp" />
     <ClCompile Include="src\Common\EventSystems\EventSystem.cpp" />
     <ClCompile Include="src\CRTExt.cpp" />
+    <ClCompile Include="src\Ext\AnimType\SpringyAnim.cpp" />
+    <ClCompile Include="src\Ext\Common\SpringyRefresh.cpp" />
+    <ClCompile Include="src\Ext\Common\SpringySHP.cpp" />
+    <ClCompile Include="src\Ext\EffectType\Effect\SpringyEffect.cpp" />
+    <ClCompile Include="src\Ext\StateType\State\SpringyState.cpp" />
+    <ClCompile Include="src\Ext\TechnoType\Status\Springy.cpp" />
     <ClCompile Include="src\Extension.cpp" />
     <ClCompile Include="src\Extension\AnimExt.cpp" />
     <ClCompile Include="src\Extension\AnimTypeExt.cpp" />
@@ -191,6 +197,8 @@
     <ClCompile Include="src\Hooks\PointerExpireHook.cpp" />
     <ClCompile Include="src\Hooks\SaveGameHook.cpp" />
     <ClCompile Include="src\Hooks\SpawnManagerExtHook.cpp" />
+    <ClCompile Include="src\Hooks\SpringyAnimHook.cpp" />
+    <ClCompile Include="src\Hooks\SpringyExtHook.cpp" />
     <ClCompile Include="src\Hooks\StandExtHook.cpp" />
     <ClCompile Include="src\Hooks\SuperWeaponTypeHook.cpp" />
     <ClCompile Include="src\Hooks\SyncEventHook.cpp" />
@@ -237,6 +245,15 @@
     <ClInclude Include="src\Common\INI\INIReaderManager.h" />
     <ClInclude Include="src\Common\MyDelegate.h" />
     <ClInclude Include="src\CRTExt.h" />
+    <ClInclude Include="src\Ext\AnimType\SpringyAnim.h" />
+    <ClInclude Include="src\Ext\Common\SpringyHelper.h" />
+    <ClInclude Include="src\Ext\Common\SpringyRefresh.h" />
+    <ClInclude Include="src\Ext\Common\SpringySHP.h" />
+    <ClInclude Include="src\Ext\Common\SpringyVoxelSprite.h" />
+    <ClInclude Include="src\Ext\Common\SpringyVoxelCache.h" />
+    <ClInclude Include="src\Ext\EffectType\Effect\SpringyEffect.h" />
+    <ClInclude Include="src\Ext\StateType\State\SpringyData.h" />
+    <ClInclude Include="src\Ext\StateType\State\SpringyState.h" />
     <ClInclude Include="src\Extension.h" />
     <ClInclude Include="src\Extension\AnimExt.h" />
     <ClInclude Include="src\Extension\AnimTypeExt.h" />

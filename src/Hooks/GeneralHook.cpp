@@ -17,6 +17,8 @@
 #include <Ext/Common/FireSuperManager.h>
 #include <Ext/Common/PaintballSyncManager.h>
 #include <Ext/Common/PrintTextManager.h>
+#include <Ext/Common/SpringyRefresh.h>
+#include <Ext/Common/SpringySHP.h>
 
 class GeneraHook
 {
@@ -97,6 +99,10 @@ DEFINE_HOOK(0x685659, Scenario_ClearClasses_End, 0xA)
 {
 	EventSystems::General.Broadcast(Events::ScenarioClearClassesEvent);
 	Common::IsScenarioClear = false;
+
+	// 场景结束、所有对象都已删除：此时才可能安全释放缩放用自造 SHP，
+	// 不可能还有对象持有那些指针
+	SpringySHP::ClearCache();
 	return 0;
 }
 
@@ -122,5 +128,13 @@ DEFINE_HOOK(0x55AFB3, LogicClass_Update, 0x6)
 DEFINE_HOOK(0x55B719, LogicClass_Update_Late, 0x5)
 {
 	EventSystems::Logic.Broadcast(Events::LogicUpdateEvent, EventArgsLate);
+	return 0;
+}
+
+// Unsorted::CurrentFrame 递增处。静态建筑不会自己重绘，缩放导致画面变化的建筑
+// 要在这里补一次标脏与脏矩形，否则会停在上一帧的尺寸上
+DEFINE_HOOK(0x55DE81, MainLoop_SpringyRefresh, 0x6)
+{
+	SpringyRefresh::OnFrame();
 	return 0;
 }

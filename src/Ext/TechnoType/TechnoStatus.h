@@ -9,6 +9,8 @@
 
 #include <TechnoClass.h>
 
+#include <Matrix3D.h>
+
 #include <Utilities/Macro.h>
 #include <Utilities/Debug.h>
 
@@ -37,6 +39,7 @@
 #include <Ext/StateType/State/PaintballState.h>
 #include <Ext/StateType/State/PumpState.h>
 #include <Ext/StateType/State/ScatterState.h>
+#include <Ext/StateType/State/SpringyState.h>
 #include <Ext/StateType/State/TeleportState.h>
 #include <Ext/StateType/State/TransformState.h>
 
@@ -166,6 +169,12 @@ public:
 
 		// 染色配置
 		MyPaintData = {};
+
+		// 渲染缩放快照
+		MySpringyData.Reset();
+		LastSpringyDrawn.Reset();
+		LastSpringyDirtySnap.Reset();
+		LastSpringyDirtyKey = 0;
 
 		drivingState = DrivingState::Moving;
 
@@ -342,6 +351,7 @@ public:
 	STATE_VAR_DEFINE(Paintball);
 	STATE_VAR_DEFINE(Pump);
 	STATE_VAR_DEFINE(Scatter);
+	STATE_VAR_DEFINE(Springy);
 	STATE_VAR_DEFINE(Teleport);
 	STATE_VAR_DEFINE(Transform);
 
@@ -362,6 +372,7 @@ public:
 		STATE_VAR_INIT(Paintball);
 		STATE_VAR_INIT(Pump);
 		STATE_VAR_INIT(Scatter);
+		STATE_VAR_INIT(Springy);
 		STATE_VAR_INIT(Teleport);
 		STATE_VAR_INIT(Transform);
 	}
@@ -405,6 +416,7 @@ public:
 			STATE_VAR_TRYGET(Paintball)
 			STATE_VAR_TRYGET(Pump)
 			STATE_VAR_TRYGET(Scatter)
+			STATE_VAR_TRYGET(Springy)
 			STATE_VAR_TRYGET(Teleport)
 			STATE_VAR_TRYGET(Transform)
 			return state != nullptr;
@@ -422,6 +434,21 @@ public:
 
 	// 染色配置
 	PaintData MyPaintData{};
+
+	// 渲染缩放快照：本帧应使用的绘制倍率，由 OnUpdate_Springy 每帧刷新，渲染侧只读
+	SpringySnapshot MySpringyData{};
+
+	// 最近一次生效时的快照。AE 撤除后倍率立刻回到 1.0，
+	// 但屏幕上还留着放大时画出的像素，脏区要按这一份算才擦得干净
+	SpringySnapshot LastSpringyDrawn{};
+
+	// 上一次因缩放变化而标脏时用的画面键。主循环据此判断本帧是否需要重新标脏：
+	// 倍率没变就不必标，避免静止建筑每帧重绘
+	long long LastSpringyDirtyKey = 0;
+
+	// 上一次标脏时覆盖的尺寸。倍率缩小时，屏幕上还留着上一帧更大的那圈像素，
+	// 脏区必须按「这一次要画的」与「上一次覆盖的」两者的较大值算，否则外圈擦不掉
+	SpringySnapshot LastSpringyDirtySnap{};
 
 	DrivingState drivingState = DrivingState::Moving;
 
@@ -632,6 +659,7 @@ private:
 	void OnUpdate_GiftBox();
 	void OnUpdate_Paintball();
 	void OnUpdate_Passenger();
+	void OnUpdate_Springy();
 	void OnUpdate_TargetLaser();
 	void OnUpdate_Transform();
 	void OnUpdate_Vector();
