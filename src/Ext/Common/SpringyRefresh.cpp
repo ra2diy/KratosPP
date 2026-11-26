@@ -9,6 +9,7 @@
 
 #include <Ext/Common/SpringyHelper.h>
 #include <Ext/Helper/Scripts.h>
+#include <Ext/Helper/Status.h>
 
 
 namespace
@@ -35,7 +36,9 @@ namespace
 	///       否则缩放后的覆盖动画会停在上一帧的位置与尺寸上
 	long long VisualKey(ObjectClass* pObject)
 	{
-		if (!pObject || pObject->WhatAmI() != AbstractType::Building)
+		// 已死或已进 limbo 的对象不再参与：它的覆盖动画指针可能已经被清掉，
+		// 再去读 Anims[] 里那些指针就是读已释放的内存
+		if (IsDeadOrInvisible(pObject) || pObject->WhatAmI() != AbstractType::Building)
 		{
 			return 0;
 		}
@@ -92,7 +95,11 @@ namespace
 	void MarkDirty(ObjectClass* pObject, TechnoStatus* status,
 		const SpringySnapshot& snap, bool markForRedraw)
 	{
-		if (!pObject)
+		// 已死或已进 limbo 的对象问不到渲染矩形：图像数据随死亡一起释放，
+		// 引擎的 GetRenderDimensions 在取图像那一步拿到空指针就直接崩（0x5F48A3）。
+		// 而且这种对象不会再被绘制，放大版最后一次贴图时的脏区已经在那一次的
+		// AddDirtyOnly 里补过，这里没有需要补的东西
+		if (IsDeadOrInvisible(pObject))
 		{
 			return;
 		}
