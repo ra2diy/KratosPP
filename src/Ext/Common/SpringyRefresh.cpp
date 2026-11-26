@@ -126,19 +126,45 @@ namespace
 		AddDirtyArea(InflateDirtyRect(dims, dirty));
 	}
 
+	/// @brief 缩放撤除后把「残影账」结清
+	/// @param status 该对象的扩展状态
+	/// @note 补完最后一次脏区之后这两份旧快照就没有用了。不复位的话，之后每次动画换帧
+	///       都会按撤除前的外扩量再登记一遍脏矩形 —— 对一栋早就没有本效果器的建筑来说，
+	///       那是纯浪费，而且脏区还会一直偏大
+	void FinishDirty(TechnoStatus* status)
+	{
+		status->LastSpringyDrawn.Reset();
+		status->LastSpringyDirtySnap.Reset();
+	}
+
 	/// @brief 处理单个单位：倍率相对上次标脏时变了才重绘
 	void UpdateOne(TechnoClass* pTechno, TechnoStatus* status)
 	{
 		const SpringySnapshot& snap = status->MySpringyData;
-		const long long key = DirtyKey(pTechno, snap);
-		if (key == status->LastSpringyDirtyKey)
+		const bool active = snap.Active;
+
+		// 没在缩放、也没有上一帧留下的残影要擦 —— 这个对象本效果器一次都不该碰。
+		// 主循环每帧遍历全部建筑，没这一句的话，一栋从没挂过效果的建筑只要覆盖动画换帧，
+		// 就要算一遍 VisualKey（本体帧 + 0x15 个 Anims + 8 个 DamageFireAnims），
+		// 再 MarkForRedraw + 登记一块外扩过的脏矩形，纯属替引擎做无用功
+		if (!active && !status->LastSpringyDrawn.Active)
 		{
-			// 画面与上次标脏时一致，不必重绘
 			return;
 		}
-		status->LastSpringyDirtyKey = key;
-		// 倍率撤除后画面要缩回原样，脏区得按撤除前那一份算，否则会留下一圈放大的残影
-		MarkDirty(pTechno, status, snap.Active ? snap : status->LastSpringyDrawn, true);
+
+		const long long key = DirtyKey(pTechno, snap);
+		if (key != status->LastSpringyDirtyKey)
+		{
+			status->LastSpringyDirtyKey = key;
+			// 倍率撤除后画面要缩回原样，脏区得按撤除前那一份算，否则会留下一圈放大的残影
+			MarkDirty(pTechno, status, active ? snap : status->LastSpringyDrawn, true);
+		}
+
+		if (!active)
+		{
+			// 这一帧（或 End 里那次 RefreshNow）补的就是最后一笔，结清之后不再参与本效果器
+			FinishDirty(status);
+		}
 	}
 }
 
@@ -174,9 +200,16 @@ void SpringyRefresh::RefreshNow(TechnoClass* pTechno)
 		return;
 	}
 	// 强制当帧重绘：AE 刚撤除、倍率要弹回原样，不等下一帧的键比较
+	const bool active = status->MySpringyData.Active;
 	status->LastSpringyDirtyKey = DirtyKey(pTechno, status->MySpringyData);
 	MarkDirty(pTechno, status,
-		status->MySpringyData.Active ? status->MySpringyData : status->LastSpringyDrawn, true);
+		active ? status->MySpringyData : status->LastSpringyDrawn, true);
+
+	// AE 撤除走的就是这一条：补完这一笔残影账，主循环那边就再也不必碰这个对象了
+	if (!active)
+	{
+		FinishDirty(status);
+	}
 }
 
 void SpringyRefresh::AddDirtyOnly(TechnoClass* pTechno)
