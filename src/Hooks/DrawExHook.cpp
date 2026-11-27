@@ -43,6 +43,28 @@
 DEFINE_HOOK(0x422CA0, AnimClass_Draw_SpringyBegin, 0x5)
 {
 	GET(AnimClass*, pAnim, ECX);
+	// ---- 临时探针：谁在画这个动画（R->Stack<DWORD>(0) = DrawIt 的返回地址）----
+	// 每 60 帧记最多 12 行，用来确认建筑动画是走层链表还是被建筑绘制时一起贴出来
+	{
+		static int lastProbeFrame = -100000;
+		static int probeBudget = 0;
+		const int probeFrame = Unsorted::CurrentFrame.get();
+		if (probeFrame - lastProbeFrame >= 60)
+		{
+			lastProbeFrame = probeFrame;
+			probeBudget = 12;
+		}
+		if (probeBudget > 0)
+		{
+			--probeBudget;
+			Debug::Log("[probe] anim=%p type=%s owner=%p isBldAnim=%d caller=%p\\n",
+				pAnim,
+				pAnim->Type ? pAnim->Type->ID : "?",
+				pAnim->OwnerObject,
+				pAnim->IsBuildingAnim ? 1 : 0,
+				reinterpret_cast<void*>(R->Stack<DWORD>(0)));
+		}
+	}
 	SpringyAnim::BeginDraw(pAnim);
 	return 0;
 }
@@ -324,6 +346,25 @@ DEFINE_HOOK(0x705E00, TechnoClass_DrawObject_Springy, 0x7)
 
 	// 画布按形变后包围盒动态变化：锁死原帧矩形会让推出去的部分被切掉
 	const bool inPlace = false;
+	// ---- 临时探针：建筑本体绘制 ----
+	{
+		static int lastProbeFrame = -100000;
+		static int probeBudget = 0;
+		const int probeFrame = Unsorted::CurrentFrame.get();
+		if (probeFrame - lastProbeFrame >= 60)
+		{
+			lastProbeFrame = probeFrame;
+			probeBudget = 12;
+		}
+		if (probeBudget > 0 && what == AbstractType::Building)
+		{
+			--probeBudget;
+			Debug::Log("[probe] body bld=%p type=%s caller=%p\\n",
+				pTechno,
+				pTechno->GetTechnoType() ? pTechno->GetTechnoType()->ID : "?",
+				reinterpret_cast<void*>(R->Stack<DWORD>(0)));
+		}
+	}
 	if (SHPStruct* pScaled = SpringySHP::GetTransformed(pSHP, scaleW, scaleH,
 		status->MySpringyData.ShearX, status->MySpringyData.ShearY, status->MySpringyData.ShearMode, 0, 0, false, inPlace))
 	{
