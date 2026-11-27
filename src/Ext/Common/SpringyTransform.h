@@ -41,7 +41,7 @@ struct SpringyTransform
 		return A == 1.0 && B == 0.0 && C == 0.0 && D == 1.0;
 	}
 
-	/// @brief 由缩放与**像素**位移构造
+	/// @brief 由缩放与**像素**位移构造（一张图自身就是整体的场合：SHP / 动画）
 	/// @param scaleX 横向倍率
 	/// @param scaleY 纵向倍率
 	/// @param shearX 顶边相对底边的水平位移（像素，正 = 右移）
@@ -50,10 +50,23 @@ struct SpringyTransform
 	void SetFromPixels(double scaleX, double scaleY, double shearX, double shearY,
 		double w, double h)
 	{
+		SetFromSpan(scaleX, scaleY, shearX, shearY, h - 1.0, w - 1.0);
+	}
+
+	/// @brief 用**外部给定的跨度**构造
+	/// @param spanRows 纵向跨度（顶行中心到底行中心的距离），X 剪切的除数
+	/// @param spanCols 横向跨度（最左列中心到最右列中心的距离），Y 剪切的除数
+	/// @note 体素单位的主体、炮塔、炮管是三次独立贴图，各自的包围盒大小差很多。
+	///       若各自拿自己的高度当除数，同样的 shearX 会让炮塔、炮管斜得比车体陡，
+	///       表现为三个部件各偏各的。所以它们必须共用「整个单位」的跨度
+	void SetFromSpan(double scaleX, double scaleY, double shearX, double shearY,
+		double spanRows, double spanCols)
+	{
 		A = scaleX;
 		D = scaleY;
-		B = h > 1.0 ? -shearX / (h - 1.0) : 0.0;
-		C = w > 1.0 ? shearY / (w - 1.0) : 0.0;
+		// 除以跨度：顶行正好位移 shearX、底行位移恒为 0，中间按行数线性过渡
+		B = spanRows > 0.5 ? -shearX / spanRows : 0.0;
+		C = spanCols > 0.5 ? shearY / spanCols : 0.0;
 	}
 
 	/// @brief 复合：this = outer · this，即「先做自己，再做 outer」

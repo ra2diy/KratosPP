@@ -222,17 +222,34 @@ DEFINE_HOOK(0x707480, TechnoClass_BlitVoxelSprite_Springy, 0x5)
 		return 0;
 	}
 
-	// 剪切枢轴 = 这个单位所有部件里最低的那条边，也就是地面线。
-	// 取最大值、跨帧保持：主体 / 炮塔 / 炮管 / 影子共用同一个枢轴，偏移量才会从地面
-	// 往上一致地增大。绕贴图基准点（车身中心）做的话上下两半反向移，看着是整体旋转；
-	// 各部件各用自己的底边，炮塔又会跟车体错开
-	// -0.5：枢轴落在底行像素的中心，底行位移才严格为 0（差半行会整行偏一点）
-	const double bottom = static_cast<double>(pSprite->Y) + static_cast<double>(pSprite->Height) - 0.5;
-	if (!status->SpringyShearPivotValid || bottom > status->SpringyShearPivotY)
+	// 剪切的共享参照框：这个单位所有部件的最低/最高/最左/最右。
+	// 主体、炮塔、炮管是三次独立贴图，包围盒大小差很多 —— 斜率必须按整个单位的跨度算，
+	// 各部件自己算的话，同样的剪切值会让炮塔、炮管斜得比车体陡（表现就是各偏各的）。
+	// 跨帧保持：某帧最先画的部件也能用到完整参照框
+	const double partLeft = static_cast<double>(pSprite->X);
+	const double partTop = static_cast<double>(pSprite->Y);
+	const double partRight = partLeft + static_cast<double>(pSprite->Width);
+	const double partBottom = partTop + static_cast<double>(pSprite->Height);
+	if (!status->SpringyShearFrameValid)
 	{
-		status->SpringyShearPivotY = bottom;
-		status->SpringyShearPivotValid = true;
+		status->SpringyShearLeft = partLeft;
+		status->SpringyShearTop = partTop;
+		status->SpringyShearRight = partRight;
+		status->SpringyShearBottom = partBottom;
+		status->SpringyShearFrameValid = true;
 	}
+	else
+	{
+		status->SpringyShearLeft = std::min(status->SpringyShearLeft, partLeft);
+		status->SpringyShearTop = std::min(status->SpringyShearTop, partTop);
+		status->SpringyShearRight = std::max(status->SpringyShearRight, partRight);
+		status->SpringyShearBottom = std::max(status->SpringyShearBottom, partBottom);
+	}
+
+	// 底行像素中心 = 枢轴；跨度取「顶行中心到底行中心」/「最左列中心到最右列中心」
+	const double pivotY = status->SpringyShearBottom - 0.5;
+	const double spanRows = (status->SpringyShearBottom - 0.5) - (status->SpringyShearTop + 0.5);
+	const double spanCols = (status->SpringyShearRight - 0.5) - (status->SpringyShearLeft + 0.5);
 
 	// 第二个参数是绘制基准点：精灵画到「基准点 + (X, Y)」上。目标是 Temp 这张表面
 	// （0x707730 处把它的指针装进 ECX 再调贴图），它的尺寸就是这次贴图的硬边界：
@@ -252,7 +269,7 @@ DEFINE_HOOK(0x707480, TechnoClass_BlitVoxelSprite_Springy, 0x5)
 
 	VoxelCacheStruct* pScaled = SpringyVoxelSprite::Transform(pSprite, scaleW, scaleH,
 		status->MySpringyData.ShearX, status->MySpringyData.ShearY,
-		status->SpringyShearPivotY, box);
+		spanRows, spanCols, pivotY, box);
 	if (!pScaled)
 	{
 		// 精灵格式与预期不符时放弃变形、按原精灵画：画面退化成没有效果，但不能出错

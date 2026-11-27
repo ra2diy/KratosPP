@@ -54,8 +54,11 @@ namespace SpringyHelper
 	{
 		if (status)
 		{
-			status->SpringyShearPivotY = 0.0;
-			status->SpringyShearPivotValid = false;
+			status->SpringyShearFrameValid = false;
+			status->SpringyShearTop = 0.0;
+			status->SpringyShearBottom = 0.0;
+			status->SpringyShearLeft = 0.0;
+			status->SpringyShearRight = 0.0;
 		}
 	}
 

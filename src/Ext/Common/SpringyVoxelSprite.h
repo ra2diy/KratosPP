@@ -168,6 +168,7 @@ namespace SpringyVoxelSprite
 	/// @param scaleW,scaleH 位图缩放倍率
 	/// @param shearX 顶边相对底边的水平位移（像素，正 = 右移）
 	/// @param shearY 右边相对左边的垂直位移（像素，正 = 下移）
+	/// @param spanRows,spanCols 整个单位的跨度（行/列中心距）：主体、炮塔、炮管必须共用它当斜率除数
 	/// @param pivotY 剪切枢轴（贴图坐标里的一条水平线）：取这个单位所有部件里最低的那条边
 	/// @param box 这次贴图的目标表面与基准点，结果会被裁到表面以内
 	/// @return 变形后的精灵；格式不符或没有变形时返回 nullptr（调用方按原精灵画）
@@ -178,7 +179,7 @@ namespace SpringyVoxelSprite
 	///       绕贴图基准点（车身中心）做的话上下两半反向移，看上去就是整体旋转，不是「推」。
 	inline VoxelCacheStruct* Transform(const VoxelCacheStruct* src,
 		double scaleW, double scaleH, double shearX, double shearY,
-		double pivotY, const TargetBox& box)
+		double spanRows, double spanCols, double pivotY, const TargetBox& box)
 	{
 		if (!src || !src->Buffer || src->Width == 0 || src->Height == 0)
 		{
@@ -231,10 +232,10 @@ namespace SpringyVoxelSprite
 			return nullptr;
 		}
 
-		// 剪切要除以**源**尺寸：写 300 就是顶边位移 300 像素，缩放不会把它放大
+		// 斜率用**整个单位**的跨度：主体 / 炮塔 / 炮管共用同一条斜率，
+		// 各部件才不会因为包围盒大小不同而各偏各的
 		SpringyTransform tf;
-		tf.SetFromPixels(scaleW, scaleH, shearX, shearY,
-			static_cast<double>(sourceWidth), static_cast<double>(h));
+		tf.SetFromSpan(scaleW, scaleH, shearX, shearY, spanRows, spanCols);
 
 		double ia = 1.0;
 		double ib = 0.0;
