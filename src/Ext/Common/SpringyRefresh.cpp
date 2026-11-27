@@ -113,8 +113,23 @@ namespace
 		// 覆盖范围取「这一次要画的」与「上一次覆盖的」之并：
 		// 缩小时屏幕上还留着上一帧更大的那圈像素，只按当前形变算会擦不掉外圈；
 		// 剪切改变的是形状与偏移，不能拿两份矩阵逐项取 max（那不是一个合法形变）
-		const RectangleStruct now = InflateDirtyRect(dims, snap);
-		const RectangleStruct before = InflateDirtyRect(dims, status->LastSpringyDirtySnap);
+		RectangleStruct now = InflateDirtyRect(dims, snap);
+		RectangleStruct before = InflateDirtyRect(dims, status->LastSpringyDirtySnap);
+
+		// 建筑是增量重绘：屏幕上的旧像素只能靠我们登记的脏区擦掉。
+		// 形变每帧都在变，只按当前形状外扩会留下一圈旧帧的像素（表现为横条纹），
+		// 所以建筑再额外四周留一圈与剪切量同量级的余量
+		if (pObject->WhatAmI() == AbstractType::Building)
+		{
+			const int extra = static_cast<int>(std::ceil(std::max(64.0,
+				std::abs(snap.ShearX) + std::abs(snap.ShearY)
+				+ std::abs(status->LastSpringyDirtySnap.ShearX) + std::abs(status->LastSpringyDirtySnap.ShearY))));
+			const auto grow = [extra](const RectangleStruct& r) -> RectangleStruct {
+				return RectangleStruct{ r.X - extra, r.Y - extra, r.Width + extra * 2, r.Height + extra * 2 };
+			};
+			now = grow(now);
+			before = grow(before);
+		}
 		status->LastSpringyDirtySnap = snap;
 
 		if (markForRedraw)

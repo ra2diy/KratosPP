@@ -363,10 +363,8 @@ DEFINE_HOOK(0x705E00, TechnoClass_DrawObject_Springy, 0x7)
 	double scaleH = 1.0;
 	SpringyHelper::GetRenderScales(status->MySpringyData, scaleW, scaleH);
 
-	// 建筑本体的像素是写进「这栋建筑自己的固定尺寸图像表面」的：画布按形变后包围盒放大就会
-	// 超出那张表面，每行写到边界后回绕到下一行 —— 屏幕上就是一排排随形变移动的横线。
-	// 所以建筑body只能原地变形（超出的部分被表面裁掉）；动画/单位画到屏幕上，可以自由长画布
-	const bool inPlace = (what == AbstractType::Building);
+	// 画布一律按形变后包围盒增长（与条纹无关，锁死画布只会把变形切掉）
+	const bool inPlace = false;
 	// ---- 临时探针：建筑本体绘制 ----
 	{
 		static int lastProbeFrame = -100000;
