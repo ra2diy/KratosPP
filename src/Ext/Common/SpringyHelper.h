@@ -47,6 +47,18 @@ namespace SpringyHelper
 		};
 	}
 
+	/// @brief 忘掉体素剪切枢轴的记忆
+	/// @note 枢轴是「所有部件里最低的那条边」，跨帧保持。效果撤除或某一帧不生效时必须
+	///       忘掉，否则下次挂上会沿用旧形状（比如刚变身过）留下的地面线
+	inline void ResetVoxelPivot(TechnoStatus* status)
+	{
+		if (status)
+		{
+			status->SpringyShearPivotY = 0.0;
+			status->SpringyShearPivotValid = false;
+		}
+	}
+
 	/// @brief 取本帧的画布形变（缩放 + 剪切复合后的矩阵）
 	/// @note 三条绘制链路（VXL 贴图点 / SHP 重采样 / 依附动画）都读它，
 	///       所以主体、炮塔、炮管、影子、动画的形变必然一致

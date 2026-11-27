@@ -34,6 +34,9 @@ void TechnoStatus::OnUpdate_Springy()
 		{
 			MySpringyData.Reset();
 		}
+		// 本帧不生效：体素剪切枢轴也一起忘掉，下次挂上按新形状重新取地面线
+		SpringyShearPivotY = 0.0;
+		SpringyShearPivotValid = false;
 		return;
 	}
 
@@ -81,6 +84,9 @@ void TechnoStatus::OnUpdate_Springy()
 		{
 			MySpringyData.Reset();
 		}
+		// 本帧不生效：体素剪切枢轴也一起忘掉，下次挂上按新形状重新取地面线
+		SpringyShearPivotY = 0.0;
+		SpringyShearPivotValid = false;
 		return;
 	}
 

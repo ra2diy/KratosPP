@@ -197,21 +197,37 @@ DEFINE_HOOK(0x707480, TechnoClass_BlitVoxelSprite_Springy, 0x5)
 {
 	GET(TechnoClass*, pTechno, ECX);
 
-	const SpringySnapshot* snap = SpringyHelper::GetSnapshot(pTechno);
-	if (!snap)
+	TechnoStatus* status = nullptr;
+	if (!TryGetStatus<TechnoExt>(pTechno, status) || !status->MySpringyData.Active)
 	{
+		SpringyHelper::ResetVoxelPivot(status);
 		return 0;
 	}
 
 	// 本帧的画布形变：缩放 + 剪切复合后的一张 2×2 矩阵。
-	// 恒等就说明这一帧没变形（没挂段、倍率恰为 1、剪切为 0），直接按原精灵画
-	const SpringyTransform& tf = snap->Matrix;
+	// 恒等就说明这一帧没变形（倍率恰为 1、剪切为 0），直接按原精灵画
+	const SpringyTransform& tf = status->MySpringyData.Matrix;
 	if (tf.IsIdentity())
 	{
 		return 0;
 	}
 
 	GET_STACK(VoxelCacheStruct*, pSprite, 0x4);
+	if (!pSprite)
+	{
+		return 0;
+	}
+
+	// 剪切枢轴 = 这个单位所有部件里最低的那条边，也就是地面线。
+	// 取最大值、跨帧保持：主体 / 炮塔 / 炮管 / 影子共用同一个枢轴，偏移量才会从地面
+	// 往上一致地增大。绕贴图基准点（车身中心）做的话上下两半反向移，看着是整体旋转；
+	// 各部件各用自己的底边，炮塔又会跟车体错开
+	const double bottom = static_cast<double>(pSprite->Y) + static_cast<double>(pSprite->Height);
+	if (!status->SpringyShearPivotValid || bottom > status->SpringyShearPivotY)
+	{
+		status->SpringyShearPivotY = bottom;
+		status->SpringyShearPivotValid = true;
+	}
 
 	// 第二个参数是绘制基准点：精灵画到「基准点 + (X, Y)」上。目标是 Temp 这张表面
 	// （0x707730 处把它的指针装进 ECX 再调贴图），它的尺寸就是这次贴图的硬边界：
@@ -229,7 +245,7 @@ DEFINE_HOOK(0x707480, TechnoClass_BlitVoxelSprite_Springy, 0x5)
 		box.Height = pTarget->GetHeight();
 	}
 
-	VoxelCacheStruct* pScaled = SpringyVoxelSprite::Transform(pSprite, tf, box);
+	VoxelCacheStruct* pScaled = SpringyVoxelSprite::Transform(pSprite, tf, status->SpringyShearPivotY, box);
 	if (!pScaled)
 	{
 		// 精灵格式与预期不符时放弃变形、按原精灵画：画面退化成没有效果，但不能出错

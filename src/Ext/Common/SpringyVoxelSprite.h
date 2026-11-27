@@ -166,15 +166,18 @@ namespace SpringyVoxelSprite
 	/// @brief 按形变矩阵重采样一张精灵（缩放 + 剪切）
 	/// @param src 引擎按原尺寸光栅化出来的精灵
 	/// @param tf 本帧的画布形变（缩放 + 剪切复合，见 SpringyTransform）
+	/// @param pivotY 剪切枢轴（贴图坐标里的一条水平线）：通常取这个单位所有部件里最低的那条边
 	/// @param box 这次贴图的目标表面与基准点，结果会被裁到表面以内
 	/// @return 变形后的精灵；格式不符或形变恰是恒等时返回 nullptr（调用方按原精灵画）
 	/// @note 最近邻**逆映射**：每个目标像素反解到源坐标取样。
 	///       逆映射不会让平行四边形里留洞（正射映射在放大时会漏格），
 	///       反解到源范围之外的像素写透明 —— 平行四边形四角的透明区就是这么来的。
+	///       枢轴是地面线：它不动，越往上偏移越大。绕贴图基准点（车身中心）做的话
+	///       上下两半会朝相反方向移，看上去就是整体旋转，不是「推」。
 	///       锚点按几何变换处理：把源包围盒整体过一遍矩阵、取外接矩形，
-	///       所以主体、炮塔、炮管共用基准点缩放/剪切时不会互相拉偏
+	///       所以主体、炮塔、炮管共用同一条地面线时不会互相拉偏
 	inline VoxelCacheStruct* Transform(const VoxelCacheStruct* src, const SpringyTransform& tf,
-		const TargetBox& box)
+		double pivotY, const TargetBox& box)
 	{
 		if (!src || !src->Buffer || src->Width == 0 || src->Height == 0 || tf.IsIdentity())
 		{
@@ -232,20 +235,21 @@ namespace SpringyVoxelSprite
 			return nullptr;
 		}
 
-		// 源精灵的像素 (px,py) 落在「基准点 + (X+px, Y+py)」，所以把整块源矩形
-		// (X, Y, sourceWidth, h) 过一遍矩阵取外接矩形，再向外取整到像素边界：
+		// 源精灵的像素 (px,py) 落在「基准点 + (X+px, Y+py)」，枢轴是基准点坐标里 y = pivotY
+		// 那条水平线。把源矩形换成**相对枢轴**的坐标再过矩阵：枢轴上的点位移恒为 0，
+		// 越往上偏移越大（这才是「从矩形推成平行四边形」）。取外接矩形后向外取整到像素边界：
 		// 内缩取整会让最后一行/列落出包围盒，宁可多一格
 		double bx = 0.0;
 		double by = 0.0;
 		double bw = 0.0;
 		double bh = 0.0;
-		tf.MapRect(static_cast<double>(src->X), static_cast<double>(src->Y),
+		tf.MapRect(static_cast<double>(src->X), static_cast<double>(src->Y) - pivotY,
 			static_cast<double>(sourceWidth), static_cast<double>(h), bx, by, bw, bh);
 
 		const int anchorX = static_cast<int>(std::floor(bx));
-		const int anchorY = static_cast<int>(std::floor(by));
+		const int anchorY = static_cast<int>(std::floor(by + pivotY));
 		const int nw = static_cast<int>(std::ceil(bx + bw)) - anchorX;
-		const int nh = static_cast<int>(std::ceil(by + bh)) - anchorY;
+		const int nh = static_cast<int>(std::ceil(by + bh + pivotY)) - anchorY;
 		if (nw <= 0 || nh <= 0 || nw > 0x2000 || nh > 0x2000)
 		{
 			return nullptr;
@@ -293,13 +297,13 @@ namespace SpringyVoxelSprite
 		size_t offset = 0;
 		for (int y = cropTop; y < cropBottom; ++y)
 		{
-			// 目标像素相对基准点的坐标（像素左上角）；反解回源像素下标
-			const double dy = static_cast<double>(anchorY + y);
+			// 目标像素相对基准点的坐标（像素左上角）；先换成相对枢轴，再反解回源
+			const double dy = static_cast<double>(anchorY + y) - pivotY;
 			for (int x = cropLeft; x < cropRight; ++x)
 			{
 				const double dx = static_cast<double>(anchorX + x);
 				const double fx = ia * dx + ib * dy - static_cast<double>(src->X);
-				const double fy = ic * dx + id * dy - static_cast<double>(src->Y);
+				const double fy = ic * dx + id * dy + pivotY - static_cast<double>(src->Y);
 				const int sx = static_cast<int>(std::floor(fx));
 				const int sy = static_cast<int>(std::floor(fy));
 				row[x - cropLeft] =

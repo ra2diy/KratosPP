@@ -175,6 +175,8 @@ public:
 		LastSpringyDrawn.Reset();
 		LastSpringyDirtySnap.Reset();
 		LastSpringyDirtyKey = 0;
+		SpringyShearPivotY = 0.0;
+		SpringyShearPivotValid = false;
 
 		drivingState = DrivingState::Moving;
 
@@ -445,6 +447,12 @@ public:
 	// 上一次因缩放变化而标脏时用的画面键。主循环据此判断本帧是否需要重新标脏：
 	// 倍率没变就不必标，避免静止建筑每帧重绘
 	long long LastSpringyDirtyKey = 0;
+	// 剪切枢轴（体素贴图坐标）：这个单位所有部件里最低的那条边，也就是地面线。
+	// 剪切要绕它做，偏移量才从地面往上逐渐增大；如果绕贴图基准点（车身中心）做，
+	// 上下两半会朝相反方向移，看上去就成了整体旋转。
+	// 取所有部件的最大值、跨帧保持：炮塔、炮管共用同一个枢轴才不会跟车体错开
+	double SpringyShearPivotY = 0.0;
+	bool SpringyShearPivotValid = false;
 
 	// 上一次标脏时覆盖的尺寸。倍率缩小时，屏幕上还留着上一帧更大的那圈像素，
 	// 脏区必须按「这一次要画的」与「上一次覆盖的」两者的较大值算，否则外圈擦不掉
