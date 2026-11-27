@@ -14,6 +14,7 @@
 #include <Ext/AnimType/AnimStatus.h>
 #include <Ext/Common/SpringyHelper.h>
 #include <Ext/Common/SpringySHP.h>
+#include <Ext/TechnoType/TechnoStatus.h>
 #include <Ext/Helper/CastEx.h>
 #include <Ext/Helper/Scripts.h>
 
@@ -133,6 +134,14 @@ void SpringyAnim::BeginDraw(AnimClass* pAnim)
 	Context.ShearX = snap->ShearX;
 	Context.ShearY = snap->ShearY;
 	Context.ShearMode = snap->ShearMode;
+	// 宿主本帧实际用的斜率：有就跟它保持一致，否则动画会按自己的帧高算出另一个角度
+	Context.UseOwnerSlope = false;
+	if (TechnoStatus* ownerStatus = nullptr; TryGetStatus<TechnoExt>(pOwner, ownerStatus) && ownerStatus->SpringySlopeValid)
+	{
+		Context.OwnerSlopeX = ownerStatus->SpringySlopeX;
+		Context.OwnerSlopeY = ownerStatus->SpringySlopeY;
+		Context.UseOwnerSlope = true;
+	}
 	Context.IsBuildingAnim = pAnim->IsBuildingAnim;
 
 	if (snap->AnimPivot == SpringyAnimPivot::OWNER)
@@ -180,7 +189,7 @@ SHPStruct* SpringyAnim::SubstituteSHP(SHPStruct* pOriginal)
 	// 它们的画布是建筑那张固定尺寸的缓存，换成形变后的帧会越过边界写坏邻行（实测是竖条纹），
 	// 而且 Layer=ground / top 都没有区别 —— 说明它不走层链表，是建筑绘制时一起贴出来的。
 	return SpringySHP::GetTransformed(pOriginal, Context.ScaleW, Context.ScaleH,
-		Context.ShearX, Context.ShearY, Context.ShearMode, Context.PivotX, Context.PivotY, usePivot,
+		Context.ShearX, Context.ShearY, Context.ShearMode, Context.PivotX, Context.PivotY, usePivot, Context.UseOwnerSlope, Context.OwnerSlopeX, Context.OwnerSlopeY,
 		// 画布按形变后包围盒动态增长：锁死原帧矩形会把推出去的部分直接切掉
 		false);
 }

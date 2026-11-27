@@ -176,6 +176,9 @@ public:
 		LastSpringyDirtySnap.Reset();
 		LastSpringyDirtyKey = 0;
 		SpringyShearFrameValid = false;
+		SpringySlopeValid = false;
+		SpringySlopeX = 0.0;
+		SpringySlopeY = 0.0;
 		SpringyShearTop = 0.0;
 		SpringyShearBottom = 0.0;
 		SpringyShearLeft = 0.0;
@@ -454,6 +457,13 @@ public:
 	// 主体、炮塔、炮管是三次独立贴图，包围盒大小差很多：斜率必须按**整个单位**的跨度算，
 	// 否则同样的剪切值会让炮塔、炮管斜得比车体陡、三个部件各偏各的。
 	// 跨帧保持：某帧最先画的那个部件也能用到完整参照框
+	// 本帧本体实际用的剪切斜率（位移/跨度，无量纲）。
+	// 挂在单位上的动画必须用同一条斜率，否则动画按自己的帧高算出来的斜率跟本体不一样，
+	// 两边的像素会逐行错开（表现为横条纹）
+	double SpringySlopeX = 0.0;
+	double SpringySlopeY = 0.0;
+	bool SpringySlopeValid = false;
+
 	double SpringyShearTop = 0.0;
 	double SpringyShearBottom = 0.0;
 	double SpringyShearLeft = 0.0;

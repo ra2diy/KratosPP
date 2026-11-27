@@ -43,26 +43,6 @@
 DEFINE_HOOK(0x422CA0, AnimClass_Draw_SpringyBegin, 0x5)
 {
 	GET(AnimClass*, pAnim, ECX);
-	// ---- 临时探针：记录「谁在调 DrawIt」（[esp] = 返回地址，落在通用裁剪助手里）----
-	{
-		static int lastProbeFrame = -100000;
-		static int probeBudget = 0;
-		const int probeFrame = Unsorted::CurrentFrame.get();
-		if (probeFrame - lastProbeFrame >= 60)
-		{
-			lastProbeFrame = probeFrame;
-			probeBudget = 12;
-		}
-		if (probeBudget > 0)
-		{
-			--probeBudget;
-			Debug::Log("[probe] anim=%p type=%s isBldAnim=%d c1=%p\n",
-				pAnim,
-				pAnim->Type ? pAnim->Type->ID : "?",
-				pAnim->IsBuildingAnim ? 1 : 0,
-				reinterpret_cast<void*>(R->Stack<DWORD>(0)));
-		}
-	}
 	SpringyAnim::BeginDraw(pAnim);
 	return 0;
 }
@@ -79,27 +59,6 @@ DEFINE_HOOK_AGAIN(0x423827, AnimClass_Draw_BlitSHP_Springy, 0x5)
 DEFINE_HOOK(0x42389E, AnimClass_Draw_BlitSHP_Springy, 0x5)
 {
 	REF_STACK(SHPStruct*, pSHP, 0x0);
-	// ---- 临时探针 3：建筑动画的 blit ----
-	if (reinterpret_cast<uintptr_t>(pSHP) >= 0x10000 && pSHP->Frames > 0)
-	{
-		static int lastProbeFrame = -100000;
-		static int probeBudget = 0;
-		const int probeFrame = Unsorted::CurrentFrame.get();
-		if (probeFrame - lastProbeFrame >= 60)
-		{
-			lastProbeFrame = probeFrame;
-			probeBudget = 16;
-		}
-		if (probeBudget > 0)
-		{
-			--probeBudget;
-			Debug::Log("[probe3] shp=%p %dx%d f=%d | s0=%p s1=%x s2=%x s3=%x s4=%x s5=%x\n",
-				pSHP, pSHP->Width, pSHP->Height, pSHP->Frames,
-				reinterpret_cast<void*>(R->Stack<DWORD>(0)),
-				R->Stack<DWORD>(1), R->Stack<DWORD>(2), R->Stack<DWORD>(3),
-				R->Stack<DWORD>(4), R->Stack<DWORD>(5));
-		}
-	}
 	// 太小的值不是指针（原版会传一些常量标记），直接放过
 	if (reinterpret_cast<uintptr_t>(pSHP) >= 0x10000)
 	{
@@ -308,6 +267,15 @@ DEFINE_HOOK(0x707480, TechnoClass_BlitVoxelSprite_Springy, 0x5)
 		box.Height = pTarget->GetHeight();
 	}
 
+	// 记下本体这一帧实际用的斜率，供挂在它身上的动画对齐（否则两边斜率不同会逐行错开）
+	status->SpringySlopeX = status->MySpringyData.ShearMode == SpringyShearMode::PERCENT
+		? status->MySpringyData.ShearX / 100.0
+		: (spanRows > 0.5 ? status->MySpringyData.ShearX / spanRows : 0.0);
+	status->SpringySlopeY = status->MySpringyData.ShearMode == SpringyShearMode::PERCENT
+		? status->MySpringyData.ShearY / 100.0
+		: (spanCols > 0.5 ? status->MySpringyData.ShearY / spanCols : 0.0);
+	status->SpringySlopeValid = true;
+
 	VoxelCacheStruct* pScaled = SpringyVoxelSprite::Transform(pSprite, scaleW, scaleH,
 		status->MySpringyData.ShearX, status->MySpringyData.ShearY, status->MySpringyData.ShearMode,
 		spanRows, spanCols, pivotY, box);
@@ -365,27 +333,20 @@ DEFINE_HOOK(0x705E00, TechnoClass_DrawObject_Springy, 0x7)
 
 	// 画布一律按形变后包围盒增长（与条纹无关，锁死画布只会把变形切掉）
 	const bool inPlace = false;
-	// ---- 临时探针：建筑本体绘制 ----
+	if (what == AbstractType::Building && pSHP->Height > 1 && pSHP->Width > 1)
 	{
-		static int lastProbeFrame = -100000;
-		static int probeBudget = 0;
-		const int probeFrame = Unsorted::CurrentFrame.get();
-		if (probeFrame - lastProbeFrame >= 60)
-		{
-			lastProbeFrame = probeFrame;
-			probeBudget = 12;
-		}
-		if (probeBudget > 0 && what == AbstractType::Building)
-		{
-			--probeBudget;
-			Debug::Log("[probe] body bld=%p type=%s caller=%p\\n",
-				pTechno,
-				pTechno->GetTechnoType() ? pTechno->GetTechnoType()->ID : "?",
-				reinterpret_cast<void*>(R->Stack<DWORD>(0)));
-		}
+		status->SpringySlopeX = status->MySpringyData.ShearMode == SpringyShearMode::PERCENT
+			? status->MySpringyData.ShearX / 100.0
+			: status->MySpringyData.ShearX / static_cast<double>(pSHP->Height - 1);
+		status->SpringySlopeY = status->MySpringyData.ShearMode == SpringyShearMode::PERCENT
+			? status->MySpringyData.ShearY / 100.0
+			: status->MySpringyData.ShearY / static_cast<double>(pSHP->Width - 1);
+		status->SpringySlopeValid = true;
 	}
+
 	if (SHPStruct* pScaled = SpringySHP::GetTransformed(pSHP, scaleW, scaleH,
-		status->MySpringyData.ShearX, status->MySpringyData.ShearY, status->MySpringyData.ShearMode, 0, 0, false, inPlace))
+		status->MySpringyData.ShearX, status->MySpringyData.ShearY, status->MySpringyData.ShearMode, 0, 0, false,
+		false, 0.0, 0.0, inPlace))
 	{
 		R->Stack<SHPStruct*>(0x4, pScaled);
 	}
@@ -397,33 +358,5 @@ DEFINE_HOOK(0x705E00, TechnoClass_DrawObject_Springy, 0x7)
 		SpringyRefresh::AddDirtyOnly(pTechno);
 	}
 
-	return 0;
-}
-
-// ==================== 临时探针 2 ====================
-// 通用「按矩形画对象」助手 0x5F4B10 的入口：ecx = 被画的对象，[esp] = 调它的那个函数。
-// 三个调用点（0x422C8E / 0x73B132 / 0x749B5B）分别对应不同的绘制趟，
-// 这一行就能确定「建筑动画到底是被谁画出来的」。
-DEFINE_HOOK(0x5F4B10, DrawObjectClipped_Probe, 0x8)
-{
-	GET(ObjectClass*, pObject, ECX);
-	if (pObject && pObject->WhatAmI() == AbstractType::Anim)
-	{
-		static int lastProbeFrame = -100000;
-		static int probeBudget = 0;
-		const int probeFrame = Unsorted::CurrentFrame.get();
-		if (probeFrame - lastProbeFrame >= 60)
-		{
-			lastProbeFrame = probeFrame;
-			probeBudget = 12;
-		}
-		if (probeBudget > 0)
-		{
-			--probeBudget;
-			Debug::Log("[probe2] obj=%p caller=%p\n",
-				pObject,
-				reinterpret_cast<void*>(R->Stack<DWORD>(0)));
-		}
-	}
 	return 0;
 }

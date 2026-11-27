@@ -69,6 +69,14 @@ struct SpringyTransform
 	/// @note 体素单位的主体、炮塔、炮管是三次独立贴图，各自的包围盒大小差很多。
 	///       若各自拿自己的高度当除数，同样的 shearX 会让炮塔、炮管斜得比车体陡，
 	///       表现为三个部件各偏各的。所以它们必须共用「整个单位」的跨度
+	void SetFromSlope(double scaleX, double scaleY, double slopeX, double slopeY)
+	{
+		A = scaleX;
+		D = scaleY;
+		B = -slopeX;
+		C = slopeY;
+	}
+
 	void SetFromSpan(double scaleX, double scaleY, double shearX, double shearY,
 		double spanRows, double spanCols)
 	{

@@ -27,6 +27,10 @@ namespace SpringyAnim
 		double ShearX = 0.0;
 		double ShearY = 0.0;
 		SpringyShearMode ShearMode = SpringyShearMode::PX;
+		// 宿主的斜率（位移/跨度）。有效时优先于自身像素值，保证与本体同角度
+		double OwnerSlopeX = 0.0;
+		double OwnerSlopeY = 0.0;
+		bool UseOwnerSlope = false;
 		// 这个动画是否画进建筑的缓存画布：是则不能换更大的帧
 		bool IsBuildingAnim = false;
 

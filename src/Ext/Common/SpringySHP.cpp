@@ -124,7 +124,8 @@ namespace
 	///       采样用逆映射：平行四边形四角落在源范围之外，写透明
 	SHPStruct* BuildTransformed(SHPStruct* pOriginal, double scaleW, double scaleH,
 		double shearX, double shearY, SpringyShearMode shearMode,
-		int pivotX, int pivotY, bool usePivot, bool inPlace)
+		int pivotX, int pivotY, bool usePivot,
+		bool useOwnerSlope, double ownerSlopeX, double ownerSlopeY, bool inPlace)
 	{
 		const auto pFile = pOriginal->GetData();
 		if (!pFile)
@@ -163,7 +164,13 @@ namespace
 			// 百分比模式：数值是「整图高度/宽度的百分之几」，先换算成像素
 			double shX = shearX;
 			double shY = shearY;
-			if (shearMode == SpringyShearMode::PERCENT)
+			if (useOwnerSlope)
+			{
+				// 与本体同角度：位移 = 斜率 × 自己的跨度，动画就不会相对本体逐行错开
+				shX = ownerSlopeX * static_cast<double>(h - 1);
+				shY = ownerSlopeY * static_cast<double>(w - 1);
+			}
+			else if (shearMode == SpringyShearMode::PERCENT)
 			{
 				shX = shearX * static_cast<double>(h - 1) / 100.0;
 				shY = shearY * static_cast<double>(w - 1) / 100.0;
@@ -286,7 +293,8 @@ namespace
 
 SHPStruct* SpringySHP::GetTransformed(SHPStruct* pOriginal,
 	double scaleW, double scaleH, double shearX, double shearY, SpringyShearMode shearMode,
-	int pivotX, int pivotY, bool usePivot, bool inPlace)
+	int pivotX, int pivotY, bool usePivot,
+	bool useOwnerSlope, double ownerSlopeX, double ownerSlopeY, bool inPlace)
 {
 	if (!pOriginal)
 	{
@@ -301,7 +309,9 @@ SHPStruct* SpringySHP::GetTransformed(SHPStruct* pOriginal,
 	const auto qScale = [](double v) { return static_cast<int>(std::lround(v * 1000.0)); };
 	const auto qShear = [](double v) { return static_cast<int>(std::lround(v * 4.0)); };
 	const CacheKey key{ pOriginal, qScale(scaleW), qScale(scaleH),
-		qShear(shearX), qShear(shearY), static_cast<int>(shearMode), pivotX, pivotY, usePivot, inPlace };
+		qShear(useOwnerSlope ? ownerSlopeX * 10000.0 : shearX),
+		qShear(useOwnerSlope ? ownerSlopeY * 10000.0 : shearY),
+		static_cast<int>(shearMode) + (useOwnerSlope ? 100 : 0), pivotX, pivotY, usePivot, inPlace };
 	auto it = Cache.find(key);
 	if (it != Cache.end())
 	{
@@ -309,7 +319,7 @@ SHPStruct* SpringySHP::GetTransformed(SHPStruct* pOriginal,
 	}
 
 	SHPStruct* pScaled = BuildTransformed(pOriginal, scaleW, scaleH, shearX, shearY, shearMode,
-		pivotX, pivotY, usePivot, inPlace);
+		pivotX, pivotY, usePivot, useOwnerSlope, ownerSlopeX, ownerSlopeY, inPlace);
 	// 失败不入缓存：缓存了空指针会让这张 SHP 永久失效，
 	// 连「资源稍后才加载好」这种正常情况也救不回来
 	if (pScaled)
