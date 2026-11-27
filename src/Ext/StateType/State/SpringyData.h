@@ -112,8 +112,9 @@ public:
 	int WidthPhase = 0;
 	int HeightPhase = 0;
 
-	// 剪切（推拉）：把矩形推成平行四边形。单位是「每 100 像素位移多少像素」（%），
-	// 正 ShearX = 顶部相对底部右移，正 ShearY = 右侧相对左侧下移。
+	// 剪切（推拉）：把矩形推成平行四边形。**单位是像素**：写 300 就是顶边相对底边右移 300 像素，
+	// 底边不动、中间各行按「离底部的行数 / 总行数」线性递增。
+	// 正 ShearX = 顶边右移，正 ShearY = 右边下移。
 	// 全 0 = 不变形（与只有缩放的旧配置完全一致）；配合 WAVE 时同一波形同时驱动缩放与剪切，
 	// 所以「一边胀缩一边推拉」不用额外开关，想纯推拉就把 Width/Height 端点都写 100
 	int ShearXMax = 0;
@@ -171,12 +172,12 @@ public:
 		ShearXMin = reader->Get(title + "ShearXMin", ShearXMin);
 		ShearYMax = reader->Get(title + "ShearYMax", ShearYMax);
 		ShearYMin = reader->Get(title + "ShearYMin", ShearYMin);
-		// 上限 150%（约 56°）：再大平行四边形会扁得看不出形体，且缩放与剪切的
-		// 行列式容易过小（极端组合下矩阵接近不可逆，绘制会退化成原图）
-		ShearXMax = std::clamp(ShearXMax, -150, 150);
-		ShearXMin = std::clamp(ShearXMin, -150, 150);
-		ShearYMax = std::clamp(ShearYMax, -150, 150);
-		ShearYMin = std::clamp(ShearYMin, -150, 150);
+		// 只做安全钳位（±3000 像素），不按角度限制：写多少就是顶边移多少，
+		// 极端值由矩阵求逆失败时「按原样绘制」兜底
+		ShearXMax = std::clamp(ShearXMax, -3000, 3000);
+		ShearXMin = std::clamp(ShearXMin, -3000, 3000);
+		ShearYMax = std::clamp(ShearYMax, -3000, 3000);
+		ShearYMin = std::clamp(ShearYMin, -3000, 3000);
 
 		ShearXPhase = reader->Get(title + "ShearXPhase", ShearXPhase);
 		ShearYPhase = reader->Get(title + "ShearYPhase", ShearYPhase);
@@ -267,7 +268,11 @@ struct SpringySnapshot
 
 	// 本帧的画布形变（位图口径）：缩放 + 剪切复合后的矩阵。
 	// 主体 / 炮塔 / 炮管 / 影子 / 依附动画都读它，保证同一条段在三条链路上形状一致
-	SpringyTransform Matrix{};
+	// 本帧的剪切位移（像素）：顶边相对底边的水平/垂直位移。
+	// 位图口径 —— 主体 / 炮塔 / 炮管 / 影子 / 依附动画都读它，三条链路形状一致。
+	// 存像素而不是斜率：斜率要除以精灵尺寸，而尺寸只有到贴图那一刻才知道
+	double ShearX = 0.0;
+	double ShearY = 0.0;
 
 	SpringyAnimPivot AnimPivot = SpringyAnimPivot::ANIM;
 
@@ -275,6 +280,7 @@ struct SpringySnapshot
 	{
 		*this = {};
 		ScaleX = ScaleY = ScaleZ = 1.0;
-		Matrix.Reset();
+		ShearX = 0.0;
+		ShearY = 0.0;
 	}
 };

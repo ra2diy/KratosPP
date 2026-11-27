@@ -124,8 +124,14 @@ void SpringyAnim::BeginDraw(AnimClass* pAnim)
 	}
 
 	Context.Active = true;
-	// 直接用单位的画布形变矩阵：主体怎么缩放 / 剪切，它身上的动画就怎么变
-	Context.Transform = snap->Matrix;
+	// 与主体同一口径：主体怎么缩放 / 剪切，它身上的动画就怎么变
+	double scaleW = 1.0;
+	double scaleH = 1.0;
+	SpringyHelper::GetRenderScales(*snap, scaleW, scaleH);
+	Context.ScaleW = scaleW;
+	Context.ScaleH = scaleH;
+	Context.ShearX = snap->ShearX;
+	Context.ShearY = snap->ShearY;
 
 	if (snap->AnimPivot == SpringyAnimPivot::OWNER)
 	{
@@ -168,6 +174,6 @@ SHPStruct* SpringyAnim::SubstituteSHP(SHPStruct* pOriginal)
 			usePivot = false;
 		}
 	}
-	return SpringySHP::GetTransformed(pOriginal, Context.Transform,
-		Context.PivotX, Context.PivotY, usePivot);
+	return SpringySHP::GetTransformed(pOriginal, Context.ScaleW, Context.ScaleH,
+		Context.ShearX, Context.ShearY, Context.PivotX, Context.PivotY, usePivot);
 }

@@ -15,13 +15,16 @@ namespace SpringySHP
 {
 	/// @brief 取一份按形变矩阵重采样的 SHP 副本（带缓存）
 	/// @param pOriginal 原始 SHP
-	/// @param tf 画布形变（缩放 + 剪切复合，见 SpringyTransform）
+	/// @param scaleW,scaleH 位图缩放倍率
+	/// @param shearX 顶边相对底边的水平位移（像素，正 = 右移）
+	/// @param shearY 右边相对左边的垂直位移（像素，正 = 下移）
 	/// @param pivotX 形变枢轴 X（SHP 帧坐标）；usePivot 为 false 时忽略
 	/// @param pivotY 形变枢轴 Y；usePivot 为 false 时忽略
 	/// @param usePivot true = 绕给定枢轴变形（贴身特效跟着单位走），
 	///                 false = 自身底边中点变形（独立特效原地变大小 / 倾斜）
 	/// @return 变形后的 SHP；形变是恒等或构建失败时返回原 SHP
-	SHPStruct* GetTransformed(SHPStruct* pOriginal, const SpringyTransform& tf,
+	SHPStruct* GetTransformed(SHPStruct* pOriginal,
+		double scaleW, double scaleH, double shearX, double shearY,
 		int pivotX, int pivotY, bool usePivot);
 
 	/// @brief 清空缓存并释放全部自造 SHP

@@ -206,11 +206,15 @@ DEFINE_HOOK(0x707480, TechnoClass_BlitVoxelSprite_Springy, 0x5)
 
 	// 本帧的画布形变：缩放 + 剪切复合后的一张 2×2 矩阵。
 	// 恒等就说明这一帧没变形（倍率恰为 1、剪切为 0），直接按原精灵画
-	const SpringyTransform& tf = status->MySpringyData.Matrix;
-	if (tf.IsIdentity())
+	if (!SpringyHelper::HasDeformation(status->MySpringyData))
 	{
 		return 0;
 	}
+
+	// 剪切单位是像素：写 300 就是顶边相对底边位移 300 像素
+	double scaleW = 1.0;
+	double scaleH = 1.0;
+	SpringyHelper::GetRenderScales(status->MySpringyData, scaleW, scaleH);
 
 	GET_STACK(VoxelCacheStruct*, pSprite, 0x4);
 	if (!pSprite)
@@ -222,7 +226,8 @@ DEFINE_HOOK(0x707480, TechnoClass_BlitVoxelSprite_Springy, 0x5)
 	// 取最大值、跨帧保持：主体 / 炮塔 / 炮管 / 影子共用同一个枢轴，偏移量才会从地面
 	// 往上一致地增大。绕贴图基准点（车身中心）做的话上下两半反向移，看着是整体旋转；
 	// 各部件各用自己的底边，炮塔又会跟车体错开
-	const double bottom = static_cast<double>(pSprite->Y) + static_cast<double>(pSprite->Height);
+	// -0.5：枢轴落在底行像素的中心，底行位移才严格为 0（差半行会整行偏一点）
+	const double bottom = static_cast<double>(pSprite->Y) + static_cast<double>(pSprite->Height) - 0.5;
 	if (!status->SpringyShearPivotValid || bottom > status->SpringyShearPivotY)
 	{
 		status->SpringyShearPivotY = bottom;
@@ -245,7 +250,9 @@ DEFINE_HOOK(0x707480, TechnoClass_BlitVoxelSprite_Springy, 0x5)
 		box.Height = pTarget->GetHeight();
 	}
 
-	VoxelCacheStruct* pScaled = SpringyVoxelSprite::Transform(pSprite, tf, status->SpringyShearPivotY, box);
+	VoxelCacheStruct* pScaled = SpringyVoxelSprite::Transform(pSprite, scaleW, scaleH,
+		status->MySpringyData.ShearX, status->MySpringyData.ShearY,
+		status->SpringyShearPivotY, box);
 	if (!pScaled)
 	{
 		// 精灵格式与预期不符时放弃变形、按原精灵画：画面退化成没有效果，但不能出错
@@ -288,13 +295,18 @@ DEFINE_HOOK(0x705E00, TechnoClass_DrawObject_Springy, 0x7)
 		return 0;
 	}
 
-	const SpringyTransform& tf = status->MySpringyData.Matrix;
-	if (tf.IsIdentity())
+	if (!SpringyHelper::HasDeformation(status->MySpringyData))
 	{
 		return 0;
 	}
 
-	if (SHPStruct* pScaled = SpringySHP::GetTransformed(pSHP, tf, 0, 0, false))
+	// 剪切单位是像素：写 300 就是顶边相对底边位移 300 像素
+	double scaleW = 1.0;
+	double scaleH = 1.0;
+	SpringyHelper::GetRenderScales(status->MySpringyData, scaleW, scaleH);
+
+	if (SHPStruct* pScaled = SpringySHP::GetTransformed(pSHP, scaleW, scaleH,
+		status->MySpringyData.ShearX, status->MySpringyData.ShearY, 0, 0, false))
 	{
 		R->Stack<SHPStruct*>(0x4, pScaled);
 	}

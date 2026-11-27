@@ -14,17 +14,19 @@
 
 namespace
 {
-	/// @brief 把对象报上来的渲染矩形按形变后的包围盒外扩
+	/// @brief 把对象报上来的渲染矩形按形变后的范围外扩
 	/// @param rect 引擎给出的渲染矩形（与脏区同一坐标口径）
-	/// @param tf 形变矩阵（缩放 + 剪切）
+	/// @param snap 本帧（或上一次绘制时）的快照
 	/// @return 外扩后的矩形
-	/// @note 缩放与剪切都可能把像素画到原矩形之外，且剪切会把图形整体推到一侧，
+	/// @note 缩放与剪切都可能把像素画到原矩形之外，且剪切会把顶边整体推到一侧，
 	///       所以交给 SpringyHelper 按四个方向各自补齐，而不是四周等量外扩
-	RectangleStruct InflateDirtyRect(const RectangleStruct& rect, const SpringyTransform& tf)
+	RectangleStruct InflateDirtyRect(const RectangleStruct& rect, const SpringySnapshot& snap)
 	{
-		return SpringyHelper::InflateDirtyRect(rect, tf);
+		double scaleW = 1.0;
+		double scaleH = 1.0;
+		SpringyHelper::GetRenderScales(snap, scaleW, scaleH);
+		return SpringyHelper::InflateDirtyRect(rect, scaleW, scaleH, snap.ShearX, snap.ShearY);
 	}
-
 	/// @brief 建筑自己会画的东西：本体帧号与所有覆盖动画的当前帧
 	/// @param pObject 目标对象
 	/// @return 一个可比较的帧状态键；非建筑恒为 0
@@ -111,8 +113,8 @@ namespace
 		// 覆盖范围取「这一次要画的」与「上一次覆盖的」之并：
 		// 缩小时屏幕上还留着上一帧更大的那圈像素，只按当前形变算会擦不掉外圈；
 		// 剪切改变的是形状与偏移，不能拿两份矩阵逐项取 max（那不是一个合法形变）
-		const RectangleStruct now = InflateDirtyRect(dims, snap.Matrix);
-		const RectangleStruct before = InflateDirtyRect(dims, status->LastSpringyDirtySnap.Matrix);
+		const RectangleStruct now = InflateDirtyRect(dims, snap);
+		const RectangleStruct before = InflateDirtyRect(dims, status->LastSpringyDirtySnap);
 		status->LastSpringyDirtySnap = snap;
 
 		if (markForRedraw)

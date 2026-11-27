@@ -52,44 +52,14 @@ void SpringyState::RemoveSegment(SpringyEffect* segment)
 	}
 }
 
-bool SpringyState::GetScale(double& x, double& y, double& z, AffectWho viewer)
+bool SpringyState::GetGeometry(double& x, double& y, double& z, double& shearX, double& shearY, AffectWho viewer)
 {
 	x = 1.0;
 	y = 1.0;
 	z = 1.0;
+	shearX = 0.0;
+	shearY = 0.0;
 
-	bool any = false;
-	for (SpringyEffect* segment : _segments)
-	{
-		// ALL 对两边都生效；MASTER / STAND 只对各自那一边生效
-		AffectWho target = segment->GetAffectWho();
-		if (target != AffectWho::ALL && target != viewer)
-		{
-			continue;
-		}
-		double sx = 1.0;
-		double sy = 1.0;
-		double sz = 1.0;
-		segment->GetScale(sx, sy, sz);
-		x *= sx;
-		y *= sy;
-		z *= sz;
-		any = true;
-	}
-	return any;
-}
-
-SpringyAnimPivot SpringyState::GetAnimPivot()
-{
-	if (_segments.empty())
-	{
-		return SpringyAnimPivot::ANIM;
-	}
-	return _segments.back()->GetAnimPivot();
-}
-
-bool SpringyState::ComposeTransform(SpringyTransform& io, AffectWho viewer)
-{
 	bool any = false;
 	for (SpringyEffect* segment : _segments)
 	{
@@ -103,21 +73,28 @@ bool SpringyState::ComposeTransform(SpringyTransform& io, AffectWho viewer)
 		{
 			continue;
 		}
-
-		double x = 1.0;
-		double y = 1.0;
-		double z = 1.0;
-		double shearX = 0.0;
-		double shearY = 0.0;
-		segment->GetTransform(x, y, z, shearX, shearY);
-
-		// 位图口径：X 与 Y 在屏幕上都落成水平投影，取平均；纵向取 Z。
-		// 剪切按「缩放后的像素」计，所以矩阵里的 B/C 带了缩放（见 SpringyTransform::Set）
-		SpringyTransform seg;
-		seg.Set((x + y) * 0.5, z, shearX, shearY);
-		// 先登记的段在内层、后登记的外层：最后挂上的那条在最外面
-		io.Compose(seg);
+		double sx = 1.0;
+		double sy = 1.0;
+		double sz = 1.0;
+		double kx = 0.0;
+		double ky = 0.0;
+		segment->GetTransform(sx, sy, sz, kx, ky);
+		x *= sx;
+		y *= sy;
+		z *= sz;
+		// 剪切是像素位移：多条段在屏幕上叠加，直接相加
+		shearX += kx;
+		shearY += ky;
 		any = true;
 	}
 	return any;
 }
+SpringyAnimPivot SpringyState::GetAnimPivot()
+{
+	if (_segments.empty())
+	{
+		return SpringyAnimPivot::ANIM;
+	}
+	return _segments.back()->GetAnimPivot();
+}
+

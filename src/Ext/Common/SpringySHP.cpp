@@ -26,10 +26,10 @@ namespace
 	};
 
 	// 缓存键：原 SHP + 量化后的形变矩阵 + 枢轴。
-	// 矩阵按 1/256 量化（见 SpringyTransform::Key），保持全整数比较：
+	// 倍率按 1/1000、剪切按 1/4 像素量化，保持全整数比较：
 	// 不同 AE 参数但结果相同的会共享同一份，结果不同的不会撞键拿到别人的帧。
 	// 波形是 8 档正弦表，所以每张 SHP 稳态只会落 8 个键，条目数有界
-	using CacheKey = std::tuple<SHPStruct*, long long, int, int, bool>;
+	using CacheKey = std::tuple<SHPStruct*, int, int, int, int, int, int, bool>;
 
 	std::map<CacheKey, SHPStruct*> Cache{};
 
@@ -121,20 +121,11 @@ namespace
 	/// @note 每帧的画布是「形变后包围盒」：帧头里的 Left/Top/W/H 是逐帧的，
 	///       所以可以变大；文件级 Width/Height 保持原值（引擎按它算锚点，改了会整体漂移）。
 	///       采样用逆映射：平行四边形四角落在源范围之外，写透明
-	SHPStruct* BuildTransformed(SHPStruct* pOriginal, const SpringyTransform& tf,
-		int pivotX, int pivotY, bool usePivot)
+	SHPStruct* BuildTransformed(SHPStruct* pOriginal, double scaleW, double scaleH,
+		double shearX, double shearY, int pivotX, int pivotY, bool usePivot)
 	{
 		const auto pFile = pOriginal->GetData();
 		if (!pFile)
-		{
-			return nullptr;
-		}
-
-		double ia = 1.0;
-		double ib = 0.0;
-		double ic = 0.0;
-		double id = 1.0;
-		if (!tf.Invert(ia, ib, ic, id))
 		{
 			return nullptr;
 		}
@@ -163,8 +154,23 @@ namespace
 
 			// 枢轴：贴身部件绕给定枢轴；独立特效绕自身底边中点，
 			// 这样纯缩放时与旧实现完全等价（水平居中、垂直贴底）
-			const int px0 = usePivot ? pivotX : (left + w / 2);
-			const int py0 = usePivot ? pivotY : (top + h);
+			// 非枢轴模式：水平居中、纵向贴底。py0 取「帧底行像素中心」，底行位移才严格为 0
+			const double px0 = usePivot ? static_cast<double>(pivotX) : (static_cast<double>(left) + w / 2.0);
+			const double py0 = usePivot ? static_cast<double>(pivotY) : (static_cast<double>(top) + h - 0.5);
+
+			// 剪切要除以**这一帧**的尺寸：写 300 就是顶边位移 300 像素，缩放不会把它放大
+			SpringyTransform tf;
+			tf.SetFromPixels(scaleW, scaleH, shearX, shearY,
+				static_cast<double>(w), static_cast<double>(h));
+
+			double ia = 1.0;
+			double ib = 0.0;
+			double ic = 0.0;
+			double id = 1.0;
+			if (!tf.Invert(ia, ib, ic, id))
+			{
+				continue;
+			}
 
 			// 帧矩形相对枢轴的坐标，过一遍矩阵取外接矩形
 			double bx = 0.0;
@@ -189,10 +195,10 @@ namespace
 			// 最近邻取样：调色板索引不能插值，插值会混出不存在的颜色
 			for (int y = 0; y < h2; y++)
 			{
-				const double dy = static_cast<double>(oy + y);
+				const double dy = static_cast<double>(oy + y) + 0.5;
 				for (int x = 0; x < w2; x++)
 				{
-					const double dx = static_cast<double>(ox + x);
+					const double dx = static_cast<double>(ox + x) + 0.5;
 					const double fx = ia * dx + ib * dy - static_cast<double>(left - px0);
 					const double fy = ic * dx + id * dy - static_cast<double>(top - py0);
 					const int sx = static_cast<int>(std::floor(fx));
@@ -264,27 +270,32 @@ namespace
 }
 
 
-SHPStruct* SpringySHP::GetTransformed(SHPStruct* pOriginal, const SpringyTransform& tf,
+SHPStruct* SpringySHP::GetTransformed(SHPStruct* pOriginal,
+	double scaleW, double scaleH, double shearX, double shearY,
 	int pivotX, int pivotY, bool usePivot)
 {
 	if (!pOriginal)
 	{
 		return nullptr;
 	}
-	// 形变恰是恒等就没有要画的变形，直接用原图：省掉一份完全相同的副本
-	if (tf.IsIdentity())
+	// 完全没有变形就直接用原图：省掉一份完全相同的副本
+	if (scaleW == 1.0 && scaleH == 1.0 && shearX == 0.0 && shearY == 0.0)
 	{
 		return pOriginal;
 	}
 
-	const CacheKey key{ pOriginal, tf.Key(), pivotX, pivotY, usePivot };
+	const auto qScale = [](double v) { return static_cast<int>(std::lround(v * 1000.0)); };
+	const auto qShear = [](double v) { return static_cast<int>(std::lround(v * 4.0)); };
+	const CacheKey key{ pOriginal, qScale(scaleW), qScale(scaleH),
+		qShear(shearX), qShear(shearY), pivotX, pivotY, usePivot };
 	auto it = Cache.find(key);
 	if (it != Cache.end())
 	{
 		return it->second;
 	}
 
-	SHPStruct* pScaled = BuildTransformed(pOriginal, tf, pivotX, pivotY, usePivot);
+	SHPStruct* pScaled = BuildTransformed(pOriginal, scaleW, scaleH, shearX, shearY,
+		pivotX, pivotY, usePivot);
 	// 失败不入缓存：缓存了空指针会让这张 SHP 永久失效，
 	// 连「资源稍后才加载好」这种正常情况也救不回来
 	if (pScaled)
@@ -297,12 +308,11 @@ SHPStruct* SpringySHP::GetTransformed(SHPStruct* pOriginal, const SpringyTransfo
 	const char* name = pOriginal->IsReference() && pOriginal->AsReference()->Filename
 		? pOriginal->AsReference()->Filename
 		: "?";
-	Debug::Log("[Springy]SHP %s 形变[%.2f %.2f; %.2f %.2f] 构建%s\n",
-		name, tf.A, tf.B, tf.C, tf.D, pScaled ? "成功" : "失败");
+	Debug::Log("[Springy]SHP %s 缩放(%.2f,%.2f) 剪切(%.1f,%.1f)px 构建%s\n",
+		name, scaleW, scaleH, shearX, shearY, pScaled ? "成功" : "失败");
 
 	return pScaled;
 }
-
 void SpringySHP::ClearCache()
 {
 	for (auto& entry : Cache)

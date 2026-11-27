@@ -5,17 +5,19 @@
 
 /// @brief 二维绘制变换：缩放 + 剪切（矩形 → 平行四边形）。
 ///
-/// 矩阵按 **K·S** 复合（先缩放、后剪切）：
+/// 剪切的**参数是像素**：`shearX` = 顶边相对底边的水平位移（缩放后的像素），
+/// `shearY` = 右边相对左边的垂直位移。变换到矩阵里时要除以**源精灵的尺寸**：
 /// ```
-/// [ A  B ]   [ sx   -kx*sy ]
-/// [ C  D ] = [ ky*sx   sy   ]
+/// [ A  B ]   [ sx      -shearX / h ]
+/// [ C  D ] = [ shearY / w    sy     ]
 /// ```
-/// 约定（屏幕坐标，y 向下）：
-///   - `kx > 0` = 顶部相对底部**右移**（水平推）；
-///   - `ky > 0` = 右侧相对左侧**下移**（垂直推）；
-///   - 枢轴是绘制基准线（VXL 的贴图基准点 / SHP 的底边中点），所以「脚不动、越高偏得越多」。
+/// 这样任意一行相对底边的位移就是 `shearX × (这一行离底部的行数 / 总行数)`：
+/// 底行不动、顶行正好位移 `shearX` 像素，中间按行数线性递增 —— 就是「矩形推成平行四边形」。
+/// 除的是源尺寸而不是最终尺寸，所以缩放不会把这个像素数放大：写 300 就是 300 像素。
 ///
-/// 为什么是先缩放后剪切：这样 `kx` 表达的是斜率（≈角度），不随缩放变化，调参直观。
+/// 约定（屏幕坐标，y 向下）：
+///   - `shearX > 0` = 顶边右移；`shearY > 0` = 右边下移；
+///   - 枢轴是底边（VXL 取该单位所有部件里最低的那条边，SHP 取帧底边中点）。
 ///
 /// 三条绘制链路（VXL 贴图点、SHP 重采样、依附动画）都走这一个结构，
 /// 保证主体 / 炮塔 / 炮管 / 影子 / 动画的形变完全一致。
@@ -39,17 +41,19 @@ struct SpringyTransform
 		return A == 1.0 && B == 0.0 && C == 0.0 && D == 1.0;
 	}
 
-	/// @brief 由缩放与剪切系数构造
+	/// @brief 由缩放与**像素**位移构造
 	/// @param scaleX 横向倍率
 	/// @param scaleY 纵向倍率
-	/// @param shearX 水平推：每 1 个（缩放后）纵向像素位移多少横向像素；正 = 顶部右移
-	/// @param shearY 垂直推：每 1 个（缩放后）横向像素位移多少纵向像素；正 = 右侧下移
-	void Set(double scaleX, double scaleY, double shearX, double shearY)
+	/// @param shearX 顶边相对底边的水平位移（像素，正 = 右移）
+	/// @param shearY 右边相对左边的垂直位移（像素，正 = 下移）
+	/// @param w,h 源精灵的尺寸（像素）。为 0 或 1 时该方向的剪切退化为 0
+	void SetFromPixels(double scaleX, double scaleY, double shearX, double shearY,
+		double w, double h)
 	{
 		A = scaleX;
-		B = -shearX * scaleY;
-		C = shearY * scaleX;
 		D = scaleY;
+		B = h > 1.0 ? -shearX / (h - 1.0) : 0.0;
+		C = w > 1.0 ? shearY / (w - 1.0) : 0.0;
 	}
 
 	/// @brief 复合：this = outer · this，即「先做自己，再做 outer」
@@ -113,19 +117,5 @@ struct SpringyTransform
 		oy = minY;
 		ow = maxX - minX;
 		oh = maxY - minY;
-	}
-
-	/// @brief 压成一个整数键，用于「这一帧的画面是否变了」的相等比较
-	/// @note 1/256 量化、每项 16 位带偏移，取舍只在相等判断上：键相同就认为画面相同
-	long long Key() const
-	{
-		return (Quantize(A) << 48) ^ (Quantize(B) << 32) ^ (Quantize(C) << 16) ^ Quantize(D);
-	}
-
-private:
-	static long long Quantize(double value)
-	{
-		long long q = static_cast<long long>(std::lround(value * 256.0)) + 0x8000;
-		return std::clamp<long long>(q, 0, 0xFFFF);
 	}
 };

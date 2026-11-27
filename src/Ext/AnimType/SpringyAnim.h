@@ -20,9 +20,12 @@ namespace SpringyAnim
 	{
 		bool Active = false;
 
-		// 画布形变（缩放 + 剪切复合）。与主体共用同一个矩阵，
-		// 所以单位一边胀缩一边推拉时，它身上的动画会跟着一起变形
-		SpringyTransform Transform{};
+		// 位图缩放与剪切（像素）。与主体同一口径：单位一边胀缩一边推拉时，
+		// 它身上的动画跟着一起变形
+		double ScaleW = 1.0;
+		double ScaleH = 1.0;
+		double ShearX = 0.0;
+		double ShearY = 0.0;
 
 		// 形变枢轴（SHP 帧坐标）。UsePivot 为 false 时绕自身帧底边中点变形
 		bool UsePivot = false;

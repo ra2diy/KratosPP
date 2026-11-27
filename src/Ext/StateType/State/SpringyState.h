@@ -40,24 +40,17 @@ public:
 
 	bool HasSegment() const { return !_segments.empty(); }
 
-	/// @brief 把表里允许作用于 viewer 的段逐轴相乘
+	/// @brief 把表里允许作用于 viewer 的段合成这一帧的倍率与剪切
 	/// @param x 横向（对应 FLH 的 F）倍率，输出
 	/// @param y 横向（对应 FLH 的 L）倍率，输出
 	/// @param z 纵向（对应 FLH 的 H）倍率，输出
+	/// @param shearX 顶边相对底边的水平位移（像素），输出；多条段相加
+	/// @param shearY 右边相对左边的垂直位移（像素），输出
 	/// @param viewer 从谁的视角取：MASTER 计入 AffectWho 为 MASTER/ALL 的段，
 	///               STAND 计入 AffectWho 为 STAND/ALL 的段
 	/// @return 是否至少计入了一个段
-	/// @note 没有符合条件的段时三个输出都是 1.0
-	bool GetScale(double& x, double& y, double& z, AffectWho viewer);
-
-	/// @brief 把表里允许作用于 viewer 的段复合成一个画布形变矩阵
-	/// @param io 输入输出：进来的是已累计的矩阵（通常是单位矩阵），出去的是复合结果
-	/// @param viewer 从谁的视角取，口径同 GetScale
-	/// @return 是否至少计入了一个段
-	/// @note 与 GetScale 的区别：这里是**位图口径**（横向取 (X+Y)/2、纵向取 Z），
-	///       并且把剪切一起复合进来。主体 / 炮塔 / 影子 / 依附动画都读这一个矩阵
-	bool ComposeTransform(SpringyTransform& io, AffectWho viewer);
-
+	/// @note 没有符合条件的段时倍率都是 1.0、剪切都是 0
+	bool GetGeometry(double& x, double& y, double& z, double& shearX, double& shearY, AffectWho viewer);
 	/// @brief 依附动画的缩放枢轴设置：取最后挂上的那条段
 	/// @return 表空时返回 ANIM（动画自身底边）
 	SpringyAnimPivot GetAnimPivot();

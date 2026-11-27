@@ -79,14 +79,15 @@ namespace
 			const double pulseSY = WavePulse((waveStep + data->ShearYPhase * quarter) % Steps);
 			const double endSX = pulseSX >= 0.0 ? data->ShearXMax : data->ShearXMin;
 			const double endSY = pulseSY >= 0.0 ? data->ShearYMax : data->ShearYMin;
-			shearXTarget = endSX / 100.0 * std::abs(pulseSX);
-			shearYTarget = endSY / 100.0 * std::abs(pulseSY);
+			// 端点就是像素：脉冲为正走 Max、为负走 Min，幅度按 |脉冲| 线性走
+			shearXTarget = endSX * std::abs(pulseSX);
+			shearYTarget = endSY * std::abs(pulseSY);
 		}
 		else
 		{
 			// STATIC：没有波形，端点直接当固定斜率用（与 ScaleX/Y/Z 的静态口径一致）
-			shearXTarget = data->ShearXMax / 100.0;
-			shearYTarget = data->ShearYMax / 100.0;
+			shearXTarget = data->ShearXMax;
+			shearYTarget = data->ShearYMax;
 		}
 
 		// X 与 Y 同属横向，共用一个波形系数：波形只做「变宽 / 变窄」，不区分前后与左右

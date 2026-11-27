@@ -163,32 +163,28 @@ namespace SpringyVoxelSprite
 		int Height = 0;
 	};
 
-	/// @brief 按形变矩阵重采样一张精灵（缩放 + 剪切）
+	/// @brief 按缩放与剪切重采样一张精灵
 	/// @param src 引擎按原尺寸光栅化出来的精灵
-	/// @param tf 本帧的画布形变（缩放 + 剪切复合，见 SpringyTransform）
-	/// @param pivotY 剪切枢轴（贴图坐标里的一条水平线）：通常取这个单位所有部件里最低的那条边
+	/// @param scaleW,scaleH 位图缩放倍率
+	/// @param shearX 顶边相对底边的水平位移（像素，正 = 右移）
+	/// @param shearY 右边相对左边的垂直位移（像素，正 = 下移）
+	/// @param pivotY 剪切枢轴（贴图坐标里的一条水平线）：取这个单位所有部件里最低的那条边
 	/// @param box 这次贴图的目标表面与基准点，结果会被裁到表面以内
-	/// @return 变形后的精灵；格式不符或形变恰是恒等时返回 nullptr（调用方按原精灵画）
+	/// @return 变形后的精灵；格式不符或没有变形时返回 nullptr（调用方按原精灵画）
 	/// @note 最近邻**逆映射**：每个目标像素反解到源坐标取样。
 	///       逆映射不会让平行四边形里留洞（正射映射在放大时会漏格），
 	///       反解到源范围之外的像素写透明 —— 平行四边形四角的透明区就是这么来的。
-	///       枢轴是地面线：它不动，越往上偏移越大。绕贴图基准点（车身中心）做的话
-	///       上下两半会朝相反方向移，看上去就是整体旋转，不是「推」。
-	///       锚点按几何变换处理：把源包围盒整体过一遍矩阵、取外接矩形，
-	///       所以主体、炮塔、炮管共用同一条地面线时不会互相拉偏
-	inline VoxelCacheStruct* Transform(const VoxelCacheStruct* src, const SpringyTransform& tf,
+	///       剪切绕地面线做：底行不动、顶行正好位移 `shearX` 像素、中间按行数线性递增。
+	///       绕贴图基准点（车身中心）做的话上下两半反向移，看上去就是整体旋转，不是「推」。
+	inline VoxelCacheStruct* Transform(const VoxelCacheStruct* src,
+		double scaleW, double scaleH, double shearX, double shearY,
 		double pivotY, const TargetBox& box)
 	{
-		if (!src || !src->Buffer || src->Width == 0 || src->Height == 0 || tf.IsIdentity())
+		if (!src || !src->Buffer || src->Width == 0 || src->Height == 0)
 		{
 			return nullptr;
 		}
-
-		double ia = 1.0;
-		double ib = 0.0;
-		double ic = 0.0;
-		double id = 1.0;
-		if (!tf.Invert(ia, ib, ic, id))
+		if (scaleW == 1.0 && scaleH == 1.0 && shearX == 0.0 && shearY == 0.0)
 		{
 			return nullptr;
 		}
@@ -235,10 +231,23 @@ namespace SpringyVoxelSprite
 			return nullptr;
 		}
 
+		// 剪切要除以**源**尺寸：写 300 就是顶边位移 300 像素，缩放不会把它放大
+		SpringyTransform tf;
+		tf.SetFromPixels(scaleW, scaleH, shearX, shearY,
+			static_cast<double>(sourceWidth), static_cast<double>(h));
+
+		double ia = 1.0;
+		double ib = 0.0;
+		double ic = 0.0;
+		double id = 1.0;
+		if (!tf.Invert(ia, ib, ic, id))
+		{
+			return nullptr;
+		}
+
 		// 源精灵的像素 (px,py) 落在「基准点 + (X+px, Y+py)」，枢轴是基准点坐标里 y = pivotY
 		// 那条水平线。把源矩形换成**相对枢轴**的坐标再过矩阵：枢轴上的点位移恒为 0，
-		// 越往上偏移越大（这才是「从矩形推成平行四边形」）。取外接矩形后向外取整到像素边界：
-		// 内缩取整会让最后一行/列落出包围盒，宁可多一格
+		// 越往上偏移越大。取外接矩形后向外取整到像素边界：内缩取整会让最后一行/列落出包围盒
 		double bx = 0.0;
 		double by = 0.0;
 		double bw = 0.0;
@@ -297,11 +306,11 @@ namespace SpringyVoxelSprite
 		size_t offset = 0;
 		for (int y = cropTop; y < cropBottom; ++y)
 		{
-			// 目标像素相对基准点的坐标（像素左上角）；先换成相对枢轴，再反解回源
-			const double dy = static_cast<double>(anchorY + y) - pivotY;
+			// 目标像素中心相对基准点，再换成相对枢轴，最后反解回源坐标
+			const double dy = static_cast<double>(anchorY + y) + 0.5 - pivotY;
 			for (int x = cropLeft; x < cropRight; ++x)
 			{
-				const double dx = static_cast<double>(anchorX + x);
+				const double dx = static_cast<double>(anchorX + x) + 0.5;
 				const double fx = ia * dx + ib * dy - static_cast<double>(src->X);
 				const double fy = ic * dx + id * dy + pivotY - static_cast<double>(src->Y);
 				const int sx = static_cast<int>(std::floor(fx));
