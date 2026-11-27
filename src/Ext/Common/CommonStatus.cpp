@@ -2,6 +2,8 @@
 
 #include <Common/EventSystems/EventSystem.h>
 
+#include <Ext/Helper/Crush.h>
+
 GeneralData* General::_data = nullptr;
 
 CombatDamageData* CombatDamage::_data = nullptr;
@@ -19,4 +21,7 @@ void ClearCommonStatusCache(EventSystem* sender, Event e, void* args)
 	CombatDamage::ClearCache();
 	AudioVisual::ClearCache();
 	AIConfig::ClearCache();
+
+	// overlay 类型换局会重建，按指针缓存的 overlay CrushableLevel 必须一起失效
+	Crush::ClearOverlayLevelCache();
 }
