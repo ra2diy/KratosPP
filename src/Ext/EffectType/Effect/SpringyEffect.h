@@ -51,7 +51,10 @@ public:
 	/// @param shearY 垂直推的斜率（正 = 右侧下移），输出
 	void GetTransform(double& x, double& y, double& z, double& shearX, double& shearY);
 
-	/// @brief 只取本段这一帧的两个剪切斜率
+	/// @brief 本段的剪切参数单位（PX / PERCENT）
+	SpringyShearMode GetShearMode();
+
+	/// @brief 只取本段这一帧的两个剪切量
 	void GetShear(double& shearX, double& shearY);
 
 	/// @brief 本段配置的依附动画枢轴

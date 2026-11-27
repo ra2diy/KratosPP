@@ -1,4 +1,4 @@
-﻿#include <exception>
+#include <exception>
 #include <Windows.h>
 
 #include <AnimTypeClass.h>
@@ -422,10 +422,24 @@ DEFINE_HOOK(0x424CCA, AnimClass_InWhichLayer_FollowAttachOwner, 0x6)
 			TechnoClass* pOwner = nullptr;
 			if (CastToTechno(status->pAttachOwner, pOwner) && pOwner->IsAlive)
 			{
-				const Layer masterLayer = pOwner->LastLayer;
-				if (masterLayer > pThis->Type->Layer)
+				Layer want = pThis->Type->Layer;
+				// 挂在建筑上的动画：建筑本体与它同在 Ground 层，而 Ground 层每帧按 Y 排序，
+				// 动画的排序键常常落在本体之前 ⇒ 被本体盖住（NACNST 就是这种情况）。
+				// 抬到 Air 层即可：整层画在 Ground 之后，必定覆盖在本体之上。
+				// Flat=yes 的动画语义是「贴地、应被踩在上面」，保持原层不动。
+				if (pOwner->WhatAmI() == AbstractType::Building
+					&& !pThis->Type->Flat && want <= Layer::Ground)
 				{
-					R->EAX(masterLayer);
+					want = Layer::Air;
+				}
+				const Layer masterLayer = pOwner->LastLayer;
+				if (masterLayer > want)
+				{
+					want = masterLayer;
+				}
+				if (want != pThis->Type->Layer)
+				{
+					R->EAX(want);
 					return 0x424CD0;
 				}
 			}

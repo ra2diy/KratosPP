@@ -17,14 +17,15 @@ namespace SpringySHP
 	/// @param pOriginal 原始 SHP
 	/// @param scaleW,scaleH 位图缩放倍率
 	/// @param shearX 顶边相对底边的水平位移（像素，正 = 右移）
-	/// @param shearY 右边相对左边的垂直位移（像素，正 = 下移）
+	/// @param shearY 右边相对左边的垂直位移（像素或百分比，正 = 下移）
+	/// @param shearMode 剪切单位：PX = 像素，PERCENT = 整图高度/宽度的百分比
 	/// @param pivotX 形变枢轴 X（SHP 帧坐标）；usePivot 为 false 时忽略
 	/// @param pivotY 形变枢轴 Y；usePivot 为 false 时忽略
 	/// @param usePivot true = 绕给定枢轴变形（贴身特效跟着单位走），
 	///                 false = 自身底边中点变形（独立特效原地变大小 / 倾斜）
 	/// @return 变形后的 SHP；形变是恒等或构建失败时返回原 SHP
 	SHPStruct* GetTransformed(SHPStruct* pOriginal,
-		double scaleW, double scaleH, double shearX, double shearY,
+		double scaleW, double scaleH, double shearX, double shearY, SpringyShearMode shearMode,
 		int pivotX, int pivotY, bool usePivot);
 
 	/// @brief 清空缓存并释放全部自造 SHP

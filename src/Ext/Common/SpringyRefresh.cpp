@@ -25,7 +25,7 @@ namespace
 		double scaleW = 1.0;
 		double scaleH = 1.0;
 		SpringyHelper::GetRenderScales(snap, scaleW, scaleH);
-		return SpringyHelper::InflateDirtyRect(rect, scaleW, scaleH, snap.ShearX, snap.ShearY);
+		return SpringyHelper::InflateDirtyRect(rect, scaleW, scaleH, snap.ShearX, snap.ShearY, snap.ShearMode);
 	}
 	/// @brief 建筑自己会画的东西：本体帧号与所有覆盖动画的当前帧
 	/// @param pObject 目标对象

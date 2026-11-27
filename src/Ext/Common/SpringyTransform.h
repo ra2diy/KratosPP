@@ -3,6 +3,16 @@
 #include <cmath>
 #include <algorithm>
 
+/// @brief 剪切参数的单位
+/// @note PX = 像素：写 300 就是顶边整条右移 300 像素（与图片大小无关）；
+///       PERCENT = 百分比：写 100 就是顶边右移到「整单位高度」那么远（约 45°，同样与图片大小无关）
+enum class SpringyShearMode : int
+{
+	PX = 0,
+	PERCENT = 1
+};
+
+
 /// @brief 二维绘制变换：缩放 + 剪切（矩形 → 平行四边形）。
 ///
 /// 剪切的**参数是像素**：`shearX` = 顶边相对底边的水平位移（缩放后的像素），

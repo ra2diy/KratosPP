@@ -103,7 +103,9 @@ namespace SpringyHelper
 		const auto qShear = [](double v) -> long long {
 			return std::clamp<long long>(static_cast<long long>(std::lround(v * 4.0)) + 0x8000, 0, 0xFFFF);
 		};
-		return (qScale(scaleW) << 48) ^ (qScale(scaleH) << 32) ^ (qShear(snap.ShearX) << 16) ^ qShear(snap.ShearY);
+		// 单位也入键：同样的数值在 PX / PERCENT 下形状完全不同
+		const long long modeTag = snap.ShearMode == SpringyShearMode::PERCENT ? 0x5A5A5A5A5A5A5A5ALL : 0LL;
+		return ((qScale(scaleW) << 48) ^ (qScale(scaleH) << 32) ^ (qShear(snap.ShearX) << 16) ^ qShear(snap.ShearY)) ^ modeTag;
 	}
 
 	/// @brief 两个矩形取并集
@@ -124,10 +126,17 @@ namespace SpringyHelper
 	///       剪切按方向补：顶边往右推就补右边、往左推就补左边，不能四周等量补，
 	///       否则推出去的那一边会留下一圈像素
 	inline RectangleStruct InflateDirtyRect(const RectangleStruct& rect,
-		double scaleW, double scaleH, double shearX, double shearY)
+		double scaleW, double scaleH, double shearX, double shearY, SpringyShearMode shearMode)
 	{
 		const int w = std::max(rect.Width, 1);
 		const int h = std::max(rect.Height, 1);
+
+		// 百分比模式：按渲染尺寸换算成像素，才谈得上「外扩多少像素」
+		if (shearMode == SpringyShearMode::PERCENT)
+		{
+			shearX = shearX * static_cast<double>(h) / 100.0;
+			shearY = shearY * static_cast<double>(w) / 100.0;
+		}
 
 		const double overW = std::max(0.0, (w * std::max(scaleW, 1.0) - w) * 0.5);
 		const double overH = std::max(0.0, h * std::max(scaleH, 1.0) - h);

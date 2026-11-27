@@ -132,6 +132,7 @@ void SpringyAnim::BeginDraw(AnimClass* pAnim)
 	Context.ScaleH = scaleH;
 	Context.ShearX = snap->ShearX;
 	Context.ShearY = snap->ShearY;
+	Context.ShearMode = snap->ShearMode;
 
 	if (snap->AnimPivot == SpringyAnimPivot::OWNER)
 	{
@@ -175,5 +176,5 @@ SHPStruct* SpringyAnim::SubstituteSHP(SHPStruct* pOriginal)
 		}
 	}
 	return SpringySHP::GetTransformed(pOriginal, Context.ScaleW, Context.ScaleH,
-		Context.ShearX, Context.ShearY, Context.PivotX, Context.PivotY, usePivot);
+		Context.ShearX, Context.ShearY, Context.ShearMode, Context.PivotX, Context.PivotY, usePivot);
 }

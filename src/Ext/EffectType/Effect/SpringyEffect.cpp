@@ -232,6 +232,11 @@ void SpringyEffect::GetShear(double& shearX, double& shearY)
 	GetTransform(x, y, z, shearX, shearY);
 }
 
+SpringyShearMode SpringyEffect::GetShearMode()
+{
+	return Data->ShearMode;
+}
+
 SpringyAnimPivot SpringyEffect::GetAnimPivot()
 {
 	return Data->AnimPivot;

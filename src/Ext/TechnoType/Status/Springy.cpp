@@ -50,9 +50,10 @@ void TechnoStatus::OnUpdate_Springy()
 	SpringyAnimPivot pivot = SpringyAnimPivot::ANIM;
 	double shearX = 0.0;
 	double shearY = 0.0;
+	SpringyShearMode shearMode = SpringyShearMode::PX;
 
 	// 主身视角：计入 AffectWho 为 MASTER / ALL 的段
-	if (hasOwn && ownSpringy->GetGeometry(x, y, z, shearX, shearY, AffectWho::MASTER))
+	if (hasOwn && ownSpringy->GetGeometry(x, y, z, shearX, shearY, shearMode, AffectWho::MASTER))
 	{
 		counted = true;
 		pivot = ownSpringy->GetAnimPivot();
@@ -66,7 +67,8 @@ void TechnoStatus::OnUpdate_Springy()
 		double mz = 1.0;
 		double msx = 0.0;
 		double msy = 0.0;
-		if (masterSpringy->GetGeometry(mx, my, mz, msx, msy, AffectWho::STAND))
+		SpringyShearMode mshearMode = SpringyShearMode::PX;
+		if (masterSpringy->GetGeometry(mx, my, mz, msx, msy, mshearMode, AffectWho::STAND))
 		{
 			x *= mx;
 			y *= my;
@@ -74,6 +76,7 @@ void TechnoStatus::OnUpdate_Springy()
 			counted = true;
 			shearX += msx;
 			shearY += msy;
+			shearMode = mshearMode;
 		}
 		// 枢轴一律按母体的设置：替身是母体的一部分，跟着母体的口径走。
 		// 母体自己可能没生效（只挂 STAND 段），此时直接问母体的段表
@@ -103,6 +106,7 @@ void TechnoStatus::OnUpdate_Springy()
 	MySpringyData.ScaleZ = z;
 	MySpringyData.ShearX = shearX;
 	MySpringyData.ShearY = shearY;
+	MySpringyData.ShearMode = shearMode;
 	MySpringyData.AnimPivot = pivot;
 	MySpringyData.Active = true;
 	// 记下这一份：AE 撤除当帧倍率就回到 1.0，届时补脏区要按撤除前的尺寸算

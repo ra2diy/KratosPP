@@ -52,7 +52,8 @@ void SpringyState::RemoveSegment(SpringyEffect* segment)
 	}
 }
 
-bool SpringyState::GetGeometry(double& x, double& y, double& z, double& shearX, double& shearY, AffectWho viewer)
+bool SpringyState::GetGeometry(double& x, double& y, double& z, double& shearX, double& shearY,
+	SpringyShearMode& shearMode, AffectWho viewer)
 {
 	x = 1.0;
 	y = 1.0;
@@ -85,6 +86,8 @@ bool SpringyState::GetGeometry(double& x, double& y, double& z, double& shearX, 
 		// 剪切是像素位移：多条段在屏幕上叠加，直接相加
 		shearX += kx;
 		shearY += ky;
+		// 多条段目前只支持同一种单位；取最后一条贡献剪切的段
+		shearMode = segment->GetShearMode();
 		any = true;
 	}
 	return any;

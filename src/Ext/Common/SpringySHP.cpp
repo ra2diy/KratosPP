@@ -29,7 +29,7 @@ namespace
 	// 倍率按 1/1000、剪切按 1/4 像素量化，保持全整数比较：
 	// 不同 AE 参数但结果相同的会共享同一份，结果不同的不会撞键拿到别人的帧。
 	// 波形是 8 档正弦表，所以每张 SHP 稳态只会落 8 个键，条目数有界
-	using CacheKey = std::tuple<SHPStruct*, int, int, int, int, int, int, bool>;
+	using CacheKey = std::tuple<SHPStruct*, int, int, int, int, int, int, int, bool>;
 
 	std::map<CacheKey, SHPStruct*> Cache{};
 
@@ -122,7 +122,8 @@ namespace
 	///       所以可以变大；文件级 Width/Height 保持原值（引擎按它算锚点，改了会整体漂移）。
 	///       采样用逆映射：平行四边形四角落在源范围之外，写透明
 	SHPStruct* BuildTransformed(SHPStruct* pOriginal, double scaleW, double scaleH,
-		double shearX, double shearY, int pivotX, int pivotY, bool usePivot)
+		double shearX, double shearY, SpringyShearMode shearMode,
+		int pivotX, int pivotY, bool usePivot)
 	{
 		const auto pFile = pOriginal->GetData();
 		if (!pFile)
@@ -158,9 +159,18 @@ namespace
 			const double px0 = usePivot ? static_cast<double>(pivotX) : (static_cast<double>(left) + w / 2.0);
 			const double py0 = usePivot ? static_cast<double>(pivotY) : (static_cast<double>(top) + h - 0.5);
 
+			// 百分比模式：数值是「整图高度/宽度的百分之几」，先换算成像素
+			double shX = shearX;
+			double shY = shearY;
+			if (shearMode == SpringyShearMode::PERCENT)
+			{
+				shX = shearX * static_cast<double>(h - 1) / 100.0;
+				shY = shearY * static_cast<double>(w - 1) / 100.0;
+			}
+
 			// 剪切要除以**这一帧**的尺寸：写 300 就是顶边位移 300 像素，缩放不会把它放大
 			SpringyTransform tf;
-			tf.SetFromPixels(scaleW, scaleH, shearX, shearY,
+			tf.SetFromPixels(scaleW, scaleH, shX, shY,
 				static_cast<double>(w), static_cast<double>(h));
 
 			double ia = 1.0;
@@ -271,7 +281,7 @@ namespace
 
 
 SHPStruct* SpringySHP::GetTransformed(SHPStruct* pOriginal,
-	double scaleW, double scaleH, double shearX, double shearY,
+	double scaleW, double scaleH, double shearX, double shearY, SpringyShearMode shearMode,
 	int pivotX, int pivotY, bool usePivot)
 {
 	if (!pOriginal)
@@ -287,14 +297,14 @@ SHPStruct* SpringySHP::GetTransformed(SHPStruct* pOriginal,
 	const auto qScale = [](double v) { return static_cast<int>(std::lround(v * 1000.0)); };
 	const auto qShear = [](double v) { return static_cast<int>(std::lround(v * 4.0)); };
 	const CacheKey key{ pOriginal, qScale(scaleW), qScale(scaleH),
-		qShear(shearX), qShear(shearY), pivotX, pivotY, usePivot };
+		qShear(shearX), qShear(shearY), static_cast<int>(shearMode), pivotX, pivotY, usePivot };
 	auto it = Cache.find(key);
 	if (it != Cache.end())
 	{
 		return it->second;
 	}
 
-	SHPStruct* pScaled = BuildTransformed(pOriginal, scaleW, scaleH, shearX, shearY,
+	SHPStruct* pScaled = BuildTransformed(pOriginal, scaleW, scaleH, shearX, shearY, shearMode,
 		pivotX, pivotY, usePivot);
 	// 失败不入缓存：缓存了空指针会让这张 SHP 永久失效，
 	// 连「资源稍后才加载好」这种正常情况也救不回来

@@ -168,6 +168,7 @@ namespace SpringyVoxelSprite
 	/// @param scaleW,scaleH 位图缩放倍率
 	/// @param shearX 顶边相对底边的水平位移（像素，正 = 右移）
 	/// @param shearY 右边相对左边的垂直位移（像素，正 = 下移）
+	/// @param shearMode 剪切单位：PX = 像素，PERCENT = 整单位高度/宽度的百分比
 	/// @param spanRows,spanCols 整个单位的跨度（行/列中心距）：主体、炮塔、炮管必须共用它当斜率除数
 	/// @param pivotY 剪切枢轴（贴图坐标里的一条水平线）：取这个单位所有部件里最低的那条边
 	/// @param box 这次贴图的目标表面与基准点，结果会被裁到表面以内
@@ -178,13 +179,20 @@ namespace SpringyVoxelSprite
 	///       剪切绕地面线做：底行不动、顶行正好位移 `shearX` 像素、中间按行数线性递增。
 	///       绕贴图基准点（车身中心）做的话上下两半反向移，看上去就是整体旋转，不是「推」。
 	inline VoxelCacheStruct* Transform(const VoxelCacheStruct* src,
-		double scaleW, double scaleH, double shearX, double shearY,
+		double scaleW, double scaleH, double shearX, double shearY, SpringyShearMode shearMode,
 		double spanRows, double spanCols, double pivotY, const TargetBox& box)
 	{
 		if (!src || !src->Buffer || src->Width == 0 || src->Height == 0)
 		{
 			return nullptr;
 		}
+		// 百分比模式：数值是「整单位高度/宽度的百分之几」，先换算成像素
+		if (shearMode == SpringyShearMode::PERCENT)
+		{
+			shearX = shearX * spanRows / 100.0;
+			shearY = shearY * spanCols / 100.0;
+		}
+
 		if (scaleW == 1.0 && scaleH == 1.0 && shearX == 0.0 && shearY == 0.0)
 		{
 			return nullptr;

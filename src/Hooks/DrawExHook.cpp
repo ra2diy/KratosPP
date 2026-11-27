@@ -268,7 +268,7 @@ DEFINE_HOOK(0x707480, TechnoClass_BlitVoxelSprite_Springy, 0x5)
 	}
 
 	VoxelCacheStruct* pScaled = SpringyVoxelSprite::Transform(pSprite, scaleW, scaleH,
-		status->MySpringyData.ShearX, status->MySpringyData.ShearY,
+		status->MySpringyData.ShearX, status->MySpringyData.ShearY, status->MySpringyData.ShearMode,
 		spanRows, spanCols, pivotY, box);
 	if (!pScaled)
 	{
@@ -323,7 +323,7 @@ DEFINE_HOOK(0x705E00, TechnoClass_DrawObject_Springy, 0x7)
 	SpringyHelper::GetRenderScales(status->MySpringyData, scaleW, scaleH);
 
 	if (SHPStruct* pScaled = SpringySHP::GetTransformed(pSHP, scaleW, scaleH,
-		status->MySpringyData.ShearX, status->MySpringyData.ShearY, 0, 0, false))
+		status->MySpringyData.ShearX, status->MySpringyData.ShearY, status->MySpringyData.ShearMode, 0, 0, false))
 	{
 		R->Stack<SHPStruct*>(0x4, pScaled);
 	}

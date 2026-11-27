@@ -39,6 +39,25 @@ inline bool Parser<SpringyMode>::TryParse(const char* pValue, SpringyMode* outVa
 }
 
 
+template <>
+inline bool Parser<SpringyShearMode>::TryParse(const char* pValue, SpringyShearMode* outValue)
+{
+	const char* p = pValue;
+	while (*p == ' ' || *p == '\t')
+	{
+		++p;
+	}
+	const char first = static_cast<char>(toupper(static_cast<unsigned char>(*p)));
+	// PX / PERCENT 都以 P 开头，看第二个字符区分；也接受 % / PCT
+	const char second = static_cast<char>(toupper(static_cast<unsigned char>(p[0] ? p[1] : '\0')));
+	const bool percent = first == '%' || (first == 'P' && (second == 'E' || second == 'C'));
+	if (outValue)
+	{
+		*outValue = percent ? SpringyShearMode::PERCENT : SpringyShearMode::PX;
+	}
+	return true;
+}
+
 enum class SpringyAnimPivot : int
 {
 	ANIM = 0,  // 依附动画以自身帧的底边为枢轴缩放（独立特效不跟着单位上移）
@@ -100,10 +119,10 @@ public:
 	// WAVE 模式：波形的四个端点，按半周分别取用。100 = 原尺寸，120 = 放大两成，80 = 缩到八成。
 	// 正半周取「宽峰 + 矮谷」，负半周取「窄谷 + 高峰」，pulse 过零时两端都精确回到 100。
 	// 这样写的每个值就是屏幕上量到的那个尺寸，不再是「在 100 上加多少」
-	int WidthMax = 120;  // 宽峰，脉冲为正那一侧的横向极值
-	int WidthMin = 80;   // 宽谷，脉冲为负那一侧的横向极值
-	int HeightMax = 140; // 高峰，脉冲为负那一侧的纵向极值
-	int HeightMin = 60;  // 高谷，脉冲为正那一侧的纵向极值
+	int WidthMax = 100;  // 宽峰，脉冲为正那一侧的横向极值
+	int WidthMin = 100;   // 宽谷，脉冲为负那一侧的横向极值
+	int HeightMax = 100; // 高峰，脉冲为负那一侧的纵向极值
+	int HeightMin = 100;  // 高谷，脉冲为正那一侧的纵向极值
 
 	// WAVE 模式：两个轴各自的相位起点，每档 90°（0~3）。
 	// 两轴默认同相：横向在宽峰时纵向正在矮谷（宽扁 ↔ 窄高）。
@@ -117,6 +136,8 @@ public:
 	// 正 ShearX = 顶边右移，正 ShearY = 右边下移。
 	// 全 0 = 不变形（与只有缩放的旧配置完全一致）；配合 WAVE 时同一波形同时驱动缩放与剪切，
 	// 所以「一边胀缩一边推拉」不用额外开关，想纯推拉就把 Width/Height 端点都写 100
+	// 剪切参数的单位：PX = 像素（默认），PERCENT = 整单位高度/宽度的百分比
+	SpringyShearMode ShearMode = SpringyShearMode::PX;
 	int ShearXMax = 0;
 	int ShearXMin = 0;
 	int ShearYMax = 0;
@@ -168,6 +189,7 @@ public:
 		WidthPhase = ((WidthPhase % 4) + 4) % 4;
 		HeightPhase = ((HeightPhase % 4) + 4) % 4;
 
+		ShearMode = reader->Get(title + "ShearMode", ShearMode);
 		ShearXMax = reader->Get(title + "ShearXMax", ShearXMax);
 		ShearXMin = reader->Get(title + "ShearXMin", ShearXMin);
 		ShearYMax = reader->Get(title + "ShearYMax", ShearYMax);
@@ -228,6 +250,7 @@ public:
 			.Process(this->ShearYMin)
 			.Process(this->ShearXPhase)
 			.Process(this->ShearYPhase)
+			.Process(this->ShearMode)
 			.Success();
 	};
 
@@ -272,6 +295,7 @@ struct SpringySnapshot
 	// 位图口径 —— 主体 / 炮塔 / 炮管 / 影子 / 依附动画都读它，三条链路形状一致。
 	// 存像素而不是斜率：斜率要除以精灵尺寸，而尺寸只有到贴图那一刻才知道
 	double ShearX = 0.0;
+	SpringyShearMode ShearMode = SpringyShearMode::PX;
 	double ShearY = 0.0;
 
 	SpringyAnimPivot AnimPivot = SpringyAnimPivot::ANIM;

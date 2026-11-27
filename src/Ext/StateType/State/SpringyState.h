@@ -46,11 +46,13 @@ public:
 	/// @param z 纵向（对应 FLH 的 H）倍率，输出
 	/// @param shearX 顶边相对底边的水平位移（像素），输出；多条段相加
 	/// @param shearY 右边相对左边的垂直位移（像素），输出
+	/// @param shearMode 剪切量的单位（取最后一条贡献了剪切的段），输出
 	/// @param viewer 从谁的视角取：MASTER 计入 AffectWho 为 MASTER/ALL 的段，
 	///               STAND 计入 AffectWho 为 STAND/ALL 的段
 	/// @return 是否至少计入了一个段
 	/// @note 没有符合条件的段时倍率都是 1.0、剪切都是 0
-	bool GetGeometry(double& x, double& y, double& z, double& shearX, double& shearY, AffectWho viewer);
+	bool GetGeometry(double& x, double& y, double& z, double& shearX, double& shearY,
+		SpringyShearMode& shearMode, AffectWho viewer);
 	/// @brief 依附动画的缩放枢轴设置：取最后挂上的那条段
 	/// @return 表空时返回 ANIM（动画自身底边）
 	SpringyAnimPivot GetAnimPivot();

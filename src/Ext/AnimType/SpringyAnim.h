@@ -26,6 +26,7 @@ namespace SpringyAnim
 		double ScaleH = 1.0;
 		double ShearX = 0.0;
 		double ShearY = 0.0;
+		SpringyShearMode ShearMode = SpringyShearMode::PX;
 
 		// 形变枢轴（SHP 帧坐标）。UsePivot 为 false 时绕自身帧底边中点变形
 		bool UsePivot = false;
