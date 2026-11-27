@@ -19,6 +19,8 @@ namespace SpringySHP
 	/// @param shearX 顶边相对底边的水平位移（像素，正 = 右移）
 	/// @param shearY 右边相对左边的垂直位移（像素或百分比，正 = 下移）
 	/// @param shearMode 剪切单位：PX = 像素，PERCENT = 整图高度/宽度的百分比
+	/// @param inPlace true = 保持原帧矩形（只换像素、超出裁掉）。建筑本体与建筑动画画进的是
+	///        建筑自己的缓存画布，换更大的帧会越过缓存边界写坏邻行，必须用这个模式
 	/// @param pivotX 形变枢轴 X（SHP 帧坐标）；usePivot 为 false 时忽略
 	/// @param pivotY 形变枢轴 Y；usePivot 为 false 时忽略
 	/// @param usePivot true = 绕给定枢轴变形（贴身特效跟着单位走），
@@ -26,7 +28,7 @@ namespace SpringySHP
 	/// @return 变形后的 SHP；形变是恒等或构建失败时返回原 SHP
 	SHPStruct* GetTransformed(SHPStruct* pOriginal,
 		double scaleW, double scaleH, double shearX, double shearY, SpringyShearMode shearMode,
-		int pivotX, int pivotY, bool usePivot);
+		int pivotX, int pivotY, bool usePivot, bool inPlace = false);
 
 	/// @brief 清空缓存并释放全部自造 SHP
 	/// @note 只能在确认没有任何对象还持有这些指针时调用（场景开始 / 结束）

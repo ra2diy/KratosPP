@@ -133,6 +133,7 @@ void SpringyAnim::BeginDraw(AnimClass* pAnim)
 	Context.ShearX = snap->ShearX;
 	Context.ShearY = snap->ShearY;
 	Context.ShearMode = snap->ShearMode;
+	Context.IsBuildingAnim = pAnim->IsBuildingAnim;
 
 	if (snap->AnimPivot == SpringyAnimPivot::OWNER)
 	{
@@ -176,5 +177,8 @@ SHPStruct* SpringyAnim::SubstituteSHP(SHPStruct* pOriginal)
 		}
 	}
 	return SpringySHP::GetTransformed(pOriginal, Context.ScaleW, Context.ScaleH,
-		Context.ShearX, Context.ShearY, Context.ShearMode, Context.PivotX, Context.PivotY, usePivot);
+		Context.ShearX, Context.ShearY, Context.ShearMode, Context.PivotX, Context.PivotY, usePivot,
+		// 建筑动画和本体一样画进建筑缓存画布（上游确认：动画本身每帧现画，但建筑那条是缓存），
+		// 换更大的帧会越过缓存边界，所以原地换像素
+		Context.IsBuildingAnim);
 }
