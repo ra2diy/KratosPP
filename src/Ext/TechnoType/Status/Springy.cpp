@@ -1,4 +1,4 @@
-﻿#include "../TechnoStatus.h"
+#include "../TechnoStatus.h"
 
 #include <Drawing.h>
 #include <Matrix3D.h>
@@ -42,12 +42,15 @@ void TechnoStatus::OnUpdate_Springy()
 	double z = 1.0;
 	bool counted = false;
 	SpringyAnimPivot pivot = SpringyAnimPivot::ANIM;
+	// 画布形变（缩放 + 剪切）按同样的段顺序复合：自身段在内层、母体段在外层
+	SpringyTransform matrix;
 
 	// 主身视角：计入 AffectWho 为 MASTER / ALL 的段
 	if (hasOwn && ownSpringy->GetScale(x, y, z, AffectWho::MASTER))
 	{
 		counted = true;
 		pivot = ownSpringy->GetAnimPivot();
+		ownSpringy->ComposeTransform(matrix, AffectWho::MASTER);
 	}
 
 	// 替身视角：再并入母体上 AffectWho 为 STAND / ALL 的段
@@ -62,6 +65,7 @@ void TechnoStatus::OnUpdate_Springy()
 			y *= my;
 			z *= mz;
 			counted = true;
+			masterSpringy->ComposeTransform(matrix, AffectWho::STAND);
 		}
 		// 枢轴一律按母体的设置：替身是母体的一部分，跟着母体的口径走。
 		// 母体自己可能没生效（只挂 STAND 段），此时直接问母体的段表
@@ -83,6 +87,7 @@ void TechnoStatus::OnUpdate_Springy()
 	MySpringyData.ScaleX = x;
 	MySpringyData.ScaleY = y;
 	MySpringyData.ScaleZ = z;
+	MySpringyData.Matrix = matrix;
 	MySpringyData.AnimPivot = pivot;
 	MySpringyData.Active = true;
 	// 记下这一份：AE 撤除当帧倍率就回到 1.0，届时补脏区要按撤除前的尺寸算

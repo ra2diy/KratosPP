@@ -47,56 +47,66 @@ namespace SpringyHelper
 		};
 	}
 
-	/// @brief 把快照换算成 SHP 位图的放大倍率
-	/// @note SHP 是二维位图，只有水平与垂直两个方向，而倍率有三个。横向取 X 与 Y 的平均：
-	///       两者在屏幕上都落成水平投影，这样 ScaleX=2/ScaleY=1 与反过来效果相同。
-	///       纵向取 Z
-	inline void GetRenderScales(const SpringySnapshot& snap, double& scaleW, double& scaleH)
+	/// @brief 取本帧的画布形变（缩放 + 剪切复合后的矩阵）
+	/// @note 三条绘制链路（VXL 贴图点 / SHP 重采样 / 依附动画）都读它，
+	///       所以主体、炮塔、炮管、影子、动画的形变必然一致
+	inline const SpringyTransform& GetTransform(const SpringySnapshot& snap)
 	{
-		scaleW = (snap.ScaleX + snap.ScaleY) * 0.5;
-		scaleH = snap.ScaleZ;
+		return snap.Matrix;
 	}
 
 	/// @brief 把快照压成一个可比较的整数键，用于判断「这一帧的画面是否变了」
-	/// @note 只做相等比较，不参与任何计算
+	/// @note 只做相等比较，不参与任何计算。键里必须含剪切：
+	///       纯剪切（倍率都是 1）时如果只比倍率，脏区判定会认为画面没变、不重绘
 	inline long long RenderKey(const SpringySnapshot& snap)
 	{
 		if (!snap.Active)
 		{
 			return 0;
 		}
-		const long long x = static_cast<long long>(std::lround(snap.ScaleX * 1000.0));
-		const long long y = static_cast<long long>(std::lround(snap.ScaleY * 1000.0));
-		const long long z = static_cast<long long>(std::lround(snap.ScaleZ * 1000.0));
-		// 三个千分位整数各占 21 位，互不重叠；倍率上限 10 倍 = 10000，远小于 2^21
-		return (x << 42) ^ (y << 21) ^ z;
+		return snap.Matrix.Key();
 	}
 
-	/// @brief 脏矩形按最坏幅度外扩，保证残影被擦掉
+	/// @brief 两个矩形取并集
+	inline RectangleStruct UnionRect(const RectangleStruct& a, const RectangleStruct& b)
+	{
+		const int x0 = std::min(a.X, b.X);
+		const int y0 = std::min(a.Y, b.Y);
+		const int x1 = std::max(a.X + a.Width, b.X + b.Width);
+		const int y1 = std::max(a.Y + a.Height, b.Y + b.Height);
+		return RectangleStruct{ x0, y0, x1 - x0, y1 - y0 };
+	}
+
+	/// @brief 脏矩形按形变后的包围盒外扩，保证残影被擦掉
 	/// @param rect 引擎报上来的渲染矩形
-	/// @param widenPercent 横向最多超出原宽度的百分比（本效果按倍率算，可为 100 以上）
-	/// @param stretchPercent 纵向最多超出原高度的百分比
-	/// @note 公式照搬参考实现：横向每侧 = 宽度 × 变宽幅度的一半 + 8，
-	///       纵向向上 = 高度 × 增高幅度 + 横向扩量（等轴投影下的泄漏）+ 8。
-	///       只有下界钳位：参考实现的 90 上限是给「振幅参数」用的，
-	///       这里传进来的是真实超出量，放大 3 倍就是 200%，截到 90 会留残影
-	inline RectangleStruct InflateDirtyRect(const RectangleStruct& rect,
-		int widenPercent, int stretchPercent)
+	/// @param tf 本帧（或上一次绘制时）的画布形变
+	/// @note 形变后的图形是平行四边形，取它的外接矩形；四个方向各自补齐 ——
+	///       剪切会把图形整体推到一侧（例如正 ShearX 时顶部右移、右边多出一块），
+	///       只按「四周等量外扩」补会漏掉推出去的那一边
+	inline RectangleStruct InflateDirtyRect(const RectangleStruct& rect, const SpringyTransform& tf)
 	{
 		const int w = std::max(rect.Width, 1);
 		const int h = std::max(rect.Height, 1);
-		const int widen = std::max(widenPercent, 0);
-		const int stretch = std::max(stretchPercent, 0);
 
-		const int mx = w * widen / 200 + 8;
-		const int myTop = h * stretch / 100 + mx + 8;
-		const int myBottom = mx;
+		double ox = 0.0;
+		double oy = 0.0;
+		double ow = 0.0;
+		double oh = 0.0;
+		tf.MapRect(0.0, 0.0, static_cast<double>(w), static_cast<double>(h), ox, oy, ow, oh);
+
+		const int left = std::max(0, static_cast<int>(std::floor(-ox)));
+		const int top = std::max(0, static_cast<int>(std::floor(-oy)));
+		const int right = std::max(0, static_cast<int>(std::ceil(ox + ow - static_cast<double>(w))));
+		const int bottom = std::max(0, static_cast<int>(std::ceil(oy + oh - static_cast<double>(h))));
+
+		// 定值余量：像素取整、等轴投影下的泄漏、引擎自身的脏区粒度
+		const int pad = 8;
 
 		return RectangleStruct{
-			rect.X - mx,
-			rect.Y - myTop,
-			w + mx * 2,
-			h + myTop + myBottom
+			rect.X - left - pad,
+			rect.Y - top - pad,
+			w + left + right + pad * 2,
+			h + top + bottom + pad * 2
 		};
 	}
 }

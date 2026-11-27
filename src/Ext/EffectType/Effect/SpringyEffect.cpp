@@ -1,4 +1,4 @@
-﻿#include "SpringyEffect.h"
+#include "SpringyEffect.h"
 
 #include <algorithm>
 #include <cmath>
@@ -41,22 +41,28 @@ namespace
 		return Table[std::clamp(step, 0, Steps - 1)];
 	}
 
-	/// @brief 按给定相位与过渡进度求一组倍率
+	/// @brief 按给定相位与过渡进度求一组倍率与剪切
 	/// @param data 段配置
 	/// @param waveStep 波形相位档（只有 WAVE 模式用得到）
 	/// @param progress 过渡进度：0 = 完全原样，1 = 完全到位
 	/// @param x,y,z 输出的三个轴倍率
+	/// @param shearX,shearY 输出的两个方向剪切（0 = 不推）
+	/// @note 剪切与缩放共用同一条脉冲：正半周走 Max 端、负半周走 Min 端。
+	///       端点是带符号的斜率，所以 Max=+30 / Min=-30 就是一左一右往复
 	void Evaluate(const SpringyData* data, int waveStep, double progress,
-		double& x, double& y, double& z)
+		double& x, double& y, double& z, double& shearX, double& shearY)
 	{
+		const int quarter = Steps / 4;
+
 		double waveX = 1.0;
 		double waveZ = 1.0;
+		double shearXTarget = 0.0;
+		double shearYTarget = 0.0;
 		if (data->Mode == SpringyMode::WAVE)
 		{
 			// 两个轴各自取相位：相位每加一档就是把采样点往前挪 90°（Steps/4 步）。
 			// 默认两轴同相 → 横向正半周取宽峰时纵向正处在矮谷（宽扁 / 窄高）；
 			// 纵向相位 +2（即 180°）让两个轴同时到达各自的「大」端 → 同步放大
-			const int quarter = Steps / 4;
 			const double pulseW = WavePulse((waveStep + data->WidthPhase * quarter) % Steps);
 			const double pulseH = WavePulse((waveStep + data->HeightPhase * quarter) % Steps);
 
@@ -67,6 +73,20 @@ namespace
 			const double heightPct = pulseH >= 0.0 ? data->HeightMin : data->HeightMax;
 			waveX = 1.0 + (widthPct - 100.0) / 100.0 * std::abs(pulseW);
 			waveZ = 1.0 + (heightPct - 100.0) / 100.0 * std::abs(pulseH);
+
+			// 剪切的相位独立（默认两轴同相，一左一右同步推）
+			const double pulseSX = WavePulse((waveStep + data->ShearXPhase * quarter) % Steps);
+			const double pulseSY = WavePulse((waveStep + data->ShearYPhase * quarter) % Steps);
+			const double endSX = pulseSX >= 0.0 ? data->ShearXMax : data->ShearXMin;
+			const double endSY = pulseSY >= 0.0 ? data->ShearYMax : data->ShearYMin;
+			shearXTarget = endSX / 100.0 * std::abs(pulseSX);
+			shearYTarget = endSY / 100.0 * std::abs(pulseSY);
+		}
+		else
+		{
+			// STATIC：没有波形，端点直接当固定斜率用（与 ScaleX/Y/Z 的静态口径一致）
+			shearXTarget = data->ShearXMax / 100.0;
+			shearYTarget = data->ShearYMax / 100.0;
 		}
 
 		// X 与 Y 同属横向，共用一个波形系数：波形只做「变宽 / 变窄」，不区分前后与左右
@@ -78,6 +98,9 @@ namespace
 		x = 1.0 + (targetX - 1.0) * progress;
 		y = 1.0 + (targetY - 1.0) * progress;
 		z = 1.0 + (targetZ - 1.0) * progress;
+		// 剪切从 0 长到目标斜率：过渡结束时正好是配置值
+		shearX = shearXTarget * progress;
+		shearY = shearYTarget * progress;
 	}
 }
 
@@ -189,8 +212,23 @@ double SpringyEffect::Progress()
 
 void SpringyEffect::GetScale(double& x, double& y, double& z)
 {
+	double shearX = 0.0;
+	double shearY = 0.0;
+	GetTransform(x, y, z, shearX, shearY);
+}
+
+void SpringyEffect::GetTransform(double& x, double& y, double& z, double& shearX, double& shearY)
+{
 	const SpringyData* data = Data;
-	Evaluate(data, WaveStep(data->Rate), Progress(), x, y, z);
+	Evaluate(data, WaveStep(data->Rate), Progress(), x, y, z, shearX, shearY);
+}
+
+void SpringyEffect::GetShear(double& shearX, double& shearY)
+{
+	double x = 1.0;
+	double y = 1.0;
+	double z = 1.0;
+	GetTransform(x, y, z, shearX, shearY);
 }
 
 SpringyAnimPivot SpringyEffect::GetAnimPivot()

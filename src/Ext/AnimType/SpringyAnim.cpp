@@ -124,10 +124,8 @@ void SpringyAnim::BeginDraw(AnimClass* pAnim)
 	}
 
 	Context.Active = true;
-	// SHP 是二维位图：横向只取一个因子。X 与 Y 在屏幕上都是水平方向的投影，
-	// 取平均后 ScaleX=2/ScaleY=1 与 ScaleX=1/ScaleY=2 效果相同
-	Context.ScaleW = (snap->ScaleX + snap->ScaleY) * 0.5;
-	Context.ScaleH = snap->ScaleZ;
+	// 直接用单位的画布形变矩阵：主体怎么缩放 / 剪切，它身上的动画就怎么变
+	Context.Transform = snap->Matrix;
 
 	if (snap->AnimPivot == SpringyAnimPivot::OWNER)
 	{
@@ -170,6 +168,6 @@ SHPStruct* SpringyAnim::SubstituteSHP(SHPStruct* pOriginal)
 			usePivot = false;
 		}
 	}
-	return SpringySHP::GetScaled(pOriginal, Context.ScaleW, Context.ScaleH,
+	return SpringySHP::GetTransformed(pOriginal, Context.Transform,
 		Context.PivotX, Context.PivotY, usePivot);
 }

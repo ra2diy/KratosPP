@@ -1,4 +1,4 @@
-﻿// 绘制相关的 hook 全在这里：
+// 绘制相关的 hook 全在这里：
 //   - 动画（AnimClass）：绘制入口置上下文 + 四个 blit 点换 SHP（Springy 动画、建筑覆盖动画）
 //   - 体素（VXL）：绘制入口的预置补画、精灵贴图点换放大位图、SHP 主体替换、影子原尺寸合成抑制
 //
@@ -198,20 +198,15 @@ DEFINE_HOOK(0x707480, TechnoClass_BlitVoxelSprite_Springy, 0x5)
 	GET(TechnoClass*, pTechno, ECX);
 
 	const SpringySnapshot* snap = SpringyHelper::GetSnapshot(pTechno);
-
-	double scaleW = 1.0;
-	double scaleH = 1.0;
-	if (snap)
-	{
-		SpringyHelper::GetRenderScales(*snap, scaleW, scaleH);
-	}
-
 	if (!snap)
 	{
 		return 0;
 	}
 
-	if (scaleW == 1.0 && scaleH == 1.0)
+	// 本帧的画布形变：缩放 + 剪切复合后的一张 2×2 矩阵。
+	// 恒等就说明这一帧没变形（没挂段、倍率恰为 1、剪切为 0），直接按原精灵画
+	const SpringyTransform& tf = snap->Matrix;
+	if (tf.IsIdentity())
 	{
 		return 0;
 	}
@@ -220,8 +215,8 @@ DEFINE_HOOK(0x707480, TechnoClass_BlitVoxelSprite_Springy, 0x5)
 
 	// 第二个参数是绘制基准点：精灵画到「基准点 + (X, Y)」上。目标是 Temp 这张表面
 	// （0x707730 处把它的指针装进 ECX 再调贴图），它的尺寸就是这次贴图的硬边界：
-	// 主体、炮塔、炮管画进去的是 256×256 的临时表面，基准点恒为它的中心，放大到超出它
-	// 就会被写成环绕到相邻行，所以放大函数要拿到这个矩形才能裁齐
+	// 主体、炮塔、炮管画进去的是 256×256 的临时表面，基准点恒为它的中心，变形到超出它
+	// 就会被写成环绕到相邻行，所以变形函数要拿到这个矩形才能裁齐
 	GET_STACK(int*, pBase, 0x8);
 
 	SpringyVoxelSprite::TargetBox box;
@@ -234,10 +229,10 @@ DEFINE_HOOK(0x707480, TechnoClass_BlitVoxelSprite_Springy, 0x5)
 		box.Height = pTarget->GetHeight();
 	}
 
-	VoxelCacheStruct* pScaled = SpringyVoxelSprite::Scale(pSprite, scaleW, scaleH, box);
+	VoxelCacheStruct* pScaled = SpringyVoxelSprite::Transform(pSprite, tf, box);
 	if (!pScaled)
 	{
-		// 精灵格式与预期不符时放弃放大、按原精灵画：画面退化成不缩放，但不能出错
+		// 精灵格式与预期不符时放弃变形、按原精灵画：画面退化成没有效果，但不能出错
 		return 0;
 	}
 
@@ -277,11 +272,13 @@ DEFINE_HOOK(0x705E00, TechnoClass_DrawObject_Springy, 0x7)
 		return 0;
 	}
 
-	double scaleW = 1.0;
-	double scaleH = 1.0;
-	SpringyHelper::GetRenderScales(status->MySpringyData, scaleW, scaleH);
+	const SpringyTransform& tf = status->MySpringyData.Matrix;
+	if (tf.IsIdentity())
+	{
+		return 0;
+	}
 
-	if (SHPStruct* pScaled = SpringySHP::GetScaled(pSHP, scaleW, scaleH, 0, 0, false))
+	if (SHPStruct* pScaled = SpringySHP::GetTransformed(pSHP, tf, 0, 0, false))
 	{
 		R->Stack<SHPStruct*>(0x4, pScaled);
 	}

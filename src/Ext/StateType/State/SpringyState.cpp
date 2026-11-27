@@ -87,3 +87,37 @@ SpringyAnimPivot SpringyState::GetAnimPivot()
 	}
 	return _segments.back()->GetAnimPivot();
 }
+
+bool SpringyState::ComposeTransform(SpringyTransform& io, AffectWho viewer)
+{
+	bool any = false;
+	for (SpringyEffect* segment : _segments)
+	{
+		if (!segment)
+		{
+			continue;
+		}
+		// ALL 对两边都生效；MASTER / STAND 只对各自那一边生效
+		AffectWho target = segment->GetAffectWho();
+		if (target != AffectWho::ALL && target != viewer)
+		{
+			continue;
+		}
+
+		double x = 1.0;
+		double y = 1.0;
+		double z = 1.0;
+		double shearX = 0.0;
+		double shearY = 0.0;
+		segment->GetTransform(x, y, z, shearX, shearY);
+
+		// 位图口径：X 与 Y 在屏幕上都落成水平投影，取平均；纵向取 Z。
+		// 剪切按「缩放后的像素」计，所以矩阵里的 B/C 带了缩放（见 SpringyTransform::Set）
+		SpringyTransform seg;
+		seg.Set((x + y) * 0.5, z, shearX, shearY);
+		// 先登记的段在内层、后登记的外层：最后挂上的那条在最外面
+		io.Compose(seg);
+		any = true;
+	}
+	return any;
+}

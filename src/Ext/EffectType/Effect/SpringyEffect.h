@@ -46,6 +46,14 @@ public:
 	/// @note 已包含基准倍率、波形系数与过渡进度；未生效时三个输出都是 1.0
 	void GetScale(double& x, double& y, double& z);
 
+	/// @brief 本段这一帧的完整形变：三个轴倍率 + 两个方向剪切，一次算完
+	/// @param shearX 水平推的斜率（正 = 顶部右移），输出
+	/// @param shearY 垂直推的斜率（正 = 右侧下移），输出
+	void GetTransform(double& x, double& y, double& z, double& shearX, double& shearY);
+
+	/// @brief 只取本段这一帧的两个剪切斜率
+	void GetShear(double& shearX, double& shearY);
+
 	/// @brief 本段配置的依附动画枢轴
 	SpringyAnimPivot GetAnimPivot();
 

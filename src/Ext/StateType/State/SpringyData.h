@@ -8,6 +8,7 @@
 
 #include <Ext/EffectType/Effect/EffectData.h>
 #include <Ext/Helper/CastEx.h>
+#include <Ext/Common/SpringyTransform.h>
 
 
 enum class SpringyMode : int
@@ -111,6 +112,17 @@ public:
 	int WidthPhase = 0;
 	int HeightPhase = 0;
 
+	// 剪切（推拉）：把矩形推成平行四边形。单位是「每 100 像素位移多少像素」（%），
+	// 正 ShearX = 顶部相对底部右移，正 ShearY = 右侧相对左侧下移。
+	// 全 0 = 不变形（与只有缩放的旧配置完全一致）；配合 WAVE 时同一波形同时驱动缩放与剪切，
+	// 所以「一边胀缩一边推拉」不用额外开关，想纯推拉就把 Width/Height 端点都写 100
+	int ShearXMax = 0;
+	int ShearXMin = 0;
+	int ShearYMax = 0;
+	int ShearYMin = 0;
+	int ShearXPhase = 0;
+	int ShearYPhase = 0;
+
 	virtual void Read(INIBufferReader* reader) override
 	{
 		Read(reader, TITLE);
@@ -155,14 +167,31 @@ public:
 		WidthPhase = ((WidthPhase % 4) + 4) % 4;
 		HeightPhase = ((HeightPhase % 4) + 4) % 4;
 
+		ShearXMax = reader->Get(title + "ShearXMax", ShearXMax);
+		ShearXMin = reader->Get(title + "ShearXMin", ShearXMin);
+		ShearYMax = reader->Get(title + "ShearYMax", ShearYMax);
+		ShearYMin = reader->Get(title + "ShearYMin", ShearYMin);
+		// 上限 150%（约 56°）：再大平行四边形会扁得看不出形体，且缩放与剪切的
+		// 行列式容易过小（极端组合下矩阵接近不可逆，绘制会退化成原图）
+		ShearXMax = std::clamp(ShearXMax, -150, 150);
+		ShearXMin = std::clamp(ShearXMin, -150, 150);
+		ShearYMax = std::clamp(ShearYMax, -150, 150);
+		ShearYMin = std::clamp(ShearYMin, -150, 150);
+
+		ShearXPhase = reader->Get(title + "ShearXPhase", ShearXPhase);
+		ShearYPhase = reader->Get(title + "ShearYPhase", ShearYPhase);
+		ShearXPhase = ((ShearXPhase % 4) + 4) % 4;
+		ShearYPhase = ((ShearYPhase % 4) + 4) % 4;
+
 		// 没显式写 Enable 时，只要配了会改变画面的参数就自动启用（与 Paintball 一致）。
 		// 显式写了 Enable 则以它为准，便于同一份 AE 段整体关停
 		bool explicitEnable = false;
 		if (!reader->TryGet(title + "Enable", explicitEnable))
 		{
 			const bool scaled = ScaleX != 1.0 || ScaleY != 1.0 || ScaleZ != 1.0;
-			// WAVE 即使三个倍率都是 1 也会动，同样算启用
-			if (scaled || Mode == SpringyMode::WAVE)
+			const bool sheared = ShearXMax != 0 || ShearXMin != 0 || ShearYMax != 0 || ShearYMin != 0;
+			// WAVE 即使三个倍率都是 1、剪切全是 0 也会动，同样算启用
+			if (scaled || sheared || Mode == SpringyMode::WAVE)
 			{
 				Enable = true;
 			}
@@ -191,6 +220,13 @@ public:
 			.Process(this->HeightMin)
 			.Process(this->WidthPhase)
 			.Process(this->HeightPhase)
+			// 新增字段一律追加在末尾：旧存档按原顺序读到的还是原来那些值
+			.Process(this->ShearXMax)
+			.Process(this->ShearXMin)
+			.Process(this->ShearYMax)
+			.Process(this->ShearYMin)
+			.Process(this->ShearXPhase)
+			.Process(this->ShearYPhase)
 			.Success();
 	};
 
@@ -215,7 +251,7 @@ private:
 /// 它与绘制尺寸无关：绘制倍率始终是连续量，不往这个步数上取整。
 constexpr int SpringySteps = 8;
 
-/// @brief 一个单位当前这一帧应该用的绘制倍率。
+/// @brief 一个单位当前这一帧应该用的绘制倍率与形变。
 ///
 /// 由 TechnoStatus 每帧刷新一次，渲染侧只读它，不自己去遍历段、算相位——
 /// 绘制 hook 每帧会被调用上千次，让它每次都算会把同一组数算上千遍。
@@ -224,9 +260,14 @@ struct SpringySnapshot
 	bool Active = false;
 
 	// 本帧最终倍率：自身所有段的乘积（替身额外纳入母体上 AffectWho 允许的那些段）
+	// 这是**世界轴**口径（F/L/H），给 FLH 偏移与挂点用，不是位图的缩放
 	double ScaleX = 1.0;
 	double ScaleY = 1.0;
 	double ScaleZ = 1.0;
+
+	// 本帧的画布形变（位图口径）：缩放 + 剪切复合后的矩阵。
+	// 主体 / 炮塔 / 炮管 / 影子 / 依附动画都读它，保证同一条段在三条链路上形状一致
+	SpringyTransform Matrix{};
 
 	SpringyAnimPivot AnimPivot = SpringyAnimPivot::ANIM;
 
@@ -234,5 +275,6 @@ struct SpringySnapshot
 	{
 		*this = {};
 		ScaleX = ScaleY = ScaleZ = 1.0;
+		Matrix.Reset();
 	}
 };

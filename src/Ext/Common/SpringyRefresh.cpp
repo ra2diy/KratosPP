@@ -14,18 +14,15 @@
 
 namespace
 {
-	/// @brief 把对象报上来的渲染矩形按最坏情况外扩
+	/// @brief 把对象报上来的渲染矩形按形变后的包围盒外扩
 	/// @param rect 引擎给出的渲染矩形（与脏区同一坐标口径）
-	/// @param snap 缩放快照
+	/// @param tf 形变矩阵（缩放 + 剪切）
 	/// @return 外扩后的矩形
-	/// @note 只有放大才会把像素画到原矩形之外，缩小时不会，所以取相对 1.0 的正向增量
-	RectangleStruct InflateDirtyRect(const RectangleStruct& rect, const SpringySnapshot& snap)
+	/// @note 缩放与剪切都可能把像素画到原矩形之外，且剪切会把图形整体推到一侧，
+	///       所以交给 SpringyHelper 按四个方向各自补齐，而不是四周等量外扩
+	RectangleStruct InflateDirtyRect(const RectangleStruct& rect, const SpringyTransform& tf)
 	{
-		const double overW = std::max({ snap.ScaleX, snap.ScaleY, 1.0 }) - 1.0;
-		const double overH = std::max(snap.ScaleZ, 1.0) - 1.0;
-		return SpringyHelper::InflateDirtyRect(rect,
-			static_cast<int>(std::lround(overW * 100.0)),
-			static_cast<int>(std::lround(overH * 100.0)));
+		return SpringyHelper::InflateDirtyRect(rect, tf);
 	}
 
 	/// @brief 建筑自己会画的东西：本体帧号与所有覆盖动画的当前帧
@@ -111,19 +108,18 @@ namespace
 			return;
 		}
 
-		// 覆盖范围取「这一次要画的」与「上一次覆盖的」较大值：
-		// 倍率缩小时屏幕上还留着上一帧更大的那圈像素，只按当前尺寸算会擦不掉外圈
-		SpringySnapshot dirty = snap;
-		dirty.ScaleX = std::max(dirty.ScaleX, status->LastSpringyDirtySnap.ScaleX);
-		dirty.ScaleY = std::max(dirty.ScaleY, status->LastSpringyDirtySnap.ScaleY);
-		dirty.ScaleZ = std::max(dirty.ScaleZ, status->LastSpringyDirtySnap.ScaleZ);
-		status->LastSpringyDirtySnap = dirty;
+		// 覆盖范围取「这一次要画的」与「上一次覆盖的」之并：
+		// 缩小时屏幕上还留着上一帧更大的那圈像素，只按当前形变算会擦不掉外圈；
+		// 剪切改变的是形状与偏移，不能拿两份矩阵逐项取 max（那不是一个合法形变）
+		const RectangleStruct now = InflateDirtyRect(dims, snap.Matrix);
+		const RectangleStruct before = InflateDirtyRect(dims, status->LastSpringyDirtySnap.Matrix);
+		status->LastSpringyDirtySnap = snap;
 
 		if (markForRedraw)
 		{
 			pObject->MarkForRedraw();
 		}
-		AddDirtyArea(InflateDirtyRect(dims, dirty));
+		AddDirtyArea(SpringyHelper::UnionRect(now, before));
 	}
 
 	/// @brief 缩放撤除后把「残影账」结清

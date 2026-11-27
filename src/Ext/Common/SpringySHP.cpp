@@ -25,17 +25,13 @@ namespace
 		std::vector<byte> Pixels;
 	};
 
-	// 缓存键：原 SHP + 量化后的倍率 + 枢轴。
-	// 倍率按千分之一量化，保持全整数比较：不同 AE 参数但结果相同的会共享同一份，
-	// 结果不同的不会撞键拿到别人的帧。
-	using CacheKey = std::tuple<SHPStruct*, int, int, int, int, bool>;
+	// 缓存键：原 SHP + 量化后的形变矩阵 + 枢轴。
+	// 矩阵按 1/256 量化（见 SpringyTransform::Key），保持全整数比较：
+	// 不同 AE 参数但结果相同的会共享同一份，结果不同的不会撞键拿到别人的帧。
+	// 波形是 8 档正弦表，所以每张 SHP 稳态只会落 8 个键，条目数有界
+	using CacheKey = std::tuple<SHPStruct*, long long, int, int, bool>;
 
 	std::map<CacheKey, SHPStruct*> Cache{};
-
-	int Quantize(double scale)
-	{
-		return static_cast<int>(std::lround(scale * 1000.0));
-	}
 
 	/// @brief 把一帧解码成 Width*Height 的调色板索引缓冲（0 = 透明）
 	/// @param pSHP 源 SHP
@@ -116,13 +112,29 @@ namespace
 		return true;
 	}
 
-	/// @brief 按给定倍率重采样全部帧并拼成一个新的内存 SHP
+	/// @brief 按形变矩阵重采样全部帧并拼成一个新的内存 SHP
+	/// @param pOriginal 原始 SHP
+	/// @param tf 画布形变（缩放 + 剪切）
+	/// @param pivotX,pivotY 形变枢轴（SHP 帧坐标）
+	/// @param usePivot true = 绕给定枢轴；false = 每帧自身底边中点
 	/// @return 新 SHP；失败返回 nullptr
-	SHPStruct* BuildScaled(SHPStruct* pOriginal, double scaleW, double scaleH,
+	/// @note 每帧的画布是「形变后包围盒」：帧头里的 Left/Top/W/H 是逐帧的，
+	///       所以可以变大；文件级 Width/Height 保持原值（引擎按它算锚点，改了会整体漂移）。
+	///       采样用逆映射：平行四边形四角落在源范围之外，写透明
+	SHPStruct* BuildTransformed(SHPStruct* pOriginal, const SpringyTransform& tf,
 		int pivotX, int pivotY, bool usePivot)
 	{
 		const auto pFile = pOriginal->GetData();
 		if (!pFile)
+		{
+			return nullptr;
+		}
+
+		double ia = 1.0;
+		double ib = 0.0;
+		double ic = 0.0;
+		double id = 1.0;
+		if (!tf.Invert(ia, ib, ic, id))
 		{
 			return nullptr;
 		}
@@ -142,43 +154,61 @@ namespace
 			int h = 0;
 			short left = 0;
 			short top = 0;
-			// 单帧解不出来就跳过这一帧（写 0 面积），其余帧照常缩放：
-			// 一份 SHP 里夹着坏帧不该让整个单位失去缩放
+			// 单帧解不出来就跳过这一帧（写 0 面积），其余帧照常变形：
+			// 一份 SHP 里夹着坏帧不该让整个单位失去效果
 			if (!DecodeFrame(pOriginal, f, px, w, h, left, top))
 			{
 				continue;
 			}
 
-			const int w2 = std::max(1, static_cast<int>(std::lround(w * scaleW)));
-			const int h2 = std::max(1, static_cast<int>(std::lround(h * scaleH)));
+			// 枢轴：贴身部件绕给定枢轴；独立特效绕自身底边中点，
+			// 这样纯缩放时与旧实现完全等价（水平居中、垂直贴底）
+			const int px0 = usePivot ? pivotX : (left + w / 2);
+			const int py0 = usePivot ? pivotY : (top + h);
+
+			// 帧矩形相对枢轴的坐标，过一遍矩阵取外接矩形
+			double bx = 0.0;
+			double by = 0.0;
+			double bw = 0.0;
+			double bh = 0.0;
+			tf.MapRect(static_cast<double>(left - px0), static_cast<double>(top - py0),
+				static_cast<double>(w), static_cast<double>(h), bx, by, bw, bh);
+
+			const int ox = static_cast<int>(std::floor(bx));
+			const int oy = static_cast<int>(std::floor(by));
+			const int w2 = static_cast<int>(std::ceil(bx + bw)) - ox;
+			const int h2 = static_cast<int>(std::ceil(by + bh)) - oy;
+			if (w2 <= 0 || h2 <= 0 || w2 > 0x2000 || h2 > 0x2000)
+			{
+				continue;
+			}
+
 			std::vector<byte> sp(static_cast<size_t>(w2) * h2, 0);
 
-			// 最近邻取样：不插值。插值会混出不存在的调色板索引，看起来是脏点
+			// 目标像素 (x,y) 的画布坐标 = (ox+x, oy+y)，相对枢轴后反解回源帧坐标。
+			// 最近邻取样：调色板索引不能插值，插值会混出不存在的颜色
 			for (int y = 0; y < h2; y++)
 			{
-				const int sy = std::min(h - 1, y * h / h2);
+				const double dy = static_cast<double>(oy + y);
 				for (int x = 0; x < w2; x++)
 				{
-					const int sx = std::min(w - 1, x * w / w2);
-					sp[static_cast<size_t>(y) * w2 + x] = px[static_cast<size_t>(sy) * w + sx];
+					const double dx = static_cast<double>(ox + x);
+					const double fx = ia * dx + ib * dy - static_cast<double>(left - px0);
+					const double fy = ic * dx + id * dy - static_cast<double>(top - py0);
+					const int sx = static_cast<int>(std::floor(fx));
+					const int sy = static_cast<int>(std::floor(fy));
+					if (sx >= 0 && sx < w && sy >= 0 && sy < h)
+					{
+						sp[static_cast<size_t>(y) * w2 + x] = px[static_cast<size_t>(sy) * w + sx];
+					}
 				}
 			}
 
 			auto& fp = scaled[f];
 			fp.W = w2;
 			fp.H = h2;
-			if (usePivot)
-			{
-				// 绕给定枢轴缩放：贴身子部件要绕单位底边变，否则会脱体
-				fp.Left = static_cast<short>(std::lround(pivotX + (left - pivotX) * scaleW));
-				fp.Top = static_cast<short>(std::lround(pivotY + (top - pivotY) * scaleH));
-			}
-			else
-			{
-				// 底边对齐：水平居中、垂直贴底，否则单位会浮空或陷地
-				fp.Left = static_cast<short>(left + (w - w2) / 2);
-				fp.Top = static_cast<short>(top + (h - h2));
-			}
+			fp.Left = static_cast<short>(px0 + ox);
+			fp.Top = static_cast<short>(py0 + oy);
 			fp.Pixels = std::move(sp);
 		}
 
@@ -234,27 +264,27 @@ namespace
 }
 
 
-SHPStruct* SpringySHP::GetScaled(SHPStruct* pOriginal, double scaleW, double scaleH,
+SHPStruct* SpringySHP::GetTransformed(SHPStruct* pOriginal, const SpringyTransform& tf,
 	int pivotX, int pivotY, bool usePivot)
 {
 	if (!pOriginal)
 	{
 		return nullptr;
 	}
-	// 倍率没变就没有变形，直接用原图：省掉一份完全相同的副本
-	if (std::abs(scaleW - 1.0) < 0.0005 && std::abs(scaleH - 1.0) < 0.0005)
+	// 形变恰是恒等就没有要画的变形，直接用原图：省掉一份完全相同的副本
+	if (tf.IsIdentity())
 	{
 		return pOriginal;
 	}
 
-	const CacheKey key{ pOriginal, Quantize(scaleW), Quantize(scaleH), pivotX, pivotY, usePivot };
+	const CacheKey key{ pOriginal, tf.Key(), pivotX, pivotY, usePivot };
 	auto it = Cache.find(key);
 	if (it != Cache.end())
 	{
 		return it->second;
 	}
 
-	SHPStruct* pScaled = BuildScaled(pOriginal, scaleW, scaleH, pivotX, pivotY, usePivot);
+	SHPStruct* pScaled = BuildTransformed(pOriginal, tf, pivotX, pivotY, usePivot);
 	// 失败不入缓存：缓存了空指针会让这张 SHP 永久失效，
 	// 连「资源稍后才加载好」这种正常情况也救不回来
 	if (pScaled)
@@ -262,13 +292,13 @@ SHPStruct* SpringySHP::GetScaled(SHPStruct* pOriginal, double scaleW, double sca
 		Cache.emplace(key, pScaled);
 	}
 
-	// 每张 SHP 的每个倍率组合只构建一次，所以这条日志不会刷屏。
-	// 不放在条件编译里：Release 下看不到日志时，排查「SHP 不缩放」会完全没有依据
+	// 每张 SHP 的每个形变组合只构建一次，所以这条日志不会刷屏。
+	// 不放在条件编译里：Release 下看不到日志时，排查「SHP 不变形」会完全没有依据
 	const char* name = pOriginal->IsReference() && pOriginal->AsReference()->Filename
 		? pOriginal->AsReference()->Filename
 		: "?";
-	Debug::Log("[Springy]SHP %s 倍率(%.2f,%.2f) 构建%s\n",
-		name, scaleW, scaleH, pScaled ? "成功" : "失败");
+	Debug::Log("[Springy]SHP %s 形变[%.2f %.2f; %.2f %.2f] 构建%s\n",
+		name, tf.A, tf.B, tf.C, tf.D, pScaled ? "成功" : "失败");
 
 	return pScaled;
 }

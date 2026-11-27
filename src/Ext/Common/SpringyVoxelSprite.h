@@ -7,6 +7,8 @@
 
 #include <Drawing.h>
 
+#include <Ext/Common/SpringyTransform.h>
+
 
 /// @brief 体素精灵（VoxelCacheStruct）的位图放大
 /// @note 精灵的像素区是**逐行游程编码**：每行开头 `uint16 行总字节数（含本字段）`，
@@ -161,19 +163,29 @@ namespace SpringyVoxelSprite
 		int Height = 0;
 	};
 
-	/// @brief 按倍率放大一张精灵
+	/// @brief 按形变矩阵重采样一张精灵（缩放 + 剪切）
 	/// @param src 引擎按原尺寸光栅化出来的精灵
-	/// @param scaleW 横向倍率
-	/// @param scaleH 纵向倍率
-	/// @param box 这次贴图的目标表面与基准点，放大结果会被裁到表面以内
-	/// @return 放大后的精灵；格式不符或无需处理时返回 nullptr（调用方按原精灵画）
-	/// @note 最近邻重采样：颜色是调色板索引，插值会混出无效索引，所以只做复制。
-	///       锚点按几何放大处理：X/Y 是包围盒左上角相对绘制基准点的偏移，放大 s 倍时整体乘 s
-	inline VoxelCacheStruct* Scale(const VoxelCacheStruct* src, double scaleW, double scaleH,
+	/// @param tf 本帧的画布形变（缩放 + 剪切复合，见 SpringyTransform）
+	/// @param box 这次贴图的目标表面与基准点，结果会被裁到表面以内
+	/// @return 变形后的精灵；格式不符或形变恰是恒等时返回 nullptr（调用方按原精灵画）
+	/// @note 最近邻**逆映射**：每个目标像素反解到源坐标取样。
+	///       逆映射不会让平行四边形里留洞（正射映射在放大时会漏格），
+	///       反解到源范围之外的像素写透明 —— 平行四边形四角的透明区就是这么来的。
+	///       锚点按几何变换处理：把源包围盒整体过一遍矩阵、取外接矩形，
+	///       所以主体、炮塔、炮管共用基准点缩放/剪切时不会互相拉偏
+	inline VoxelCacheStruct* Transform(const VoxelCacheStruct* src, const SpringyTransform& tf,
 		const TargetBox& box)
 	{
-		if (!src || !src->Buffer || src->Width == 0 || src->Height == 0
-			|| scaleW <= 0.0 || scaleH <= 0.0 || (scaleW == 1.0 && scaleH == 1.0))
+		if (!src || !src->Buffer || src->Width == 0 || src->Height == 0 || tf.IsIdentity())
+		{
+			return nullptr;
+		}
+
+		double ia = 1.0;
+		double ib = 0.0;
+		double ic = 0.0;
+		double id = 1.0;
+		if (!tf.Invert(ia, ib, ic, id))
 		{
 			return nullptr;
 		}
@@ -214,26 +226,30 @@ namespace SpringyVoxelSprite
 			p += length;
 		}
 
-		// 各行像素数与 Width 相差过大，说明这一行的解析本身不可信，放弃放大
+		// 各行像素数与 Width 相差过大，说明这一行的解析本身不可信，放弃变形
 		if (sourceWidth < w || sourceWidth > w + 8)
 		{
 			return nullptr;
 		}
 
-		const int nw = static_cast<int>(std::lround(sourceWidth * scaleW));
-		const int nh = static_cast<int>(std::lround(h * scaleH));
+		// 源精灵的像素 (px,py) 落在「基准点 + (X+px, Y+py)」，所以把整块源矩形
+		// (X, Y, sourceWidth, h) 过一遍矩阵取外接矩形，再向外取整到像素边界：
+		// 内缩取整会让最后一行/列落出包围盒，宁可多一格
+		double bx = 0.0;
+		double by = 0.0;
+		double bw = 0.0;
+		double bh = 0.0;
+		tf.MapRect(static_cast<double>(src->X), static_cast<double>(src->Y),
+			static_cast<double>(sourceWidth), static_cast<double>(h), bx, by, bw, bh);
+
+		const int anchorX = static_cast<int>(std::floor(bx));
+		const int anchorY = static_cast<int>(std::floor(by));
+		const int nw = static_cast<int>(std::ceil(bx + bw)) - anchorX;
+		const int nh = static_cast<int>(std::ceil(by + bh)) - anchorY;
 		if (nw <= 0 || nh <= 0 || nw > 0x2000 || nh > 0x2000)
 		{
 			return nullptr;
 		}
-
-		// 锚点：引擎贴图时的落点是「绘制基准点 + (X, Y)」（0x70755D 处 movsx 取 X、加基准点的 X），
-		// 所以 X/Y 是包围盒左上角相对基准点的偏移。体素几何放大 s 倍，等于把每个顶点相对基准点的
-		// 坐标都乘 s，包围盒左上角同样乘 s —— 不能用「包围盒中心不动」（X - (s-1)·W/2）：
-		// 两者只在 X = -W/2 时相等，主体近乎居中所以看不出差别，炮塔、炮管相对基准点偏得远，
-		// 用中心不动就会被拉向车体中心，表现为部件不跟车体同步
-		const int anchorX = static_cast<int>(std::lround(src->X * scaleW));
-		const int anchorY = static_cast<int>(std::lround(src->Y * scaleH));
 
 		// 裁到目标表面以内。表面之外的像素本来就贴不出来，但不裁不会「什么都不显示」：
 		// 贴图按行写，负的列落到上一行行尾、超过宽度的列落到下一行行首，画面上就是一条
@@ -277,17 +293,19 @@ namespace SpringyVoxelSprite
 		size_t offset = 0;
 		for (int y = cropTop; y < cropBottom; ++y)
 		{
-			int sy = static_cast<int>(y / scaleH);
-			if (sy >= h)
-			{
-				sy = h - 1;
-			}
-
-			const unsigned char* const srcRow = &raw[static_cast<size_t>(sy) * sourceWidth];
+			// 目标像素相对基准点的坐标（像素左上角）；反解回源像素下标
+			const double dy = static_cast<double>(anchorY + y);
 			for (int x = cropLeft; x < cropRight; ++x)
 			{
-				int sx = static_cast<int>(x / scaleW);
-				row[x - cropLeft] = srcRow[sx >= sourceWidth ? sourceWidth - 1 : sx];
+				const double dx = static_cast<double>(anchorX + x);
+				const double fx = ia * dx + ib * dy - static_cast<double>(src->X);
+				const double fy = ic * dx + id * dy - static_cast<double>(src->Y);
+				const int sx = static_cast<int>(std::floor(fx));
+				const int sy = static_cast<int>(std::floor(fy));
+				row[x - cropLeft] =
+					(sx >= 0 && sx < sourceWidth && sy >= 0 && sy < h)
+					? raw[static_cast<size_t>(sy) * sourceWidth + sx]
+					: 0;
 			}
 
 			// 行尾哨兵：压缩器数行尾透明段时会多看后面一个字节，行尾之后必须是可读的非零字节，
