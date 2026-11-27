@@ -431,36 +431,30 @@ DEFINE_HOOK(0x424CBA, AnimClass_InWhichLayer_OwnerObject, 0x5)
 {
 	GET(AnimClass*, pThis, ECX);
 
+	// 宿主：Kratos AE 动画记在自己的状态里；建筑 IdleAnim / ActiveAnim 这类
+	// 由引擎（或 Ares 之类的层）创建的动画则记在引擎的 OwnerObject 上
+	ObjectClass* pOwner = pThis->OwnerObject;
 	AnimStatus* status = nullptr;
-	if (!TryGetStatus<AnimExt>(pThis, status) || !status->pAttachOwner)
+	if (TryGetStatus<AnimExt>(pThis, status) && status->pAttachOwner)
 	{
-		return 0;
+		pOwner = status->pAttachOwner;
 	}
 
-	// 基准仍是原版的 Ground：OwnerObject 存在的动画本来就在这一层
-	Layer want = Layer::Ground;
-	TechnoClass* pOwner = nullptr;
-	if (CastToTechno(status->pAttachOwner, pOwner) && pOwner->IsAlive)
+	// 建筑本体在 Ground 层里按 Y 排序绘制（全引擎只有这一层每帧 Sort），
+	// 与它同层的动画排序键常常落在本体之前 ⇒ 先画、被本体盖住。
+	// 抬到 Air 层即可：整层画在 Ground 之后，必定在本体之上。
+	// Flat=yes 的动画语义是「贴地、应被踩在上面」，保持原层不动。
+	if (pOwner && pThis->Type && !pThis->Type->Flat
+		&& pOwner->WhatAmI() == AbstractType::Building)
 	{
 		const Layer ownerLayer = pOwner->LastLayer;
-		if (ownerLayer > want)
-		{
-			want = ownerLayer;
-		}
-		// 建筑本体画进建筑自己的缓存画布，与动画一起留在 Ground 层时会被 Y 排序压住；
-		// 抬到 Air 层（整层画在 Ground 之后），动画必定在本体之上。
-		// Flat=yes 语义是「贴地、应被踩在上面」，保持原层。
-		if (pOwner->WhatAmI() == AbstractType::Building
-			&& pThis->Type && !pThis->Type->Flat
-			&& want <= Layer::Ground)
-		{
-			want = Layer::Air;
-		}
+		const Layer want = ownerLayer > Layer::Air ? ownerLayer : Layer::Air;
+		R->EAX(want);
+		// 0x424CBF 是原函数那句 `ret`：本钩子覆盖的 `mov eax,2`（恒 Ground）已被跳过
+		return 0x424CBF;
 	}
 
-	R->EAX(want);
-	// 0x424CBF 是原函数那句 `ret`：原 mov eax,2 已被本钩子跳过
-	return 0x424CBF;
+	return 0;
 }
 DEFINE_HOOK(0x424CCA, AnimClass_InWhichLayer_FollowAttachOwner, 0x6)
 {
