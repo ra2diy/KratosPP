@@ -1,7 +1,13 @@
 ﻿#include "Crush.h"
 
+#include <map>
+#include <string>
+
 #include <TechnoClass.h>
 #include <InfantryClass.h>
+#include <OverlayTypeClass.h>
+
+#include <Common/INI/INI.h>
 
 #include <Extension/TechnoExt.h>
 #include <Extension/TechnoTypeExt.h>
@@ -125,4 +131,35 @@ int Crush::GetCrushableLevel(TechnoClass* pThis)
 		return pStatus->CrushableLevelCache;
 
 	return CalcCrushableLevel(pThis);
+}
+
+namespace
+{
+	// overlay 类型 -> 该 overlay 段落里配置的 CrushableLevel（-1 = 未配置）
+	std::map<const OverlayTypeClass*, int> OverlayCrushableLevels;
+}
+
+int Crush::GetOverlayCrushableLevel(OverlayTypeClass* pOverlay)
+{
+	if (!pOverlay)
+		return -1;
+
+	auto it = OverlayCrushableLevels.find(pOverlay);
+	if (it != OverlayCrushableLevels.end())
+		return it->second;
+
+	int level = -1;
+	if (pOverlay->ID && pOverlay->ID[0])
+	{
+		INIBufferReader* reader = INI::GetSection(INI::Rules, pOverlay->ID);
+		level = reader->Get("CrushableLevel", level);
+	}
+
+	OverlayCrushableLevels[pOverlay] = level;
+	return level;
+}
+
+void Crush::ClearOverlayLevelCache()
+{
+	OverlayCrushableLevels.clear();
 }
