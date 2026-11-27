@@ -49,7 +49,25 @@ namespace
 	/// @param shearX,shearY 输出的两个方向剪切（0 = 不推）
 	/// @note 剪切与缩放共用同一条脉冲：正半周走 Max 端、负半周走 Min 端。
 	///       端点是带符号的斜率，所以 Max=+30 / Min=-30 就是一左一右往复
-	void Evaluate(const SpringyData* data, int waveStep, double progress,
+	/// @brief 振幅渐变系数（百分点，100 = 原幅度）
+	/// @note 不累积：直接由步数算，跳帧 / 加速 / 回放都得到同一个值，联机确定性。
+	///       量化到 2% 是为了让变形缓存能复用（每步都产生新值的话缓存条目会随时间无限增长）
+	double Envelope(int increment, int lower, int upper, int steps)
+	{
+		if (increment == 0 || steps <= 0)
+		{
+			return 100.0;
+		}
+		const int capped = std::min(steps, 10000);
+		const double raw = 100.0 + static_cast<double>(increment) * static_cast<double>(capped);
+		const double lo = static_cast<double>(lower);
+		const double hi = static_cast<double>(upper);
+		double g = std::clamp(raw, lo, hi);
+		g = std::round(g / 2.0) * 2.0;
+		return std::clamp(g, lo, hi);
+	}
+
+	void Evaluate(const SpringyData* data, int waveStep, double progress, int rampSteps,
 		double& x, double& y, double& z, double& shearX, double& shearY)
 	{
 		const int quarter = Steps / 4;
@@ -71,8 +89,10 @@ namespace
 			// 不能拿两个端点做整体插值 —— 那样过零点会落在两端的中点，端点不对称时就不再经过原尺寸
 			const double widthPct = pulseW >= 0.0 ? data->WidthMax : data->WidthMin;
 			const double heightPct = pulseH >= 0.0 ? data->HeightMin : data->HeightMax;
-			waveX = 1.0 + (widthPct - 100.0) / 100.0 * std::abs(pulseW);
-			waveZ = 1.0 + (heightPct - 100.0) / 100.0 * std::abs(pulseH);
+			// 振幅渐变：只放大「偏离 100 的那部分」，端点本身不动
+			const double gain = Envelope(data->Increment, data->IncreaseMin, data->IncreaseMax, rampSteps) / 100.0;
+			waveX = 1.0 + (widthPct - 100.0) / 100.0 * std::abs(pulseW) * gain;
+			waveZ = 1.0 + (heightPct - 100.0) / 100.0 * std::abs(pulseH) * gain;
 
 			// 剪切的相位独立（默认两轴同相，一左一右同步推）
 			const double pulseSX = WavePulse((waveStep + data->ShearXPhase * quarter) % Steps);
@@ -80,8 +100,9 @@ namespace
 			const double endSX = pulseSX >= 0.0 ? data->ShearXMax : data->ShearXMin;
 			const double endSY = pulseSY >= 0.0 ? data->ShearYMax : data->ShearYMin;
 			// 端点就是像素：脉冲为正走 Max、为负走 Min，幅度按 |脉冲| 线性走
-			shearXTarget = endSX * std::abs(pulseSX);
-			shearYTarget = endSY * std::abs(pulseSY);
+			const double gainShear = Envelope(data->ShearIncrement, data->IncreaseMin, data->IncreaseMax, rampSteps) / 100.0;
+			shearXTarget = endSX * std::abs(pulseSX) * gainShear;
+			shearYTarget = endSY * std::abs(pulseSY) * gainShear;
 		}
 		else
 		{
@@ -199,6 +220,16 @@ void SpringyEffect::End(CoordStruct location)
 	}
 }
 
+int SpringyEffect::RampSteps()
+{
+	const SpringyData* data = Data;
+	if (!data || data->IncreaseRate <= 0)
+	{
+		return 0;
+	}
+	// _progress 就是已存活帧数（冻结时不动），直接除，不做累积
+	return std::max(_progress, 0) / data->IncreaseRate;
+}
 double SpringyEffect::Progress()
 {
 	const int frames = Data->TransitionFrames;
@@ -221,7 +252,7 @@ void SpringyEffect::GetScale(double& x, double& y, double& z)
 void SpringyEffect::GetTransform(double& x, double& y, double& z, double& shearX, double& shearY)
 {
 	const SpringyData* data = Data;
-	Evaluate(data, WaveStep(data->Rate), Progress(), x, y, z, shearX, shearY);
+	Evaluate(data, WaveStep(data->Rate), Progress(), RampSteps(), x, y, z, shearX, shearY);
 }
 
 void SpringyEffect::GetShear(double& shearX, double& shearY)

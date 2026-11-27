@@ -88,6 +88,9 @@ private:
 	void UnregisterFromState();
 
 	/// @brief 过渡进度，0~1：0 = 完全原样，1 = 完全到位
+	/// @brief 振幅渐变已经走过的步数（冻结期间不推进，与过渡进度同一时间基准）
+	int RampSteps();
+
 	double Progress();
 
 	int _progress = 0;   // 已走过的过渡帧数

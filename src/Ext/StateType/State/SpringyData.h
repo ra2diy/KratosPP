@@ -145,6 +145,15 @@ public:
 	int ShearXPhase = 0;
 	int ShearYPhase = 0;
 
+	// 振幅渐变（ramp）：每 IncreaseRate 帧走一步，把「波形振幅」乘上 100 + Increment × 步数（百分点）。
+	// 缩放与剪切各有一条独立的渐变系数，都被夹在 [IncreaseMin, IncreaseMax] 内，到界即停。
+	// IncreaseRate = 0 时完全不参与（默认，行为与没有这个功能时一致）。
+	int Increment = 0;        // 缩放振幅每步增量（百分点），正 = 越震越大，负 = 越震越小
+	int ShearIncrement = 0;   // 剪切振幅每步增量（百分点），单位随 ShearMode
+	int IncreaseRate = 0;     // 每多少帧走一步；0 = 关闭
+	int IncreaseMin = 100;    // 渐变系数下限（百分点），100 = 原幅度
+	int IncreaseMax = 100;    // 渐变系数上限（百分点），400 = 最多 4 倍振幅
+
 	virtual void Read(INIBufferReader* reader) override
 	{
 		Read(reader, TITLE);
@@ -203,6 +212,16 @@ public:
 
 		ShearXPhase = reader->Get(title + "ShearXPhase", ShearXPhase);
 		ShearYPhase = reader->Get(title + "ShearYPhase", ShearYPhase);
+		// 振幅渐变
+		Increment = std::clamp(reader->Get(title + "Increment", Increment), -100, 100);
+		ShearIncrement = std::clamp(reader->Get(title + "ShearIncrement", ShearIncrement), -100, 100);
+		IncreaseRate = std::clamp(reader->Get(title + "IncreaseRate", IncreaseRate), 0, 600);
+		IncreaseMin = std::clamp(reader->Get(title + "IncreaseMin", IncreaseMin), 0, 1000);
+		IncreaseMax = std::clamp(reader->Get(title + "IncreaseMax", IncreaseMax), 100, 1000);
+		if (IncreaseMin > IncreaseMax)
+		{
+			IncreaseMax = IncreaseMin;
+		}
 		ShearXPhase = ((ShearXPhase % 4) + 4) % 4;
 		ShearYPhase = ((ShearYPhase % 4) + 4) % 4;
 
@@ -251,6 +270,11 @@ public:
 			.Process(this->ShearXPhase)
 			.Process(this->ShearYPhase)
 			.Process(this->ShearMode)
+			.Process(this->Increment)
+			.Process(this->ShearIncrement)
+			.Process(this->IncreaseRate)
+			.Process(this->IncreaseMin)
+			.Process(this->IncreaseMax)
 			.Success();
 	};
 
