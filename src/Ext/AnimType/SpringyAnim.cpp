@@ -178,7 +178,6 @@ SHPStruct* SpringyAnim::SubstituteSHP(SHPStruct* pOriginal)
 	}
 	return SpringySHP::GetTransformed(pOriginal, Context.ScaleW, Context.ScaleH,
 		Context.ShearX, Context.ShearY, Context.ShearMode, Context.PivotX, Context.PivotY, usePivot,
-		// 建筑动画和本体一样画进建筑缓存画布（上游确认：动画本身每帧现画，但建筑那条是缓存），
-		// 换更大的帧会越过缓存边界，所以原地换像素
-		Context.IsBuildingAnim);
+		// 画布按形变后包围盒动态增长：锁死原帧矩形会把推出去的部分直接切掉
+		false);
 }
