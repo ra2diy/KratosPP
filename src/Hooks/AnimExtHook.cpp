@@ -410,6 +410,58 @@ DEFINE_HOOK(0x423CD5, AnimClass_Extras_HitWater, 0x6)
 //      已变而尚未重提交、动画先跳层"⇒ 宿主后提交把动画压回去 的反向遮挡；
 //      同时彻底不触碰 FootClass 的 locomotor(+0x674)，没有额外虚调用与空指针路径。
 //   参考：Phobos AnimClass_InWhichLayer_AttachedObjectLayer（走 OwnerObject 路径，机制不同）。
+// ============================================================================
+//  AnimClass::InWhichLayer —— OwnerObject 存在的那一支（0x424CBA）
+//
+//  原函数（0x424CB0）：
+//     mov eax,[ecx+0xCC]   ; OwnerObject
+//     test eax,eax / je 0x424CC0
+//     mov eax,2 / ret      ; ← OwnerObject 存在 ⇒ 恒回 Ground，不再看 Type->Layer
+//   0x424CC0: mov eax,[ecx+0xC8]（Type）… mov eax,[eax+0x364]（Type->Layer）/ ret
+//
+//  所以 0x424CCA 那个钩子只覆盖「没有 OwnerObject」的分支。挂在对象上的 AE 动画
+//  （OwnerObject 已由 SetOwnerObject 写入）走的是 0x424CBA 这条恒 Ground 的近路，
+//  于是它和建筑本体同在 Ground 层 —— 而 Ground 层每帧按 Y 排序，动画常被本体盖住
+//  （NACNST 的覆盖动画就是被本体压住）。
+//
+//  这里只在「Kratos 的 AE 动画」上接管这一支，vanilla 动画原样放行（return 0 重放
+//  `mov eax,2`，落回 0x424CBF 的 ret）。
+// ============================================================================
+DEFINE_HOOK(0x424CBA, AnimClass_InWhichLayer_OwnerObject, 0x5)
+{
+	GET(AnimClass*, pThis, ECX);
+
+	AnimStatus* status = nullptr;
+	if (!TryGetStatus<AnimExt>(pThis, status) || !status->pAttachOwner)
+	{
+		return 0;
+	}
+
+	// 基准仍是原版的 Ground：OwnerObject 存在的动画本来就在这一层
+	Layer want = Layer::Ground;
+	TechnoClass* pOwner = nullptr;
+	if (CastToTechno(status->pAttachOwner, pOwner) && pOwner->IsAlive)
+	{
+		const Layer ownerLayer = pOwner->LastLayer;
+		if (ownerLayer > want)
+		{
+			want = ownerLayer;
+		}
+		// 建筑本体画进建筑自己的缓存画布，与动画一起留在 Ground 层时会被 Y 排序压住；
+		// 抬到 Air 层（整层画在 Ground 之后），动画必定在本体之上。
+		// Flat=yes 语义是「贴地、应被踩在上面」，保持原层。
+		if (pOwner->WhatAmI() == AbstractType::Building
+			&& pThis->Type && !pThis->Type->Flat
+			&& want <= Layer::Ground)
+		{
+			want = Layer::Air;
+		}
+	}
+
+	R->EAX(want);
+	// 0x424CBF 是原函数那句 `ret`：原 mov eax,2 已被本钩子跳过
+	return 0x424CBF;
+}
 DEFINE_HOOK(0x424CCA, AnimClass_InWhichLayer_FollowAttachOwner, 0x6)
 {
 	GET(AnimClass*, pThis, ECX);

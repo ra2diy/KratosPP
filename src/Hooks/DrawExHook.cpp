@@ -322,8 +322,8 @@ DEFINE_HOOK(0x705E00, TechnoClass_DrawObject_Springy, 0x7)
 	double scaleH = 1.0;
 	SpringyHelper::GetRenderScales(status->MySpringyData, scaleW, scaleH);
 
-	// 建筑本体是画进建筑自己的缓存画布的：只能原地换像素，不能换更大的帧
-	const bool inPlace = what == AbstractType::Building;
+	// 画布按形变后包围盒动态变化（画进缓存画布也由 DSurface 裁剪，不换画布会让大角度推拉被切掉）
+	const bool inPlace = false;
 	if (SHPStruct* pScaled = SpringySHP::GetTransformed(pSHP, scaleW, scaleH,
 		status->MySpringyData.ShearX, status->MySpringyData.ShearY, status->MySpringyData.ShearMode, 0, 0, false, inPlace))
 	{
