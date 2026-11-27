@@ -43,8 +43,7 @@
 DEFINE_HOOK(0x422CA0, AnimClass_Draw_SpringyBegin, 0x5)
 {
 	GET(AnimClass*, pAnim, ECX);
-	// ---- 临时探针：谁在画这个动画（R->Stack<DWORD>(0) = DrawIt 的返回地址）----
-	// 每 60 帧记最多 12 行，用来确认建筑动画是走层链表还是被建筑绘制时一起贴出来
+	// ---- 临时探针：记录「谁在调 DrawIt」（[esp] = 返回地址，落在通用裁剪助手里）----
 	{
 		static int lastProbeFrame = -100000;
 		static int probeBudget = 0;
@@ -57,10 +56,9 @@ DEFINE_HOOK(0x422CA0, AnimClass_Draw_SpringyBegin, 0x5)
 		if (probeBudget > 0)
 		{
 			--probeBudget;
-			Debug::Log("[probe] anim=%p type=%s owner=%p isBldAnim=%d caller=%p\\n",
+			Debug::Log("[probe] anim=%p type=%s isBldAnim=%d c1=%p\n",
 				pAnim,
 				pAnim->Type ? pAnim->Type->ID : "?",
-				pAnim->OwnerObject,
 				pAnim->IsBuildingAnim ? 1 : 0,
 				reinterpret_cast<void*>(R->Stack<DWORD>(0)));
 		}
@@ -81,6 +79,27 @@ DEFINE_HOOK_AGAIN(0x423827, AnimClass_Draw_BlitSHP_Springy, 0x5)
 DEFINE_HOOK(0x42389E, AnimClass_Draw_BlitSHP_Springy, 0x5)
 {
 	REF_STACK(SHPStruct*, pSHP, 0x0);
+	// ---- 临时探针 3：建筑动画的 blit ----
+	if (reinterpret_cast<uintptr_t>(pSHP) >= 0x10000 && pSHP->Frames > 0)
+	{
+		static int lastProbeFrame = -100000;
+		static int probeBudget = 0;
+		const int probeFrame = Unsorted::CurrentFrame.get();
+		if (probeFrame - lastProbeFrame >= 60)
+		{
+			lastProbeFrame = probeFrame;
+			probeBudget = 16;
+		}
+		if (probeBudget > 0)
+		{
+			--probeBudget;
+			Debug::Log("[probe3] shp=%p %dx%d f=%d | s0=%p s1=%x s2=%x s3=%x s4=%x s5=%x\n",
+				pSHP, pSHP->Width, pSHP->Height, pSHP->Frames,
+				reinterpret_cast<void*>(R->Stack<DWORD>(0)),
+				R->Stack<DWORD>(1), R->Stack<DWORD>(2), R->Stack<DWORD>(3),
+				R->Stack<DWORD>(4), R->Stack<DWORD>(5));
+		}
+	}
 	// 太小的值不是指针（原版会传一些常量标记），直接放过
 	if (reinterpret_cast<uintptr_t>(pSHP) >= 0x10000)
 	{
@@ -344,8 +363,10 @@ DEFINE_HOOK(0x705E00, TechnoClass_DrawObject_Springy, 0x7)
 	double scaleH = 1.0;
 	SpringyHelper::GetRenderScales(status->MySpringyData, scaleW, scaleH);
 
-	// 画布按形变后包围盒动态变化：锁死原帧矩形会让推出去的部分被切掉
-	const bool inPlace = false;
+	// 建筑本体的像素是写进「这栋建筑自己的固定尺寸图像表面」的：画布按形变后包围盒放大就会
+	// 超出那张表面，每行写到边界后回绕到下一行 —— 屏幕上就是一排排随形变移动的横线。
+	// 所以建筑body只能原地变形（超出的部分被表面裁掉）；动画/单位画到屏幕上，可以自由长画布
+	const bool inPlace = (what == AbstractType::Building);
 	// ---- 临时探针：建筑本体绘制 ----
 	{
 		static int lastProbeFrame = -100000;
@@ -378,5 +399,33 @@ DEFINE_HOOK(0x705E00, TechnoClass_DrawObject_Springy, 0x7)
 		SpringyRefresh::AddDirtyOnly(pTechno);
 	}
 
+	return 0;
+}
+
+// ==================== 临时探针 2 ====================
+// 通用「按矩形画对象」助手 0x5F4B10 的入口：ecx = 被画的对象，[esp] = 调它的那个函数。
+// 三个调用点（0x422C8E / 0x73B132 / 0x749B5B）分别对应不同的绘制趟，
+// 这一行就能确定「建筑动画到底是被谁画出来的」。
+DEFINE_HOOK(0x5F4B10, DrawObjectClipped_Probe, 0x8)
+{
+	GET(ObjectClass*, pObject, ECX);
+	if (pObject && pObject->WhatAmI() == AbstractType::Anim)
+	{
+		static int lastProbeFrame = -100000;
+		static int probeBudget = 0;
+		const int probeFrame = Unsorted::CurrentFrame.get();
+		if (probeFrame - lastProbeFrame >= 60)
+		{
+			lastProbeFrame = probeFrame;
+			probeBudget = 12;
+		}
+		if (probeBudget > 0)
+		{
+			--probeBudget;
+			Debug::Log("[probe2] obj=%p caller=%p\n",
+				pObject,
+				reinterpret_cast<void*>(R->Stack<DWORD>(0)));
+		}
+	}
 	return 0;
 }

@@ -179,11 +179,6 @@ SHPStruct* SpringyAnim::SubstituteSHP(SHPStruct* pOriginal)
 	// 建筑自己合成进缓存画布的动画（IdleAnim / ActiveAnim 这类 IsBuildingAnim）不做变形：
 	// 它们的画布是建筑那张固定尺寸的缓存，换成形变后的帧会越过边界写坏邻行（实测是竖条纹），
 	// 而且 Layer=ground / top 都没有区别 —— 说明它不走层链表，是建筑绘制时一起贴出来的。
-	if (Context.IsBuildingAnim)
-	{
-		return pOriginal;
-	}
-
 	return SpringySHP::GetTransformed(pOriginal, Context.ScaleW, Context.ScaleH,
 		Context.ShearX, Context.ShearY, Context.ShearMode, Context.PivotX, Context.PivotY, usePivot,
 		// 画布按形变后包围盒动态增长：锁死原帧矩形会把推出去的部分直接切掉
