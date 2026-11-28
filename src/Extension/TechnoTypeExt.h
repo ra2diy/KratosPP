@@ -41,6 +41,20 @@ public:
 		bool DisableNoFighterFireTwice = false; // 禁用NoFighter飞机开火两次
 		bool CurleyShuffle = true; // NoFighter飞机开火后换位置
 
+		// Kratos - 碾压等级（-1 = 未设置，按军衔向下一档回退）
+		// 作为碾压者时的等级
+		int CrushLevel = -1;
+		int CrushLevel_Veteran = -1;
+		int CrushLevel_Elite = -1;
+		// 作为被碾压者时的等级
+		int CrushableLevel = -1;
+		int CrushableLevel_Veteran = -1;
+		int CrushableLevel_Elite = -1;
+		// 部署状态（步兵）作为被碾压者时的等级
+		int DeployedCrushableLevel = -1;
+		int DeployedCrushableLevel_Veteran = -1;
+		int DeployedCrushableLevel_Elite = -1;
+
 		virtual void Read(INIBufferReader* reader) override
 		{
 			// 读取全局设置
@@ -80,6 +94,17 @@ public:
 			DisableNoFighterFireTwice = cdReader->Get("DisableNoFighterFireTwice", DisableNoFighterFireTwice);
 			DisableNoFighterFireTwice = reader->Get("DisableNoFighterFireTwice", DisableNoFighterFireTwice);
 			CurleyShuffle = reader->Get("CurleyShuffle", rules->CurleyShuffle);
+
+			// 碾压等级
+			CrushLevel = reader->Get("CrushLevel", CrushLevel);
+			CrushLevel_Veteran = reader->Get("CrushLevel.Veteran", CrushLevel_Veteran);
+			CrushLevel_Elite = reader->Get("CrushLevel.Elite", CrushLevel_Elite);
+			CrushableLevel = reader->Get("CrushableLevel", CrushableLevel);
+			CrushableLevel_Veteran = reader->Get("CrushableLevel.Veteran", CrushableLevel_Veteran);
+			CrushableLevel_Elite = reader->Get("CrushableLevel.Elite", CrushableLevel_Elite);
+			DeployedCrushableLevel = reader->Get("DeployedCrushableLevel", DeployedCrushableLevel);
+			DeployedCrushableLevel_Veteran = reader->Get("DeployedCrushableLevel.Veteran", DeployedCrushableLevel_Veteran);
+			DeployedCrushableLevel_Elite = reader->Get("DeployedCrushableLevel.Elite", DeployedCrushableLevel_Elite);
 		}
 	};
 

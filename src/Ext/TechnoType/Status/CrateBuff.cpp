@@ -2,6 +2,7 @@
 
 #include <Ext/Common/CommonStatus.h>
 
+#include <Ext/Helper/Crush.h>
 #include <Ext/Helper/Scripts.h>
 
 #include <Ext/ObjectType/AttachEffect.h>
@@ -22,10 +23,11 @@ void TechnoStatus::RecalculateStatus()
 		bool cloakableBuff = CrateBuff.Cloakable;
 
 		// 算上AE加成
+		CrateBuffData aeMultiplier{};
 		AttachEffect* ae = AEManager();
 		if (ae)
 		{
-			CrateBuffData aeMultiplier = ae->CountAttachStatusMultiplier();
+			aeMultiplier = ae->CountAttachStatusMultiplier();
 			firepowerMult *= aeMultiplier.FirepowerMultiplier;
 			armorMult *= aeMultiplier.ArmorMultiplier;
 
@@ -34,6 +36,13 @@ void TechnoStatus::RecalculateStatus()
 
 			speedMult *= aeMultiplier.SpeedMultiplier;
 		}
+
+		// 碾压等级：类型基准 + 箱子 + AE，每帧刷新一次，供移动钩子 O(1) 读取
+		CrushLevelCache = Crush::CalcCrushLevel(pTechno) + CrateBuff.CrushLevel + aeMultiplier.CrushLevel;
+		int crushableLevel = Crush::CalcCrushableLevel(pTechno) + CrateBuff.CrushableLevel + aeMultiplier.CrushableLevel;
+		// 被碾压等级下限钳到 0：负值会让"没碾压能力的单位"也能压（引擎前置判断已被拆掉）
+		CrushableLevelCache = crushableLevel < 0 ? 0 : crushableLevel;
+		CrushLevelReady = true;
 
 		// 隐身和破隐效果及更新隐身属性
 		if (ForceDecloakActive != forceDecloak)

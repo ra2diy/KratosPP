@@ -22,6 +22,10 @@ public:
 	double RangeMultiplier = 1.0;
 	double RangeCell = 0.0;
 
+	// Kratos - 碾压等级增减（加法聚合）
+	int CrushLevel = 0; // 作为碾压者时的等级加成，可负
+	int CrushableLevel = 0; // 作为被碾压者时的等级加成，可负（负值更容易被压）
+
 	CrateBuffData() : EffectData()
 	{
 		AffectWho = AffectWho::ALL;
@@ -43,6 +47,8 @@ public:
 		this->ForceDecloak = a.ForceDecloak;
 		this->RangeMultiplier += a.RangeMultiplier;
 		this->RangeCell += a.RangeCell;
+		this->CrushLevel += a.CrushLevel;
+		this->CrushableLevel += a.CrushableLevel;
 		return *this;
 	}
 
@@ -63,6 +69,8 @@ public:
 		ForceDecloak = reader->Get(title + "ForceDecloak", ForceDecloak);
 		RangeMultiplier = reader->Get(title + "RangeMultiplier", RangeMultiplier);
 		RangeCell = reader->Get(title + "RangeCell", RangeCell);
+		CrushLevel = reader->Get(title + "CrushLevel", CrushLevel);
+		CrushableLevel = reader->Get(title + "CrushableLevel", CrushableLevel);
 
 		Enable = FirepowerMultiplier != 1.0
 			|| ArmorMultiplier != 1.0
@@ -70,7 +78,9 @@ public:
 			|| ROFMultiplier != 1.0
 			|| Cloakable || ForceDecloak
 			|| RangeMultiplier != 1.0
-			|| RangeCell != 0.0;
+			|| RangeCell != 0.0
+			|| CrushLevel != 0
+			|| CrushableLevel != 0;
 	}
 
 #pragma region save/load
@@ -86,6 +96,9 @@ public:
 			.Process(this->ForceDecloak)
 			.Process(this->RangeMultiplier)
 			.Process(this->RangeCell)
+			// 追加在末尾：中间插入会改变存档字段顺序
+			.Process(this->CrushLevel)
+			.Process(this->CrushableLevel)
 			.Success();
 	};
 

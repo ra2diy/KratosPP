@@ -231,6 +231,8 @@ CrateBuffData AttachEffect::CountAttachStatusMultiplier()
 			multiplier.ForceDecloak |= temp->AEData.CrateBuff.ForceDecloak;
 			multiplier.RangeMultiplier *= temp->AEData.CrateBuff.RangeMultiplier;
 			multiplier.RangeCell += temp->AEData.CrateBuff.RangeCell;
+			multiplier.CrushLevel += temp->AEData.CrateBuff.CrushLevel;
+			multiplier.CrushableLevel += temp->AEData.CrateBuff.CrushableLevel;
 		}
 		});
 	return multiplier;

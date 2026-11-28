@@ -93,6 +93,7 @@
     <ClCompile Include="src\Ext\EffectType\State\StateEffect.cpp" />
     <ClCompile Include="src\Ext\EffectType\State\StateEffectScript.cpp" />
     <ClCompile Include="src\Ext\Helper\CastEx.cpp" />
+    <ClCompile Include="src\Ext\Helper\Crush.cpp" />
     <ClCompile Include="src\Ext\Helper\DrawEx.cpp" />
     <ClCompile Include="src\Ext\Helper\Finder.cpp" />
     <ClCompile Include="src\Ext\Helper\FLH.cpp" />
@@ -178,6 +179,7 @@
     <ClCompile Include="src\Hooks\BuildingExtHook.cpp" />
     <ClCompile Include="src\Hooks\BulletExtHook.cpp" />
     <ClCompile Include="src\Hooks\BulletTypeExtHook.cpp" />
+    <ClCompile Include="src\Hooks\CrushHook.cpp" />
     <ClCompile Include="src\Hooks\EBoltExtHook.cpp" />
     <ClCompile Include="src\Hooks\HouseExtHook.cpp" />
     <ClCompile Include="src\Hooks\GeneralHook.cpp" />
@@ -338,6 +340,7 @@
     <ClInclude Include="src\Ext\EffectType\State\StateEffect.h" />
     <ClInclude Include="src\Ext\EffectType\State\StateEffectScript.h" />
     <ClInclude Include="src\Ext\Helper\CastEx.h" />
+    <ClInclude Include="src\Ext\Helper\Crush.h" />
     <ClInclude Include="src\Ext\Helper\DrawEx.h" />
     <ClInclude Include="src\Ext\Helper\Finder.h" />
     <ClInclude Include="src\Ext\Helper\FLH.h" />
